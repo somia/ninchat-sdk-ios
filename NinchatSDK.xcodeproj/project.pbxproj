@@ -7,10 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19420454399005D4FCF19880 /* Pods_NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55C2C9F443FF0622964BB49D /* Pods_NinchatSDK.framework */; };
 		4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944355208DF33400101DCA /* NinchatSDK.framework */; };
 		49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49944363208DF33400101DCA /* NinchatSDKTests.m */; };
 		49944366208DF33400101DCA /* NinchatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 49944358208DF33400101DCA /* NinchatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		49944371208E009F00101DCA /* NinchatGo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944370208E009F00101DCA /* NinchatGo.framework */; };
+		49944371208E009F00101DCA /* Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944370208E009F00101DCA /* Client.framework */; };
+		49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 49944372208E05DB00101DCA /* NinchatSDK.podspec */; };
+		49944376208E05DB00101DCA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 49944373208E05DB00101DCA /* README.md */; };
+		49944377208E05DB00101DCA /* BUILDING.md in Resources */ = {isa = PBXBuildFile; fileRef = 49944374208E05DB00101DCA /* BUILDING.md */; };
+		499443B4208F320700101DCA /* NINClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 499443B2208F320700101DCA /* NINClient.h */; };
+		499443B5208F320700101DCA /* NINClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINClient.m */; };
+		499443B6208F320700101DCA /* NINClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINClient.m */; };
+		499443BA208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
+		499443BB208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
+		B0030CA71DE3793B5155420D /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDE949B0F061E0E042CDBC77 /* Pods_NinchatSDKTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,13 +34,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		079C11273990681ACED0C21B /* Pods-NinchatSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		49944355208DF33400101DCA /* NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944358208DF33400101DCA /* NinchatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDK.h; sourceTree = "<group>"; };
 		49944359208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4994435E208DF33400101DCA /* NinchatSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NinchatSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944363208DF33400101DCA /* NinchatSDKTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NinchatSDKTests.m; sourceTree = "<group>"; };
 		49944365208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49944370208E009F00101DCA /* NinchatGo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NinchatGo.framework; sourceTree = "<group>"; };
+		49944370208E009F00101DCA /* Client.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Client.framework; sourceTree = "<group>"; };
+		49944372208E05DB00101DCA /* NinchatSDK.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatSDK.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		49944373208E05DB00101DCA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		49944374208E05DB00101DCA /* BUILDING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = BUILDING.md; sourceTree = "<group>"; };
+		499443B2208F320700101DCA /* NINClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINClient.h; sourceTree = "<group>"; };
+		499443B3208F320700101DCA /* NINClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINClient.m; sourceTree = "<group>"; };
+		499443B9208F35CD00101DCA /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		499443BC208F37A300101DCA /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		55C2C9F443FF0622964BB49D /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
+		D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.release.xcconfig"; sourceTree = "<group>"; };
+		EDE949B0F061E0E042CDBC77 /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				49944371208E009F00101DCA /* NinchatGo.framework in Frameworks */,
+				49944371208E009F00101DCA /* Client.framework in Frameworks */,
+				19420454399005D4FCF19880 /* Pods_NinchatSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */,
+				B0030CA71DE3793B5155420D /* Pods_NinchatSDKTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,10 +81,15 @@
 		4994434B208DF33400101DCA = {
 			isa = PBXGroup;
 			children = (
+				499443B9208F35CD00101DCA /* Podfile */,
+				49944372208E05DB00101DCA /* NinchatSDK.podspec */,
+				49944374208E05DB00101DCA /* BUILDING.md */,
+				49944373208E05DB00101DCA /* README.md */,
 				4994436F208E007700101DCA /* Frameworks */,
 				49944357208DF33400101DCA /* NinchatSDK */,
 				49944362208DF33400101DCA /* NinchatSDKTests */,
 				49944356208DF33400101DCA /* Products */,
+				748A62C35B36023A82D6A0E2 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,6 +107,9 @@
 			children = (
 				49944358208DF33400101DCA /* NinchatSDK.h */,
 				49944359208DF33400101DCA /* Info.plist */,
+				499443B2208F320700101DCA /* NINClient.h */,
+				499443B3208F320700101DCA /* NINClient.m */,
+				499443BC208F37A300101DCA /* PrefixHeader.pch */,
 			);
 			path = NinchatSDK;
 			sourceTree = "<group>";
@@ -93,9 +126,22 @@
 		4994436F208E007700101DCA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				49944370208E009F00101DCA /* NinchatGo.framework */,
+				49944370208E009F00101DCA /* Client.framework */,
+				55C2C9F443FF0622964BB49D /* Pods_NinchatSDK.framework */,
+				EDE949B0F061E0E042CDBC77 /* Pods_NinchatSDKTests.framework */,
 			);
 			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		748A62C35B36023A82D6A0E2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */,
+				D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */,
+				079C11273990681ACED0C21B /* Pods-NinchatSDKTests.debug.xcconfig */,
+				CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -106,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
+				499443B4208F320700101DCA /* NINClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +163,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 49944369208DF33400101DCA /* Build configuration list for PBXNativeTarget "NinchatSDK" */;
 			buildPhases = (
+				5191603C19EB8A75DAC2C5EC /* [CP] Check Pods Manifest.lock */,
 				49944350208DF33400101DCA /* Sources */,
 				49944351208DF33400101DCA /* Frameworks */,
 				49944352208DF33400101DCA /* Headers */,
@@ -134,9 +182,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4994436C208DF33400101DCA /* Build configuration list for PBXNativeTarget "NinchatSDKTests" */;
 			buildPhases = (
+				936D8AAC0B5AC2CA55E8C73E /* [CP] Check Pods Manifest.lock */,
 				4994435A208DF33400101DCA /* Sources */,
 				4994435B208DF33400101DCA /* Frameworks */,
 				4994435C208DF33400101DCA /* Resources */,
+				B60FFA625315D3E0890FE0B0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -189,6 +239,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49944377208E05DB00101DCA /* BUILDING.md in Resources */,
+				49944376208E05DB00101DCA /* README.md in Resources */,
+				499443BA208F35CD00101DCA /* Podfile in Resources */,
+				49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,16 +250,75 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				499443BB208F35CD00101DCA /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5191603C19EB8A75DAC2C5EC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NinchatSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		936D8AAC0B5AC2CA55E8C73E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NinchatSDKTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B60FFA625315D3E0890FE0B0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		49944350208DF33400101DCA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				499443B5208F320700101DCA /* NINClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +326,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				499443B6208F320700101DCA /* NINClient.m in Sources */,
 				49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +384,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NinchatSDK/PrefixHeader.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -329,6 +444,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NinchatSDK/PrefixHeader.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -346,6 +462,7 @@
 		};
 		4994436A208DF33400101DCA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -374,6 +491,7 @@
 		};
 		4994436B208DF33400101DCA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -402,6 +520,7 @@
 		};
 		4994436D208DF33400101DCA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 079C11273990681ACED0C21B /* Pods-NinchatSDKTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;
@@ -419,6 +538,7 @@
 		};
 		4994436E208DF33400101DCA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;

@@ -51,7 +51,7 @@ cd /path/to/project/go-sdk/src/github.com/ninchat/ninchat-go/mobile
 ```
 3. Create the Framework:
 ```sh
-GOPATH=$GOPATH:/Users/matti/src/ninchat-sdk-ios/go-sdk gomobile bind -target ios -o /tmp/NinchatGo.framework
+GOPATH=$GOPATH:/path/to/project/go-sdk gomobile bind -target ios -o /tmp/NinchatGo.framework
 ```
 4. Replace the version in the iOS project
 ```sh
