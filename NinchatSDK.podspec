@@ -23,6 +23,9 @@ Pod::Spec.new do |s|
     ss.source_files  = "NinchatSDK/**/*.{h,m}"
     ss.public_header_files = "NinchatSDK/**/*.h"
     ss.prefix_header_file = "NinchatSDK/PrefixHeader.pch"
+    ss.resource_bundles = {
+        "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib}"],
+    }
     ss.dependency 'CocoaLumberjack', '~> 3.4'
   end
   

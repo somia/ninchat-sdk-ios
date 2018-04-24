@@ -14,4 +14,7 @@
 /** Initializes the client. Always the create the client with this method. */
 +(instancetype) create;
 
+/** Returns the initial view controller for the Ninchat UI. */
+-(nonnull UIViewController*) initialViewController;
+
 @end

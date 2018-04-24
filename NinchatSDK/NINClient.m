@@ -6,7 +6,7 @@
 //  Copyright © 2018 Ninchat. All rights reserved.
 //
 
-#import <Client/Client.h>
+@import Client;
 
 #import "NINClient.h"
 
@@ -27,6 +27,21 @@
     //TODO init stuff on client
 
     return client;
+}
+
+-(nonnull UIViewController*) initialViewController {
+    // Locate our framework bundle by showing it a class in this framework
+    NSBundle* framworkBundle = [NSBundle bundleForClass:[self class]];
+
+    // Locate our resource bundle
+    NSURL* bundleURL = [framworkBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
+    NSBundle* bundle = [NSBundle bundleWithURL:bundleURL];
+
+    // Then, instantiate our Chat storyboard from that bundle
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
+
+    // Finally return the initial view controller for that storyboard
+    return [storyboard instantiateInitialViewController];
 }
 
 -(id) init {

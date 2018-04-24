@@ -20,6 +20,9 @@
 		499443B6208F320700101DCA /* NINClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINClient.m */; };
 		499443BA208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
 		499443BB208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
+		499443BF208F475200101DCA /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 499443BE208F475200101DCA /* Chat.storyboard */; };
+		499443C2208F47EA00101DCA /* NINMessagesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 499443C0208F47EA00101DCA /* NINMessagesViewController.h */; };
+		499443C3208F47EA00101DCA /* NINMessagesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443C1208F47EA00101DCA /* NINMessagesViewController.m */; };
 		B0030CA71DE3793B5155420D /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EDE949B0F061E0E042CDBC77 /* Pods_NinchatSDKTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +52,9 @@
 		499443B3208F320700101DCA /* NINClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINClient.m; sourceTree = "<group>"; };
 		499443B9208F35CD00101DCA /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		499443BC208F37A300101DCA /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		499443BE208F475200101DCA /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
+		499443C0208F47EA00101DCA /* NINMessagesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINMessagesViewController.h; sourceTree = "<group>"; };
+		499443C1208F47EA00101DCA /* NINMessagesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINMessagesViewController.m; sourceTree = "<group>"; };
 		55C2C9F443FF0622964BB49D /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -105,6 +111,7 @@
 		49944357208DF33400101DCA /* NinchatSDK */ = {
 			isa = PBXGroup;
 			children = (
+				499443BD208F473700101DCA /* UI */,
 				49944358208DF33400101DCA /* NinchatSDK.h */,
 				49944359208DF33400101DCA /* Info.plist */,
 				499443B2208F320700101DCA /* NINClient.h */,
@@ -133,6 +140,24 @@
 			path = Frameworks;
 			sourceTree = "<group>";
 		};
+		499443BD208F473700101DCA /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				499443C4208F47F000101DCA /* MessagesView */,
+				499443BE208F475200101DCA /* Chat.storyboard */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		499443C4208F47F000101DCA /* MessagesView */ = {
+			isa = PBXGroup;
+			children = (
+				499443C0208F47EA00101DCA /* NINMessagesViewController.h */,
+				499443C1208F47EA00101DCA /* NINMessagesViewController.m */,
+			);
+			path = MessagesView;
+			sourceTree = "<group>";
+		};
 		748A62C35B36023A82D6A0E2 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +177,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
+				499443C2208F47EA00101DCA /* NINMessagesViewController.h in Headers */,
 				499443B4208F320700101DCA /* NINClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,6 +268,7 @@
 				49944377208E05DB00101DCA /* BUILDING.md in Resources */,
 				49944376208E05DB00101DCA /* README.md in Resources */,
 				499443BA208F35CD00101DCA /* Podfile in Resources */,
+				499443BF208F475200101DCA /* Chat.storyboard in Resources */,
 				49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,6 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				499443C3208F47EA00101DCA /* NINMessagesViewController.m in Sources */,
 				499443B5208F320700101DCA /* NINClient.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
