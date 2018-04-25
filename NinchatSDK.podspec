@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "iOS SDK for Ninchat."
   s.homepage     = "https://ninchat.com/"
