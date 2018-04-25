@@ -492,6 +492,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					arm64,
+					armv7,
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -503,6 +508,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
+				GCC_DYNAMIC_NO_PIC = NO;
 				INFOPLIST_FILE = NinchatSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -521,6 +527,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					arm64,
+					armv7,
+					armv7s,
+				);
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -532,6 +543,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
+				GCC_DYNAMIC_NO_PIC = NO;
 				INFOPLIST_FILE = NinchatSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (

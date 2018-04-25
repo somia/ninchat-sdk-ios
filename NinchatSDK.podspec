@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.3"
+  s.version      = "0.0.4"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "iOS SDK for Ninchat."
   s.homepage     = "https://ninchat.com/"
@@ -15,11 +15,11 @@ Pod::Spec.new do |s|
   # Handle the Go library as a subspec
   s.subspec "Go" do |gs|
     gs.vendored_frameworks = "Frameworks/Client.framework"
+    s.pod_target_xcconfig = {
+        "OTHER_LDFLAGS[i386]" => "-Wl,-read_only_relocs,suppress"
+    }
 
-#gs.pod_target_xcconfig = {
-        # "ARCHS" => "arm64 armv7 armv7s x86_64",
-        #"ARCHS_STANDARD" => "arm64 armv7 armv7s x86_64"
-        #    }
+    # -Wl,-read_only_relocs,suppress
   end
 
   # Handle the SDK itself as a subspec with a dependency to the Go lib
@@ -31,15 +31,10 @@ Pod::Spec.new do |s|
     ss.resource_bundles = {
         "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib}"],
     }
-    ss.dependency "CocoaLumberjack", "~> 3.4"
   end
   
+  s.dependency "CocoaLumberjack", "~> 3.4"
   s.requires_arc = true
   s.default_subspec = "SDK"
-
-# s.pod_target_xcconfig = {
-#      "ARCHS" => "arm64 armv7 armv7s x86_64",
-#      "ARCHS_STANDARD" => "arm64 armv7 armv7s x86_64"
-#  }
 
 end
