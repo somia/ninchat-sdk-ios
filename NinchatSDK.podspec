@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.4"
+  s.version      = "0.0.5"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "iOS SDK for Ninchat."
   s.homepage     = "https://ninchat.com/"
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.subspec "Go" do |gs|
     gs.vendored_frameworks = "Frameworks/Client.framework"
     s.pod_target_xcconfig = {
-        "OTHER_LDFLAGS[i386]" => "-Wl,-read_only_relocs,suppress"
+        "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress"
     }
 
     # -Wl,-read_only_relocs,suppress
