@@ -61,7 +61,19 @@ cp -r /tmp/NinchatGo.framework /path/to/project/Frameworks/NinchatGo.framework
 
 ## Releasing new SDK version
 
-**TODO**
+First of all you need to have configured the private podspecs repo:
+
+```sh
+pod repo add ninchat-podspecs https://github.com/somia/ninchat-podspecs.git
+```
+
+To release a new SDK version on the said podspec repository, take the following steps:
+
+* Update NinchatSDK.podspec and set s.version to match the upcoming tag
+* Commit all your changes, merge all pending accepted *Merge ('pull') Requests*
+* Create a new tag following [Semantic Versioning](http://semver.org/); eg. `git tag -a 1.0.1 -m "Your tag comment"`
+* `git push --tags`
+* `pod repo push ninchat-podspecs NinchatSDK.podspec`
 
 
 
