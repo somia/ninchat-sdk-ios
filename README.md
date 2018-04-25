@@ -4,7 +4,13 @@ This document describes integrating the Ninchat iOS SDK into a native iOS applic
 
 ## Installation
 
-TODO: Cocoapods 
+Podfile:
+
+```
+source 'https://github.com/somia/ninchat-podspecs.git'
+
+pod 'NinchatSDK', '~> 0.0.1'
+```
 
 ## Usage
 
