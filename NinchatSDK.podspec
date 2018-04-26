@@ -2,11 +2,11 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.5"
+  s.version      = "0.0.6"
   s.summary      = "iOS SDK for Ninchat."
-  s.description  = "iOS SDK for Ninchat."
+  s.description  = "For building applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
-  s.license      = "MIT"
+  s.license      = { :type => "Ninchat", :file => "LICENSE.md" }
   s.author       = { "Matti Dahlbom" => "matti.dahlbom@qvik.fi" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios.git", :tag => "#{s.version}" }
 
@@ -18,8 +18,6 @@ Pod::Spec.new do |s|
     s.pod_target_xcconfig = {
         "OTHER_LDFLAGS[arch=i386]" => "-Wl,-read_only_relocs,suppress"
     }
-
-    # -Wl,-read_only_relocs,suppress
   end
 
   # Handle the SDK itself as a subspec with a dependency to the Go lib
