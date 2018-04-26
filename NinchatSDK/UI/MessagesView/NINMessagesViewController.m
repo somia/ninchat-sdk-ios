@@ -6,6 +6,8 @@
 //  Copyright © 2018 Ninchat. All rights reserved.
 //
 
+#include <stdlib.h>
+
 #import "NINMessagesViewController.h"
 
 @interface NINMessagesViewController ()
@@ -20,6 +22,10 @@
     [super viewDidLoad];
 
     self.testLabel.text = @"NINCHAT SDK SAYS: Hi!";
+}
+
+-(IBAction) pushButtonPressed:(UIButton*)button {
+    self.testLabel.text = [NSString stringWithFormat:@"Here's a random number: %d", arc4random_uniform(74)];
 }
 
 @end

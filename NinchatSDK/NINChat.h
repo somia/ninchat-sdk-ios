@@ -8,13 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-//TODO placeholder class
-@interface NINClient : NSObject
+/**
+ * API Facade for Ninchat iOS SDK.
+ *
+ * Instantiate this class using the `create` method.
+ */
+@interface NINChat : NSObject
 
 /** Initializes the client. Always the create the client with this method. */
 +(instancetype) create;
 
 /** Returns the initial view controller for the Ninchat UI. */
 -(nonnull UIViewController*) initialViewController;
+
+/** Tests the connectivity. Returns YES if successful. */
+-(BOOL) connectionTest;
 
 @end

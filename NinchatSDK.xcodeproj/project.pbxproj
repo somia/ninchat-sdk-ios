@@ -15,9 +15,9 @@
 		49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 49944372208E05DB00101DCA /* NinchatSDK.podspec */; };
 		49944376208E05DB00101DCA /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 49944373208E05DB00101DCA /* README.md */; };
 		49944377208E05DB00101DCA /* BUILDING.md in Resources */ = {isa = PBXBuildFile; fileRef = 49944374208E05DB00101DCA /* BUILDING.md */; };
-		499443B4208F320700101DCA /* NINClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 499443B2208F320700101DCA /* NINClient.h */; };
-		499443B5208F320700101DCA /* NINClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINClient.m */; };
-		499443B6208F320700101DCA /* NINClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINClient.m */; };
+		499443B4208F320700101DCA /* NINChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 499443B2208F320700101DCA /* NINChat.h */; };
+		499443B5208F320700101DCA /* NINChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINChat.m */; };
+		499443B6208F320700101DCA /* NINChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443B3208F320700101DCA /* NINChat.m */; };
 		499443BA208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
 		499443BB208F35CD00101DCA /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 499443B9208F35CD00101DCA /* Podfile */; };
 		499443BF208F475200101DCA /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 499443BE208F475200101DCA /* Chat.storyboard */; };
@@ -48,8 +48,8 @@
 		49944372208E05DB00101DCA /* NinchatSDK.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatSDK.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		49944373208E05DB00101DCA /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		49944374208E05DB00101DCA /* BUILDING.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = BUILDING.md; sourceTree = "<group>"; };
-		499443B2208F320700101DCA /* NINClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINClient.h; sourceTree = "<group>"; };
-		499443B3208F320700101DCA /* NINClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINClient.m; sourceTree = "<group>"; };
+		499443B2208F320700101DCA /* NINChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChat.h; sourceTree = "<group>"; };
+		499443B3208F320700101DCA /* NINChat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChat.m; sourceTree = "<group>"; };
 		499443B9208F35CD00101DCA /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		499443BC208F37A300101DCA /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		499443BE208F475200101DCA /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
@@ -114,8 +114,8 @@
 				499443BD208F473700101DCA /* UI */,
 				49944358208DF33400101DCA /* NinchatSDK.h */,
 				49944359208DF33400101DCA /* Info.plist */,
-				499443B2208F320700101DCA /* NINClient.h */,
-				499443B3208F320700101DCA /* NINClient.m */,
+				499443B2208F320700101DCA /* NINChat.h */,
+				499443B3208F320700101DCA /* NINChat.m */,
 				499443BC208F37A300101DCA /* PrefixHeader.pch */,
 			);
 			path = NinchatSDK;
@@ -143,8 +143,8 @@
 		499443BD208F473700101DCA /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				499443C4208F47F000101DCA /* MessagesView */,
 				499443BE208F475200101DCA /* Chat.storyboard */,
+				499443C4208F47F000101DCA /* MessagesView */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -178,7 +178,7 @@
 			files = (
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				499443C2208F47EA00101DCA /* NINMessagesViewController.h in Headers */,
-				499443B4208F320700101DCA /* NINClient.h in Headers */,
+				499443B4208F320700101DCA /* NINChat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,7 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				499443C3208F47EA00101DCA /* NINMessagesViewController.m in Sources */,
-				499443B5208F320700101DCA /* NINClient.m in Sources */,
+				499443B5208F320700101DCA /* NINChat.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,7 +354,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				499443B6208F320700101DCA /* NINClient.m in Sources */,
+				499443B6208F320700101DCA /* NINChat.m in Sources */,
 				49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -492,11 +492,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					arm64,
-					armv7,
-					armv7s,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -504,6 +500,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
@@ -527,11 +524,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					arm64,
-					armv7,
-					armv7s,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -539,6 +532,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",

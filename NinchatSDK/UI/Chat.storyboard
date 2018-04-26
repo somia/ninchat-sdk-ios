@@ -24,11 +24,20 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Clu-8W-jaJ">
+                                <rect key="frame" x="154" y="384" width="67" height="30"/>
+                                <state key="normal" title="PUSH ME"/>
+                                <connections>
+                                    <action selector="pushButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="loW-WY-9aT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerY" secondItem="w6e-s4-vNx" secondAttribute="centerY" id="Tgb-8X-j4D"/>
+                            <constraint firstItem="Clu-8W-jaJ" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="gOu-2N-evz"/>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="oyf-rz-mxE"/>
+                            <constraint firstItem="Clu-8W-jaJ" firstAttribute="top" secondItem="1zg-yu-CMq" secondAttribute="bottom" constant="40" id="psp-NQ-TEu"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="R8Q-s8-woL"/>
                     </view>
