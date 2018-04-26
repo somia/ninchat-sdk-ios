@@ -3,7 +3,7 @@
 //  NinchatSDK
 //
 //  Created by Matti Dahlbom on 24/04/2018.
-//  Copyright © 2018 Ninchat. All rights reserved.
+//  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

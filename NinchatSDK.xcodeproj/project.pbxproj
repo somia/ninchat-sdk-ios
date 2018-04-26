@@ -232,7 +232,7 @@
 			attributes = {
 				CLASSPREFIX = NIN;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = Ninchat;
+				ORGANIZATIONNAME = "Somia Reality Oy";
 				TargetAttributes = {
 					49944354208DF33400101DCA = {
 						CreatedOnToolsVersion = 9.3;
