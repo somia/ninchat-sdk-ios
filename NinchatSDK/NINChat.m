@@ -18,7 +18,7 @@
 
 #pragma mark - Public API
 
--(nonnull UIViewController*) initialViewController {
+-(nonnull UIViewController*) viewController {
     NSLog(@"Loading initial view controller..");
 
     // Locate our framework bundle by showing it a class in this framework
@@ -33,13 +33,18 @@
     return [storyboard instantiateInitialViewController];
 }
 
--(BOOL) connectionTest {
+-(BOOL) start {
     NSError* error = nil;
 
     ClientStrings* messageTypes = [ClientStrings new];
     [messageTypes append:@"ninchat.com/*"];
 
     ClientProps* sessionParams = [ClientProps new];
+    if (self.userName != nil) {
+        ClientProps* attrs = [ClientProps new];
+        [attrs setString:@"name" val:self.userName];
+        [sessionParams setObject:@"user_attrs" ref:attrs];
+    }
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
     ClientSession* session = [ClientSession new];
@@ -59,22 +64,23 @@
         return NO;
     }
 
-    ClientProps* sendParams = [ClientProps new];
-    [sendParams setString:@"action" val:@"send_message"];
-    [sendParams setString:@"user_id" val:@"007"];
-    [sendParams setString:@"message_type" val:@"ninchat.com/no-such-message-type"];
+    if (self.queueId != nil) {
+        ClientProps* audienceParams = [ClientProps new];
+        [audienceParams setString:@"action" val:@"request_audience"];
+        [audienceParams setString:@"queue_id" val:self.queueId];
+	if (self.audienceMetadataJSON != nil) {
+            ClientJSON* json = [[ClientJSON alloc] init:self.audienceMetadataJSON];
+            [audienceParams setJSON:@"audience_metadata" ref:json];
+        }
 
-    ClientPayload* sendPayload = [ClientPayload new];
-    NSString* msgJson = @"{\"text\": \"asdf\"}";
-    NSData* msgData = [msgJson dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
-    [sendPayload append:msgData];
-
-    [session send:sendParams payload:sendPayload error:&error];
-    if (error != nil) {
-        NSLog(@"Error sending message: %@", error);
-        return NO;
+        [session send:audienceParams payload:nil error:&error];
+        if (error != nil) {
+            NSLog(@"Error sending message: %@", error);
+            return NO;
+        }
     }
 
+    [self.statusDelegate statusDidChange:@"starting"];
     return YES;
 }
 
@@ -82,6 +88,11 @@
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
     NSLog(@"Event: %@", params.string);
+
+    NSError* error = nil;
+    NSString* event = [params getString:@"event" error:&error];
+    if (error == nil)
+        [self.statusDelegate statusDidChange:event];
 }
 
 #pragma mark - From ClientLogHandler
@@ -100,12 +111,18 @@
 
 -(void) onClose {
     NSLog(@"Session closed.");
+    [self.statusDelegate statusDidChange:@"closed"];
 }
 
 #pragma mark - From ClientSessionEventHandler
 
 -(void) onSessionEvent:(ClientProps*)params {
     NSLog(@"Session event: %@", [params string]);
+
+    NSError* error = nil;
+    NSString* event = [params getString:@"event" error:&error];
+    if (error == nil)
+	[self.statusDelegate statusDidChange:event];
 }
 
 #pragma mark - Lifecycle etc.
