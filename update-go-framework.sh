@@ -19,7 +19,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Running gomobile tool.."
-GOPATH=$mygopath gomobile bind -target ios -o $tmpframework
+GOPATH=$mygopath gomobile bind -target ios -o $tmpframework github.com/ninchat/ninchat-go/mobile
 if [ $? -ne 0 ]; then
     echo "gomobile cmd failed, aborting."
     exit 1
