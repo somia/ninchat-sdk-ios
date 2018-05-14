@@ -6,6 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+@import UIKit;
+
 #import <Foundation/Foundation.h>
 
 /**
@@ -19,7 +21,7 @@
 +(instancetype) create;
 
 /** Returns the initial view controller for the Ninchat UI. */
--(nonnull UIViewController*) initialViewController;
+-(UIViewController*) initialViewController;
 
 /** Tests the connectivity. Returns YES if successful. */
 -(BOOL) connectionTest;

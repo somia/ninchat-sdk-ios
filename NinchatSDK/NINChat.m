@@ -21,9 +21,6 @@
 #pragma mark - Public API
 
 +(instancetype) create {
-    [DDLog addLogger:[DDTTYLogger sharedInstance]]; // TTY = Xcode console
-    //    [DDLog addLogger:[DDASLLogger sharedInstance]]; // ASL = Apple System Logs
-
     NINChat* client = [NINChat new];
 
     //TODO init stuff on client
@@ -31,7 +28,7 @@
     return client;
 }
 
--(nonnull UIViewController*) initialViewController {
+-(UIViewController*) initialViewController {
     // Locate our framework bundle by showing it a class in this framework
     NSBundle* framworkBundle = [NSBundle bundleForClass:[self class]];
 
@@ -63,12 +60,12 @@
     [session setOnLog:self];
     [session setParams:sessionParams error:&error];
     if (error != nil) {
-        DDLogError(@"Error setting session params: %@", error);
+        NSLog(@"Error setting session params: %@", error);
         return NO;
     }
     [session open:&error];
     if (error != nil) {
-        DDLogError(@"Error opening session: %@", error);
+        NSLog(@"Error opening session: %@", error);
         return NO;
     }
 
@@ -84,7 +81,7 @@
 
     [session send:sendParams payload:sendPayload error:&error];
     if (error != nil) {
-        DDLogError(@"Error sending message: %@", error);
+        NSLog(@"Error sending message: %@", error);
         return NO;
     }
 
@@ -94,31 +91,31 @@
 #pragma mark - From ClientEventHandler
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
-    DDLogDebug(@"Event: %@", params.string);
+    NSLog(@"Event: %@", params.string);
 }
 
 #pragma mark - From ClientLogHandler
 
 -(void) onLog:(NSString*)msg {
-    DDLogDebug(@"Log: %@", msg);
+    NSLog(@"Log: %@", msg);
 }
 
 #pragma mark - From ClientConnStateHandler
 
 -(void) onConnState:(NSString*)state {
-    DDLogDebug(@"Connection state: %@", state);
+    NSLog(@"Connection state: %@", state);
 }
 
 #pragma mark - From ClientCloseHandler
 
 -(void) onClose {
-    DDLogDebug(@"Session closed.");
+    NSLog(@"Session closed.");
 }
 
 #pragma mark - From ClientSessionEventHandler
 
 -(void) onSessionEvent:(ClientProps*)params {
-    DDLogDebug(@"Session event: %@", [params string]);
+    NSLog(@"Session event: %@", [params string]);
 }
 
 #pragma mark - Lifecycle etc.
@@ -128,7 +125,7 @@
 
     if (self != nil) {
         self.caller = [ClientCaller new];
-        DDLogDebug(@"Created Go language ClientCaller: %@", self.caller);
+        NSLog(@"Created Go language ClientCaller: %@", self.caller);
     }
 
     return self;
