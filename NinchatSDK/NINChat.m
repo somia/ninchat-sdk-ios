@@ -12,32 +12,22 @@
 
 @interface NINChat () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler>
 
-@property ClientCaller* caller;
-
 @end
 
 @implementation NINChat
 
 #pragma mark - Public API
 
-+(instancetype) create {
-    NINChat* client = [NINChat new];
+-(nonnull UIViewController*) initialViewController {
+    NSLog(@"Loading initial view controller..");
 
-    //TODO init stuff on client
-
-    return client;
-}
-
--(UIViewController*) initialViewController {
     // Locate our framework bundle by showing it a class in this framework
     NSBundle* framworkBundle = [NSBundle bundleForClass:[self class]];
+    NSLog(@"framworkBundle: %@", framworkBundle);
 
-    // Locate our resource bundle
-    NSURL* bundleURL = [framworkBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
-    NSBundle* bundle = [NSBundle bundleWithURL:bundleURL];
-
-    // Then, instantiate our Chat storyboard from that bundle
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
+    // Instantiate our storyboard
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:framworkBundle];
+    NSLog(@"storyboard: %@", storyboard);
 
     // Finally return the initial view controller for that storyboard
     return [storyboard instantiateInitialViewController];
@@ -124,8 +114,6 @@
     self = [super init];
 
     if (self != nil) {
-        self.caller = [ClientCaller new];
-        NSLog(@"Created Go language ClientCaller: %@", self.caller);
     }
 
     return self;

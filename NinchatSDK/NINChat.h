@@ -17,11 +17,8 @@
  */
 @interface NINChat : NSObject
 
-/** Initializes the client. Always the create the client with this method. */
-+(instancetype) create;
-
 /** Returns the initial view controller for the Ninchat UI. */
--(UIViewController*) initialViewController;
+-(nonnull UIViewController*) initialViewController;
 
 /** Tests the connectivity. Returns YES if successful. */
 -(BOOL) connectionTest;
