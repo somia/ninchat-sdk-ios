@@ -11,7 +11,7 @@ This document uses Swift programming language for the usage samples.
 Example Podfile:
 
 ```
-latform :ios, '9.0'
+platform :ios, '9.0'
 use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'

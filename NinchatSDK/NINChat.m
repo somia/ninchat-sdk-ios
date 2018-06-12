@@ -91,8 +91,11 @@
 
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
-    if (error == nil)
+    if (error != nil) {
+        NSLog(@"Got error: %@", error);
+    } else {
         [self.statusDelegate statusDidChange:event];
+    }
 }
 
 #pragma mark - From ClientLogHandler
