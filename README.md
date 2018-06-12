@@ -27,7 +27,8 @@ end
 
 target 'NinchatSDKTestClientTests' do
   all_pods
-end```
+end
+```
 
 Install by running `pod install`.
 
