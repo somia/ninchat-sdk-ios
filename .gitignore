@@ -11,6 +11,8 @@ auto-save-list
 tramp
 .\#*
 
+xcuserdata
+
 # OSX
 .DS_Store
 

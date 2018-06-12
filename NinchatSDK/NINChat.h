@@ -6,22 +6,33 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+@import UIKit;
+
 #import <Foundation/Foundation.h>
+
+@protocol NINChatStatusDelegate<NSObject>
+
+@required
+-(void) statusDidChange:(NSString*)status;
+
+@end
 
 /**
  * API Facade for Ninchat iOS SDK.
- *
- * Instantiate this class using the `create` method.
  */
 @interface NINChat : NSObject
 
-/** Initializes the client. Always the create the client with this method. */
-+(instancetype) create;
+@property (nonatomic, strong) NSString* configKey;
+@property (nonatomic, strong) NSString* queueId;
+@property (nonatomic, strong) NSString* userName;
+@property (nonatomic, strong) NSString* audienceMetadataJSON;
+@property (nonatomic, strong) NSString* lang;
+@property (nonatomic, assign) id <NINChatStatusDelegate> statusDelegate;
 
-/** Returns the initial view controller for the Ninchat UI. */
--(nonnull UIViewController*) initialViewController;
+/** Returns the view controller for the Ninchat UI. */
+-(nonnull UIViewController*) viewController;
 
-/** Tests the connectivity. Returns YES if successful. */
--(BOOL) connectionTest;
+/** Starts the chat. Returns YES if successful. */
+-(BOOL) start;
 
 @end

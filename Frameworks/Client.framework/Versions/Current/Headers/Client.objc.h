@@ -13,6 +13,7 @@
 @class ClientCaller;
 @class ClientEvent;
 @class ClientEvents;
+@class ClientJSON;
 @class ClientPayload;
 @class ClientProps;
 @class ClientSession;
@@ -86,8 +87,8 @@
 
 - (BOOL)lastReply;
 - (void)setLastReply:(BOOL)v;
+- (ClientProps*)getParams;
 - (ClientPayload*)getPayload;
-- (ClientProps*)getProps;
 - (NSString*)string;
 @end
 
@@ -100,6 +101,14 @@
 - (ClientEvent*)get:(long)i;
 - (long)length;
 - (NSString*)string;
+@end
+
+@interface ClientJSON : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) id _ref;
+
+- (instancetype)initWithRef:(id)ref;
+- (instancetype)init:(NSString*)s;
 @end
 
 @interface ClientPayload : NSObject <goSeqRefInterface> {
@@ -130,6 +139,7 @@
 - (void)setBool:(NSString*)key val:(BOOL)val;
 - (void)setFloat:(NSString*)key val:(double)val;
 - (void)setInt:(NSString*)key val:(long)val;
+- (void)setJSON:(NSString*)key ref:(ClientJSON*)ref;
 - (void)setObject:(NSString*)key ref:(ClientProps*)ref;
 - (void)setString:(NSString*)key val:(NSString*)val;
 - (void)setStringArray:(NSString*)key ref:(ClientStrings*)ref;
@@ -168,6 +178,8 @@
 @end
 
 FOUNDATION_EXPORT ClientCaller* ClientNewCaller(void);
+
+FOUNDATION_EXPORT ClientJSON* ClientNewJSON(NSString* s);
 
 FOUNDATION_EXPORT ClientPayload* ClientNewPayload(void);
 

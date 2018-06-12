@@ -12,47 +12,39 @@
 
 @interface NINChat () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler>
 
-@property ClientCaller* caller;
-
 @end
 
 @implementation NINChat
 
 #pragma mark - Public API
 
-+(instancetype) create {
-    [DDLog addLogger:[DDTTYLogger sharedInstance]]; // TTY = Xcode console
-    //    [DDLog addLogger:[DDASLLogger sharedInstance]]; // ASL = Apple System Logs
+-(nonnull UIViewController*) viewController {
+    NSLog(@"Loading initial view controller..");
 
-    NINChat* client = [NINChat new];
-
-    //TODO init stuff on client
-
-    return client;
-}
-
--(nonnull UIViewController*) initialViewController {
     // Locate our framework bundle by showing it a class in this framework
     NSBundle* framworkBundle = [NSBundle bundleForClass:[self class]];
+    NSLog(@"framworkBundle: %@", framworkBundle);
 
-    // Locate our resource bundle
-    NSURL* bundleURL = [framworkBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
-    NSBundle* bundle = [NSBundle bundleWithURL:bundleURL];
-
-    // Then, instantiate our Chat storyboard from that bundle
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
+    // Instantiate our storyboard
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:framworkBundle];
+    NSLog(@"storyboard: %@", storyboard);
 
     // Finally return the initial view controller for that storyboard
     return [storyboard instantiateInitialViewController];
 }
 
--(BOOL) connectionTest {
+-(BOOL) start {
     NSError* error = nil;
 
     ClientStrings* messageTypes = [ClientStrings new];
     [messageTypes append:@"ninchat.com/*"];
 
     ClientProps* sessionParams = [ClientProps new];
+    if (self.userName != nil) {
+        ClientProps* attrs = [ClientProps new];
+        [attrs setString:@"name" val:self.userName];
+        [sessionParams setObject:@"user_attrs" ref:attrs];
+    }
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
     ClientSession* session = [ClientSession new];
@@ -63,62 +55,74 @@
     [session setOnLog:self];
     [session setParams:sessionParams error:&error];
     if (error != nil) {
-        DDLogError(@"Error setting session params: %@", error);
+        NSLog(@"Error setting session params: %@", error);
         return NO;
     }
     [session open:&error];
     if (error != nil) {
-        DDLogError(@"Error opening session: %@", error);
+        NSLog(@"Error opening session: %@", error);
         return NO;
     }
 
-    ClientProps* sendParams = [ClientProps new];
-    [sendParams setString:@"action" val:@"send_message"];
-    [sendParams setString:@"user_id" val:@"007"];
-    [sendParams setString:@"message_type" val:@"ninchat.com/no-such-message-type"];
+    if (self.queueId != nil) {
+        ClientProps* audienceParams = [ClientProps new];
+        [audienceParams setString:@"action" val:@"request_audience"];
+        [audienceParams setString:@"queue_id" val:self.queueId];
+	if (self.audienceMetadataJSON != nil) {
+            ClientJSON* json = [[ClientJSON alloc] init:self.audienceMetadataJSON];
+            [audienceParams setJSON:@"audience_metadata" ref:json];
+        }
 
-    ClientPayload* sendPayload = [ClientPayload new];
-    NSString* msgJson = @"{\"text\": \"asdf\"}";
-    NSData* msgData = [msgJson dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
-    [sendPayload append:msgData];
-
-    [session send:sendParams payload:sendPayload error:&error];
-    if (error != nil) {
-        DDLogError(@"Error sending message: %@", error);
-        return NO;
+        [session send:audienceParams payload:nil error:&error];
+        if (error != nil) {
+            NSLog(@"Error sending message: %@", error);
+            return NO;
+        }
     }
 
+    [self.statusDelegate statusDidChange:@"starting"];
     return YES;
 }
 
 #pragma mark - From ClientEventHandler
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
-    DDLogDebug(@"Event: %@", params.string);
+    NSLog(@"Event: %@", params.string);
+
+    NSError* error = nil;
+    NSString* event = [params getString:@"event" error:&error];
+    if (error == nil)
+        [self.statusDelegate statusDidChange:event];
 }
 
 #pragma mark - From ClientLogHandler
 
 -(void) onLog:(NSString*)msg {
-    DDLogDebug(@"Log: %@", msg);
+    NSLog(@"Log: %@", msg);
 }
 
 #pragma mark - From ClientConnStateHandler
 
 -(void) onConnState:(NSString*)state {
-    DDLogDebug(@"Connection state: %@", state);
+    NSLog(@"Connection state: %@", state);
 }
 
 #pragma mark - From ClientCloseHandler
 
 -(void) onClose {
-    DDLogDebug(@"Session closed.");
+    NSLog(@"Session closed.");
+    [self.statusDelegate statusDidChange:@"closed"];
 }
 
 #pragma mark - From ClientSessionEventHandler
 
 -(void) onSessionEvent:(ClientProps*)params {
-    DDLogDebug(@"Session event: %@", [params string]);
+    NSLog(@"Session event: %@", [params string]);
+
+    NSError* error = nil;
+    NSString* event = [params getString:@"event" error:&error];
+    if (error == nil)
+	[self.statusDelegate statusDidChange:event];
 }
 
 #pragma mark - Lifecycle etc.
@@ -127,8 +131,6 @@
     self = [super init];
 
     if (self != nil) {
-        self.caller = [ClientCaller new];
-        DDLogDebug(@"Created Go language ClientCaller: %@", self.caller);
     }
 
     return self;
