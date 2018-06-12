@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -31,9 +31,18 @@
                                     <action selector="pushButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="loW-WY-9aT"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xrk-H4-atc">
+                                <rect key="frame" x="145" y="454" width="85" height="30"/>
+                                <state key="normal" title="VIDEO CALL"/>
+                                <connections>
+                                    <action selector="videoCallButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="SHX-lK-kor"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="xrk-H4-atc" firstAttribute="top" secondItem="Clu-8W-jaJ" secondAttribute="bottom" constant="40" id="0Mo-0q-KVL"/>
+                            <constraint firstItem="xrk-H4-atc" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="N8f-0I-bub"/>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerY" secondItem="w6e-s4-vNx" secondAttribute="centerY" id="Tgb-8X-j4D"/>
                             <constraint firstItem="Clu-8W-jaJ" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="gOu-2N-evz"/>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="oyf-rz-mxE"/>
@@ -43,11 +52,27 @@
                     </view>
                     <connections>
                         <outlet property="testLabel" destination="1zg-yu-CMq" id="WtE-BG-RnE"/>
+                        <segue destination="8ul-sn-uv2" kind="show" identifier="MessagesToVideoCall" id="7y9-4i-59U"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xXp-nn-Bc7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="231" y="149"/>
+            <point key="canvasLocation" x="262" y="149"/>
+        </scene>
+        <!--Video Call View Controller-->
+        <scene sceneID="JcL-p7-4xC">
+            <objects>
+                <viewController id="8ul-sn-uv2" customClass="NINVideoCallViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="MLh-AD-IC2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="0EO-IT-5cg"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AqJ-bv-bUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1055" y="149"/>
         </scene>
     </scenes>
 </document>
