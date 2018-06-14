@@ -11,9 +11,6 @@ if [ $? -ne 0 ]; then
     exit
 fi
 
-#xcodebuild build -project $name.xcodeproj -target $name \
-#           -sdk iphonesimulator SYMROOT=$builddir
-
 # Build the device build
 echo "Building for device.."
 xcodebuild archive -workspace $name.xcworkspace -scheme $name \

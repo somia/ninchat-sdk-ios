@@ -10,4 +10,6 @@
 
 @interface NINVideoCallViewController : UIViewController
 
+@property (nonatomic, strong) NSString* roomName;
+
 @end

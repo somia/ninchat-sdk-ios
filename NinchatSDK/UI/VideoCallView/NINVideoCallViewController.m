@@ -8,18 +8,20 @@
 
 #import "NINVideoCallViewController.h"
 
-//#import "ARDAppClient.h"
+#import <libjingle_peerconnection/RTCEAGLVideoView.h>
 #import <AppRTC/ARDAppClient.h>
 
-//@import WebRTC;
-
 // WebRTC server address
-static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //TODO
+static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
 
-@interface NINVideoCallViewController () <ARDAppClientDelegate>
+@interface NINVideoCallViewController () <ARDAppClientDelegate, RTCEAGLVideoViewDelegate>
 
 //@property (nonatomic, strong) RTCPeerConnectionFactory* connFactory;
 @property (strong, nonatomic) ARDAppClient* client;
+
+@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteView;
+//@property (strong, nonatomic) RTCVideoTrack *localVideoTrack;
+@property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
 @end
 
@@ -28,44 +30,56 @@ static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //T
 #pragma mark - Private methods
 
 - (void)disconnect {
+    NSLog(@"NINCHAT: disconnect");
+
     if (self.client) {
 //        if (self.localVideoTrack) [self.localVideoTrack removeRenderer:self.localView];
-//        if (self.remoteVideoTrack) [self.remoteVideoTrack removeRenderer:self.remoteView];
 //        self.localVideoTrack = nil;
 //        [self.localView renderFrame:nil];
-//        self.remoteVideoTrack = nil;
-//        [self.remoteView renderFrame:nil];
+
+        if (self.remoteVideoTrack != nil) {
+            [self.remoteVideoTrack removeRenderer:self.remoteView];
+        }
+        self.remoteVideoTrack = nil;
+        [self.remoteView renderFrame:nil];
+
         [self.client disconnect];
     }
 }
 
-- (void)remoteDisconnected {
-//    if (self.remoteVideoTrack) [self.remoteVideoTrack removeRenderer:self.remoteView];
-//    self.remoteVideoTrack = nil;
-//    [self.remoteView renderFrame:nil];
-//    [self videoView:self.localView didChangeVideoSize:self.localVideoSize];
+-(void) remoteDisconnected {
+    NSLog(@"NINCHAT: remoteDisconnected");
 
+    if (self.remoteVideoTrack != nil) {
+        [self.remoteVideoTrack removeRenderer:self.remoteView];
+    }
+
+    self.remoteVideoTrack = nil;
+    [self.remoteView renderFrame:nil];
+   // [self videoView:self.localView didChangeVideoSize:self.localVideoSize];
 }
 
 #pragma mark - From ARDAppClientDelegate
 
 - (void)appClient:(ARDAppClient *)client didChangeState:(ARDAppClientState)state {
+    NSLog(@"NINCHAT: didChangeState: %ld", (long)state);
+
     switch (state) {
         case kARDAppClientStateConnected:
-            NSLog(@"Client connected.");
+            NSLog(@"NINCHAT: Client connected.");
             break;
         case kARDAppClientStateConnecting:
-            NSLog(@"Client connecting.");
+            NSLog(@"NINCHAT: Client connecting.");
             break;
         case kARDAppClientStateDisconnected:
-            NSLog(@"Client disconnected.");
+            NSLog(@"NINCHAT: Client disconnected.");
             [self remoteDisconnected];
             break;
     }
 }
 
 - (void)appClient:(ARDAppClient *)client didReceiveLocalVideoTrack:(RTCVideoTrack*)localVideoTrack {
-    NSLog(@"WebRTC: didReceiveLocalVideoTrack: %@", localVideoTrack);
+    NSLog(@"NINCHAT: didReceiveLocalVideoTrack: %@", localVideoTrack);
 
 //    if (self.localVideoTrack) {
 //        [self.localVideoTrack removeRenderer:self.localView];
@@ -77,10 +91,10 @@ static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //T
 }
 
 - (void)appClient:(ARDAppClient *)client didReceiveRemoteVideoTrack:(RTCVideoTrack*)remoteVideoTrack {
-    NSLog(@"WebRTC: didReceiveRemoteVideoTrack: %@", remoteVideoTrack);
-//    self.remoteVideoTrack = remoteVideoTrack;
-//    [self.remoteVideoTrack addRenderer:self.remoteView];
-//
+    NSLog(@"NINCHAT: didReceiveRemoteVideoTrack: %@", remoteVideoTrack);
+    self.remoteVideoTrack = remoteVideoTrack;
+    [self.remoteVideoTrack addRenderer:self.remoteView];
+
 //    [UIView animateWithDuration:0.4f animations:^{
 //        //Instead of using 0.4 of screen size, we re-calculate the local view and keep our aspect ratio
 //        UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
@@ -102,7 +116,7 @@ static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //T
 }
 
 - (void)appClient:(ARDAppClient *)client didError:(NSError *)error {
-    NSLog(@"WebRTC: didError: %@", error);
+    NSLog(@"NINCHAT: didError: %@", error);
 
 //    UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:nil
 //                                                        message:[NSString stringWithFormat:@"%@", error]
@@ -113,18 +127,86 @@ static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //T
     [self disconnect];
 }
 
+#pragma mark - From RTCEAGLVideoViewDelegate
+
+- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
+//    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+//    [UIView animateWithDuration:0.4f animations:^{
+//        CGFloat containerWidth = self.view.frame.size.width;
+//        CGFloat containerHeight = self.view.frame.size.height;
+//        CGSize defaultAspectRatio = CGSizeMake(4, 3);
+//        if (videoView == self.localView) {
+//            //Resize the Local View depending if it is full screen or thumbnail
+//            self.localVideoSize = size;
+//            CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+//            CGRect videoRect = self.view.bounds;
+//            if (self.remoteVideoTrack) {
+//                videoRect = CGRectMake(0.0f, 0.0f, self.view.frame.size.width/4.0f, self.view.frame.size.height/4.0f);
+//                if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight) {
+//                    videoRect = CGRectMake(0.0f, 0.0f, self.view.frame.size.height/4.0f, self.view.frame.size.width/4.0f);
+//                }
+//            }
+//            CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+//
+//            //Resize the localView accordingly
+//            [self.localViewWidthConstraint setConstant:videoFrame.size.width];
+//            [self.localViewHeightConstraint setConstant:videoFrame.size.height];
+//            if (self.remoteVideoTrack) {
+//                [self.localViewBottomConstraint setConstant:28.0f]; //bottom right corner
+//                [self.localViewRightConstraint setConstant:28.0f];
+//            } else {
+//                [self.localViewBottomConstraint setConstant:containerHeight/2.0f - videoFrame.size.height/2.0f]; //center
+//                [self.localViewRightConstraint setConstant:containerWidth/2.0f - videoFrame.size.width/2.0f]; //center
+//            }
+//        } else if (videoView == self.remoteView) {
+//            //Resize Remote View
+//            self.remoteVideoSize = size;
+//            CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+//            CGRect videoRect = self.view.bounds;
+//            CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+//            if (self.isZoom) {
+//                //Set Aspect Fill
+//                CGFloat scale = MAX(containerWidth/videoFrame.size.width, containerHeight/videoFrame.size.height);
+//                videoFrame.size.width *= scale;
+//                videoFrame.size.height *= scale;
+//            }
+//            [self.remoteViewTopConstraint setConstant:containerHeight/2.0f - videoFrame.size.height/2.0f];
+//            [self.remoteViewBottomConstraint setConstant:containerHeight/2.0f - videoFrame.size.height/2.0f];
+//            [self.remoteViewLeftConstraint setConstant:containerWidth/2.0f - videoFrame.size.width/2.0f]; //center
+//            [self.remoteViewRightConstraint setConstant:containerWidth/2.0f - videoFrame.size.width/2.0f]; //center
+//
+//        }
+//        [self.view layoutIfNeeded];
+//    }];
+//
+}
+
 #pragma mark - Lifecycle etc.
 
-- (void)viewWillAppear:(BOOL)animated {
+-(void) viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+    [self disconnect];
+}
+
+-(void) applicationWillResignActive:(UIApplication*)application {
+    [self disconnect];
+}
+
+-(void) viewWillAppear:(BOOL)animated {
+    NSLog(@"NINCHAT: viewWillAppear");
+
     [super viewWillAppear:animated];
 
     // Set up WebRTC
    // RTCInitializeSSL();
   //  self.connFactory = [RTCPeerConnectionFactory new];
 
+    NSLog(@"Connecting to room '%@' of server '%@'..", self.roomName, kWebRTCServerAddress);
+
     self.client = [[ARDAppClient alloc] initWithDelegate:self];
     [self.client setServerHostUrl:kWebRTCServerAddress];
-    [self.client connectToRoomWithId:@"NinchatTest" options:nil];
+    [self.client connectToRoomWithId:self.roomName options:nil];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -136,6 +218,7 @@ static NSString* const kWebRTCServerAddress = @"https://apprtc.appspot.com"; //T
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [self.remoteView setDelegate:self];
 }
 
 @end

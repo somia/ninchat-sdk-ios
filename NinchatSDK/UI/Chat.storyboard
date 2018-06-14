@@ -52,12 +52,12 @@
                     </view>
                     <connections>
                         <outlet property="testLabel" destination="1zg-yu-CMq" id="WtE-BG-RnE"/>
-                        <segue destination="8ul-sn-uv2" kind="show" identifier="MessagesToVideoCall" id="7y9-4i-59U"/>
+                        <segue destination="pON-LE-Vqx" kind="show" identifier="MessagesToVideoCall" id="9JY-MM-Aj9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xXp-nn-Bc7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="262" y="149"/>
+            <point key="canvasLocation" x="287" y="149"/>
         </scene>
         <!--Video Call View Controller-->
         <scene sceneID="JcL-p7-4xC">
@@ -66,13 +66,77 @@
                     <view key="view" contentMode="scaleToFill" id="MLh-AD-IC2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JUY-ks-3b3" customClass="RTCEAGLVideoView">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="JUY-ks-3b3" firstAttribute="leading" secondItem="0EO-IT-5cg" secondAttribute="leading" id="S2Q-29-kMu"/>
+                            <constraint firstItem="0EO-IT-5cg" firstAttribute="bottom" secondItem="JUY-ks-3b3" secondAttribute="bottom" id="Ytt-cq-Hbi"/>
+                            <constraint firstItem="JUY-ks-3b3" firstAttribute="top" secondItem="0EO-IT-5cg" secondAttribute="top" id="irr-Hl-UjM"/>
+                            <constraint firstItem="0EO-IT-5cg" firstAttribute="trailing" secondItem="JUY-ks-3b3" secondAttribute="trailing" id="z0i-yT-9QE"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="0EO-IT-5cg"/>
                     </view>
+                    <connections>
+                        <outlet property="remoteView" destination="JUY-ks-3b3" id="LWo-9s-s5s"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqJ-bv-bUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1055" y="149"/>
+            <point key="canvasLocation" x="1978" y="149"/>
+        </scene>
+        <!--Room Name View Controller-->
+        <scene sceneID="9lo-zG-IJZ">
+            <objects>
+                <viewController id="pON-LE-Vqx" customClass="NINRoomNameViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ZnC-0m-spC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Room name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jwd-Ap-Ut7">
+                                <rect key="frame" x="139.5" y="170" width="96" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="NinchatTest" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lLW-UV-RSK">
+                                <rect key="frame" x="40" y="241" width="295" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ah0-54-DAl">
+                                <rect key="frame" x="143" y="321" width="88" height="30"/>
+                                <state key="normal" title="VIDEO CHAT"/>
+                                <connections>
+                                    <action selector="chatButtonPressed:" destination="pON-LE-Vqx" eventType="touchUpInside" id="HuB-zK-VIm"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="Jwd-Ap-Ut7" firstAttribute="top" secondItem="aaC-FZ-anS" secondAttribute="top" constant="150" id="8DE-E0-oBe"/>
+                            <constraint firstItem="ah0-54-DAl" firstAttribute="centerX" secondItem="ZnC-0m-spC" secondAttribute="centerX" id="9s4-ek-GM8"/>
+                            <constraint firstItem="aaC-FZ-anS" firstAttribute="trailing" secondItem="lLW-UV-RSK" secondAttribute="trailing" constant="40" id="D7E-qB-CBc"/>
+                            <constraint firstItem="lLW-UV-RSK" firstAttribute="leading" secondItem="aaC-FZ-anS" secondAttribute="leading" constant="40" id="EX7-FM-d17"/>
+                            <constraint firstItem="ah0-54-DAl" firstAttribute="top" secondItem="lLW-UV-RSK" secondAttribute="bottom" constant="50" id="Qz0-Lf-bAI"/>
+                            <constraint firstItem="Jwd-Ap-Ut7" firstAttribute="centerX" secondItem="ZnC-0m-spC" secondAttribute="centerX" id="ktf-Pz-m8h"/>
+                            <constraint firstItem="lLW-UV-RSK" firstAttribute="top" secondItem="Jwd-Ap-Ut7" secondAttribute="bottom" constant="50" id="sha-Yh-tSR"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="aaC-FZ-anS"/>
+                    </view>
+                    <connections>
+                        <outlet property="roomNameInput" destination="lLW-UV-RSK" id="7Zy-oy-qbc"/>
+                        <segue destination="8ul-sn-uv2" kind="show" identifier="RoomNameToVideoCall" id="AGU-Xf-JNk"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Nie-gy-wYx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1106" y="149"/>
         </scene>
     </scenes>
 </document>
