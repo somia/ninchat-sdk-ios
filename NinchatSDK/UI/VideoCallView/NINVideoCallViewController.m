@@ -10,6 +10,7 @@
 
 #import <libjingle_peerconnection/RTCEAGLVideoView.h>
 #import <AppRTC/ARDAppClient.h>
+#import <AVFoundation/AVFoundation.h>
 
 // WebRTC server address
 static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
@@ -22,6 +23,13 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteView;
 //@property (strong, nonatomic) RTCVideoTrack *localVideoTrack;
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
+
+@property (assign, nonatomic) CGSize remoteVideoSize;
+
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewTopConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewRightConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewLeftConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewBottomConstraint;
 
 @end
 
@@ -57,6 +65,18 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
     self.remoteVideoTrack = nil;
     [self.remoteView renderFrame:nil];
    // [self videoView:self.localView didChangeVideoSize:self.localVideoSize];
+}
+
+-(void) orientationChanged:(NSNotification *)notification{
+    [self videoView:self.remoteView didChangeVideoSize:self.remoteVideoSize];
+}
+
+#pragma mark - IBAction handlers
+
+-(IBAction) closeButtonPressed:(UIButton*)button {
+    [self disconnect];
+
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - From ARDAppClientDelegate
@@ -130,7 +150,25 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
 #pragma mark - From RTCEAGLVideoViewDelegate
 
 - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
-//    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
+    
+    [UIView animateWithDuration:0.4f animations:^{
+        CGFloat containerWidth = self.view.frame.size.width;
+        CGFloat containerHeight = self.view.frame.size.height;
+        CGSize defaultAspectRatio = CGSizeMake(4, 3);
+        self.remoteVideoSize = size;
+        CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+        CGRect videoRect = self.view.bounds;
+        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+
+        [self.remoteViewTopConstraint setConstant:(containerHeight / 2 - videoFrame.size.height / 2)];
+        [self.remoteViewBottomConstraint setConstant:(containerHeight / 2 - videoFrame.size.height / 2)];
+        [self.remoteViewLeftConstraint setConstant:(containerWidth / 2 - videoFrame.size.width / 2)];
+        [self.remoteViewRightConstraint setConstant:(containerWidth / 2 - videoFrame.size.width / 2)];
+
+        [self.view layoutIfNeeded];
+    }];
+
 //    [UIView animateWithDuration:0.4f animations:^{
 //        CGFloat containerWidth = self.view.frame.size.width;
 //        CGFloat containerHeight = self.view.frame.size.height;
@@ -178,7 +216,7 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
 //        }
 //        [self.view layoutIfNeeded];
 //    }];
-//
+
 }
 
 #pragma mark - Lifecycle etc.
@@ -198,10 +236,6 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
 
     [super viewWillAppear:animated];
 
-    // Set up WebRTC
-   // RTCInitializeSSL();
-  //  self.connFactory = [RTCPeerConnectionFactory new];
-
     NSLog(@"Connecting to room '%@' of server '%@'..", self.roomName, kWebRTCServerAddress);
 
     self.client = [[ARDAppClient alloc] initWithDelegate:self];
@@ -219,6 +253,11 @@ static NSString* const kWebRTCServerAddress = @"https://appr.tc"; //TODO
     [super viewDidLoad];
 
     [self.remoteView setDelegate:self];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationChanged:)
+                                                 name:@"UIDeviceOrientationDidChangeNotification"
+                                               object:nil];
 }
 
 @end

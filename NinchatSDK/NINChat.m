@@ -30,7 +30,10 @@
     NSLog(@"storyboard: %@", storyboard);
 
     // Finally return the initial view controller for that storyboard
-    return [storyboard instantiateInitialViewController];
+    UIViewController* viewController = [storyboard instantiateInitialViewController];
+    NSLog(@"Instantiated initial view controller: %@", viewController);
+
+    return viewController;
 }
 
 -(BOOL) start {

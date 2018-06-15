@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="YpM-11-QhB">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yjz-4D-80v">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,6 +10,22 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="VoB-7s-LbH">
+            <objects>
+                <navigationController id="Yjz-4D-80v" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="lxX-er-2uy">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="YpM-11-QhB" kind="relationship" relationship="rootViewController" id="XwB-vb-T7N"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LHA-wL-p9P" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-487" y="149"/>
+        </scene>
         <!--Messages View Controller-->
         <scene sceneID="XHh-YP-k7w">
             <objects>
@@ -50,6 +66,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="R8Q-s8-woL"/>
                     </view>
+                    <navigationItem key="navigationItem" id="4Hx-bI-ALw"/>
                     <connections>
                         <outlet property="testLabel" destination="1zg-yu-CMq" id="WtE-BG-RnE"/>
                         <segue destination="pON-LE-Vqx" kind="show" identifier="MessagesToVideoCall" id="9JY-MM-Aj9"/>
@@ -68,21 +85,34 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JUY-ks-3b3" customClass="RTCEAGLVideoView">
-                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EE3-XP-aKB">
+                                <rect key="frame" x="20" y="84" width="48" height="30"/>
+                                <state key="normal" title="CLOSE"/>
+                                <connections>
+                                    <action selector="closeButtonPressed:" destination="8ul-sn-uv2" eventType="touchUpInside" id="PDR-vv-JRX"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="EE3-XP-aKB" firstAttribute="leading" secondItem="0EO-IT-5cg" secondAttribute="leading" constant="20" id="PeD-Kc-7aC"/>
                             <constraint firstItem="JUY-ks-3b3" firstAttribute="leading" secondItem="0EO-IT-5cg" secondAttribute="leading" id="S2Q-29-kMu"/>
                             <constraint firstItem="0EO-IT-5cg" firstAttribute="bottom" secondItem="JUY-ks-3b3" secondAttribute="bottom" id="Ytt-cq-Hbi"/>
                             <constraint firstItem="JUY-ks-3b3" firstAttribute="top" secondItem="0EO-IT-5cg" secondAttribute="top" id="irr-Hl-UjM"/>
+                            <constraint firstItem="EE3-XP-aKB" firstAttribute="top" secondItem="0EO-IT-5cg" secondAttribute="top" constant="20" id="mIX-gO-hiJ"/>
                             <constraint firstItem="0EO-IT-5cg" firstAttribute="trailing" secondItem="JUY-ks-3b3" secondAttribute="trailing" id="z0i-yT-9QE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0EO-IT-5cg"/>
                     </view>
                     <connections>
                         <outlet property="remoteView" destination="JUY-ks-3b3" id="LWo-9s-s5s"/>
+                        <outlet property="remoteViewBottomConstraint" destination="Ytt-cq-Hbi" id="Zi1-wg-HPE"/>
+                        <outlet property="remoteViewLeftConstraint" destination="S2Q-29-kMu" id="wCP-3z-BUG"/>
+                        <outlet property="remoteViewRightConstraint" destination="z0i-yT-9QE" id="TlM-ue-nKO"/>
+                        <outlet property="remoteViewTopConstraint" destination="irr-Hl-UjM" id="lBk-5c-QQq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqJ-bv-bUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -98,19 +128,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Room name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jwd-Ap-Ut7">
-                                <rect key="frame" x="139.5" y="170" width="96" height="21"/>
+                                <rect key="frame" x="139.5" y="214" width="96" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="NinchatTest" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lLW-UV-RSK">
-                                <rect key="frame" x="40" y="241" width="295" height="30"/>
+                                <rect key="frame" x="40" y="285" width="295" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ah0-54-DAl">
-                                <rect key="frame" x="143" y="321" width="88" height="30"/>
+                                <rect key="frame" x="143" y="365" width="88" height="30"/>
                                 <state key="normal" title="VIDEO CHAT"/>
                                 <connections>
                                     <action selector="chatButtonPressed:" destination="pON-LE-Vqx" eventType="touchUpInside" id="HuB-zK-VIm"/>
