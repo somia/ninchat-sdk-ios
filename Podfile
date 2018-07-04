@@ -3,14 +3,8 @@ platform :ios, '9.0'
 source 'https://github.com/CocoaPods/Specs.git'
 
 def all_pods
-
-#pod 'GoogleWebRTC'
-#pod 'AppRTC'
-
-  pod 'AppRTC', path: '.'
-  #pod 'WebRTC'
-  #pod 'libjingle_peerconnection'
-  #pod 'SocketRocket'
+    #pod 'AppRTC', path: '.'
+    pod 'AppRTC', '~> 1.0'
 end
 
 target 'NinchatSDK' do
@@ -20,5 +14,3 @@ end
 target 'NinchatSDKTests' do
   all_pods
 end
-
-

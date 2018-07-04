@@ -6,22 +6,19 @@ PODS:
   - SocketRocket (0.5.1)
 
 DEPENDENCIES:
-  - AppRTC (from `.`)
+  - AppRTC (~> 1.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - AppRTC
     - libjingle_peerconnection
     - SocketRocket
 
-EXTERNAL SOURCES:
-  AppRTC:
-    :path: "."
-
 SPEC CHECKSUMS:
-  AppRTC: f7148735e7f23185e32ac06778e40e8c064be779
+  AppRTC: 6543d19ff0965a09b94f3903a4a180da5b8d9293
   libjingle_peerconnection: 3458f646ddd61f08a9f3a0c43fb01fff5c165eb8
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
 
-PODFILE CHECKSUM: 5196da39bf7525f8e8a9854ea2887a3e2deec671
+PODFILE CHECKSUM: 73f9b252101efe8d37bb1e1a33d753e3dd434860
 
 COCOAPODS: 1.5.0

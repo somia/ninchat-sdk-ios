@@ -40,7 +40,9 @@ Pod::Spec.new do |s|
       "ENABLE_BITCODE" => "NO"
   }
 
-  s.dependency "CocoaLumberjack", "~> 3.4"
+#s.dependency "CocoaLumberjack", "~> 3.4"
+  s.dependency "AppRTC", "~> 1.0"
+
   s.requires_arc = true
   s.default_subspec = "SDK"
 
