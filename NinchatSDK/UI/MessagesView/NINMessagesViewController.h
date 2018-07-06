@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class NINChat;
+
 @interface NINMessagesViewController : UIViewController
+
+/** Reference to the NINChat instance that allocated this controller. */
+@property (nonatomic, strong) NINChat* chat;
 
 @end

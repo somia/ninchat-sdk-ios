@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 #import "NINMessagesViewController.h"
+#import "NINChat.h"
 
 // Segue to open video call view
 static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
@@ -21,14 +22,49 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
 
 @implementation NINMessagesViewController
 
-- (void)viewDidLoad {
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    // Start the chat state machine
+    BOOL ok = [self.chat start];
+    if (!ok) {
+        NSLog(@"NINChat.start() failed!");
+    }
+}
+
+-(void) viewDidLoad {
     [super viewDidLoad];
 
     self.testLabel.text = @"NINCHAT SDK SAYS: Hi!";
 }
 
+//TODO remove me
 -(IBAction) pushButtonPressed:(UIButton*)button {
     self.testLabel.text = [NSString stringWithFormat:@"Here's a random number: %d", arc4random_uniform(74)];
+}
+
+-(IBAction) chatTestButtonPressed:(UIButton*)button {
+    NSLog(@"Starting a new test chat..");
+
+    NSString* channelId = @"5npnrkp1009m"; // valid value = 5npnrkp1009m
+
+    //TODO call join_channel and show messages view controller
+    [self.chat joinChannelWithId:channelId completion:^(NSError* error) {
+        if (error != nil) {
+            NSLog(@"Failed to join channel '%@': %@", channelId, error);
+        } else {
+            NSLog(@"Channel joined.");
+
+            [self.chat sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
+                if (error != nil) {
+                    NSLog(@"Error sending message: %@", error);
+                    return;
+                }
+
+                NSLog(@"Message sent.");
+            }];
+        }
+    }];
 }
 
 -(IBAction) videoCallButtonPressed:(UIButton*)button {

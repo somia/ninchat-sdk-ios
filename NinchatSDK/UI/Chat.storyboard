@@ -54,6 +54,14 @@
                                     <action selector="videoCallButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="SHX-lK-kor"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc">
+                                <rect key="frame" x="148" y="512" width="80" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="CHAT TEST"/>
+                                <connections>
+                                    <action selector="chatTestButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="YbT-KX-hBG"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
