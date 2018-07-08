@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #import "NINMessagesViewController.h"
-#import "NINChat.h"
+#import "SessionManager.h"
 
 // Segue to open video call view
 static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
@@ -26,10 +26,10 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
     [super viewDidAppear:animated];
 
     // Start the chat state machine
-    BOOL ok = [self.chat start];
-    if (!ok) {
-        NSLog(@"NINChat.start() failed!");
-    }
+//    BOOL ok = [self.chat start];
+//    if (!ok) {
+//        NSLog(@"NINChat.start() failed!");
+//    }
 }
 
 -(void) viewDidLoad {
@@ -49,13 +49,13 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
     NSString* channelId = @"5npnrkp1009m"; // valid value = 5npnrkp1009m
 
     //TODO call join_channel and show messages view controller
-    [self.chat joinChannelWithId:channelId completion:^(NSError* error) {
+    [self.sessionManager joinChannelWithId:channelId completion:^(NSError* error) {
         if (error != nil) {
             NSLog(@"Failed to join channel '%@': %@", channelId, error);
         } else {
             NSLog(@"Channel joined.");
 
-            [self.chat sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
+            [self.sessionManager sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
                 if (error != nil) {
                     NSLog(@"Error sending message: %@", error);
                     return;

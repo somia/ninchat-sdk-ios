@@ -54,9 +54,8 @@
                                     <action selector="videoCallButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="SHX-lK-kor"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc">
-                                <rect key="frame" x="148" y="512" width="80" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mti-Jm-Fuc">
+                                <rect key="frame" x="148" y="514" width="80" height="30"/>
                                 <state key="normal" title="CHAT TEST"/>
                                 <connections>
                                     <action selector="chatTestButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="YbT-KX-hBG"/>
@@ -67,7 +66,9 @@
                         <constraints>
                             <constraint firstItem="xrk-H4-atc" firstAttribute="top" secondItem="Clu-8W-jaJ" secondAttribute="bottom" constant="40" id="0Mo-0q-KVL"/>
                             <constraint firstItem="xrk-H4-atc" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="N8f-0I-bub"/>
+                            <constraint firstItem="mti-Jm-Fuc" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="SrX-sj-Njn"/>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerY" secondItem="w6e-s4-vNx" secondAttribute="centerY" id="Tgb-8X-j4D"/>
+                            <constraint firstItem="mti-Jm-Fuc" firstAttribute="top" secondItem="xrk-H4-atc" secondAttribute="bottom" constant="30" id="aBR-z6-Vdt"/>
                             <constraint firstItem="Clu-8W-jaJ" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="gOu-2N-evz"/>
                             <constraint firstItem="1zg-yu-CMq" firstAttribute="centerX" secondItem="w6e-s4-vNx" secondAttribute="centerX" id="oyf-rz-mxE"/>
                             <constraint firstItem="Clu-8W-jaJ" firstAttribute="top" secondItem="1zg-yu-CMq" secondAttribute="bottom" constant="40" id="psp-NQ-TEu"/>

@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class NINChat;
+@class SessionManager;
 
 @interface NINMessagesViewController : UIViewController
 
-/** Reference to the NINChat instance that allocated this controller. */
-@property (nonatomic, strong) NINChat* chat;
+/** Reference to the session manager instance. */
+@property (nonatomic, strong) SessionManager* sessionManager;
 
 @end

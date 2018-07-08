@@ -30,4 +30,7 @@ void postNotification(NSString* notificationName, NSDictionary* userInfo);
  */
 void fetchNotification(NSString* notificationName, notificationBlock _Nonnull block);
 
+/** Creates a new NSError with a message. */
+NSError* newError(NSString* msg);
+
 #endif /* Utils_h */

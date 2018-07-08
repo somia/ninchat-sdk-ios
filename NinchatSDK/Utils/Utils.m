@@ -10,6 +10,10 @@
 
 #import "Utils.h"
 
+NSError* newError(NSString* msg) {
+    return [NSError errorWithDomain:@"NinchatSDK" code:1 userInfo:@{@"message": msg}];
+}
+
 void runOnMainThread(emptyBlock block) {
     if ([NSThread isMainThread]) {
         block();

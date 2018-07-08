@@ -10,37 +10,36 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol NINChatStatusDelegate<NSObject>
+#import "PublicTypes.h"
 
-@required
--(void) statusDidChange:(NSString*)status;
-
-@end
+//@protocol NINChatStatusDelegate<NSObject>
+//
+//@required
+//-(void) statusDidChange:(NSString*)status;
+//
+//@end
 
 /**
  * API Facade for Ninchat iOS SDK.
  */
 @interface NINChat : NSObject
 
-@property (nonatomic, strong) NSString* configKey;
-@property (nonatomic, strong) NSString* queueId;
-@property (nonatomic, strong) NSString* userName;
-@property (nonatomic, strong) NSString* audienceMetadataJSON;
-@property (nonatomic, strong) NSString* lang;
-@property (nonatomic, assign) id <NINChatStatusDelegate> statusDelegate;
+//@property (nonatomic, assign) id <NINChatStatusDelegate> statusDelegate;
 
-/** Returns the view controller for the Ninchat UI. */
+/**
+ * Initializes the API.
+ */
+-(id) initWithRealmId:(NSString*)realmId;
+
+/**
+ * Starts the API engine. Must be called before other API methods. The caller
+ * must wait for the callback block to be called without errors.
+ */
+-(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock;
+
+/**
+ * Returns the view controller for the Ninchat UI.
+ */
 -(nonnull UIViewController*) viewController;
-
-//TODO: anything below here belong into a private API - SessionManager
-
-/** Joins a channel with the given id. */
--(void) joinChannelWithId:(NSString*)channelId completion:(void (^)(NSError*))completion;
-
-/** Sends chat message to the active chat channel. */
--(void) sendMessage:(NSString*)message completion:(void (^)(NSError*))completion;
-
-/** Starts the chat. Returns YES if successful. */
--(BOOL) start;
 
 @end

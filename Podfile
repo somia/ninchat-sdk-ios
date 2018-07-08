@@ -5,6 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 def all_pods
     #pod 'AppRTC', path: '.'
     pod 'AppRTC', '~> 1.0'
+    pod 'MXRMessenger', '~> 0.2'
 end
 
 target 'NinchatSDK' do
