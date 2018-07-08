@@ -10,6 +10,8 @@
 
 #import "PublicTypes.h"
 
+@class ChannelMessage;
+
 /**
  This class takes care of the chat session and all related state.
  */
@@ -25,8 +27,11 @@
 /** Realm ID to use. */
 @property (nonatomic, strong) NSString* _Nonnull realmId;
 
+/** Chronological list of messages on the current channel. */
+@property (nonatomic, strong, readonly) NSArray<ChannelMessage*>* _Nonnull channelMessages;
+
 /** Opens the session with an asynchronous completion callback. */
--(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock;
+-(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
 
 /** Joins a channel with the given id. */
 -(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(void (^_Nonnull)(NSError*_Nonnull))completion;

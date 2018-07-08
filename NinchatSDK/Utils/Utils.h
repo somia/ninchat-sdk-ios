@@ -9,8 +9,7 @@
 #ifndef Utils_h
 #define Utils_h
 
-typedef void (^emptyBlock)(void);
-typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
+#import "PrivateTypes.h"
 
 /**
  Runs the given block on the main thread (queue).

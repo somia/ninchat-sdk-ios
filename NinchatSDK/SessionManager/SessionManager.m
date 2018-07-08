@@ -13,14 +13,19 @@
 
 #import "SessionManager.h"
 #import "Utils.h"
+#import "ChannelMessage.h"
+#import "PrivateTypes.h"
 
 /** Notification name for handling asynchronous completions for actions. */
-static NSString* const kActionNotification = @"ActionNotification";
+static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 @interface SessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
 
     /** Sequence for action_id:s in chat actions. */
     atomic_long actionIdSequence;
+
+    /** Mutable channel messages list. */
+    NSMutableArray<ChannelMessage*>* _channelMessages;
 }
 
 /** Chat session reference. */
@@ -65,29 +70,28 @@ static NSString* const kActionNotification = @"ActionNotification";
         return;
     }
 
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
     NSLog(@"Message payload.length = %ld", payload.length);
-    NSMutableString* payloadContents = [NSMutableString string];
     for (int i = 0; i < payload.length; i++) {
-        NSString* text = [[NSString alloc] initWithData:[payload get:i] encoding:NSUTF8StringEncoding];
-        NSLog(@"Payload text %d: %@", i, text);
         NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
         if (error != nil) {
             NSLog(@"Failed to deserialize message JSON: %@", error);
             return;
         }
 
-        [payloadContents appendString:payloadDict[@"text"]];
+        ChannelMessage* msg = [ChannelMessage messageWithTextContent:payloadDict[@"text"] mine:(actionId != 0)];
+        [_channelMessages addObject:msg];
+        postNotification(kNewChannelMessageNotification, @{@"message": msg});
+        NSLog(@"Got new channel message: %@", msg);
     }
 
-    NSLog(@"Payload contents: %@", payloadContents);
-
-    NSString* actionId = [params getString:@"action_id" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get action_id: %@", error);
-        return;
-    }
-
-    postNotification(kActionNotification, @{@"action_id": actionId});
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
 /* success:
@@ -112,6 +116,7 @@ static NSString* const kActionNotification = @"ActionNotification";
 
     // Set the currently active channel
     self.activeChannelId = channelId;
+    _channelMessages = [NSMutableArray array];
 
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
@@ -137,7 +142,7 @@ static NSString* const kActionNotification = @"ActionNotification";
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": newError(errorType)});
 }
 
-#pragma mark - Public API
+#pragma mark - Public methods
 
 -(void) joinChannelWithId:(NSString*)channelId completion:(void (^)(NSError*))completion {
     NSLog(@"Joining channel '%@'", channelId);
@@ -207,24 +212,22 @@ static NSString* const kActionNotification = @"ActionNotification";
     NSLog(@"params: %@", params);
 
     NSError* error = nil;
-    //    id payloadContentObj = @{@"text": message};
-    //    NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadContentObj options:0 error:&error];
-    //    if (error != nil) {
-    //        NSLog(@"Failed to serialize message JSON: %@", error);
-    //        if (completion != nil) {
-    //            completion(error);
-    //        }
-    //        return;
-    //    }
+    id payloadContentObj = @{@"text": message};
+    NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadContentObj options:0 error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to serialize message JSON: %@", error);
+        if (completion != nil) {
+            completion(error);
+        }
+        return;
+    }
     //TODO remove this
-    NSString* thing = @"{\"text\":\"asdf\"}";
-    NSData* payloadContentJsonData = [thing dataUsingEncoding:NSUTF8StringEncoding];
+//    NSString* thing = @"{\"text\":\"asdf\"}";
+//    NSData* payloadContentJsonData = [thing dataUsingEncoding:NSUTF8StringEncoding];
 
+    //TODO remove this
     NSString* jsonString = [[NSString alloc] initWithData:payloadContentJsonData encoding:NSUTF8StringEncoding];
     NSLog(@"Payload is: '%@'", jsonString);
-    // Enclose the JSON in quotes
-    //    jsonString = [NSString stringWithFormat:@"\"%@\"", jsonString];
-    //    payloadContentJsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
 
     //TODO remove
     NSMutableString *result = [NSMutableString string];

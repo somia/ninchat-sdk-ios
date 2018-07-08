@@ -10,6 +10,9 @@
 
 #import "Utils.h"
 
+// Notification strings
+NSString* const kNewChannelMessageNotification = @"ninchatsdk.NewChannelMessageNotification";
+
 NSError* newError(NSString* msg) {
     return [NSError errorWithDomain:@"NinchatSDK" code:1 userInfo:@{@"message": msg}];
 }

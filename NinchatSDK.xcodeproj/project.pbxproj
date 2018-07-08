@@ -15,6 +15,10 @@
 		49140B7020F2494800A00EA8 /* SessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B6E20F2494800A00EA8 /* SessionManager.h */; };
 		49140B7120F2494800A00EA8 /* SessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B6F20F2494800A00EA8 /* SessionManager.m */; };
 		49140B7220F2494800A00EA8 /* SessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B6F20F2494800A00EA8 /* SessionManager.m */; };
+		49140B7620F2748800A00EA8 /* ChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7420F2748800A00EA8 /* ChannelMessage.h */; };
+		49140B7720F2748800A00EA8 /* ChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* ChannelMessage.m */; };
+		49140B7820F2748800A00EA8 /* ChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* ChannelMessage.m */; };
+		49140B7D20F27BC900A00EA8 /* PrivateTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7C20F27BC900A00EA8 /* PrivateTypes.h */; };
 		491D5A1E20CFD31B003E2EE9 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 491D5A1D20CFD31B003E2EE9 /* Podfile */; };
 		491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */; };
 		491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
@@ -53,6 +57,9 @@
 		49140B6E20F2494800A00EA8 /* SessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionManager.h; sourceTree = "<group>"; };
 		49140B6F20F2494800A00EA8 /* SessionManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionManager.m; sourceTree = "<group>"; };
 		49140B7320F267EE00A00EA8 /* PublicTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicTypes.h; sourceTree = "<group>"; };
+		49140B7420F2748800A00EA8 /* ChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelMessage.h; sourceTree = "<group>"; };
+		49140B7520F2748800A00EA8 /* ChannelMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChannelMessage.m; sourceTree = "<group>"; };
+		49140B7C20F27BC900A00EA8 /* PrivateTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateTypes.h; sourceTree = "<group>"; };
 		491D5A1D20CFD31B003E2EE9 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallViewController.h; sourceTree = "<group>"; };
 		491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallViewController.m; sourceTree = "<group>"; };
@@ -126,8 +133,11 @@
 		4957629F20EE1A8700BC39A8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				49140B7C20F27BC900A00EA8 /* PrivateTypes.h */,
 				495762A020EE1AC700BC39A8 /* Utils.h */,
 				495762A120EE1AE000BC39A8 /* Utils.m */,
+				49140B7420F2748800A00EA8 /* ChannelMessage.h */,
+				49140B7520F2748800A00EA8 /* ChannelMessage.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -228,9 +238,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49140B7620F2748800A00EA8 /* ChannelMessage.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */,
 				490CE5CF20D29B61007D8DC4 /* NINRoomNameViewController.h in Headers */,
+				49140B7D20F27BC900A00EA8 /* PrivateTypes.h in Headers */,
 				499443B4208F320700101DCA /* NINChat.h in Headers */,
 				499443C2208F47EA00101DCA /* NINMessagesViewController.h in Headers */,
 				49140B7020F2494800A00EA8 /* SessionManager.h in Headers */,
@@ -381,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49140B7120F2494800A00EA8 /* SessionManager.m in Sources */,
+				49140B7720F2748800A00EA8 /* ChannelMessage.m in Sources */,
 				490CE5D020D29B61007D8DC4 /* NINRoomNameViewController.m in Sources */,
 				491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				499443C3208F47EA00101DCA /* NINMessagesViewController.m in Sources */,
@@ -394,6 +407,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49140B7220F2494800A00EA8 /* SessionManager.m in Sources */,
+				49140B7820F2748800A00EA8 /* ChannelMessage.m in Sources */,
 				490CE5D120D29B61007D8DC4 /* NINRoomNameViewController.m in Sources */,
 				491D5A2420CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				499443B6208F320700101DCA /* NINChat.m in Sources */,

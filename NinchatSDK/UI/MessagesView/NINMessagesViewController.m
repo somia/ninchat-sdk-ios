@@ -55,14 +55,17 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
         } else {
             NSLog(@"Channel joined.");
 
-            [self.sessionManager sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
-                if (error != nil) {
-                    NSLog(@"Error sending message: %@", error);
-                    return;
-                }
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC);
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                [self.sessionManager sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
+                    if (error != nil) {
+                        NSLog(@"Error sending message: %@", error);
+                        return;
+                    }
 
-                NSLog(@"Message sent.");
-            }];
+                    NSLog(@"Message sent.");
+                }];
+            });
         }
     }];
 }
