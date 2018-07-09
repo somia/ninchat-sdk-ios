@@ -202,22 +202,27 @@
 -(void) viewDidLoad {
     [super viewDidLoad];
 
+    self.navigationItem.title = self.title;
+
+    self.node.tableNode.delegate = self;
+    self.node.tableNode.dataSource = self;
+    self.node.tableNode.allowsSelection = YES;
+
+    [self customizeCellFactory];
 }
 
 -(instancetype) init {
     MXRMessengerInputToolbar* toolbar = [[MXRMessengerInputToolbar alloc] initWithFont:[UIFont systemFontOfSize:16.0f] placeholder:@"Type a message" tintColor:[UIColor mxr_fbMessengerBlue]];
     self = [super initWithToolbar:toolbar];
-    if (self) {
+    if (self != nil) {
+        self.title = @"chat test";
+
         // add extra buttons to toolbar
 //        MXRMessengerIconButtonNode* addPhotosBarButtonButtonNode = [MXRMessengerIconButtonNode buttonWithIcon:[[MXRMessengerPlusIconNode alloc] init] matchingToolbar:self.toolbar];
 //        [addPhotosBarButtonButtonNode addTarget:self action:@selector(tapAddPhotos:) forControlEvents:ASControlNodeEventTouchUpInside];
 //        self.toolbar.leftButtonsNode = addPhotosBarButtonButtonNode;
-        [self.toolbar.defaultSendButton addTarget:self action:@selector(sendButtonPressed:) forControlEvents:ASControlNodeEventTouchUpInside];
 
-        // delegate must be self for interactive keyboard, datasource can be whatever
-        self.node.tableNode.delegate = self;
-        self.node.tableNode.dataSource = self;
-        [self customizeCellFactory];
+        [self.toolbar.defaultSendButton addTarget:self action:@selector(sendButtonPressed:) forControlEvents:ASControlNodeEventTouchUpInside];
     }
 
     return self;

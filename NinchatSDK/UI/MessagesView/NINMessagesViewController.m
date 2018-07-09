@@ -15,9 +15,6 @@
 // Segue to open video call view
 static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
 
-// Segue to open the Chat view
-static NSString* const kSegueIdInitialToChat = @"InitialToChat";
-
 @interface NINMessagesViewController ()
 
 @property IBOutlet UILabel* testLabel;
@@ -59,7 +56,9 @@ static NSString* const kSegueIdInitialToChat = @"InitialToChat";
         } else {
             NSLog(@"Channel joined.");
 
-            [self performSegueWithIdentifier:kSegueIdInitialToChat sender:self];
+            ChatViewController* vc = [ChatViewController new];
+            vc.sessionManager = self.sessionManager;
+            [self.navigationController pushViewController:vc animated:YES];
         }
     }];
 }
@@ -69,12 +68,5 @@ static NSString* const kSegueIdInitialToChat = @"InitialToChat";
 }
 
 #pragma mark - From UIViewController
-
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:kSegueIdInitialToChat]) {
-        ChatViewController* vc = segue.destinationViewController;
-        vc.sessionManager = self.sessionManager;
-    }
-}
 
 @end

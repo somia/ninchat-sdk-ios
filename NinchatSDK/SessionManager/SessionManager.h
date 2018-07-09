@@ -27,7 +27,10 @@
 /** Realm ID to use. */
 @property (nonatomic, strong) NSString* _Nonnull realmId;
 
-/** Chronological list of messages on the current channel. */
+/**
+ * Chronological list of messages on the current channel. The list is ordered by the message
+ * timestamp in decending order (most recent first).
+ */
 @property (nonatomic, strong, readonly) NSArray<ChannelMessage*>* _Nonnull channelMessages;
 
 /** Opens the session with an asynchronous completion callback. */

@@ -86,7 +86,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
         }
 
         ChannelMessage* msg = [ChannelMessage messageWithTextContent:payloadDict[@"text"] mine:(actionId != 0)];
-        [_channelMessages addObject:msg];
+        [_channelMessages insertObject:msg atIndex:0];
         postNotification(kNewChannelMessageNotification, @{@"message": msg});
         NSLog(@"Got new channel message: %@", msg);
     }
