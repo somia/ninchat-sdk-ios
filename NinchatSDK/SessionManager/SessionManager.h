@@ -34,9 +34,9 @@
 -(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
 
 /** Joins a channel with the given id. */
--(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(void (^_Nonnull)(NSError*_Nonnull))completion;
+-(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(void (^_Nonnull)(NSError* _Nonnull))completion;
 
 /** Sends chat message to the active chat channel. */
--(void) sendMessage:(NSString* _Nonnull)message completion:(void (^_Nonnull)(NSError*_Nonnull))completion;
+-(void) sendMessage:(NSString* _Nonnull)message completion:(void (^_Nonnull)(NSError* _Nonnull))completion;
 
 @end

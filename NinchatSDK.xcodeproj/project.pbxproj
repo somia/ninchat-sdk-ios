@@ -19,6 +19,9 @@
 		49140B7720F2748800A00EA8 /* ChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* ChannelMessage.m */; };
 		49140B7820F2748800A00EA8 /* ChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* ChannelMessage.m */; };
 		49140B7D20F27BC900A00EA8 /* PrivateTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7C20F27BC900A00EA8 /* PrivateTypes.h */; };
+		49140B8120F28BE000A00EA8 /* ChatViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7F20F28BE000A00EA8 /* ChatViewController.h */; };
+		49140B8220F28BE000A00EA8 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B8020F28BE000A00EA8 /* ChatViewController.m */; };
+		49140B8320F28BE000A00EA8 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B8020F28BE000A00EA8 /* ChatViewController.m */; };
 		491D5A1E20CFD31B003E2EE9 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 491D5A1D20CFD31B003E2EE9 /* Podfile */; };
 		491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */; };
 		491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
@@ -60,6 +63,8 @@
 		49140B7420F2748800A00EA8 /* ChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelMessage.h; sourceTree = "<group>"; };
 		49140B7520F2748800A00EA8 /* ChannelMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChannelMessage.m; sourceTree = "<group>"; };
 		49140B7C20F27BC900A00EA8 /* PrivateTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateTypes.h; sourceTree = "<group>"; };
+		49140B7F20F28BE000A00EA8 /* ChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		49140B8020F28BE000A00EA8 /* ChatViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
 		491D5A1D20CFD31B003E2EE9 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallViewController.h; sourceTree = "<group>"; };
 		491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallViewController.m; sourceTree = "<group>"; };
@@ -117,6 +122,15 @@
 				49140B6F20F2494800A00EA8 /* SessionManager.m */,
 			);
 			path = SessionManager;
+			sourceTree = "<group>";
+		};
+		49140B7E20F28BC400A00EA8 /* ChatViewController */ = {
+			isa = PBXGroup;
+			children = (
+				49140B7F20F28BE000A00EA8 /* ChatViewController.h */,
+				49140B8020F28BE000A00EA8 /* ChatViewController.m */,
+			);
+			path = ChatViewController;
 			sourceTree = "<group>";
 		};
 		491D5A1F20CFD42E003E2EE9 /* VideoCallView */ = {
@@ -205,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				499443BE208F475200101DCA /* Chat.storyboard */,
+				49140B7E20F28BC400A00EA8 /* ChatViewController */,
 				499443C4208F47F000101DCA /* MessagesView */,
 				491D5A1F20CFD42E003E2EE9 /* VideoCallView */,
 			);
@@ -239,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49140B7620F2748800A00EA8 /* ChannelMessage.h in Headers */,
+				49140B8120F28BE000A00EA8 /* ChatViewController.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */,
 				490CE5CF20D29B61007D8DC4 /* NINRoomNameViewController.h in Headers */,
@@ -398,6 +414,7 @@
 				491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				499443C3208F47EA00101DCA /* NINMessagesViewController.m in Sources */,
 				495762A220EE1AE000BC39A8 /* Utils.m in Sources */,
+				49140B8220F28BE000A00EA8 /* ChatViewController.m in Sources */,
 				499443B5208F320700101DCA /* NINChat.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -412,6 +429,7 @@
 				491D5A2420CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				499443B6208F320700101DCA /* NINChat.m in Sources */,
 				495762A320EE1AE000BC39A8 /* Utils.m in Sources */,
+				49140B8320F28BE000A00EA8 /* ChatViewController.m in Sources */,
 				49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

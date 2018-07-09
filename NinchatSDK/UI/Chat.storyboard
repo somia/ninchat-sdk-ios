@@ -26,6 +26,21 @@
             </objects>
             <point key="canvasLocation" x="-487" y="149"/>
         </scene>
+        <!--Chat View Controller-->
+        <scene sceneID="etA-jr-Sqf">
+            <objects>
+                <viewController id="DCO-ee-CIJ" customClass="ChatViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="DOS-UW-Cyb">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="8Vi-1R-qrh"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="byr-mu-ta3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="263" y="-524"/>
+        </scene>
         <!--Messages View Controller-->
         <scene sceneID="XHh-YP-k7w">
             <objects>
@@ -79,11 +94,12 @@
                     <connections>
                         <outlet property="testLabel" destination="1zg-yu-CMq" id="WtE-BG-RnE"/>
                         <segue destination="pON-LE-Vqx" kind="show" identifier="MessagesToVideoCall" id="9JY-MM-Aj9"/>
+                        <segue destination="DCO-ee-CIJ" kind="show" identifier="InitialToChat" id="KDn-mI-Y7K"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xXp-nn-Bc7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="287" y="149"/>
+            <point key="canvasLocation" x="263" y="149"/>
         </scene>
         <!--Video Call View Controller-->
         <scene sceneID="JcL-p7-4xC">

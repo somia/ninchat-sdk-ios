@@ -10,9 +10,13 @@
 
 #import "NINMessagesViewController.h"
 #import "SessionManager.h"
+#import "ChatViewController.h"
 
 // Segue to open video call view
 static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
+
+// Segue to open the Chat view
+static NSString* const kSegueIdInitialToChat = @"InitialToChat";
 
 @interface NINMessagesViewController ()
 
@@ -55,23 +59,22 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
         } else {
             NSLog(@"Channel joined.");
 
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC);
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                [self.sessionManager sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
-                    if (error != nil) {
-                        NSLog(@"Error sending message: %@", error);
-                        return;
-                    }
-
-                    NSLog(@"Message sent.");
-                }];
-            });
+            [self performSegueWithIdentifier:kSegueIdInitialToChat sender:self];
         }
     }];
 }
 
 -(IBAction) videoCallButtonPressed:(UIButton*)button {
     [self performSegueWithIdentifier:kSegueIdMessagesToVideoCall sender:self];
+}
+
+#pragma mark - From UIViewController
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdInitialToChat]) {
+        ChatViewController* vc = segue.destinationViewController;
+        vc.sessionManager = self.sessionManager;
+    }
 }
 
 @end

@@ -33,7 +33,7 @@ void postNotification(NSString* notificationName, NSDictionary* userInfo) {
     });
 }
 
-void fetchNotification(NSString* notificationName, notificationBlock _Nonnull block) {
+id fetchNotification(NSString* notificationName, notificationBlock _Nonnull block) {
     id observer = nil;
 
     observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
@@ -41,5 +41,7 @@ void fetchNotification(NSString* notificationName, notificationBlock _Nonnull bl
             [[NSNotificationCenter defaultCenter] removeObserver:observer];
         }
     }];
+
+    return observer;
 }
 
