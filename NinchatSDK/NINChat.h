@@ -29,7 +29,7 @@
 /**
  * Initializes the API.
  */
--(id) initWithRealmId:(NSString*)realmId;
+-(id) initWithConfigurationKey:(NSString*)configKey;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

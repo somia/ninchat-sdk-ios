@@ -15,6 +15,6 @@ typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
  * Notification name for 'new message' notification. Userinfo param 'message'
  * contains a ChannelMessage* object.
  */
-extern NSString* const kNewChannelMessageNotification;
+extern NSString* _Nonnull const kNewChannelMessageNotification;
 
 #endif /* PrivateTypes_h */

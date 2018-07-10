@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINBaseViewController.h"
+
 @class NINSessionManager;
 
 /** Displays a waiting view while the user is in a queue. */
-@interface NINQueueViewController : UIViewController
+@interface NINQueueViewController : NINBaseViewController
 
 /** Reference to the session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;

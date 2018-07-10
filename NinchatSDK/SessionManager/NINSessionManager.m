@@ -12,7 +12,7 @@
 #import <stdatomic.h>
 
 #import "NINSessionManager.h"
-#import "Utils.h"
+#import "NINUtils.h"
 #import "ChannelMessage.h"
 #import "PrivateTypes.h"
 
@@ -27,6 +27,9 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     /** Mutable channel messages list. */
     NSMutableArray<ChannelMessage*>* _channelMessages;
 }
+
+/** Realm ID to use. */
+@property (nonatomic, strong) NSString* _Nonnull realmId;
 
 /** Chat session reference. */
 @property (nonatomic, strong) ClientSession* session;

@@ -6,8 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#ifndef Utils_h
-#define Utils_h
+#ifndef NINUtils_h
+#define NINUtils_h
 
 #import "PrivateTypes.h"
 
@@ -35,6 +35,6 @@ id _Nonnull fetchNotification(NSString* _Nonnull notificationName, notificationB
 NSError* _Nonnull newError(NSString* _Nonnull msg);
 
 /** Returns the resource bundle containing the requested resource. */
-NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* resourceType);
+NSBundle* _Nonnull findResourceBundle(Class _Nonnull class, NSString* _Nonnull resourceName, NSString* _Nonnull resourceType);
 
-#endif /* Utils_h */
+#endif /* NINUtils_h */

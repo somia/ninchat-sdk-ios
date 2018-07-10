@@ -8,14 +8,14 @@
 
 #import "MXRMessenger.h"
 
-#import "ChatViewController.h"
+#import "NINChatViewController.h"
 #import "NINSessionManager.h"
-#import "Utils.h"
+#import "NINUtils.h"
 #import "ChannelMessage.h"
 
 // SEE sample: https://github.com/skensell/MXRMessenger/blob/master/Examples/Example1/Example1/ChatViewController.m
 
-@interface ChatViewController () <MXRMessageCellFactoryDataSource, MXRMessageContentNodeDelegate, ASTableDelegate, ASTableDataSource>
+@interface NINChatViewController () <MXRMessageCellFactoryDataSource, MXRMessageContentNodeDelegate, ASTableDelegate, ASTableDataSource>
 
 /** Reference to the notifications observer that listens to new message -notifications. */
 @property (nonatomic, strong) id<NSObject> messagesObserver;
@@ -25,7 +25,7 @@
 
 @end
 
-@implementation ChatViewController
+@implementation NINChatViewController
 
 #pragma mark - Private methods
 

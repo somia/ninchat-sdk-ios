@@ -8,8 +8,9 @@
 
 #import "NINChat.h"
 #import "NINInitialViewController.h"
-#import "Utils.h"
+#import "NINUtils.h"
 #import "NINSessionManager.h"
+#import "NINinteractivePopRecognizerDelegate.h"
 
 @interface NINChat ()
 
@@ -18,6 +19,9 @@
 
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
+
+/** Keeping a strong reference to the interactive pop recognizer delegate. */
+@property (nonatomic, strong) NINinteractivePopRecognizerDelegate* backGestureDelegate;
 
 @end
 
@@ -66,6 +70,12 @@
     // Find our own initial view controller
     if ([vc isKindOfClass:[UINavigationController class]]) {
         UINavigationController* navigationController = (UINavigationController*)vc;
+
+//        self.backGestureDelegate = [NINinteractivePopRecognizerDelegate recognizerWithNavigationController:navigationController];
+//        [navigationController setNavigationBarHidden:YES];
+//        navigationController.interactivePopGestureRecognizer.enabled = YES;
+//        navigationController.interactivePopGestureRecognizer.delegate = self.backGestureDelegate;
+
         initialViewController = (NINInitialViewController*)navigationController.topViewController;
     } else if ([vc isKindOfClass:[NINInitialViewController class]]) {
         initialViewController = (NINInitialViewController*)vc;
@@ -95,12 +105,12 @@
     }
 }
 
--(id) initWithRealmId:(NSString*)realmId {
+-(id) initWithConfigurationKey:(NSString*)configKey {
     self = [super init];
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
-        self.sessionManager.realmId = realmId;
+        self.sessionManager.configKey = configKey;
         self.started = NO;
     }
 

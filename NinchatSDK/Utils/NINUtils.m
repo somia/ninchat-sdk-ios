@@ -8,7 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Utils.h"
+#import "NINUtils.h"
+
+// Site config URL pattern
+static NSString* const kSiteConfigUrlPattern = @"https://api.luupi.net/config/%@"; // test
+//static NSString* const kSiteConfigUrlPattern = @"https://api.ninchat.com/config/%@"; // production
 
 // Notification strings
 NSString* const kNewChannelMessageNotification = @"ninchatsdk.NewChannelMessageNotification";

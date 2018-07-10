@@ -13,7 +13,7 @@
 /**
  * Provides a chat view with message input and chat 'bubbles'.
  */
-@interface ChatViewController : MXRMessengerViewController
+@interface NINChatViewController : MXRMessengerViewController
 
 /** Reference to the session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;

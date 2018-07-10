@@ -7,7 +7,7 @@
 //
 
 #import "NINNavigationBar.h"
-#import "Utils.h"
+#import "NINUtils.h"
 
 @implementation NINNavigationBar
 

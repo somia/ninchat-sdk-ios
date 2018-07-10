@@ -24,8 +24,8 @@
 @property (nonatomic, strong) NSString* _Nullable audienceMetadataJSON;
 @property (nonatomic, strong) NSString* _Nullable lang;
 
-/** Realm ID to use. */
-@property (nonatomic, strong) NSString* _Nonnull realmId;
+/** Configuration key; used to retrieve service configuration (site config) */
+@property (nonatomic, strong) NSString* _Nonnull configurationKey;
 
 /**
  * Chronological list of messages on the current channel. The list is ordered by the message
