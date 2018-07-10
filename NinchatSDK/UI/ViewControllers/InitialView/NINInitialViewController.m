@@ -8,20 +8,20 @@
 
 #include <stdlib.h>
 
-#import "NINMessagesViewController.h"
-#import "SessionManager.h"
+#import "NINInitialViewController.h"
+#import "NINSessionManager.h"
 #import "ChatViewController.h"
 
 // Segue to open video call view
 static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
 
-@interface NINMessagesViewController ()
+@interface NINInitialViewController ()
 
 @property IBOutlet UILabel* testLabel;
 
 @end
 
-@implementation NINMessagesViewController
+@implementation NINInitialViewController
 
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -37,6 +37,9 @@ static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
     [super viewDidLoad];
 
     self.testLabel.text = @"NINCHAT SDK SAYS: Hi!";
+
+    // Hide navigation bar
+    [self.navigationController setNavigationBarHidden:YES];
 }
 
 //TODO remove me

@@ -45,3 +45,19 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
     return observer;
 }
 
+NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* resourceType) {
+    NSBundle* classBundle = [NSBundle bundleForClass:class];
+
+    // See if this top level bundle contains our resource
+    if ([classBundle pathForResource:resourceName ofType:resourceType] != nil) {
+        // This path is taken when using the SDK from a prebuilt .framework.
+        return classBundle;
+    } else {
+        // This path is taken when using the SDK via Cocoapods module.
+        // Locate our UI resource bundle. This is specified in the podspec file.
+        NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
+        return [NSBundle bundleWithURL:bundleURL];
+    }
+}
+
+

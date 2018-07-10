@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
     ss.public_header_files = "NinchatSDK/**/*.h"
     ss.prefix_header_file = "NinchatSDK/PrefixHeader.pch"
     ss.resource_bundles = {
-        "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib}"],
+        "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets}"],
     }
   end
 

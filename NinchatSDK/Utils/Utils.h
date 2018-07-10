@@ -34,4 +34,7 @@ id _Nonnull fetchNotification(NSString* _Nonnull notificationName, notificationB
 /** Creates a new NSError with a message. */
 NSError* _Nonnull newError(NSString* _Nonnull msg);
 
+/** Returns the resource bundle containing the requested resource. */
+NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* resourceType);
+
 #endif /* Utils_h */

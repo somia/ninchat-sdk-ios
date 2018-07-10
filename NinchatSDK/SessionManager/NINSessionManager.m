@@ -11,7 +11,7 @@
 
 #import <stdatomic.h>
 
-#import "SessionManager.h"
+#import "NINSessionManager.h"
 #import "Utils.h"
 #import "ChannelMessage.h"
 #import "PrivateTypes.h"
@@ -19,7 +19,7 @@
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
-@interface SessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
+@interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
 
     /** Sequence for action_id:s in chat actions. */
     atomic_long actionIdSequence;
@@ -36,7 +36,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 @end
 
-@implementation SessionManager
+@implementation NINSessionManager
 
 #pragma mark - Private methods
 

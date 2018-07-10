@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@class SessionManager;
+@class NINSessionManager;
 
-@interface NINMessagesViewController : UIViewController
+@interface NINInitialViewController : UIViewController
 
 /** Reference to the session manager instance. */
-@property (nonatomic, strong) SessionManager* sessionManager;
+@property (nonatomic, strong) NINSessionManager* sessionManager;
 
 @end

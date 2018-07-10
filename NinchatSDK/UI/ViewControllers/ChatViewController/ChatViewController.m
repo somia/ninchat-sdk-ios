@@ -9,7 +9,7 @@
 #import "MXRMessenger.h"
 
 #import "ChatViewController.h"
-#import "SessionManager.h"
+#import "NINSessionManager.h"
 #import "Utils.h"
 #import "ChannelMessage.h"
 

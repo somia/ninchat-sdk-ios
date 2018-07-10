@@ -15,7 +15,7 @@
 /**
  This class takes care of the chat session and all related state.
  */
-@interface SessionManager : NSObject
+@interface NINSessionManager : NSObject
 
 //TODO check if all of these are needed ..
 @property (nonatomic, strong) NSString* _Nullable configKey;

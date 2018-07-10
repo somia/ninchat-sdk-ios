@@ -8,7 +8,7 @@
 
 #import "MXRMessengerViewController.h"
 
-@class SessionManager;
+@class NINSessionManager;
 
 /**
  * Provides a chat view with message input and chat 'bubbles'.
@@ -16,6 +16,6 @@
 @interface ChatViewController : MXRMessengerViewController
 
 /** Reference to the session manager instance. */
-@property (nonatomic, strong) SessionManager* sessionManager;
+@property (nonatomic, strong) NINSessionManager* sessionManager;
 
 @end

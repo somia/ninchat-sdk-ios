@@ -7,14 +7,14 @@
 //
 
 #import "NINChat.h"
-#import "NINMessagesViewController.h"
-//#import "Utils.h"
-#import "SessionManager.h"
+#import "NINInitialViewController.h"
+#import "Utils.h"
+#import "NINSessionManager.h"
 
 @interface NINChat ()
 
 /** Session manager instance. */
-@property (nonatomic, strong) SessionManager* sessionManager;
+@property (nonatomic, strong) NINSessionManager* sessionManager;
 
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
@@ -40,37 +40,35 @@
     NSLog(@"Loading initial view controller..");
 
     // Locate our framework bundle by showing it a class in this framework
-    NSBundle* classBundle = [NSBundle bundleForClass:[self class]];
-    NSLog(@"frameworkBundle: %@", classBundle);
+//    NSBundle* classBundle = [NSBundle bundleForClass:[self class]];
+//    NSLog(@"frameworkBundle: %@", classBundle);
+//
+//    NSBundle* resourceBundle = nil;
+//
+//    // See if this top level bundle contains our storyboard
+//    if ([classBundle pathForResource:@"Chat" ofType:@"storyboard"] != nil) {
+//        // This path is taken when using the SDK from a prebuilt .framework.
+//        resourceBundle = classBundle;
+//    } else {
+//        // This path is taken when using the SDK via Cocoapods module.
+//        // Locate our UI resource bundle. This is specified in the podspec file.
+//        NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
+//        resourceBundle = [NSBundle bundleWithURL:bundleURL];
+//    }
 
-    UIStoryboard* storyboard = nil;
-
-    // See if this top level bundle contains our storyboard
-    if ([classBundle pathForResource:@"Chat" ofType:@"storyboard"] != nil) {
-        // This path is taken when using the SDK from a prebuilt .framework.
-        NSLog(@"storyboard found in class bundle");
-        storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:classBundle];
-    } else {
-        // This path is taken when using the SDK via Cocoapods module.
-        // Locate our UI resource bundle. This is specified in the podspec file.
-        NSLog(@"storyboard not found in class bundle");
-        NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
-        NSBundle* bundle = [NSBundle bundleWithURL:bundleURL];
-        storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
-    }
-
-    NSLog(@"storyboard: %@", storyboard);
+    NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
 
     // Get the initial view controller for the storyboard
     UIViewController* vc = [storyboard instantiateInitialViewController];
-    NINMessagesViewController* initialViewController = nil;
+    NINInitialViewController* initialViewController = nil;
 
     // Find our own initial view controller
     if ([vc isKindOfClass:[UINavigationController class]]) {
         UINavigationController* navigationController = (UINavigationController*)vc;
-        initialViewController = (NINMessagesViewController*)navigationController.topViewController;
-    } else if ([vc isKindOfClass:[NINMessagesViewController class]]) {
-        initialViewController = (NINMessagesViewController*)vc;
+        initialViewController = (NINInitialViewController*)navigationController.topViewController;
+    } else if ([vc isKindOfClass:[NINInitialViewController class]]) {
+        initialViewController = (NINInitialViewController*)vc;
     } else {
         NSLog(@"Invalid initial view controller from Storyboard: %@", vc.class);
         return nil;
@@ -101,7 +99,7 @@
     self = [super init];
 
     if (self != nil) {
-        self.sessionManager = [SessionManager new];
+        self.sessionManager = [NINSessionManager new];
         self.sessionManager.realmId = realmId;
         self.started = NO;
     }
