@@ -10,7 +10,6 @@
 #import "NINInitialViewController.h"
 #import "NINUtils.h"
 #import "NINSessionManager.h"
-#import "NINinteractivePopRecognizerDelegate.h"
 
 @interface NINChat ()
 
@@ -19,9 +18,6 @@
 
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
-
-/** Keeping a strong reference to the interactive pop recognizer delegate. */
-@property (nonatomic, strong) NINinteractivePopRecognizerDelegate* backGestureDelegate;
 
 @end
 
@@ -92,17 +88,30 @@
 }
 
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
-    NSError* error = [self.sessionManager openSession:^(NSError *error) {
-        NSAssert([NSThread isMainThread], @"Must be called in main thread");
-        if (error == nil) {
-            self.started = YES;
+    // Fetch the site configuration
+    fetchSiteConfig(self.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
+        NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+        
+        if (error != nil) {
+            callbackBlock(error);
+            return;
         }
-        callbackBlock(error);
-    }];
 
-    if (error != nil) {
-        callbackBlock(error);
-    }
+        // Open the chat session
+        self.sessionManager.siteConfiguration = config;
+        
+        error = [self.sessionManager openSession:^(NSError *error) {
+            NSAssert([NSThread isMainThread], @"Must be called in main thread");
+            if (error == nil) {
+                self.started = YES;
+            }
+            callbackBlock(error);
+        }];
+
+        if (error != nil) {
+            callbackBlock(error);
+        }
+    });
 }
 
 -(id) initWithConfigurationKey:(NSString*)configKey {
@@ -110,7 +119,7 @@
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
-        self.sessionManager.configKey = configKey;
+        self.sessionManager.configurationKey = configKey;
         self.started = NO;
     }
 

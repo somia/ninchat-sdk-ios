@@ -37,4 +37,7 @@ NSError* _Nonnull newError(NSString* _Nonnull msg);
 /** Returns the resource bundle containing the requested resource. */
 NSBundle* _Nonnull findResourceBundle(Class _Nonnull class, NSString* _Nonnull resourceName, NSString* _Nonnull resourceType);
 
+/** Asynchronously retrieves the site configuration from the server over HTTPS. */
+void fetchSiteConfig(NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);
+
 #endif /* NINUtils_h */

@@ -267,11 +267,11 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     ClientProps* sessionParams = [ClientProps new];
 
     //TODO where do we get the username?
-    if (self.userName != nil) {
-        ClientProps* attrs = [ClientProps new];
-        [attrs setString:@"name" val:self.userName];
-        [sessionParams setObject:@"user_attrs" ref:attrs];
-    }
+//    if (self.userName != nil) {
+//        ClientProps* attrs = [ClientProps new];
+//        [attrs setString:@"name" val:self.userName];
+//        [sessionParams setObject:@"user_attrs" ref:attrs];
+//    }
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
     //TODO implement a give up -timer?

@@ -10,6 +10,7 @@
 
 typedef void (^emptyBlock)(void);
 typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
+typedef void (^fetchSiteConfigCallbackBlock)(NSDictionary* _Nullable, NSError* _Nullable);
 
 /**
  * Notification name for 'new message' notification. Userinfo param 'message'

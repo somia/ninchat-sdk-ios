@@ -8,11 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+//#import "AFNetworking.h"
+
 #import "NINUtils.h"
 
-// Site config URL pattern
-static NSString* const kSiteConfigUrlPattern = @"https://api.luupi.net/config/%@"; // test
-//static NSString* const kSiteConfigUrlPattern = @"https://api.ninchat.com/config/%@"; // production
+// Server host name.
+static NSString* kServerHostName = @"api.ninchat.com"; // production
+//static NSString* kServerHostName = @"api.luupi.net"; // test
+
+// Site config URL pattern. Populate with kServerHostName & configuration key
+static NSString* const kSiteConfigUrlPattern = @"https://%@/config/%@";
 
 // Notification strings
 NSString* const kNewChannelMessageNotification = @"ninchatsdk.NewChannelMessageNotification";
@@ -62,6 +67,54 @@ NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* reso
         NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
         return [NSBundle bundleWithURL:bundleURL];
     }
+}
+
+void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
+    NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kServerHostName, configurationKey];
+    NSLog(@"Fetching site config from URL: %@", url);
+
+//    callbackBlock([NSDictionary dictionary], nil);
+
+    void (^callCallback)(NSDictionary* config, NSError* error) = ^(NSDictionary* config, NSError* error) {
+        runOnMainThread(^{
+            callbackBlock(config, error);
+        });
+    };
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
+    [request setHTTPMethod: @"GET"];
+
+    NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.timeoutIntervalForRequest = 10.0;
+    sessionConfig.timeoutIntervalForResource = 10.0;
+
+    NSURLSession* session = [NSURLSession sessionWithConfiguration:sessionConfig];
+
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse* response, NSError* error) {
+        NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse *)response;
+
+        if (error != nil) {
+            callCallback(nil, error);
+            return;
+        }
+
+        if ((httpResponse.statusCode < 200) || (httpResponse.statusCode >= 300)) {
+            callCallback(nil, newError([NSString stringWithFormat:@"Got response code: %ld", (long)httpResponse.statusCode]));
+            return;
+        }
+
+        NSError* parseError = nil;
+        NSDictionary* config = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
+        if (parseError != nil) {
+            callCallback(nil, error);
+            return;
+        }
+
+        NSLog(@"Got site config: %@", config);
+        callCallback(config, nil);
+    }];
+    
+    [dataTask resume];
 }
 
 

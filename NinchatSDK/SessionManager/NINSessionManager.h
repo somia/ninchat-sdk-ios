@@ -18,14 +18,17 @@
 @interface NINSessionManager : NSObject
 
 //TODO check if all of these are needed ..
-@property (nonatomic, strong) NSString* _Nullable configKey;
-@property (nonatomic, strong) NSString* _Nullable queueId;
-@property (nonatomic, strong) NSString* _Nullable userName;
-@property (nonatomic, strong) NSString* _Nullable audienceMetadataJSON;
-@property (nonatomic, strong) NSString* _Nullable lang;
+//@property (nonatomic, strong) NSString* _Nullable configKey;
+//@property (nonatomic, strong) NSString* _Nullable queueId;
+//@property (nonatomic, strong) NSString* _Nullable userName;
+//@property (nonatomic, strong) NSString* _Nullable audienceMetadataJSON;
+//@property (nonatomic, strong) NSString* _Nullable lang;
 
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;
+
+/** Site configuration. */
+@property (nonatomic, strong) NSDictionary* _Nonnull siteConfiguration;
 
 /**
  * Chronological list of messages on the current channel. The list is ordered by the message
