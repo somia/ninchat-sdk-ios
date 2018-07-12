@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 /** Represents a chat message on a channel. */
-@interface ChannelMessage : NSObject
+@interface NINChannelMessage : NSObject
 
 /** Whether this message is sent by the mobile user (this device). */
 @property (nonatomic, assign, readonly) BOOL mine;
@@ -21,6 +21,6 @@
 @property (nonatomic, strong, readonly) NSDate* timestamp;
 
 /** Initializer. */
-+(ChannelMessage*) messageWithTextContent:(NSString*)textContent mine:(BOOL)mine;
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent mine:(BOOL)mine;
 
 @end

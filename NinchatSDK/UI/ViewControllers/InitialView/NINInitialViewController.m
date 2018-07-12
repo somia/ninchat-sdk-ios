@@ -10,7 +10,7 @@
 
 #import "NINInitialViewController.h"
 #import "NINSessionManager.h"
-//#import "ChatViewController.h"
+#import "NINQueue.h"
 #import "NINQueueViewController.h"
 
 // Segue to open video call view
@@ -50,7 +50,15 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     }];
      */
 
-    [self performSegueWithIdentifier:kSegueIdInitialToQueue sender:nil];
+    // Select a queue; just pick the first one available
+    if (self.sessionManager.queues.count == 0) {
+        // No queues? well this wont do.
+        NSLog(@"** ERROR ** No queues found!");
+        return;
+    }
+    NSString* queueId = self.sessionManager.queues[0].queueId;
+
+    [self performSegueWithIdentifier:kSegueIdInitialToQueue sender:queueId];
 }
 
 //-(IBAction) videoCallButtonPressed:(UIButton*)button {
@@ -63,6 +71,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     if ([segue.identifier isEqualToString:kSegueIdInitialToQueue]) {
         NINQueueViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
+        vc.queueId = (NSString*)sender;
     }
 }
 
@@ -72,14 +81,6 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     CGFloat height = self.startChatButton.bounds.size.height;
     self.startChatButton.layer.cornerRadius = height / 2;
 }
-
--(void) viewDidLoad {
-    [super viewDidLoad];
-
-    // Hide navigation bar
-//    [self.navigationController setNavigationBarHidden:YES];
-}
-
 
 #pragma mark - From UIViewController
 

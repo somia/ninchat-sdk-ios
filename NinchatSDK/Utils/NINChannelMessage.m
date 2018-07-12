@@ -6,9 +6,9 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "ChannelMessage.h"
+#import "NINChannelMessage.h"
 
-@interface ChannelMessage ()
+@interface NINChannelMessage ()
 
 // Writable private definitions for the properties
 @property (nonatomic, assign) BOOL mine;
@@ -17,14 +17,14 @@
 
 @end
 
-@implementation ChannelMessage
+@implementation NINChannelMessage
 
 -(NSString*) description {
     return [NSString stringWithFormat:@"textContent: %@, mine: %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.timestamp];
 }
 
-+(ChannelMessage*) messageWithTextContent:(NSString*)textContent mine:(BOOL)mine {
-    ChannelMessage* msg = [ChannelMessage new];
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent mine:(BOOL)mine {
+    NINChannelMessage* msg = [NINChannelMessage new];
     msg.textContent = textContent;
     msg.mine = mine;
     msg.timestamp = [NSDate date];

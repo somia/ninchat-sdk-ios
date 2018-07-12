@@ -11,7 +11,7 @@
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"
 #import "NINUtils.h"
-#import "ChannelMessage.h"
+#import "NINChannelMessage.h"
 
 // SEE sample: https://github.com/skensell/MXRMessenger/blob/master/Examples/Example1/Example1/ChatViewController.m
 
@@ -155,7 +155,7 @@
         return [self.cellFactory cellNodeBlockWithText:message.text tableNode:tableNode row:indexPath.row];
     }
     */
-    ChannelMessage* msg = self.sessionManager.channelMessages[indexPath.row];
+    NINChannelMessage* msg = self.sessionManager.channelMessages[indexPath.row];
 
     return [self.cellFactory cellNodeBlockWithText:msg.textContent tableNode:tableNode row:indexPath.row];
 }

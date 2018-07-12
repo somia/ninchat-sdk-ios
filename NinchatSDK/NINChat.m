@@ -39,23 +39,6 @@
 
     NSLog(@"Loading initial view controller..");
 
-    // Locate our framework bundle by showing it a class in this framework
-//    NSBundle* classBundle = [NSBundle bundleForClass:[self class]];
-//    NSLog(@"frameworkBundle: %@", classBundle);
-//
-//    NSBundle* resourceBundle = nil;
-//
-//    // See if this top level bundle contains our storyboard
-//    if ([classBundle pathForResource:@"Chat" ofType:@"storyboard"] != nil) {
-//        // This path is taken when using the SDK from a prebuilt .framework.
-//        resourceBundle = classBundle;
-//    } else {
-//        // This path is taken when using the SDK via Cocoapods module.
-//        // Locate our UI resource bundle. This is specified in the podspec file.
-//        NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
-//        resourceBundle = [NSBundle bundleWithURL:bundleURL];
-//    }
-
     NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
 
@@ -66,11 +49,6 @@
     // Find our own initial view controller
     if ([vc isKindOfClass:[UINavigationController class]]) {
         UINavigationController* navigationController = (UINavigationController*)vc;
-
-//        self.backGestureDelegate = [NINinteractivePopRecognizerDelegate recognizerWithNavigationController:navigationController];
-//        [navigationController setNavigationBarHidden:YES];
-//        navigationController.interactivePopGestureRecognizer.enabled = YES;
-//        navigationController.interactivePopGestureRecognizer.delegate = self.backGestureDelegate;
 
         initialViewController = (NINInitialViewController*)navigationController.topViewController;
     } else if ([vc isKindOfClass:[NINInitialViewController class]]) {
@@ -87,25 +65,40 @@
     return vc;
 }
 
+// Performs these steps:
+// 1. Fetches the site configuration over a REST call
+// 2. Using that configuration, starts a new chat session
+// 3. Retrieves the queues available for this realm (realm id from site configuration)
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
     // Fetch the site configuration
     fetchSiteConfig(self.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
         NSAssert([NSThread isMainThread], @"Must be called on the main thread");
-        
+
         if (error != nil) {
             callbackBlock(error);
             return;
         }
 
-        // Open the chat session
         self.sessionManager.siteConfiguration = config;
         
+        // Open the chat session
         error = [self.sessionManager openSession:^(NSError *error) {
-            NSAssert([NSThread isMainThread], @"Must be called in main thread");
-            if (error == nil) {
-                self.started = YES;
+            NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+            if (error != nil) {
+                callbackBlock(error);
+                return;
             }
-            callbackBlock(error);
+
+            // Find our realm's queues
+            [self.sessionManager listQueuesWithCompletion:^(NSError* error) {
+                NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+                if (error == nil) {
+                    self.started = YES;
+                }
+                callbackBlock(error);
+            }];
         }];
 
         if (error != nil) {

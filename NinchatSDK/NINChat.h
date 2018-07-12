@@ -10,14 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "PublicTypes.h"
-
-//@protocol NINChatStatusDelegate<NSObject>
-//
-//@required
-//-(void) statusDidChange:(NSString*)status;
-//
-//@end
+#import "NINPublicTypes.h"
 
 /**
  * API Facade for Ninchat iOS SDK.
@@ -29,7 +22,7 @@
 /**
  * Initializes the API.
  */
--(id) initWithConfigurationKey:(NSString*)configKey;
+-(id _Nonnull) initWithConfigurationKey:(NSString* _Nonnull)configurationKey;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

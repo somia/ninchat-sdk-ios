@@ -9,6 +9,7 @@
 #define PrivateTypes_h
 
 typedef void (^emptyBlock)(void);
+typedef void (^callbackWithErrorBlock)(NSError* _Nullable);
 typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
 typedef void (^fetchSiteConfigCallbackBlock)(NSDictionary* _Nullable, NSError* _Nullable);
 

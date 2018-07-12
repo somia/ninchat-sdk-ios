@@ -13,8 +13,10 @@
 
 #import "NINSessionManager.h"
 #import "NINUtils.h"
-#import "ChannelMessage.h"
-#import "PrivateTypes.h"
+#import "NINQueue.h"
+#import "NINChannelMessage.h"
+#import "NINPrivateTypes.h"
+#import "NINClientPropsParser.h"
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -24,8 +26,11 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     /** Sequence for action_id:s in chat actions. */
     atomic_long actionIdSequence;
 
+    /** Mutable queue list. */
+    NSMutableArray<NINQueue*>* _queues;
+
     /** Mutable channel messages list. */
-    NSMutableArray<ChannelMessage*>* _channelMessages;
+    NSMutableArray<NINChannelMessage*>* _channelMessages;
 }
 
 /** Realm ID to use. */
@@ -33,6 +38,9 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 /** Chat session reference. */
 @property (nonatomic, strong) ClientSession* session;
+
+/** Current queue id. Nil if not currently in queue. */
+@property (nonatomic, strong) NSString* currentQueueId;
 
 /** Currently active channel id - or nil if no active channel. */
 @property (nonatomic, strong) NSString* activeChannelId;
@@ -46,6 +54,105 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 /** Returns a new unique action ID. */
 -(long) nextActionId {
     return atomic_fetch_add_explicit(&actionIdSequence, 1, memory_order_relaxed);
+}
+
+/*
+ Event: map[realm_queues:map[5npnsgnq009m:map[queue_attrs:map[length:0 name:Test queue]]] event_id:2 action_id:1 event:realm_queues_found realm_id:5npnrkp1009m]
+ */
+-(void) realmQueuesFound:(ClientProps*)params {
+    NSError* error;
+
+    // Clear existing queue list
+    [_queues removeAllObjects];
+
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
+    ClientProps* queues = [params getObject:@"realm_queues" error:&error];
+    if (error != nil) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+        return;
+    }
+    NSLog(@"queues: %@", queues.string);
+
+    NINClientPropsParser* queuesParser = [NINClientPropsParser new];
+    [queues accept:queuesParser error:&error];
+    if (error != nil) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+        return;
+    }
+
+    NSLog(@"Parsed queue map: %@", queuesParser.properties);
+
+    for (NSString* queueId in queuesParser.properties.allKeys) {
+        ClientProps* queueProps = [queues getObject:queueId error:&error];
+        if (error != nil) {
+            postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+            return;
+        }
+
+        ClientProps* queueAttrs = [queueProps getObject:@"queue_attrs" error:&error];
+        if (error != nil) {
+            postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+            return;
+        }
+
+        NSString* queueName = [queueAttrs getString:@"name" error:&error];
+        if (error != nil) {
+            postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+            return;
+        }
+
+        [_queues addObject:[NINQueue queueWithId:queueId andName:queueName]];
+    }
+
+    NSLog(@"Got queues: %@", _queues);
+    
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+}
+
+// https://github.com/ninchat/ninchat-api/blob/v2/api.md#audience_enqueued
+// https://github.com/ninchat/ninchat-api/blob/v2/api.md#queue_updated
+-(void) queueUpdated:(NSString*)eventType params:(ClientProps*)params {
+    NSError* error;
+
+    // Clear existing queue list
+    [_queues removeAllObjects];
+
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
+    NSString* queueId = [params getString:@"queue_id" error:&error];
+    if (error != nil) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+        return;
+    }
+
+    if ([eventType isEqualToString:@"audience_enqueued"]) {
+        NSLog(@"Queue %@ joined.", queueId);
+        self.currentQueueId = queueId;
+    }
+
+    long position;
+    [params getInt:@"queue_position" val:&position error:&error];
+    if (error != nil) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+        return;
+    }
+
+    NSLog(@"Queue position: %ld", position);
+
+    if (actionId != 0) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    }
 }
 
 /*
@@ -88,7 +195,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
             return;
         }
 
-        ChannelMessage* msg = [ChannelMessage messageWithTextContent:payloadDict[@"text"] mine:(actionId != 0)];
+        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] mine:(actionId != 0)];
         [_channelMessages insertObject:msg atIndex:0];
         postNotification(kNewChannelMessageNotification, @{@"message": msg});
         NSLog(@"Got new channel message: %@", msg);
@@ -102,16 +209,17 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
  */
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
+
+//    long actionId;
+//    [params getInt:@"action_id" val:&actionId error:&error];
+//    if (error != nil) {
+//        NSLog(@"Failed to get action_id: %@", error);
+//        return;
+//    }
+
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get channel id: %@", error);
-        return;
-    }
-
-    long actionId;
-    [params getInt:@"action_id" val:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get action_id: %@", error);
         return;
     }
 
@@ -119,9 +227,13 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
     // Set the currently active channel
     self.activeChannelId = channelId;
-    _channelMessages = [NSMutableArray array];
 
-    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    // Clear current list of messages
+    [_channelMessages removeAllObjects];
+
+    //TODO signal channel join to UI somehow
+
+//    postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
 /*
@@ -147,11 +259,79 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 #pragma mark - Public methods
 
+-(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
+    long actionId = self.nextActionId;
+
+    //TODO this could be a generic function!
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+        NSError* error = note.userInfo[@"error"];
+
+        if (eventActionId.longValue == actionId) {
+            if (completion != nil) {
+                completion(error);
+            }
+
+            return YES;
+        }
+
+        return NO;
+    });
+
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"describe_realm_queues"];
+    [params setInt:@"action_id" val:actionId];
+    [params setString:@"realm_id" val:self.realmId];
+
+    NSError* error = nil;
+    [self.session send:params payload:nil error:&error];
+    if (error != nil) {
+        NSLog(@"Error describing queues: %@", error);
+        completion(error);
+    }
+}
+
+// https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
+-(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion {
+    NSLog(@"Joining queue %@..", queueId);
+
+    long actionId = self.nextActionId;
+
+    //TODO this could be a generic function!
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+        NSError* error = note.userInfo[@"error"];
+
+        if (eventActionId.longValue == actionId) {
+            if (completion != nil) {
+                completion(error);
+            }
+
+            return YES;
+        }
+
+        return NO;
+    });
+
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"request_audience"];
+    [params setInt:@"action_id" val:actionId];
+    [params setString:@"queue_id" val:queueId];
+
+    NSError* error = nil;
+    [self.session send:params payload:nil error:&error];
+    if (error != nil) {
+        NSLog(@"Error joining queue: %@", error);
+        completion(error);
+    }
+}
+/*
 -(void) joinChannelWithId:(NSString*)channelId completion:(void (^)(NSError*))completion {
     NSLog(@"Joining channel '%@'", channelId);
 
     long actionId = self.nextActionId;
 
+    //TODO this could be a generic function!
     fetchNotification(kActionNotification, ^(NSNotification* note) {
         NSNumber* eventActionId = note.userInfo[@"action_id"];
         NSError* error = note.userInfo[@"error"];
@@ -176,11 +356,10 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     [self.session send:params payload:nil error:&error];
     if (error != nil) {
         NSLog(@"Error joining channel: %@", error);
-        //TODO error handling
-        return;
+        completion(error);
     }
 }
-
+*/
 -(void) sendMessage:(NSString*)message completion:(void (^)(NSError*))completion {
     if (self.activeChannelId == nil) {
         if (completion != nil) {
@@ -191,6 +370,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
     long actionId = self.nextActionId;
 
+    //TODO this could be a generic function!
     fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSNumber* msgActionId = note.userInfo[@"action_id"];
         NSError* error = note.userInfo[@"error"];
@@ -219,9 +399,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadContentObj options:0 error:&error];
     if (error != nil) {
         NSLog(@"Failed to serialize message JSON: %@", error);
-        if (completion != nil) {
-            completion(error);
-        }
+        completion(error);
         return;
     }
     //TODO remove this
@@ -246,20 +424,23 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
     NSLog(@"Sending message '%@' to channel '%@'", message, self.activeChannelId);
 
-    BOOL sendResult = [self.session send:params payload:payload error:&error];
+    [self.session send:params payload:payload error:&error];
     if (error != nil) {
         NSLog(@"Error sending message: %@", error);
-        if (completion != nil) {
-            completion(error);
-        }
-        return;
+        completion(error);
     }
-
-    NSLog(@"session.send() result: %@", sendResult ? @"YES" : @"NO");
 }
 
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
     NSError* error = nil;
+
+    // Make sure our site configuration contains a realm_id
+    NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];
+    if ((realmId == nil) || (![realmId isKindOfClass:[NSString class]])) {
+        return newError(@"Could not find valid realm id in the site configuration");
+    }
+
+    self.realmId = realmId;
 
     ClientStrings* messageTypes = [ClientStrings new];
     [messageTypes append:@"ninchat.com/*"];
@@ -342,6 +523,10 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
             [self channelJoined:params];
         } else if ([event isEqualToString:@"message_received"]) {
             [self messageReceived:params payload:payload];
+        } else if ([event isEqualToString:@"realm_queues_found"]) {
+            [self realmQueuesFound:params];
+        } else if ([event isEqualToString:@"audience_enqueued"] || [event isEqualToString:@"queue_updated"]) {
+            [self queueUpdated:event params:params];
         }
 
        // [self.statusDelegate statusDidChange:event];
@@ -397,6 +582,8 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
     if (self != nil) {
         actionIdSequence = 1;
+        _queues = [NSMutableArray array];
+        _channelMessages = [NSMutableArray array];
     }
 
     return self;

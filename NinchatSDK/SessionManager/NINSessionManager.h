@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "PublicTypes.h"
+#import "NINPublicTypes.h"
+#import "NINPrivateTypes.h"
 
-@class ChannelMessage;
+@class NINQueue;
+@class NINChannelMessage;
 
 /**
  This class takes care of the chat session and all related state.
@@ -30,19 +32,28 @@
 /** Site configuration. */
 @property (nonatomic, strong) NSDictionary* _Nonnull siteConfiguration;
 
+/** List of available queues for the realm_id. */
+@property (nonatomic, strong) NSArray<NINQueue*>* _Nonnull queues;
+
 /**
  * Chronological list of messages on the current channel. The list is ordered by the message
  * timestamp in decending order (most recent first).
  */
-@property (nonatomic, strong, readonly) NSArray<ChannelMessage*>* _Nonnull channelMessages;
+@property (nonatomic, strong, readonly) NSArray<NINChannelMessage*>* _Nonnull channelMessages;
 
 /** Opens the session with an asynchronous completion callback. */
 -(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
 
+/** Lists all the available queues for this realm. */
+-(void) listQueuesWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
+
+/** Joins a chat queue. */
+-(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion;
+
 /** Joins a channel with the given id. */
--(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(void (^_Nonnull)(NSError* _Nonnull))completion;
+//-(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
--(void) sendMessage:(NSString* _Nonnull)message completion:(void (^_Nonnull)(NSError* _Nonnull))completion;
+-(void) sendMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
 
 @end

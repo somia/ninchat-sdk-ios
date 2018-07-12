@@ -9,7 +9,7 @@
 #ifndef NINUtils_h
 #define NINUtils_h
 
-#import "PrivateTypes.h"
+#import "NINPrivateTypes.h"
 
 /**
  * Runs the given block on the main thread (queue).

@@ -18,4 +18,7 @@
 /** Reference to the session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;
 
+/** ID of the queue to connect to. */
+@property (nonatomic, strong) NSString* queueId;
+
 @end
