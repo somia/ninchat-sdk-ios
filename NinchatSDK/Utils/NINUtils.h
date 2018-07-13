@@ -11,6 +11,9 @@
 
 #import "NINPrivateTypes.h"
 
+// Server host name.
+extern NSString* _Nonnull const kNinchatServerHostName;
+
 /**
  * Runs the given block on the main thread (queue).
  */

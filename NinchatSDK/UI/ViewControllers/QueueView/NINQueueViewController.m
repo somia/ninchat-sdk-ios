@@ -8,6 +8,7 @@
 
 #import "NINQueueViewController.h"
 #import "NINSessionManager.h"
+#import "NINChatViewController.h"
 
 @interface NINQueueViewController ()
 
@@ -25,6 +26,13 @@
     // Connect to the queue
     [self.sessionManager joinQueueWithId:self.queueId completion:^(NSError* error) {
         NSLog(@"Queue join completed, error: %@", error);
+    } channelJoined:^{
+        NSLog(@"Channel joined - showing the chat UI");
+
+        NINChatViewController* vc = [NINChatViewController new];
+        vc.sessionManager = self.sessionManager;
+        [self.navigationController pushViewController:vc animated:YES];
+
     }];
 }
 

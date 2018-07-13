@@ -29,6 +29,9 @@
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;
 
+/** Site secret; used to authenticate to eg. test servers. */
+@property (nonatomic, strong) NSString* _Nullable siteSecret; 
+
 /** Site configuration. */
 @property (nonatomic, strong) NSDictionary* _Nonnull siteConfiguration;
 
@@ -48,7 +51,7 @@
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Joins a chat queue. */
--(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
 
 /** Joins a channel with the given id. */
 //-(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(callbackWithErrorBlock _Nonnull)completion;

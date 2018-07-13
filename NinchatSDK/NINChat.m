@@ -107,12 +107,13 @@
     });
 }
 
--(id) initWithConfigurationKey:(NSString*)configKey {
+-(id) initWithConfigurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret {
     self = [super init];
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
         self.sessionManager.configurationKey = configKey;
+        self.sessionManager.siteSecret = siteSecret;
         self.started = NO;
     }
 

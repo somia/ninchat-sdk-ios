@@ -13,8 +13,8 @@
 #import "NINUtils.h"
 
 // Server host name.
-static NSString* kServerHostName = @"api.ninchat.com"; // production
-//static NSString* kServerHostName = @"api.luupi.net"; // test
+//NSString* const kNinchatServerHostName = @"api.ninchat.com"; // production
+NSString* const kNinchatServerHostName = @"api.luupi.net"; // test
 
 // Site config URL pattern. Populate with kServerHostName & configuration key
 static NSString* const kSiteConfigUrlPattern = @"https://%@/config/%@";
@@ -70,7 +70,7 @@ NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* reso
 }
 
 void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
-    NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kServerHostName, configurationKey];
+    NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kNinchatServerHostName, configurationKey];
     NSLog(@"Fetching site config from URL: %@", url);
 
 //    callbackBlock([NSDictionary dictionary], nil);

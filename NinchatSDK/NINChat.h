@@ -22,7 +22,7 @@
 /**
  * Initializes the API.
  */
--(id _Nonnull) initWithConfigurationKey:(NSString* _Nonnull)configurationKey;
+-(id _Nonnull) initWithConfigurationKey:(NSString* _Nonnull)configurationKey siteSecret:(NSString* _Nullable)siteSecret;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

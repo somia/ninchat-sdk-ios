@@ -21,6 +21,9 @@
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
+/** Notification name for channel_joined event. */
+static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
+
 @interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
 
     /** Sequence for action_id:s in chat actions. */
@@ -210,13 +213,6 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
-//    long actionId;
-//    [params getInt:@"action_id" val:&actionId error:&error];
-//    if (error != nil) {
-//        NSLog(@"Failed to get action_id: %@", error);
-//        return;
-//    }
-
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get channel id: %@", error);
@@ -231,9 +227,8 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     // Clear current list of messages
     [_channelMessages removeAllObjects];
 
-    //TODO signal channel join to UI somehow
-
-//    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    // Signal channel join event to the asynchronous listener
+    postNotification(kChannelJoinedNotification, @{});
 }
 
 /*
@@ -292,7 +287,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 }
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
--(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion {
+-(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined {
     NSLog(@"Joining queue %@..", queueId);
 
     long actionId = self.nextActionId;
@@ -311,6 +306,11 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
         }
 
         return NO;
+    });
+
+    fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
+        channelJoined();
+        return YES;
     });
 
     ClientProps* params = [ClientProps new];
@@ -392,8 +392,6 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     [params setString:@"message_type" val:@"ninchat.com/text"];
     [params setString:@"channel_id" val:self.activeChannelId];
 
-    NSLog(@"params: %@", params);
-
     NSError* error = nil;
     id payloadContentObj = @{@"text": message};
     NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadContentObj options:0 error:&error];
@@ -403,7 +401,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
         return;
     }
     //TODO remove this
-//    NSString* thing = @"{\"text\":\"asdf\"}";
+//    NSString* thing = @"{\"text\":\"moi\"}";
 //    NSData* payloadContentJsonData = [thing dataUsingEncoding:NSUTF8StringEncoding];
 
     //TODO remove this
@@ -446,6 +444,9 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     [messageTypes append:@"ninchat.com/*"];
 
     ClientProps* sessionParams = [ClientProps new];
+    if (self.siteSecret != nil) {
+        [sessionParams setString:@"site_secret" val:self.siteSecret];
+    }
 
     //TODO where do we get the username?
 //    if (self.userName != nil) {
@@ -468,6 +469,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
     });
 
     self.session = [ClientSession new];
+    [self.session setAddress:kNinchatServerHostName];
     [self.session setOnSessionEvent:self];
     [self.session setOnEvent:self];
     [self.session setOnClose:self];
