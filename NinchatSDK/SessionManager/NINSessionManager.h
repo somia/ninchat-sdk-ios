@@ -14,6 +14,9 @@
 @class NINQueue;
 @class NINChannelMessage;
 
+// Notifications emitted by this class.
+extern NSString* _Nonnull const kChannelClosedNotification;
+
 /**
  This class takes care of the chat session and all related state.
  */

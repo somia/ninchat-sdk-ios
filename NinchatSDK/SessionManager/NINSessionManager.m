@@ -24,6 +24,9 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
 
+/** Notification name for channel being closed or suspended. */
+NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
+
 @interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
 
     /** Sequence for action_id:s in chat actions. */
@@ -157,6 +160,46 @@ static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNo
         postNotification(kActionNotification, @{@"action_id": @(actionId)});
     }
 }
+
+-(void) channelUpdated:(ClientProps*)params {
+    NSError* error;
+
+    NSString* channelId = [params getString:@"channel_id" error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get channel_id: %@", error);
+        return;
+    }
+
+    if (![channelId isEqualToString:self.activeChannelId]) {
+        NSLog(@"Got channel_updated for wrong channel '%@'", channelId);
+        return;
+    }
+
+    ClientProps* channelAttrs = [params getObject:@"channel_attrs" error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get channel attrs: %@", error);
+        return;
+    }
+
+    BOOL closed;
+    [channelAttrs getBool:@"closed" val:&closed error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get channel attr 'closed': %@", error);
+        return;
+    }
+
+    BOOL suspended;
+    [channelAttrs getBool:@"suspended" val:&suspended error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get channel attr 'suspended': %@", error);
+        return;
+    }
+
+    if (closed || suspended) {
+        postNotification(kChannelClosedNotification, @{});
+    }
+}
+
 
 /*
  Inbound text message:
@@ -529,6 +572,8 @@ static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNo
             [self realmQueuesFound:params];
         } else if ([event isEqualToString:@"audience_enqueued"] || [event isEqualToString:@"queue_updated"]) {
             [self queueUpdated:event params:params];
+        } else if ([event isEqualToString:@"channel_updated"]) {
+            [self channelUpdated:params];
         }
 
        // [self.statusDelegate statusDidChange:event];

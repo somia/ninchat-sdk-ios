@@ -9,12 +9,27 @@
 #import "NINQueueViewController.h"
 #import "NINSessionManager.h"
 #import "NINChatViewController.h"
+#import "NINUtils.h"
+#import "NINRatingViewController.h"
+
+static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating";
 
 @interface NINQueueViewController ()
 
 @end
 
 @implementation NINQueueViewController
+
+#pragma mark - From UIViewController
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdQueueToRating]) {
+        NINRatingViewController* vc = segue.destinationViewController;
+        vc.sessionManager = self.sessionManager;
+    }
+}
+
+#pragma mark - Lifecycle etc.
 
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -34,6 +49,19 @@
         [self.navigationController pushViewController:vc animated:YES];
 
     }];
+
+    // Listen to channel closed -events
+    fetchNotification(kChannelClosedNotification, ^BOOL(NSNotification* note) {
+        NSLog(@"Channel closed - showing rating view.");
+
+        // First pop the chat view
+        [self.navigationController popViewControllerAnimated:YES];
+
+        // Show the rating view
+        [self performSegueWithIdentifier:kSegueIdQueueToRating sender:nil];
+        
+        return YES;
+    });
 }
 
 @end
