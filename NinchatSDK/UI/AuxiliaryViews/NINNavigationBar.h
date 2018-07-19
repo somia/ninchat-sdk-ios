@@ -8,8 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINPrivateTypes.h"
+
 /** Custom "navigation bar" for the SDK UI views. */
 @interface NINNavigationBar : UIView
+
+/** Called when the close button was pressed. */
+@property (nonatomic, copy) emptyBlock closeButtonPressedCallback;
 
 @end
 

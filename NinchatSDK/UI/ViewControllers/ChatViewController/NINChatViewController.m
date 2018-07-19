@@ -65,7 +65,7 @@
     NSString* text = [self.toolbar clearText];
     NSLog(@"text to send: %@", text);
 
-    [self.sessionManager sendMessage:text completion:^(NSError* _Nonnull error) {
+    [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
         if (error != nil) {
             //TODO show error toast? check with UX people.
             NSLog(@"TODO: message failed to send - show error message");
@@ -183,11 +183,13 @@
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    __weak typeof(self) weakSelf = self;
+
     self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
 
         // Insert the new message chat bubble as the newest entry
-        [self.cellFactory updateTableNode:self.node.tableNode animated:YES withInsertions:@[[NSIndexPath indexPathForRow:0 inSection:0]] deletions:nil reloads:nil completion:nil];
+        [weakSelf.cellFactory updateTableNode:weakSelf.node.tableNode animated:YES withInsertions:@[[NSIndexPath indexPathForRow:0 inSection:0]] deletions:nil reloads:nil completion:nil];
 
         return NO;
     });
@@ -209,6 +211,10 @@
     self.node.tableNode.allowsSelection = YES;
 
     [self customizeCellFactory];
+}
+
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 -(instancetype) init {

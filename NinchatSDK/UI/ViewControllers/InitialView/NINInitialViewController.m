@@ -71,7 +71,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     if ([segue.identifier isEqualToString:kSegueIdInitialToQueue]) {
         NINQueueViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
-        vc.queueId = (NSString*)sender;
+        vc.queueIdToJoin = (NSString*)sender;
     }
 }
 

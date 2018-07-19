@@ -8,7 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class NINSessionManager;
+@class NINNavigationBar;
+
 /** Intended base class for all Ninchat SDK view controllers. */
 @interface NINBaseViewController : UIViewController
+
+/** Reference to the session manager instance. */
+@property (nonatomic, strong) NINSessionManager* sessionManager;
+
+/** Reference to the custom navigation bar. */
+@property (nonatomic, strong) IBOutlet NINNavigationBar* customNavigationBar;
 
 @end

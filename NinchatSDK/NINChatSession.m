@@ -6,12 +6,12 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "NINChat.h"
+#import "NINChatSession.h"
 #import "NINInitialViewController.h"
 #import "NINUtils.h"
 #import "NINSessionManager.h"
 
-@interface NINChat ()
+@interface NINChatSession ()
 
 /** Session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;
@@ -21,14 +21,11 @@
 
 @end
 
-@implementation NINChat
-
-#pragma mark - Private API
-
+@implementation NINChatSession
 
 #pragma mark - Public API
 
--(nonnull UIViewController*) viewController {
+-(nonnull UIViewController*) viewControllerWithNavigationController:(BOOL)withNavigationController {
     NSAssert([NSThread isMainThread], @"Must be called in main thread");
 
     if (!self.started) {
@@ -37,32 +34,26 @@
                                      userInfo:nil];
     }
 
-    NSLog(@"Loading initial view controller..");
-
     NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
 
     // Get the initial view controller for the storyboard
     UIViewController* vc = [storyboard instantiateInitialViewController];
-    NINInitialViewController* initialViewController = nil;
+
+    // Assert that the initial view controller from the Storyboard is a navigation controller
+    UINavigationController* navigationController = (UINavigationController*)vc;
+    NSAssert([navigationController isKindOfClass:[UINavigationController class]], @"Storyboard initial view controller is not UINavigationController");
 
     // Find our own initial view controller
-    if ([vc isKindOfClass:[UINavigationController class]]) {
-        UINavigationController* navigationController = (UINavigationController*)vc;
-
-        initialViewController = (NINInitialViewController*)navigationController.topViewController;
-    } else if ([vc isKindOfClass:[NINInitialViewController class]]) {
-        initialViewController = (NINInitialViewController*)vc;
-    } else {
-        NSLog(@"Invalid initial view controller from Storyboard: %@", vc.class);
-        return nil;
-    }
-
+    NINInitialViewController* initialViewController = (NINInitialViewController*)navigationController.topViewController;
+    NSAssert([initialViewController isKindOfClass:[NINInitialViewController class]], @"Storyboard navigation controller's top view controller is not NINInitialViewController");
     initialViewController.sessionManager = self.sessionManager;
     
-    NSLog(@"Instantiated initial view controller: %@", vc);
-
-    return vc;
+    if (withNavigationController) {
+        return navigationController;
+    } else {
+        return initialViewController;
+    }
 }
 
 // Performs these steps:
@@ -70,6 +61,8 @@
 // 2. Using that configuration, starts a new chat session
 // 3. Retrieves the queues available for this realm (realm id from site configuration)
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
+    __weak typeof(self) weakSelf = self;
+
     // Fetch the site configuration
     fetchSiteConfig(self.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
         NSAssert([NSThread isMainThread], @"Must be called on the main thread");
@@ -79,10 +72,10 @@
             return;
         }
 
-        self.sessionManager.siteConfiguration = config;
+        weakSelf.sessionManager.siteConfiguration = config;
         
         // Open the chat session
-        error = [self.sessionManager openSession:^(NSError *error) {
+        error = [weakSelf.sessionManager openSession:^(NSError *error) {
             NSAssert([NSThread isMainThread], @"Must be called on the main thread");
 
             if (error != nil) {
@@ -91,11 +84,11 @@
             }
 
             // Find our realm's queues
-            [self.sessionManager listQueuesWithCompletion:^(NSError* error) {
+            [weakSelf.sessionManager listQueuesWithCompletion:^(NSError* error) {
                 NSAssert([NSThread isMainThread], @"Must be called on the main thread");
 
                 if (error == nil) {
-                    self.started = YES;
+                    weakSelf.started = YES;
                 }
                 callbackBlock(error);
             }];
@@ -112,12 +105,17 @@
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
+        self.sessionManager.ninchatSession = self;
         self.sessionManager.configurationKey = configKey;
         self.sessionManager.siteSecret = siteSecret;
         self.started = NO;
     }
 
     return self;
+}
+
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 // Prevent calling the default initializer

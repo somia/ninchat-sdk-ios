@@ -19,9 +19,16 @@
 
 -(IBAction) closeButtonPressed:(UIButton*)sender {
     NSLog(@"Close button pressed.");
+    if (self.closeButtonPressedCallback != nil) {
+        self.closeButtonPressedCallback();
+    }
 }
 
 #pragma mark - Lifecycle, etc.
+
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
+}
 
 @end
 

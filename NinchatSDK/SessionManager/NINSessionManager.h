@@ -13,6 +13,7 @@
 
 @class NINQueue;
 @class NINChannelMessage;
+@class NINChatSession;
 
 // Notifications emitted by this class.
 extern NSString* _Nonnull const kChannelClosedNotification;
@@ -22,12 +23,8 @@ extern NSString* _Nonnull const kChannelClosedNotification;
  */
 @interface NINSessionManager : NSObject
 
-//TODO check if all of these are needed ..
-//@property (nonatomic, strong) NSString* _Nullable configKey;
-//@property (nonatomic, strong) NSString* _Nullable queueId;
-//@property (nonatomic, strong) NSString* _Nullable userName;
-//@property (nonatomic, strong) NSString* _Nullable audienceMetadataJSON;
-//@property (nonatomic, strong) NSString* _Nullable lang;
+/** (Circular) Reference to the session object that created this session manager. */
+@property (nonatomic, weak, nullable) NINChatSession* ninchatSession;
 
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;
@@ -54,12 +51,18 @@ extern NSString* _Nonnull const kChannelClosedNotification;
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Joins a chat queue. */
--(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
+-(void) joinQueueWithId:(NSString* _Nonnull)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
 
 /** Joins a channel with the given id. */
 //-(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
--(void) sendMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
+
+/** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
+-(void) closeChat;
+
+/** (Optionally) sends ratings and finishes the current chat from our end. */
+-(void) finishChat:(NSNumber* _Nullable)rating;
 
 @end

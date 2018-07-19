@@ -14,6 +14,7 @@
 #import "NINSessionManager.h"
 #import "NINUtils.h"
 #import "NINQueue.h"
+#import "NINChatSession.h"
 #import "NINChannelMessage.h"
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
@@ -53,6 +54,25 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 
 @end
 
+// Waits for a matching action notification and calls the specified callback block,
+// then unregisters the notification observer.
+void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock completion) {
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+        NSError* error = note.userInfo[@"error"];
+
+        if (eventActionId.longValue == actionId) {
+            if (completion != nil) {
+                completion(error);
+            }
+
+            return YES;
+        }
+
+        return NO;
+    });
+}
+
 @implementation NINSessionManager
 
 #pragma mark - Private methods
@@ -61,6 +81,23 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 -(long) nextActionId {
     return atomic_fetch_add_explicit(&actionIdSequence, 1, memory_order_relaxed);
 }
+
+//-(void) waitForAction:(long)actionId completion:(callbackWithErrorBlock)completion {
+//    fetchNotification(kActionNotification, ^(NSNotification* note) {
+//        NSNumber* eventActionId = note.userInfo[@"action_id"];
+//        NSError* error = note.userInfo[@"error"];
+//
+//        if (eventActionId.longValue == actionId) {
+//            if (completion != nil) {
+//                completion(error);
+//            }
+//
+//            return YES;
+//        }
+//
+//        return NO;
+//    });
+//}
 
 /*
  Event: map[realm_queues:map[5npnsgnq009m:map[queue_attrs:map[length:0 name:Test queue]]] event_id:2 action_id:1 event:realm_queues_found realm_id:5npnrkp1009m]
@@ -143,6 +180,7 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
     }
 
     if ([eventType isEqualToString:@"audience_enqueued"]) {
+        NSAssert(self.currentQueueId == nil, @"Already have current queue");
         NSLog(@"Queue %@ joined.", queueId);
         self.currentQueueId = queueId;
     }
@@ -163,6 +201,8 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 
 -(void) channelUpdated:(ClientProps*)params {
     NSError* error;
+
+    NSAssert(self.activeChannelId != nil, @"No active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -200,7 +240,6 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
     }
 }
 
-
 /*
  Inbound text message:
 
@@ -211,6 +250,8 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
  Event: map[message_time:1.530788844e+09 message_type:ninchat.com/info/join event_id:3 frames:1 channel_id:5npnrkp1009m event:message_received message_id:5nsk7s7c009m2]
  */
 -(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
+    NSAssert(self.activeChannelId != nil, @"No active channel");
+
     NSError* error = nil;
     NSString* messageType = [params getString:@"message_type" error:&error];
     if (error != nil) {
@@ -256,6 +297,9 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
+    NSAssert(self.currentQueueId != nil, @"No current queue");
+    NSAssert(self.activeChannelId == nil, @"Already have active channel");
+
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get channel id: %@", error);
@@ -266,6 +310,9 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 
     // Set the currently active channel
     self.activeChannelId = channelId;
+
+    // We are no longer in the queue; clear the queue reference
+    self.currentQueueId = nil;
 
     // Clear current list of messages
     [_channelMessages removeAllObjects];
@@ -298,23 +345,12 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 #pragma mark - Public methods
 
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
+    NSAssert(self.session != nil, @"No chat session");
+
     long actionId = self.nextActionId;
 
-    //TODO this could be a generic function!
-    fetchNotification(kActionNotification, ^(NSNotification* note) {
-        NSNumber* eventActionId = note.userInfo[@"action_id"];
-        NSError* error = note.userInfo[@"error"];
-
-        if (eventActionId.longValue == actionId) {
-            if (completion != nil) {
-                completion(error);
-            }
-
-            return YES;
-        }
-
-        return NO;
-    });
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
 
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"describe_realm_queues"];
@@ -331,25 +367,15 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
 -(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined {
+
+    NSAssert(self.session != nil, @"No chat session");
+
     NSLog(@"Joining queue %@..", queueId);
 
     long actionId = self.nextActionId;
 
-    //TODO this could be a generic function!
-    fetchNotification(kActionNotification, ^(NSNotification* note) {
-        NSNumber* eventActionId = note.userInfo[@"action_id"];
-        NSError* error = note.userInfo[@"error"];
-
-        if (eventActionId.longValue == actionId) {
-            if (completion != nil) {
-                completion(error);
-            }
-
-            return YES;
-        }
-
-        return NO;
-    });
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
 
     fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
         channelJoined();
@@ -368,102 +394,36 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
         completion(error);
     }
 }
-/*
--(void) joinChannelWithId:(NSString*)channelId completion:(void (^)(NSError*))completion {
-    NSLog(@"Joining channel '%@'", channelId);
 
-    long actionId = self.nextActionId;
+// Sends a message to the activa channel. Active channel must exist.
+-(void) sendMessageWithActionId:(long)actionId messageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
-    //TODO this could be a generic function!
-    fetchNotification(kActionNotification, ^(NSNotification* note) {
-        NSNumber* eventActionId = note.userInfo[@"action_id"];
-        NSError* error = note.userInfo[@"error"];
+    NSAssert(self.session != nil, @"No chat session");
 
-        if (eventActionId.longValue == actionId) {
-            if (completion != nil) {
-                completion(error);
-            }
-
-            return YES;
-        }
-
-        return NO;
-    });
-
-    ClientProps* params = [ClientProps new];
-    [params setString:@"action" val:@"join_channel"];
-    [params setInt:@"action_id" val:actionId];
-    [params setString:@"channel_id" val:channelId];
-
-    NSError* error = nil;
-    [self.session send:params payload:nil error:&error];
-    if (error != nil) {
-        NSLog(@"Error joining channel: %@", error);
-        completion(error);
-    }
-}
-*/
--(void) sendMessage:(NSString*)message completion:(void (^)(NSError*))completion {
     if (self.activeChannelId == nil) {
-        if (completion != nil) {
-            completion(newError(@"No active channel"));
-        }
+        completion(newError(@"No active channel"));
         return;
     }
 
-    long actionId = self.nextActionId;
-
-    //TODO this could be a generic function!
-    fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
-        NSNumber* msgActionId = note.userInfo[@"action_id"];
-        NSError* error = note.userInfo[@"error"];
-
-        if (msgActionId.longValue == actionId) {
-            if (completion != nil) {
-                completion(error);
-            }
-
-            return YES;
-        }
-
-        return NO;
-    });
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
 
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"send_message"];
     [params setInt:@"action_id" val:actionId];
-    [params setString:@"message_type" val:@"ninchat.com/text"];
+    [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.activeChannelId];
 
-    NSError* error = nil;
-    id payloadContentObj = @{@"text": message};
-    NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadContentObj options:0 error:&error];
+    NSError* error;
+    NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadDict options:0 error:&error];
     if (error != nil) {
         NSLog(@"Failed to serialize message JSON: %@", error);
         completion(error);
         return;
     }
-    //TODO remove this
-//    NSString* thing = @"{\"text\":\"moi\"}";
-//    NSData* payloadContentJsonData = [thing dataUsingEncoding:NSUTF8StringEncoding];
-
-    //TODO remove this
-    NSString* jsonString = [[NSString alloc] initWithData:payloadContentJsonData encoding:NSUTF8StringEncoding];
-    NSLog(@"Payload is: '%@'", jsonString);
-
-    //TODO remove
-    NSMutableString *result = [NSMutableString string];
-    const char *bytes = [payloadContentJsonData bytes];
-    for (int i = 0; i < [payloadContentJsonData length]; i++)
-    {
-        [result appendFormat:@"%02hhx ", (unsigned char)bytes[i]];
-    }
-    NSLog(@"Payload bytes are: %@", result);
 
     ClientPayload* payload = [ClientPayload new];
     [payload append:payloadContentJsonData];
-
-    NSLog(@"Sending message '%@' to channel '%@'", message, self.activeChannelId);
 
     [self.session send:params payload:payload error:&error];
     if (error != nil) {
@@ -472,8 +432,58 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
     }
 }
 
+-(void) sendTextMessage:(NSString*)message completion:(callbackWithErrorBlock _Nonnull)completion {
+    NSAssert(self.session != nil, @"No chat session");
+
+    long actionId = self.nextActionId;
+
+    NSDictionary* payloadDict = @{@"text": message};
+    [self sendMessageWithActionId:actionId messageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
+
+    //TODO remove this
+//    NSString* jsonString = [[NSString alloc] initWithData:payloadContentJsonData encoding:NSUTF8StringEncoding];
+//    NSLog(@"Payload is: '%@'", jsonString);
+//
+//    //TODO remove
+//    NSMutableString *result = [NSMutableString string];
+//    const char *bytes = [payloadContentJsonData bytes];
+//    for (int i = 0; i < [payloadContentJsonData length]; i++)
+//    {
+//        [result appendFormat:@"%02hhx ", (unsigned char)bytes[i]];
+//    }
+//    NSLog(@"Payload bytes are: %@", result);
+}
+
+-(void) closeChat {
+    NSLog(@"Shutting down chat Session..");
+    self.activeChannelId = nil;
+    [self.session close];
+    self.session = nil;
+
+    // Signal the delegate that our session has ended
+    [self.ninchatSession.delegate ninchatDidEndChatSession:self.ninchatSession];
+}
+
+-(void) finishChat:(NSNumber* _Nullable)rating {
+    NSAssert(self.session != nil, @"No chat session");
+
+    NSLog(@"finishChat: %@", rating);
+
+    if (rating != nil) {
+        long actionId = self.nextActionId;
+        NSDictionary* payloadDict = @{@"data": @{@"rating": rating}};
+
+        __weak typeof(self) weakSelf = self;
+        [self sendMessageWithActionId:actionId messageType:@"ninchat.com/metadata" payloadDict:payloadDict completion:^(NSError* error) {
+            [weakSelf closeChat];
+        }];
+    } else {
+        [self closeChat];
+    }
+}
+
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
-    NSError* error = nil;
+    NSAssert(self.session == nil, @"Existing chat session found");
 
     // Make sure our site configuration contains a realm_id
     NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];
@@ -500,7 +510,7 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
     //TODO implement a give up -timer?
-    // Wait for the event creation event
+    // Wait for the session creation event
     fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSString* eventType = note.userInfo[@"event_type"];
         if ([eventType isEqualToString:@"session_created"]) {
@@ -511,13 +521,17 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
         return NO;
     });
 
+    __weak typeof(self) weakSelf = self;
+
     self.session = [ClientSession new];
     [self.session setAddress:kNinchatServerHostName];
-    [self.session setOnSessionEvent:self];
-    [self.session setOnEvent:self];
-    [self.session setOnClose:self];
-    [self.session setOnConnState:self];
-    [self.session setOnLog:self];
+    [self.session setOnSessionEvent:weakSelf];
+    [self.session setOnEvent:weakSelf];
+    [self.session setOnClose:weakSelf];
+    [self.session setOnConnState:weakSelf];
+    [self.session setOnLog:weakSelf];
+
+    NSError* error = nil;
     [self.session setParams:sessionParams error:&error];
     if (error != nil) {
         NSLog(@"Error setting session params: %@", error);
@@ -559,24 +573,22 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
     if (error != nil) {
-        //TODO what to do here?
         NSLog(@"Got error getting event data: %@", error);
-    } else {
-        if ([event isEqualToString:@"error"]) {
-            [self handleError:params];
-        } else if ([event isEqualToString:@"channel_joined"]) {
-            [self channelJoined:params];
-        } else if ([event isEqualToString:@"message_received"]) {
-            [self messageReceived:params payload:payload];
-        } else if ([event isEqualToString:@"realm_queues_found"]) {
-            [self realmQueuesFound:params];
-        } else if ([event isEqualToString:@"audience_enqueued"] || [event isEqualToString:@"queue_updated"]) {
-            [self queueUpdated:event params:params];
-        } else if ([event isEqualToString:@"channel_updated"]) {
-            [self channelUpdated:params];
-        }
+        return;
+    }
 
-       // [self.statusDelegate statusDidChange:event];
+    if ([event isEqualToString:@"error"]) {
+        [self handleError:params];
+    } else if ([event isEqualToString:@"channel_joined"]) {
+        [self channelJoined:params];
+    } else if ([event isEqualToString:@"message_received"]) {
+        [self messageReceived:params payload:payload];
+    } else if ([event isEqualToString:@"realm_queues_found"]) {
+        [self realmQueuesFound:params];
+    } else if ([event isEqualToString:@"audience_enqueued"] || [event isEqualToString:@"queue_updated"]) {
+        [self queueUpdated:event params:params];
+    } else if ([event isEqualToString:@"channel_updated"]) {
+        [self channelUpdated:params];
     }
 }
 
@@ -621,7 +633,7 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
 #pragma mark - Lifecycle etc.
 
 -(void) dealloc {
-    [self.session close];
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 -(id) init {

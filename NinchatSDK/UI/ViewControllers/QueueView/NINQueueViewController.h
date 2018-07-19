@@ -15,10 +15,7 @@
 /** Displays a waiting view while the user is in a queue. */
 @interface NINQueueViewController : NINBaseViewController
 
-/** Reference to the session manager instance. */
-@property (nonatomic, strong) NINSessionManager* sessionManager;
-
-/** ID of the queue to connect to. */
-@property (nonatomic, strong) NSString* queueId;
+/** ID of the queue to connect to. If nil, does not join a queue. */
+@property (nonatomic, strong) NSString* queueIdToJoin;
 
 @end

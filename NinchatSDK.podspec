@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.subspec "SDK" do |ss|
     ss.dependency "#{s.name}/Go"
     ss.source_files  = "NinchatSDK/**/*.{h,m}"
-    ss.public_header_files = "NinchatSDK/**/*.h"
+    ss.public_header_files = "NinchatSDK/NINChatSession.h, NinchatSDK/NINChat.h, NinchatSDK/NINPublicTypes.h"
     ss.prefix_header_file = "NinchatSDK/PrefixHeader.pch"
     ss.resource_bundles = {
         "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets}"],

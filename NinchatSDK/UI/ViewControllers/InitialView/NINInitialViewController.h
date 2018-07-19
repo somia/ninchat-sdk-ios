@@ -14,7 +14,4 @@
 
 @interface NINInitialViewController : NINBaseViewController
 
-/** Reference to the session manager instance. */
-@property (nonatomic, strong) NINSessionManager* sessionManager;
-
 @end

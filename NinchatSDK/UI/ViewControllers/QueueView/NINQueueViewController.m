@@ -34,20 +34,26 @@ static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating"
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    NSAssert(self.queueId != nil, @"queueId not defined");
+    NSString* queueId = self.queueIdToJoin;
 
-    //TODO listen to Channel Joined -notifications! or even better, add channelJoined -block to the call below.
+    if (queueId == nil) {
+        // Nothing to do; this is the case after we have popped the chat controller
+        return;
+    }
+
+    self.queueIdToJoin = nil;
+
+    __weak typeof(self) weakSelf = self;
 
     // Connect to the queue
-    [self.sessionManager joinQueueWithId:self.queueId completion:^(NSError* error) {
+    [self.sessionManager joinQueueWithId:queueId completion:^(NSError* error) {
         NSLog(@"Queue join completed, error: %@", error);
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
         NINChatViewController* vc = [NINChatViewController new];
-        vc.sessionManager = self.sessionManager;
-        [self.navigationController pushViewController:vc animated:YES];
-
+        vc.sessionManager = weakSelf.sessionManager;
+        [weakSelf.navigationController pushViewController:vc animated:YES];
     }];
 
     // Listen to channel closed -events
@@ -55,10 +61,10 @@ static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating"
         NSLog(@"Channel closed - showing rating view.");
 
         // First pop the chat view
-        [self.navigationController popViewControllerAnimated:YES];
+        [weakSelf.navigationController popViewControllerAnimated:YES];
 
         // Show the rating view
-        [self performSegueWithIdentifier:kSegueIdQueueToRating sender:nil];
+        [weakSelf performSegueWithIdentifier:kSegueIdQueueToRating sender:nil];
         
         return YES;
     });
