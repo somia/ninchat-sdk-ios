@@ -26,7 +26,7 @@
 #pragma mark - Public API
 
 -(nonnull UIViewController*) viewControllerWithNavigationController:(BOOL)withNavigationController {
-    NSAssert([NSThread isMainThread], @"Must be called in main thread");
+    NSCAssert([NSThread isMainThread], @"Must be called in main thread");
 
     if (!self.started) {
         @throw [NSException exceptionWithName:NSInternalInconsistencyException
@@ -42,11 +42,11 @@
 
     // Assert that the initial view controller from the Storyboard is a navigation controller
     UINavigationController* navigationController = (UINavigationController*)vc;
-    NSAssert([navigationController isKindOfClass:[UINavigationController class]], @"Storyboard initial view controller is not UINavigationController");
+    NSCAssert([navigationController isKindOfClass:[UINavigationController class]], @"Storyboard initial view controller is not UINavigationController");
 
     // Find our own initial view controller
     NINInitialViewController* initialViewController = (NINInitialViewController*)navigationController.topViewController;
-    NSAssert([initialViewController isKindOfClass:[NINInitialViewController class]], @"Storyboard navigation controller's top view controller is not NINInitialViewController");
+    NSCAssert([initialViewController isKindOfClass:[NINInitialViewController class]], @"Storyboard navigation controller's top view controller is not NINInitialViewController");
     initialViewController.sessionManager = self.sessionManager;
     
     if (withNavigationController) {
@@ -65,7 +65,7 @@
 
     // Fetch the site configuration
     fetchSiteConfig(self.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
-        NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
         if (error != nil) {
             callbackBlock(error);
@@ -76,7 +76,7 @@
         
         // Open the chat session
         error = [weakSelf.sessionManager openSession:^(NSError *error) {
-            NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+            NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
             if (error != nil) {
                 callbackBlock(error);
@@ -85,7 +85,7 @@
 
             // Find our realm's queues
             [weakSelf.sessionManager listQueuesWithCompletion:^(NSError* error) {
-                NSAssert([NSThread isMainThread], @"Must be called on the main thread");
+                NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
                 if (error == nil) {
                     weakSelf.started = YES;

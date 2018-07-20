@@ -180,7 +180,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     if ([eventType isEqualToString:@"audience_enqueued"]) {
-        NSAssert(self.currentQueueId == nil, @"Already have current queue");
+        NSCAssert(self.currentQueueId == nil, @"Already have current queue");
         NSLog(@"Queue %@ joined.", queueId);
         self.currentQueueId = queueId;
     }
@@ -202,7 +202,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) channelUpdated:(ClientProps*)params {
     NSError* error;
 
-    NSAssert(self.activeChannelId != nil, @"No active channel");
+    NSCAssert(self.activeChannelId != nil, @"No active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -250,7 +250,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
  Event: map[message_time:1.530788844e+09 message_type:ninchat.com/info/join event_id:3 frames:1 channel_id:5npnrkp1009m event:message_received message_id:5nsk7s7c009m2]
  */
 -(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
-    NSAssert(self.activeChannelId != nil, @"No active channel");
+    NSCAssert(self.activeChannelId != nil, @"No active channel");
 
     NSError* error = nil;
     NSString* messageType = [params getString:@"message_type" error:&error];
@@ -297,8 +297,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
-    NSAssert(self.currentQueueId != nil, @"No current queue");
-    NSAssert(self.activeChannelId == nil, @"Already have active channel");
+    NSCAssert(self.currentQueueId != nil, @"No current queue");
+    NSCAssert(self.activeChannelId == nil, @"Already have active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -345,7 +345,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 #pragma mark - Public methods
 
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
-    NSAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.session != nil, @"No chat session");
 
     long actionId = self.nextActionId;
 
@@ -368,7 +368,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
 -(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined {
 
-    NSAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.session != nil, @"No chat session");
 
     NSLog(@"Joining queue %@..", queueId);
 
@@ -398,7 +398,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 // Sends a message to the activa channel. Active channel must exist.
 -(void) sendMessageWithActionId:(long)actionId messageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
-    NSAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.session != nil, @"No chat session");
 
     if (self.activeChannelId == nil) {
         completion(newError(@"No active channel"));
@@ -433,7 +433,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(void) sendTextMessage:(NSString*)message completion:(callbackWithErrorBlock _Nonnull)completion {
-    NSAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.session != nil, @"No chat session");
 
     long actionId = self.nextActionId;
 
@@ -465,7 +465,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(void) finishChat:(NSNumber* _Nullable)rating {
-    NSAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.session != nil, @"No chat session");
 
     NSLog(@"finishChat: %@", rating);
 
@@ -483,7 +483,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
-    NSAssert(self.session == nil, @"Existing chat session found");
+    NSCAssert(self.session == nil, @"Existing chat session found");
 
     // Make sure our site configuration contains a realm_id
     NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];
