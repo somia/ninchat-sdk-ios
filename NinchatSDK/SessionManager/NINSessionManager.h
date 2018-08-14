@@ -53,8 +53,8 @@ extern NSString* _Nonnull const kChannelClosedNotification;
 /** Joins a chat queue. */
 -(void) joinQueueWithId:(NSString* _Nonnull)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
 
-/** Joins a channel with the given id. */
-//-(void) joinChannelWithId:(NSString* _Nonnull)channelId completion:(callbackWithErrorBlock _Nonnull)completion;
+/** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
+-(void) beginICEWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;

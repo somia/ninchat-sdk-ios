@@ -51,6 +51,11 @@ static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating"
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
+        //TODO remove
+        [weakSelf.sessionManager beginICEWithCompletion:^(NSError* error) {
+            NSLog(@"ICE info retrieved with error: %@", error);
+        }];
+
         NINChatViewController* vc = [NINChatViewController new];
         vc.sessionManager = weakSelf.sessionManager;
         [weakSelf.navigationController pushViewController:vc animated:YES];

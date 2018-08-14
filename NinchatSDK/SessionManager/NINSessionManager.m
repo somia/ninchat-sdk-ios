@@ -18,6 +18,7 @@
 #import "NINChannelMessage.h"
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
+#import "NINWebRTCServerInfo.h"
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -28,6 +29,11 @@ static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNo
 /** Notification name for channel being closed or suspended. */
 NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
 
+/**
+ This implementation is written against the following API specification:
+
+ https://github.com/ninchat/ninchat-api/blob/v2/api.md
+ */
 @interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
 
     /** Sequence for action_id:s in chat actions. */
@@ -76,28 +82,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 @implementation NINSessionManager
 
 #pragma mark - Private methods
-
-/** Returns a new unique action ID. */
--(long) nextActionId {
-    return atomic_fetch_add_explicit(&actionIdSequence, 1, memory_order_relaxed);
-}
-
-//-(void) waitForAction:(long)actionId completion:(callbackWithErrorBlock)completion {
-//    fetchNotification(kActionNotification, ^(NSNotification* note) {
-//        NSNumber* eventActionId = note.userInfo[@"action_id"];
-//        NSError* error = note.userInfo[@"error"];
-//
-//        if (eventActionId.longValue == actionId) {
-//            if (completion != nil) {
-//                completion(error);
-//            }
-//
-//            return YES;
-//        }
-//
-//        return NO;
-//    });
-//}
 
 /*
  Event: map[realm_queues:map[5npnsgnq009m:map[queue_attrs:map[length:0 name:Test queue]]] event_id:2 action_id:1 event:realm_queues_found realm_id:5npnrkp1009m]
@@ -240,6 +224,72 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 }
 
+// Processes the response to the WebRTC connectivity ICE query
+-(void) iceBegun:(ClientProps*)params {
+    NSError* error = nil;
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
+    // Parse the STUN server list
+    ClientObjects* stunServers = [params getObjectArray:@"stun_servers" error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get stun_servers: %@", error);
+        return;
+    }
+    NSMutableArray<NINWebRTCServerInfo*>* stunServerArray = [NSMutableArray array];
+    for (int i = 0; i < stunServers.length; i++) {
+        ClientProps* serverProps = [stunServers get:i];
+        ClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
+        if (error != nil) {
+            NSLog(@"Could not get stun_servers.urls: %@", error);
+            return;
+        }
+        for (int j = 0; j < urls.length; j++) {
+            [stunServerArray addObject:[NINWebRTCServerInfo serverWithURL:[urls get:j] username:nil credential:nil]];
+        }
+    }
+    NSLog(@"Parsed STUN servers: %@", stunServerArray);
+
+    // Parse the TURN server list
+    ClientObjects* turnServers = [params getObjectArray:@"turn_servers" error:&error];
+    if (error != nil) {
+        NSLog(@"Could not get turn_servers: %@", error);
+        return;
+    }
+    NSMutableArray<NINWebRTCServerInfo*>* turnServerArray = [NSMutableArray array];
+    for (int i = 0; i < turnServers.length; i++) {
+        ClientProps* serverProps = [turnServers get:i];
+
+        NSString* username = [serverProps getString:@"username" error:&error];
+        if (error != nil) {
+            NSLog(@"Could not get turn_servers.username: %@", error);
+            return;
+        }
+
+        NSString* credential = [serverProps getString:@"credential" error:&error];
+        if (error != nil) {
+            NSLog(@"Could not get turn_servers.credential: %@", error);
+            return;
+        }
+
+        ClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
+        if (error != nil) {
+            NSLog(@"Could not get turn_servers.urls: %@", error);
+            return;
+        }
+        for (int j = 0; j < urls.length; j++) {
+            [turnServerArray addObject:[NINWebRTCServerInfo serverWithURL:[urls get:j] username:username credential:credential]];
+        }
+    }
+    NSLog(@"Parsed TURN servers: %@", turnServerArray);
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+}
+
 /*
  Inbound text message:
 
@@ -347,22 +397,20 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
-    long actionId = self.nextActionId;
-
-    // When this action completes, trigger the completion block callback
-    connectCallbackToActionCompletion(actionId, completion);
-
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"describe_realm_queues"];
-    [params setInt:@"action_id" val:actionId];
     [params setString:@"realm_id" val:self.realmId];
 
     NSError* error = nil;
-    [self.session send:params payload:nil error:&error];
+    int64_t actionId;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
     if (error != nil) {
         NSLog(@"Error describing queues: %@", error);
         completion(error);
     }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
 }
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
@@ -372,11 +420,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     NSLog(@"Joining queue %@..", queueId);
 
-    long actionId = self.nextActionId;
-
-    // When this action completes, trigger the completion block callback
-    connectCallbackToActionCompletion(actionId, completion);
-
     fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
         channelJoined();
         return YES;
@@ -384,33 +427,49 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"request_audience"];
-    [params setInt:@"action_id" val:actionId];
     [params setString:@"queue_id" val:queueId];
 
+    int64_t actionId;
     NSError* error = nil;
-    [self.session send:params payload:nil error:&error];
+    [self.session send:params payload:nil actionId:&actionId error:&error];
     if (error != nil) {
         NSLog(@"Error joining queue: %@", error);
         completion(error);
     }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
+// Retrieves the WebRTC ICE STUN/TURN server details
+-(void) beginICEWithCompletion:(callbackWithErrorBlock _Nonnull)completion {
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"begin_ice"];
+
+    int64_t actionId;
+    NSError* error = nil;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error calling begin_ice: %@", error);
+        completion(error);
+    }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
 }
 
 // Sends a message to the activa channel. Active channel must exist.
--(void) sendMessageWithActionId:(long)actionId messageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
+-(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
     NSCAssert(self.session != nil, @"No chat session");
 
     if (self.activeChannelId == nil) {
         completion(newError(@"No active channel"));
-        return;
+        return -1;
     }
-
-    // When this action completes, trigger the completion block callback
-    connectCallbackToActionCompletion(actionId, completion);
 
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"send_message"];
-    [params setInt:@"action_id" val:actionId];
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.activeChannelId];
 
@@ -419,41 +478,34 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     if (error != nil) {
         NSLog(@"Failed to serialize message JSON: %@", error);
         completion(error);
-        return;
+        return -1;
     }
 
     ClientPayload* payload = [ClientPayload new];
     [payload append:payloadContentJsonData];
 
-    [self.session send:params payload:payload error:&error];
+    int64_t actionId = -1;
+    [self.session send:params payload:payload actionId:&actionId error:&error];
     if (error != nil) {
         NSLog(@"Error sending message: %@", error);
         completion(error);
     }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+
+    return actionId;
 }
 
+// Sends a text message to the current channel
 -(void) sendTextMessage:(NSString*)message completion:(callbackWithErrorBlock _Nonnull)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
-    long actionId = self.nextActionId;
-
     NSDictionary* payloadDict = @{@"text": message};
-    [self sendMessageWithActionId:actionId messageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
-
-    //TODO remove this
-//    NSString* jsonString = [[NSString alloc] initWithData:payloadContentJsonData encoding:NSUTF8StringEncoding];
-//    NSLog(@"Payload is: '%@'", jsonString);
-//
-//    //TODO remove
-//    NSMutableString *result = [NSMutableString string];
-//    const char *bytes = [payloadContentJsonData bytes];
-//    for (int i = 0; i < [payloadContentJsonData length]; i++)
-//    {
-//        [result appendFormat:@"%02hhx ", (unsigned char)bytes[i]];
-//    }
-//    NSLog(@"Payload bytes are: %@", result);
+    [self sendMessageWithMessageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
 }
 
+// Low-level shutdown of the chatsession; invalidates session resource.
 -(void) closeChat {
     NSLog(@"Shutting down chat Session..");
     self.activeChannelId = nil;
@@ -464,17 +516,17 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self.ninchatSession.delegate ninchatDidEndChatSession:self.ninchatSession];
 }
 
+// High-level chat ending; sends channel metadata and then closes session.
 -(void) finishChat:(NSNumber* _Nullable)rating {
     NSCAssert(self.session != nil, @"No chat session");
 
     NSLog(@"finishChat: %@", rating);
 
     if (rating != nil) {
-        long actionId = self.nextActionId;
         NSDictionary* payloadDict = @{@"data": @{@"rating": rating}};
 
         __weak typeof(self) weakSelf = self;
-        [self sendMessageWithActionId:actionId messageType:@"ninchat.com/metadata" payloadDict:payloadDict completion:^(NSError* error) {
+        [self sendMessageWithMessageType:@"ninchat.com/metadata" payloadDict:payloadDict completion:^(NSError* error) {
             [weakSelf closeChat];
         }];
     } else {
@@ -589,6 +641,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [self queueUpdated:event params:params];
     } else if ([event isEqualToString:@"channel_updated"]) {
         [self channelUpdated:params];
+    } else if ([event isEqualToString:@"ice_begun"]) {
+        [self iceBegun:params];
     }
 }
 

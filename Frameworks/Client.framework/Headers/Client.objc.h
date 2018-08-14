@@ -14,6 +14,7 @@
 @class ClientEvent;
 @class ClientEvents;
 @class ClientJSON;
+@class ClientObjects;
 @class ClientPayload;
 @class ClientProps;
 @class ClientSession;
@@ -57,6 +58,7 @@
 - (BOOL)visitBool:(NSString*)p0 p1:(BOOL)p1 error:(NSError**)error;
 - (BOOL)visitNumber:(NSString*)p0 p1:(double)p1 error:(NSError**)error;
 - (BOOL)visitObject:(NSString*)p0 p1:(ClientProps*)p1 error:(NSError**)error;
+- (BOOL)visitObjectArray:(NSString*)p0 p1:(ClientObjects*)p1 error:(NSError**)error;
 - (BOOL)visitString:(NSString*)p0 p1:(NSString*)p1 error:(NSError**)error;
 - (BOOL)visitStringArray:(NSString*)p0 p1:(ClientStrings*)p1 error:(NSError**)error;
 @end
@@ -111,6 +113,17 @@
 - (instancetype)init:(NSString*)s;
 @end
 
+@interface ClientObjects : NSObject <goSeqRefInterface> {
+}
+@property(strong, readonly) id _ref;
+
+- (instancetype)initWithRef:(id)ref;
+- (instancetype)init;
+- (ClientProps*)get:(long)i;
+- (long)length;
+- (NSString*)string;
+@end
+
 @interface ClientPayload : NSObject <goSeqRefInterface> {
 }
 @property(strong, readonly) id _ref;
@@ -134,6 +147,7 @@
 - (BOOL)getFloat:(NSString*)key val:(double*)val error:(NSError**)error;
 - (BOOL)getInt:(NSString*)key val:(long*)val error:(NSError**)error;
 - (ClientProps*)getObject:(NSString*)key error:(NSError**)error;
+- (ClientObjects*)getObjectArray:(NSString*)key error:(NSError**)error;
 - (NSString*)getString:(NSString*)key error:(NSError**)error;
 - (ClientStrings*)getStringArray:(NSString*)key error:(NSError**)error;
 - (void)setBool:(NSString*)key val:(BOOL)val;
@@ -154,7 +168,7 @@
 - (instancetype)init;
 - (void)close;
 - (BOOL)open:(NSError**)error;
-- (BOOL)send:(ClientProps*)params payload:(ClientPayload*)payload error:(NSError**)error;
+- (BOOL)send:(ClientProps*)params payload:(ClientPayload*)payload actionId:(int64_t*)actionId error:(NSError**)error;
 - (void)setAddress:(NSString*)address;
 - (void)setOnClose:(id<ClientCloseHandler>)callback;
 - (void)setOnConnActive:(id<ClientConnActiveHandler>)callback;
@@ -251,6 +265,7 @@ FOUNDATION_EXPORT ClientStrings* ClientNewStrings(void);
 - (BOOL)visitBool:(NSString*)p0 p1:(BOOL)p1 error:(NSError**)error;
 - (BOOL)visitNumber:(NSString*)p0 p1:(double)p1 error:(NSError**)error;
 - (BOOL)visitObject:(NSString*)p0 p1:(ClientProps*)p1 error:(NSError**)error;
+- (BOOL)visitObjectArray:(NSString*)p0 p1:(ClientObjects*)p1 error:(NSError**)error;
 - (BOOL)visitString:(NSString*)p0 p1:(NSString*)p1 error:(NSError**)error;
 - (BOOL)visitStringArray:(NSString*)p0 p1:(ClientStrings*)p1 error:(NSError**)error;
 @end

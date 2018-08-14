@@ -13,7 +13,7 @@
 /** Parses a ClientProps object via its -accept method. */
 @interface NINClientPropsParser : NSObject <ClientPropVisitor>
 
-/** Parsed properties. The value types will be NSString, NSNumber, ClientProps or ClientStrings. */
+/** Parsed properties. The value types will be NSString, NSNumber, ClientProps, ClientObjects or ClientStrings. */
 @property (nonatomic, strong) NSDictionary<NSString*, id>* properties;
 
 @end

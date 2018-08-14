@@ -23,7 +23,7 @@
  * Implemeent this if you want to receive debug/error logging from the SDK.
  */
 @optional
--(void) log:(NSString*)format, ...;
+-(void) log:(NSString*_Nonnull)format, ...;
 
 /**
  * Indicates that the Ninchat SDK UI has completed its chat and would like
