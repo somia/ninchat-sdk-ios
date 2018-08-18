@@ -15,8 +15,21 @@
 @class NINChannelMessage;
 @class NINChatSession;
 
-// Notifications emitted by this class.
-extern NSString* _Nonnull const kChannelClosedNotification;
+/** Notification that indicates the current channel was closed. */
+extern NSString* _Nonnull const kNINChannelClosedNotification;
+
+/**
+ * Notification that indicates a WebRTC signaling message was received.
+ * Userinfo 'messageType' contains a kNINMessageTypeWebRTC* value, 'payload'
+ * contains the message payload.
+ */
+extern NSString* _Nonnull const kNINWebRTCSignalNotification;
+
+/** Message type for WebRTC signaling: 'ICE candidate' */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate;
+
+/** Message type for WebRTC signaling: 'answer'. */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCAnswer;
 
 /**
  This class takes care of the chat session and all related state.
@@ -54,7 +67,7 @@ extern NSString* _Nonnull const kChannelClosedNotification;
 -(void) joinQueueWithId:(NSString* _Nonnull)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
--(void) beginICEWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) initWebRTC:(initWebRTCCallbackBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;

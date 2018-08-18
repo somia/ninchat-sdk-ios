@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class RTCICEServer;
+
 /**
  * Represents a (STUN / TURN) server.
  */
@@ -18,5 +20,7 @@
 @property (nonatomic, strong, readonly) NSString* credential;
 
 +(NINWebRTCServerInfo*) serverWithURL:(NSString*)url username:(NSString*)username credential:(NSString*)credential;
+
+-(RTCICEServer*) iceServer;
 
 @end

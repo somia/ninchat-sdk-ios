@@ -105,6 +105,7 @@
                     </view>
                     <connections>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.QueueToRating" id="pBT-dj-VvT"/>
+                        <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="fKm-q7-mGV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ude-D9-dhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -401,7 +402,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="startChatButton" destination="mti-Jm-Fuc" id="vcJ-0S-12d"/>
-                        <segue destination="pON-LE-Vqx" kind="show" identifier="MessagesToVideoCall" id="9JY-MM-Aj9"/>
                         <segue destination="XUt-Du-Jff" kind="show" identifier="ninchatsdk.InitialToQueue" id="o6R-dU-FLh"/>
                     </connections>
                 </viewController>
@@ -450,56 +450,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqJ-bv-bUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="916"/>
-        </scene>
-        <!--Room Name View Controller-->
-        <scene sceneID="9lo-zG-IJZ">
-            <objects>
-                <viewController id="pON-LE-Vqx" customClass="NINRoomNameViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ZnC-0m-spC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Room name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jwd-Ap-Ut7">
-                                <rect key="frame" x="139.5" y="170" width="96" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="NinchatTest" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lLW-UV-RSK">
-                                <rect key="frame" x="40" y="241" width="295" height="30"/>
-                                <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ah0-54-DAl">
-                                <rect key="frame" x="143" y="321" width="88" height="30"/>
-                                <state key="normal" title="VIDEO CHAT"/>
-                                <connections>
-                                    <action selector="chatButtonPressed:" destination="pON-LE-Vqx" eventType="touchUpInside" id="HuB-zK-VIm"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="Jwd-Ap-Ut7" firstAttribute="top" secondItem="aaC-FZ-anS" secondAttribute="top" constant="150" id="8DE-E0-oBe"/>
-                            <constraint firstItem="ah0-54-DAl" firstAttribute="centerX" secondItem="ZnC-0m-spC" secondAttribute="centerX" id="9s4-ek-GM8"/>
-                            <constraint firstItem="aaC-FZ-anS" firstAttribute="trailing" secondItem="lLW-UV-RSK" secondAttribute="trailing" constant="40" id="D7E-qB-CBc"/>
-                            <constraint firstItem="lLW-UV-RSK" firstAttribute="leading" secondItem="aaC-FZ-anS" secondAttribute="leading" constant="40" id="EX7-FM-d17"/>
-                            <constraint firstItem="ah0-54-DAl" firstAttribute="top" secondItem="lLW-UV-RSK" secondAttribute="bottom" constant="50" id="Qz0-Lf-bAI"/>
-                            <constraint firstItem="Jwd-Ap-Ut7" firstAttribute="centerX" secondItem="ZnC-0m-spC" secondAttribute="centerX" id="ktf-Pz-m8h"/>
-                            <constraint firstItem="lLW-UV-RSK" firstAttribute="top" secondItem="Jwd-Ap-Ut7" secondAttribute="bottom" constant="50" id="sha-Yh-tSR"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="aaC-FZ-anS"/>
-                    </view>
-                    <connections>
-                        <outlet property="roomNameInput" destination="lLW-UV-RSK" id="7Zy-oy-qbc"/>
-                        <segue destination="8ul-sn-uv2" kind="show" identifier="RoomNameToVideoCall" id="AGU-Xf-JNk"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Nie-gy-wYx" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="262" y="916"/>
+            <point key="canvasLocation" x="1057" y="877"/>
         </scene>
     </scenes>
     <resources>

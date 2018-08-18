@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class NINWebRTCClient;
+
 @interface NINVideoCallViewController : UIViewController
 
-@property (nonatomic, strong) NSString* roomName;
+@property (nonatomic, strong) NINWebRTCClient* webrtcClient;
 
 @end

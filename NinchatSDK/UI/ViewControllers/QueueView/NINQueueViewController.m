@@ -11,8 +11,12 @@
 #import "NINChatViewController.h"
 #import "NINUtils.h"
 #import "NINRatingViewController.h"
+//TODO remove here
+#import "NINVideoCallViewController.h"
 
 static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating";
+static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
+
 
 @interface NINQueueViewController ()
 
@@ -26,6 +30,9 @@ static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating"
     if ([segue.identifier isEqualToString:kSegueIdQueueToRating]) {
         NINRatingViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
+    } else if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
+        NINVideoCallViewController* vc = segue.destinationViewController;
+        vc.webrtcClient = sender;
     }
 }
 
@@ -52,17 +59,23 @@ static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating"
         NSLog(@"Channel joined - showing the chat UI");
 
         //TODO remove
-        [weakSelf.sessionManager beginICEWithCompletion:^(NSError* error) {
-            NSLog(@"ICE info retrieved with error: %@", error);
+        [weakSelf.sessionManager initWebRTC:^(NSError* error, NINWebRTCClient* client) {
+            NSLog(@"ICE info retrieved with error: %@, client: %@", error, client);
+
+            if (error == nil) {
+                //TODO remove, and show the chat view instead.
+                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
+            }
         }];
 
-        NINChatViewController* vc = [NINChatViewController new];
-        vc.sessionManager = weakSelf.sessionManager;
-        [weakSelf.navigationController pushViewController:vc animated:YES];
+
+//        NINChatViewController* vc = [NINChatViewController new];
+//        vc.sessionManager = weakSelf.sessionManager;
+//        [weakSelf.navigationController pushViewController:vc animated:YES];
     }];
 
     // Listen to channel closed -events
-    fetchNotification(kChannelClosedNotification, ^BOOL(NSNotification* note) {
+    fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
         NSLog(@"Channel closed - showing rating view.");
 
         // First pop the chat view

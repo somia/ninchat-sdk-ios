@@ -9,8 +9,6 @@
 // Import the ported Go SDK framework
 @import Client;
 
-#import <stdatomic.h>
-
 #import "NINSessionManager.h"
 #import "NINUtils.h"
 #import "NINQueue.h"
@@ -19,6 +17,7 @@
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
 #import "NINWebRTCServerInfo.h"
+#import "NINWebRTCClient.h"
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -26,8 +25,12 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
 
-/** Notification name for channel being closed or suspended. */
-NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
+NSString* _Nonnull const kNINWebRTCSignalNotification = @"ninchatsdk.NWebRTCSignalNotification";
+NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
+
+// WebRTC related message types
+NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
+NSString* _Nonnull const kNINMessageTypeWebRTCAnswer = @"ninchat.com/rtc/answer";
 
 /**
  This implementation is written against the following API specification:
@@ -35,9 +38,6 @@ NSString* const kChannelClosedNotification = @"ninchatsdk.ChannelClosedNotificat
  https://github.com/ninchat/ninchat-api/blob/v2/api.md
  */
 @interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
-
-    /** Sequence for action_id:s in chat actions. */
-    atomic_long actionIdSequence;
 
     /** Mutable queue list. */
     NSMutableArray<NINQueue*>* _queues;
@@ -220,7 +220,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     if (closed || suspended) {
-        postNotification(kChannelClosedNotification, @{});
+        postNotification(kNINChannelClosedNotification, @{});
     }
 }
 
@@ -287,7 +287,10 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
     NSLog(@"Parsed TURN servers: %@", turnServerArray);
 
-    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    // Create new WebRTC client based on these ICE servers
+    NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:self stunServers:stunServerArray turnServers:turnServerArray];
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId), @"client": client});
 }
 
 /*
@@ -310,6 +313,15 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     NSLog(@"Got message_type: %@", messageType);
+
+    if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
+        [messageType isEqualToString:kNINMessageTypeWebRTCAnswer]) {
+        for (int i = 0; i < payload.length; i++) {
+            // Handle a WebRTC signaling message
+            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": [payload get:i]});
+        }
+        return;
+    }
 
     if (![messageType isEqualToString:@"ninchat.com/text"]) {
         // Ignore all but text messages
@@ -442,7 +454,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 // Retrieves the WebRTC ICE STUN/TURN server details
--(void) beginICEWithCompletion:(callbackWithErrorBlock _Nonnull)completion {
+-(void) initWebRTC:(initWebRTCCallbackBlock _Nonnull)completion {
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"begin_ice"];
 
@@ -451,11 +463,26 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self.session send:params payload:nil actionId:&actionId error:&error];
     if (error != nil) {
         NSLog(@"Error calling begin_ice: %@", error);
-        completion(error);
+        completion(error, nil);
     }
 
     // When this action completes, trigger the completion block callback
-    connectCallbackToActionCompletion(actionId, completion);
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+
+        if (eventActionId.longValue == actionId) {
+            NSError* error = note.userInfo[@"error"];
+            NINWebRTCClient* client = note.userInfo[@"client"];
+
+            if (completion != nil) {
+                completion(error, client);
+            }
+
+            return YES;
+        }
+
+        return NO;
+    });
 }
 
 // Sends a message to the activa channel. Active channel must exist.
@@ -694,7 +721,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     self = [super init];
 
     if (self != nil) {
-        actionIdSequence = 1;
         _queues = [NSMutableArray array];
         _channelMessages = [NSMutableArray array];
     }

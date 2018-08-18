@@ -5,7 +5,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 def all_pods
     #pod 'AppRTC', path: '.'
-    pod 'AppRTC', '~> 1.0'
+    pod 'AppRTC', '~> 1.0' #TODO drop this and replace it with its dependencies!
     pod 'MXRMessenger', '~> 0.2'
 end
 
