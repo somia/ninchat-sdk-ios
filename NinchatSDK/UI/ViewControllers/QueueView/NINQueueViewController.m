@@ -17,7 +17,6 @@
 static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating";
 static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
 
-
 @interface NINQueueViewController ()
 
 @end

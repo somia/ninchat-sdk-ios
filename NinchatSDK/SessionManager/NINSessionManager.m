@@ -31,6 +31,7 @@ NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotifi
 // WebRTC related message types
 NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
 NSString* _Nonnull const kNINMessageTypeWebRTCAnswer = @"ninchat.com/rtc/answer";
+NSString* _Nonnull const kNINMessageTypeWebRTCOffer = @"ninchat.com/rtc/offer";
 
 /**
  This implementation is written against the following API specification:
@@ -500,6 +501,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.activeChannelId];
 
+    NSLog(@"Sending message with type '%@' and payload: %@", messageType, payloadDict);
+    
     NSError* error;
     NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadDict options:0 error:&error];
     if (error != nil) {

@@ -14,6 +14,8 @@
 #import <libjingle_peerconnection/RTCMediaConstraints.h>
 #import <libjingle_peerconnection/RTCMediaStream.h>
 #import <libjingle_peerconnection/RTCPair.h>
+#import <libjingle_peerconnection/RTCSessionDescription.h>
+#import <libjingle_peerconnection/RTCICECandidate.h>
 
 #import "NINSessionManager.h"
 #import "NINWebRTCClient.h"
@@ -107,7 +109,22 @@
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         NSLog(@"Got WebRTC signaling message: %@", note);
 
-        //TODO handle signaling msg
+        NSDictionary* payload = note.userInfo[@"payload"];
+        NSLog(@"Signaling message payload: %@", payload);
+
+        if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
+            NSLog(@"Adding an ICE candidate");
+
+            RTCICECandidate* candidate = [[RTCICECandidate alloc] initWithMid:payload[@"id"] index:[payload[@"label"] integerValue] sdp:payload[@"candidate"]];
+            NSLog(@"candidate: %@", candidate);
+            [self.peerConnection addICECandidate:candidate];
+        } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
+            NSLog(@"Setting remote session description");
+
+            RTCSessionDescription* description = [[RTCSessionDescription alloc] initWithType:@"answer" sdp:payload[@"sdp"]];
+            NSLog(@"description: %@", description);
+            [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:description];
+        }
 
         return false;
     });
@@ -147,9 +164,12 @@
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate {
     NSLog(@"WebRTC: got ICE candidate: %@", candidate);
-    //TODO signal the channel about the candidate: https://github.com/ninchat/ninchat-api/blob/audience-channel/api.md#ninchatcomrtc
 
-
+    //TODO do we need all of these or just "candidate": key ?
+    NSDictionary* candidateDict = @{@"type": @"candidate", @"label": @(candidate.sdpMLineIndex), @"id": candidate.sdpMid, @"candidate": candidate.sdp};
+    [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCIceCandidate payloadDict:@{@"candidate": candidateDict} completion:^(NSError* error) {
+        NSLog(@"WebRTC Message send: %@", error);
+    }];
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCICEConnectionState)newState {
@@ -187,8 +207,19 @@
         }
 
         [self.peerConnection setLocalDescriptionWithDelegate:self sessionDescription:sdp];
-//        [self sendSignalingMessage:message];
-        //TODO signal this using https://github.com/ninchat/ninchat-api/blob/audience-channel/api.md#ninchatcomrtc ?
+
+        NSLog(@"WebRTC: SDP type: %@", sdp.type);
+
+        if ([sdp.type isEqualToString:@"offer"]) {
+            // Send signaling message about the offer
+            NSLog(@"Sending SDP description: %@", sdp.description);
+            
+            [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCOffer payloadDict:@{@"sdp": sdp.description} completion:^(NSError* error) {
+                NSLog(@"WebRTC Message send: %@", error);
+            }];
+        } else {
+            NSLog(@"Unknown SDP type!");
+        }
     });
 }
 

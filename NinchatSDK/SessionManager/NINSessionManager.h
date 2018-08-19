@@ -31,6 +31,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate;
 /** Message type for WebRTC signaling: 'answer'. */
 extern NSString* _Nonnull const kNINMessageTypeWebRTCAnswer;
 
+/** Message type for WebRTC signaling: 'offer'. */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCOffer;
+
 /**
  This class takes care of the chat session and all related state.
  */
@@ -68,6 +71,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCAnswer;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
 -(void) initWebRTC:(initWebRTCCallbackBlock _Nonnull)completion;
+
+/** Sends a message to the activa channel. Active channel must exist. */
+-(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
