@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NINChatBubbleCell" rowHeight="141" id="k9S-lx-nTH">
+            <rect key="frame" x="0.0" y="0.0" width="512" height="141"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="k9S-lx-nTH" id="yDM-3n-XJ5">
+                <rect key="frame" x="0.0" y="0.0" width="512" height="140.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="f9O-t5-M7M">
+                        <rect key="frame" x="50" y="0.0" width="412" height="141"/>
+                    </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B9w-uE-UUn" userLabel="Left avatar container">
+                        <rect key="frame" x="0.0" y="0.0" width="50" height="140.5"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_face_happy" translatesAutoresizingMaskIntoConstraints="NO" id="5wH-wE-D5T">
+                                <rect key="frame" x="5" y="50.5" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="5wH-wE-D5T" secondAttribute="height" id="zjq-ox-Xmq"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="5wH-wE-D5T" firstAttribute="centerY" secondItem="B9w-uE-UUn" secondAttribute="centerY" id="3TM-78-bn5"/>
+                            <constraint firstItem="5wH-wE-D5T" firstAttribute="width" secondItem="B9w-uE-UUn" secondAttribute="width" multiplier="0.8" id="NdM-ff-g4s"/>
+                            <constraint firstItem="5wH-wE-D5T" firstAttribute="centerX" secondItem="B9w-uE-UUn" secondAttribute="centerX" id="h7H-UD-Qsv"/>
+                            <constraint firstAttribute="width" constant="50" id="uoH-1d-b8W"/>
+                        </constraints>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VDb-fh-S7z" userLabel="Right avatar container">
+                        <rect key="frame" x="462" y="0.0" width="50" height="140.5"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_face_sad" translatesAutoresizingMaskIntoConstraints="NO" id="afl-L6-jcA">
+                                <rect key="frame" x="5" y="50.5" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="afl-L6-jcA" secondAttribute="height" id="QlZ-sP-CdQ"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="50" id="Gur-SR-UDJ"/>
+                            <constraint firstItem="afl-L6-jcA" firstAttribute="centerX" secondItem="VDb-fh-S7z" secondAttribute="centerX" id="JLV-hh-Ga1"/>
+                            <constraint firstItem="afl-L6-jcA" firstAttribute="width" secondItem="VDb-fh-S7z" secondAttribute="width" multiplier="0.8" id="aYx-TT-Xyz"/>
+                            <constraint firstItem="afl-L6-jcA" firstAttribute="centerY" secondItem="VDb-fh-S7z" secondAttribute="centerY" id="lLf-fu-ECM"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="f9O-t5-M7M" firstAttribute="leading" secondItem="B9w-uE-UUn" secondAttribute="trailing" id="9kH-id-EYn"/>
+                    <constraint firstAttribute="bottom" secondItem="B9w-uE-UUn" secondAttribute="bottom" id="HKm-oK-1fl"/>
+                    <constraint firstItem="B9w-uE-UUn" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="J44-eG-BLm"/>
+                    <constraint firstItem="f9O-t5-M7M" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="Mhw-Xd-8V6"/>
+                    <constraint firstAttribute="bottom" secondItem="VDb-fh-S7z" secondAttribute="bottom" id="Ry4-Rt-VJg"/>
+                    <constraint firstItem="VDb-fh-S7z" firstAttribute="leading" secondItem="f9O-t5-M7M" secondAttribute="trailing" id="VAt-hf-ftt"/>
+                    <constraint firstAttribute="trailing" secondItem="VDb-fh-S7z" secondAttribute="trailing" id="Yib-Qj-wuW"/>
+                    <constraint firstItem="B9w-uE-UUn" firstAttribute="leading" secondItem="yDM-3n-XJ5" secondAttribute="leading" id="ZRF-jA-2Tg"/>
+                    <constraint firstAttribute="bottom" secondItem="f9O-t5-M7M" secondAttribute="bottom" id="e5A-3U-1OB"/>
+                    <constraint firstItem="VDb-fh-S7z" firstAttribute="leading" secondItem="f9O-t5-M7M" secondAttribute="trailing" id="ehl-VU-iCo"/>
+                    <constraint firstItem="VDb-fh-S7z" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="uSV-d6-m9q"/>
+                </constraints>
+            </tableViewCellContentView>
+            <point key="canvasLocation" x="62" y="-26.5"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="chat_bubble_left" width="283" height="267"/>
+        <image name="icon_face_happy" width="166" height="160"/>
+        <image name="icon_face_sad" width="160" height="156"/>
+    </resources>
+</document>

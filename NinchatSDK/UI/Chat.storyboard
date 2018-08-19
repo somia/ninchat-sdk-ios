@@ -104,13 +104,31 @@
                         <viewLayoutGuide key="safeArea" id="yzb-y7-ihz"/>
                     </view>
                     <connections>
-                        <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.QueueToRating" id="pBT-dj-VvT"/>
-                        <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="fKm-q7-mGV"/>
+                        <segue destination="bZ9-oP-wEd" kind="show" identifier="ninchatsdk.segue.QueueToChat" id="LLf-7w-9Uz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ude-D9-dhZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1056.8" y="148.87556221889056"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="5s0-Qq-Gee">
+            <objects>
+                <viewController id="bZ9-oP-wEd" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
+                    </view>
+                    <connections>
+                        <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="V96-PI-mkd"/>
+                        <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N5V-LR-dPx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1841" y="149"/>
         </scene>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">
@@ -284,7 +302,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xNA-rk-MTU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1796" y="143.47826086956522"/>
+            <point key="canvasLocation" x="2598" y="149"/>
         </scene>
         <!--Initial View Controller-->
         <scene sceneID="XHh-YP-k7w">
@@ -450,7 +468,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqJ-bv-bUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1057" y="877"/>
+            <point key="canvasLocation" x="1841" y="897"/>
         </scene>
     </scenes>
     <resources>
