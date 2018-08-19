@@ -10,12 +10,12 @@
 #import "NINSessionManager.h"
 #import "NINChatViewController.h"
 #import "NINUtils.h"
-#import "NINRatingViewController.h"
+#import "NINChatViewController.h"
+//#import "NINRatingViewController.h"
 //TODO remove here
-#import "NINVideoCallViewController.h"
+//#import "NINVideoCallViewController.h"
 
-static NSString* const kSegueIdQueueToRating = @"ninchatsdk.segue.QueueToRating";
-static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
+static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 @interface NINQueueViewController ()
 
@@ -26,13 +26,19 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 #pragma mark - From UIViewController
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdQueueToChat]) {
+        NINChatViewController* vc = segue.destinationViewController;
+        vc.sessionManager = self.sessionManager;
+    }
+
+    /*
     if ([segue.identifier isEqualToString:kSegueIdQueueToRating]) {
         NINRatingViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
     } else if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
         NINVideoCallViewController* vc = segue.destinationViewController;
         vc.webrtcClient = sender;
-    }
+    }*/
 }
 
 #pragma mark - Lifecycle etc.
@@ -57,34 +63,20 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
-        //TODO remove
-        [weakSelf.sessionManager initWebRTC:^(NSError* error, NINWebRTCClient* client) {
-            NSLog(@"ICE info retrieved with error: %@, client: %@", error, client);
 
-            if (error == nil) {
-                //TODO remove, and show the chat view instead.
-                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
-            }
-        }];
+//        //TODO remove
+//        [weakSelf.sessionManager initWebRTC:^(NSError* error, NINWebRTCClient* client) {
+//            NSLog(@"ICE info retrieved with error: %@, client: %@", error, client);
+//
+//            if (error == nil) {
+//                //TODO remove, and show the chat view instead.
+//                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
+//            }
+//        }];
 
 
-//        NINChatViewController* vc = [NINChatViewController new];
-//        vc.sessionManager = weakSelf.sessionManager;
-//        [weakSelf.navigationController pushViewController:vc animated:YES];
+        [self performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
-
-    // Listen to channel closed -events
-    fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
-        NSLog(@"Channel closed - showing rating view.");
-
-        // First pop the chat view
-        [weakSelf.navigationController popViewControllerAnimated:YES];
-
-        // Show the rating view
-        [weakSelf performSegueWithIdentifier:kSegueIdQueueToRating sender:nil];
-        
-        return YES;
-    });
 }
 
 @end

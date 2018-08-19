@@ -11,6 +11,9 @@
 #import "NINUtils.h"
 #import "NINChannelMessage.h"
 
+static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
+static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
+
 @interface NINChatViewController ()
 
 /** Reference to the notifications observer that listens to new message -notifications. */
@@ -92,6 +95,19 @@
 //        [weakSelf.cellFactory updateTableNode:weakSelf.node.tableNode animated:YES withInsertions:@[[NSIndexPath indexPathForRow:0 inSection:0]] deletions:nil reloads:nil completion:nil];
 
         return NO;
+    });
+
+    // Listen to channel closed -events
+    fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
+        NSLog(@"Channel closed - showing rating view.");
+
+        // First pop the chat view
+        [weakSelf.navigationController popToViewController:self animated:YES];
+
+        // Show the rating view
+        [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
+
+        return YES;
     });
 }
 

@@ -118,7 +118,40 @@
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tZn-zd-Dxr" customClass="NINEmbeddableNavigationBar">
+                                <rect key="frame" x="0.0" y="20" width="375" height="60"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="60" id="AYG-g6-PSb"/>
+                                    <constraint firstAttribute="height" constant="60" id="aY5-Cb-FLp"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view container" customClass="NINEmbeddableChatView">
+                                <rect key="frame" x="0.0" y="80" width="375" height="487"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Input controls container">
+                                <rect key="frame" x="0.0" y="567" width="375" height="100"/>
+                                <color key="backgroundColor" red="0.2156862745" green="0.63137254899999995" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="YKl-pu-wGd"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="tZn-zd-Dxr" secondAttribute="trailing" id="A63-zf-iEA"/>
+                            <constraint firstItem="brw-f0-DOL" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="IYK-k8-alS"/>
+                            <constraint firstItem="Kml-pm-EfW" firstAttribute="trailing" secondItem="pew-Xu-b1Q" secondAttribute="trailing" id="Utg-Kn-AfO"/>
+                            <constraint firstItem="Kml-pm-EfW" firstAttribute="bottom" secondItem="pew-Xu-b1Q" secondAttribute="bottom" id="a2L-EI-w5F"/>
+                            <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="brw-f0-DOL" secondAttribute="trailing" id="fc7-oh-dei"/>
+                            <constraint firstItem="tZn-zd-Dxr" firstAttribute="top" secondItem="pew-Xu-b1Q" secondAttribute="top" id="fuB-Kv-MIW"/>
+                            <constraint firstItem="Kml-pm-EfW" firstAttribute="top" secondItem="brw-f0-DOL" secondAttribute="bottom" id="iXd-JE-7hS"/>
+                            <constraint firstItem="Kml-pm-EfW" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="iZn-ai-eoG"/>
+                            <constraint firstItem="brw-f0-DOL" firstAttribute="top" secondItem="tZn-zd-Dxr" secondAttribute="bottom" id="lcb-j5-ebD"/>
+                            <constraint firstItem="tZn-zd-Dxr" firstAttribute="leading" secondItem="wrn-IT-ZNh" secondAttribute="leading" id="n46-JX-rhi"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
                     </view>
                     <connections>
@@ -128,7 +161,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="N5V-LR-dPx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1841" y="149"/>
+            <point key="canvasLocation" x="1840.8" y="148.87556221889056"/>
         </scene>
         <!--Rating View Controller-->
         <scene sceneID="AoA-TJ-9Dd">

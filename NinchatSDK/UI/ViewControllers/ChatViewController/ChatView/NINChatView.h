@@ -11,3 +11,8 @@
 @interface NINChatView : UIView
 
 @end
+
+/** Storyboard/xib-embeddable subclass of NINChatView */
+@interface NINEmbeddableChatView : UIView
+
+@end
