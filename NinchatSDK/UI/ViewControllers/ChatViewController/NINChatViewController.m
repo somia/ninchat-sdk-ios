@@ -10,21 +10,25 @@
 #import "NINSessionManager.h"
 #import "NINUtils.h"
 #import "NINChannelMessage.h"
+#import "NINWebRTCClient.h"
+#import "NINVideoCallViewController.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
 
 @interface NINChatViewController ()
 
-/** Reference to the notifications observer that listens to new message -notifications. */
+// Reference to the notifications observer that listens to new message -notifications.
 @property (nonatomic, strong) id<NSObject> messagesObserver;
+
+// NSNotificationCenter observer for WebRTC signaling events from session manager
+@property (nonatomic, strong) id<NSObject> signalingObserver;
 
 @end
 
 @implementation NINChatViewController
 
 #pragma mark - Private methods
-
 
 -(void) sendButtonPressed:(id)sender {
     NSString* text = [self.toolbar clearText];
@@ -63,25 +67,16 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 //    return [self.sessionManager.channelMessages[row].timestamp timeIntervalSince1970];
 //}
 
-#pragma mark - Lifecycle etc.
+#pragma mark - From UIViewController
 
--(void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-/*
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [self.sessionManager sendMessage:@"Ninchat iOS SDK says hi" completion:^(NSError* error) {
-            if (error != nil) {
-                NSLog(@"Error sending message: %@", error);
-                return;
-            }
-
-            NSLog(@"Message sent.");
-        }];
-    });
-*/
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
+        NINVideoCallViewController* vc = segue.destinationViewController;
+        vc.webrtcClient = sender;
+    }
 }
+
+#pragma mark - Lifecycle etc.
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -91,12 +86,40 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
 
-        // Insert the new message chat bubble as the newest entry
-//        [weakSelf.cellFactory updateTableNode:weakSelf.node.tableNode animated:YES withInsertions:@[[NSIndexPath indexPathForRow:0 inSection:0]] deletions:nil reloads:nil completion:nil];
-
         return NO;
     });
 
+    // Start listening to WebRTC signaling messages from the chat session manager
+    self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
+        if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
+            NSLog(@"Got WebRTC offer - initializing webrtc for video call");
+
+            NSData* payloadData = note.userInfo[@"payload"];
+            NSError* jsonError = nil;
+            NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:payloadData options:kNilOptions error:&jsonError];
+            if (jsonError != nil) {
+                NSLog(@"Failed to parse JSON: %@", jsonError);
+                return NO;
+            }
+
+            NSLog(@"Parsed payloadDict: %@", payloadDict);
+
+            // Fetch our STUN / TURN server information
+            [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
+
+                // Create a WebRTC client for the video call
+                NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
+
+                
+
+                // Open the video call view
+                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
+            }];
+        }
+
+        return NO;
+    });
+    
     // Listen to channel closed -events
     fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
         NSLog(@"Channel closed - showing rating view.");
@@ -132,23 +155,5 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 -(void) dealloc {
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
-
-//
-//-(instancetype) init {
-////    MXRMessengerInputToolbar* toolbar = [[MXRMessengerInputToolbar alloc] initWithFont:[UIFont systemFontOfSize:16.0f] placeholder:@"Type a message" tintColor:[UIColor mxr_fbMessengerBlue]];
-////    self = [super initWithToolbar:toolbar];
-//    if (self != nil) {
-//        self.title = @"chat test";
-//
-//        // add extra buttons to toolbar
-////        MXRMessengerIconButtonNode* addPhotosBarButtonButtonNode = [MXRMessengerIconButtonNode buttonWithIcon:[[MXRMessengerPlusIconNode alloc] init] matchingToolbar:self.toolbar];
-////        [addPhotosBarButtonButtonNode addTarget:self action:@selector(tapAddPhotos:) forControlEvents:ASControlNodeEventTouchUpInside];
-////        self.toolbar.leftButtonsNode = addPhotosBarButtonButtonNode;
-//
-//        [self.toolbar.defaultSendButton addTarget:self action:@selector(sendButtonPressed:) forControlEvents:ASControlNodeEventTouchUpInside];
-//    }
-//
-//    return self;
-//}
 
 @end

@@ -288,10 +288,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
     NSLog(@"Parsed TURN servers: %@", turnServerArray);
 
-    // Create new WebRTC client based on these ICE servers
-    NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:self stunServers:stunServerArray turnServers:turnServerArray];
-
-    postNotification(kActionNotification, @{@"action_id": @(actionId), @"client": client});
+    postNotification(kActionNotification, @{@"action_id": @(actionId), @"stunServers": stunServerArray, @"turnServers": turnServerArray});
 }
 
 /*
@@ -316,7 +313,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSLog(@"Got message_type: %@", messageType);
 
     if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
-        [messageType isEqualToString:kNINMessageTypeWebRTCAnswer]) {
+        [messageType isEqualToString:kNINMessageTypeWebRTCAnswer] ||
+        [messageType isEqualToString:kNINMessageTypeWebRTCOffer]) {
+
         for (int i = 0; i < payload.length; i++) {
             // Handle a WebRTC signaling message
             postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": [payload get:i]});
@@ -354,9 +353,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
-/* success:
- Event: map[event_id:2 action_id:1 channel_attrs:map[upload:member disclosed:true disclosed_since:1.530691939e+09 name:General owner_id:02eobjtj public:true] channel_id:5npnrkp1009m channel_members:map[02eobjtj:map[user_attrs:map[iconurl:https://ninchat.s3-eu-west-1.amazonaws.com/u/02eobjtj/4vlngbq500lpo info:map[company:Ninchat url:] name:Antti realname:Antti Laakso admin:true connected:true] member_attrs:map[moderator:true operator:true since:1.530691974e+09]] 5i09opdv0049:map[user_attrs:map[info:map[company:QVIK url:https://qvik.fi] name:Matti Dahlbom realname:Matti Dahlbom connected:true iconurl:https://ninchat.s3-eu-west-1.amazonaws.com/u/5i09opdv0049/5i09qdb50049 idle:1.530706564e+09] member_attrs:map[since:1.530693958e+09]] 5nq6hnnb004qs:map[member_attrs:map[since:1.530707382e+09] user_attrs:map[connected:true guest:true]]] event:channel_joined realm_id:5npnrkp1009m]
- */
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
@@ -455,7 +451,37 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 // Retrieves the WebRTC ICE STUN/TURN server details
--(void) initWebRTC:(initWebRTCCallbackBlock _Nonnull)completion {
+-(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion {
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"begin_ice"];
+
+    int64_t actionId;
+    NSError* error = nil;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error calling begin_ice: %@", error);
+        completion(error, nil, nil);
+    }
+
+    // When this action completes, trigger the completion block callback
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+
+        if (eventActionId.longValue == actionId) {
+            NSError* error = note.userInfo[@"error"];
+            NSArray* stunServers = note.userInfo[@"stunServers"];
+            NSArray* turnServers = note.userInfo[@"turnServers"];
+
+            completion(error, stunServers, turnServers);
+            return YES;
+        }
+
+        return NO;
+    });
+}
+
+/*
+-(void) initWebRTCWithOperatingMode:(NINWebRTCClientOperatingMode)operatingMode completionCallback:(initWebRTCCallbackBlock _Nonnull)completion {
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"begin_ice"];
 
@@ -473,11 +499,13 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
         if (eventActionId.longValue == actionId) {
             NSError* error = note.userInfo[@"error"];
-            NINWebRTCClient* client = note.userInfo[@"client"];
+            NSArray* stunServers = note.userInfo[@"stunServers"];
+            NSArray* turnServers = note.userInfo[@"turnServers"];
 
-            if (completion != nil) {
-                completion(error, client);
-            }
+            // Create new WebRTC client based on these ICE servers
+            NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:self operatingMode:operatingMode stunServers:stunServers turnServers:turnServers];
+
+            completion(error, client);
 
             return YES;
         }
@@ -485,6 +513,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return NO;
     });
 }
+*/
 
 // Sends a message to the activa channel. Active channel must exist.
 -(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {

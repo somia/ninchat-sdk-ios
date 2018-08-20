@@ -45,6 +45,10 @@
 		49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CD521295C7F00695F33 /* NINChatBubbleCell.h */; };
 		49721CD821295C7F00695F33 /* NINChatBubbleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CD621295C7F00695F33 /* NINChatBubbleCell.m */; };
 		49721CDA21295CC000695F33 /* NINChatBubbleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 49721CD921295CC000695F33 /* NINChatBubbleCell.xib */; };
+		49721CDE212AF84200695F33 /* RTCSessionDescription+Dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CDC212AF84200695F33 /* RTCSessionDescription+Dictionary.h */; };
+		49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */; };
+		49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */; };
+		49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */; };
 		4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944355208DF33400101DCA /* NinchatSDK.framework */; };
 		49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49944363208DF33400101DCA /* NinchatSDKTests.m */; };
 		49944366208DF33400101DCA /* NinchatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 49944358208DF33400101DCA /* NinchatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -113,6 +117,10 @@
 		49721CD521295C7F00695F33 /* NINChatBubbleCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChatBubbleCell.h; sourceTree = "<group>"; };
 		49721CD621295C7F00695F33 /* NINChatBubbleCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChatBubbleCell.m; sourceTree = "<group>"; };
 		49721CD921295CC000695F33 /* NINChatBubbleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINChatBubbleCell.xib; sourceTree = "<group>"; };
+		49721CDC212AF84200695F33 /* RTCSessionDescription+Dictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RTCSessionDescription+Dictionary.h"; sourceTree = "<group>"; };
+		49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCSessionDescription+Dictionary.m"; sourceTree = "<group>"; };
+		49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RTCICECandidate+Dictionary.h"; sourceTree = "<group>"; };
+		49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCICECandidate+Dictionary.m"; sourceTree = "<group>"; };
 		49944355208DF33400101DCA /* NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944358208DF33400101DCA /* NinchatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDK.h; sourceTree = "<group>"; };
 		49944359208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -230,6 +238,7 @@
 		4957629F20EE1A8700BC39A8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				49721CDB212AF7F200695F33 /* WebRTC */,
 				49140B7C20F27BC900A00EA8 /* NINPrivateTypes.h */,
 				495762A020EE1AC700BC39A8 /* NINUtils.h */,
 				495762A120EE1AE000BC39A8 /* NINUtils.m */,
@@ -273,6 +282,17 @@
 				49721CD921295CC000695F33 /* NINChatBubbleCell.xib */,
 			);
 			path = ChatView;
+			sourceTree = "<group>";
+		};
+		49721CDB212AF7F200695F33 /* WebRTC */ = {
+			isa = PBXGroup;
+			children = (
+				49721CDC212AF84200695F33 /* RTCSessionDescription+Dictionary.h */,
+				49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */,
+				49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */,
+				49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */,
+			);
+			path = WebRTC;
 			sourceTree = "<group>";
 		};
 		4994434B208DF33400101DCA = {
@@ -396,7 +416,9 @@
 				491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */,
 				49721CD121295AEA00695F33 /* NINChatView.h in Headers */,
 				49140B7D20F27BC900A00EA8 /* NINPrivateTypes.h in Headers */,
+				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
+				49721CDE212AF84200695F33 /* RTCSessionDescription+Dictionary.h in Headers */,
 				499443C2208F47EA00101DCA /* NINInitialViewController.h in Headers */,
 				49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */,
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
@@ -566,7 +588,9 @@
 				49140B8820F395A700A00EA8 /* NINQueueViewController.m in Sources */,
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,
+				49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */,
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,
+				49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */,
 				49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */,
 				49721CCC2122F87B00695F33 /* NINWebRTCServerInfo.m in Sources */,
 			);

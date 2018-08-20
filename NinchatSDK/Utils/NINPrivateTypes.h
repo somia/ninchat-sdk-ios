@@ -8,14 +8,21 @@
 #ifndef PrivateTypes_h
 #define PrivateTypes_h
 
-@class NINWebRTCClient;
+@class NINWebRTCServerInfo;
 
 typedef void (^emptyBlock)(void);
 typedef void (^callbackWithErrorBlock)(NSError* _Nullable);
 typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
 typedef void (^fetchSiteConfigCallbackBlock)(NSDictionary* _Nullable, NSError* _Nullable);
-typedef void (^initWebRTCCallbackBlock)(NSError* _Nullable, NINWebRTCClient* _Nullable);
+typedef void (^beginICECallbackBlock)(NSError* _Nullable, NSArray<NINWebRTCServerInfo*>* _Nullable stunServers, NSArray<NINWebRTCServerInfo*>* _Nullable turnServers);
 
+// WebRTC client operating modes
+typedef NS_ENUM(NSInteger, NINWebRTCClientOperatingMode) {
+    NINWebRTCClientOperatingModeCaller,
+    NINWebRTCClientOperatingModeCallee
+};
+
+// Values for chat rating
 typedef NS_ENUM(NSInteger, NINChatRating) {
     // Do not change these values
     kNINChatRatingSad = -1,

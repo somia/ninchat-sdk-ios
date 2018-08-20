@@ -70,10 +70,11 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCOffer;
 -(void) joinQueueWithId:(NSString* _Nonnull)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
--(void) initWebRTC:(initWebRTCCallbackBlock _Nonnull)completion;
+-(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion;
+//-(void) initWebRTCWithOperatingMode:(NINWebRTCClientOperatingMode)operatindMode completionCallback:(initWebRTCCallbackBlock _Nonnull)completion;
 
 /** Sends a message to the activa channel. Active channel must exist. */
--(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
+-(long) sendMessageWithMessageType:(NSString* _Nonnull)messageType payloadDict:(NSDictionary* _Nonnull)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;

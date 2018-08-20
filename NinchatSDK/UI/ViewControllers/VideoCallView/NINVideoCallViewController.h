@@ -12,6 +12,7 @@
 
 @interface NINVideoCallViewController : UIViewController
 
+/** WebRTC client for the video call. */
 @property (nonatomic, strong) NINWebRTCClient* webrtcClient;
 
 @end

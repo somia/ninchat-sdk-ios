@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NINPrivateTypes.h"
+
 @class NINSessionManager;
 @class NINWebRTCServerInfo;
 @class NINWebRTCClient;
@@ -37,7 +39,10 @@
 /** Client delegate for receiving video tracks and other updates. */
 @property (nonatomic, weak) id<NINWebRTCClientDelegate> delegate;
 
+/** Starts the client, with optional SDP (Service Description Protocol) data. */
+-(void) startWithSDP:(NSDictionary*)sdp;
+
 /** Creates a new client. */
-+(instancetype) clientWithSessionManager:(NINSessionManager*)sessionManager stunServers:(NSArray<NINWebRTCServerInfo*>*)stunServers turnServers:(NSArray<NINWebRTCServerInfo*>*)turnServers;
++(instancetype) clientWithSessionManager:(NINSessionManager*)sessionManager operatingMode:(NINWebRTCClientOperatingMode)operatingMode stunServers:(NSArray<NINWebRTCServerInfo*>*)stunServers turnServers:(NSArray<NINWebRTCServerInfo*>*)turnServers;
 
 @end
