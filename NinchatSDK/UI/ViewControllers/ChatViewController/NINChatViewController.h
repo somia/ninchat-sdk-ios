@@ -6,14 +6,14 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "MXRMessengerViewController.h"
+@import UIKit;
 
 @class NINSessionManager;
 
 /**
  * Provides a chat view with message input and chat 'bubbles'.
  */
-@interface NINChatViewController : MXRMessengerViewController
+@interface NINChatViewController : UIViewController
 
 /** Reference to the session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;

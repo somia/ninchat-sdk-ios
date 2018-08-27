@@ -10,7 +10,9 @@
 #import "NINChatBubbleCell.h"
 #import "NINUtils.h"
 
-@interface NINChatView () <UITableViewDelegate, UITableViewDataSource>
+@interface NINChatView () <UITableViewDelegate, UITableViewDataSource> {
+    NSArray<NSIndexPath*>* _zeroIndexPathArray;
+}
 
 @property (nonatomic, strong) IBOutlet UITableView* tableView;
 
@@ -18,12 +20,23 @@
 
 @implementation NINChatView
 
+#pragma mark - Public methods
+
+-(void) newMessageWasAdded {
+    [self.tableView insertRowsAtIndexPaths:_zeroIndexPathArray withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 #pragma mark - From UITableViewDelegate
 
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
 
-    //TODO
+    NSInteger row = indexPath.row;
+    NSString* text = [self.dataSource chatView:self messageTextAtIndex:row];
+    NSString* avatarURL = [self.dataSource chatView:self avatarURLAtIndex:row];
+    BOOL fromMe = [self.dataSource chatView:self isMessageFromMeAtIndex:row];
+
+    [cell populateWithText:text avatarImageUrl:avatarURL isMine:fromMe];
 
     return cell;
 }
@@ -31,8 +44,7 @@
 #pragma mark - From UITableViewDataSource
 
 -(NSInteger) tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    //TODO
-    return 3;
+    return [self.dataSource numberOfMessagesForChatView:self];
 }
 
 #pragma mark - Lifecycle etc.
@@ -40,10 +52,13 @@
 -(void) awakeFromNib {
     [super awakeFromNib];
 
+    _zeroIndexPathArray = @[[NSIndexPath indexPathForRow:0 inSection:0]];
+
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
-    NSBundle* bundle = findResourceBundle(self.class, @"NINChatBubbleCell", @"nib");
+//    NSBundle* bundle = findResourceBundle(self.class, @"NINChatBubbleCell", @"nib");
+    NSBundle* bundle = findResourceBundle(self.class);
     NSCAssert(bundle != nil, @"Bundle not found");
     UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
     NSCAssert(nib != nil, @"NIB not found");
@@ -58,17 +73,23 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINChatView*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle([NINChatView class], @"NINChatView", @"nib");
+//    NSBundle* bundle = findResourceBundle([NINChatView class], @"NINChatView", @"nib");
+    NSBundle* bundle = findResourceBundle(self.class);
     NSArray* objects = [bundle loadNibNamed:@"NINChatView" owner:nil options:nil];
 
+    NSCAssert([objects[0] isKindOfClass:[NINChatView class]], @"Invalid class resource");
+    
     return (NINChatView*)objects[0];
 }
 
 // Substitutes the original view content (eg. from Storyboard) with contents of the xib
 -(id) awakeAfterUsingCoder:(NSCoder *)aDecoder {
-    UIView* newView = [self loadViewFromNib];
+    NINChatView* newView = [self loadViewFromNib];
     newView.translatesAutoresizingMaskIntoConstraints = NO;
 
+    // Copy our public properties over
+    newView.dataSource = self.dataSource;
+    
     // Not to break the layout surrounding this view, we must copy the constraints over
     // to the newly loaded view
     for (NSLayoutConstraint* constraint in self.constraints) {

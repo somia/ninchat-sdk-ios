@@ -111,10 +111,10 @@
             </objects>
             <point key="canvasLocation" x="1056.8" y="148.87556221889056"/>
         </scene>
-        <!--View Controller-->
+        <!--Chat View Controller-->
         <scene sceneID="5s0-Qq-Gee">
             <objects>
-                <viewController id="bZ9-oP-wEd" sceneMemberID="viewController">
+                <viewController id="bZ9-oP-wEd" customClass="NINChatViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wrn-IT-ZNh">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -127,7 +127,7 @@
                                     <constraint firstAttribute="height" constant="60" id="aY5-Cb-FLp"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view container" customClass="NINEmbeddableChatView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINEmbeddableChatView">
                                 <rect key="frame" x="0.0" y="80" width="375" height="487"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
@@ -155,6 +155,7 @@
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
                     </view>
                     <connections>
+                        <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
                         <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="V96-PI-mkd"/>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>
                     </connections>

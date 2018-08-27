@@ -6,12 +6,11 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "NINVideoCallViewController.h"
-
 #import <libjingle_peerconnection/RTCEAGLVideoView.h>
 #import <AVFoundation/AVFoundation.h>
 #import <libjingle_peerconnection/RTCVideoTrack.h>
 
+#import "NINVideoCallViewController.h"
 #import "NINWebRTCClient.h"
 
 @interface NINVideoCallViewController () <NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate>
@@ -33,8 +32,17 @@
 
 #pragma mark - Private methods
 
-- (void)disconnect {
+-(void) disconnect {
     NSLog(@"NINCHAT: disconnect");
+
+    [self.webrtcClient disconnect];
+
+    if (self.remoteVideoTrack != nil) {
+        [self.remoteVideoTrack removeRenderer:self.remoteView];
+    }
+    self.remoteVideoTrack = nil;
+    [self.remoteView renderFrame:nil];
+
 /*
     if (self.client) {
 //        if (self.localVideoTrack) [self.localVideoTrack removeRenderer:self.localView];
@@ -52,20 +60,12 @@
  */
 }
 
--(void) remoteDisconnected {
-    NSLog(@"NINCHAT: remoteDisconnected");
-
-    if (self.remoteVideoTrack != nil) {
-        [self.remoteVideoTrack removeRenderer:self.remoteView];
-    }
-
-    self.remoteVideoTrack = nil;
-    [self.remoteView renderFrame:nil];
-   // [self videoView:self.localView didChangeVideoSize:self.localVideoSize];
-}
-
 -(void) orientationChanged:(NSNotification *)notification{
     [self videoView:self.remoteView didChangeVideoSize:self.remoteVideoSize];
+}
+
+-(void) applicationWillResignActive:(UIApplication*)application {
+    [self disconnect];
 }
 
 #pragma mark - IBAction handlers
@@ -125,19 +125,14 @@
     [self disconnect];
 }
 
--(void) applicationWillResignActive:(UIApplication*)application {
-    [self disconnect];
-}
-
 -(void) viewDidLoad {
     [super viewDidLoad];
 
     [self.remoteView setDelegate:self];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(orientationChanged:)
-                                                 name:@"UIDeviceOrientationDidChangeNotification"
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 }
 
 @end

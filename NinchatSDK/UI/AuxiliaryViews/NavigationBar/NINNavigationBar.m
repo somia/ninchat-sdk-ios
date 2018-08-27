@@ -38,7 +38,8 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINNavigationBar*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle([NINNavigationBar class], @"NINNavigationBar", @"nib");
+//    NSBundle* bundle = findResourceBundle([NINNavigationBar class], @"NINNavigationBar", @"nib");
+    NSBundle* bundle = findResourceBundle(self.class);
     NSArray* objects = [bundle loadNibNamed:@"NINNavigationBar" owner:nil options:nil];
 
     return (NINNavigationBar*)objects[0];

@@ -39,6 +39,9 @@
 /** Client delegate for receiving video tracks and other updates. */
 @property (nonatomic, weak) id<NINWebRTCClientDelegate> delegate;
 
+/** Disconnects the client. The client is unusable after calling this method. */
+-(void) disconnect;
+
 /** Starts the client, with optional SDP (Service Description Protocol) data. */
 -(void) startWithSDP:(NSDictionary*)sdp;
 

@@ -100,17 +100,23 @@
     return localStream;
 }
 
+#pragma mark - Public Methods
+
 -(void) disconnect {
     [self.peerConnection close];
+    
     self.peerConnection = nil;
+    self.peerConnectionFactory = nil;
     self.sessionManager = nil;
+    self.iceServers = nil;
 
     [NSNotificationCenter.defaultCenter removeObserver:self.signalingObserver];
 }
 
-#pragma mark - Public Methods
-
 -(void) startWithSDP:(NSDictionary*)sdp {
+    NSCAssert(self.peerConnectionFactory != nil, @"Invalid state - client was disconnected?");
+    NSCAssert(self.sessionManager != nil, @"Invalid state - client was disconnected?");
+
     NSLog(@"WebRTC: Starting with SDP: %@", sdp);
 
     // Start listening to WebRTC signaling messages from the chat session manager

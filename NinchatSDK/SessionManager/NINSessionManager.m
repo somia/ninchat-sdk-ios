@@ -376,6 +376,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     // Clear current list of messages
     [_channelMessages removeAllObjects];
 
+    //TODO remove; this is test data
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" mine:NO]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" mine:YES]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." mine:NO]];
+
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});
 }
@@ -480,41 +485,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     });
 }
 
-/*
--(void) initWebRTCWithOperatingMode:(NINWebRTCClientOperatingMode)operatingMode completionCallback:(initWebRTCCallbackBlock _Nonnull)completion {
-    ClientProps* params = [ClientProps new];
-    [params setString:@"action" val:@"begin_ice"];
-
-    int64_t actionId;
-    NSError* error = nil;
-    [self.session send:params payload:nil actionId:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Error calling begin_ice: %@", error);
-        completion(error, nil);
-    }
-
-    // When this action completes, trigger the completion block callback
-    fetchNotification(kActionNotification, ^(NSNotification* note) {
-        NSNumber* eventActionId = note.userInfo[@"action_id"];
-
-        if (eventActionId.longValue == actionId) {
-            NSError* error = note.userInfo[@"error"];
-            NSArray* stunServers = note.userInfo[@"stunServers"];
-            NSArray* turnServers = note.userInfo[@"turnServers"];
-
-            // Create new WebRTC client based on these ICE servers
-            NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:self operatingMode:operatingMode stunServers:stunServers turnServers:turnServers];
-
-            completion(error, client);
-
-            return YES;
-        }
-
-        return NO;
-    });
-}
-*/
-
 // Sends a message to the activa channel. Active channel must exist.
 -(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
@@ -529,6 +499,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [params setString:@"action" val:@"send_message"];
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.activeChannelId];
+
+    if ([messageType hasPrefix:@"ninchat.com/rtc/"]) {
+        // Add message_ttl to all rtc signaling messages
+        [params setInt:@"message_ttl" val:10];
+    }
 
     NSLog(@"Sending message with type '%@' and payload: %@", messageType, payloadDict);
     

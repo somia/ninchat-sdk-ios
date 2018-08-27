@@ -54,6 +54,21 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
     return observer;
 }
 
+NSBundle* findResourceBundle(Class class) {
+    NSBundle* classBundle = [NSBundle bundleForClass:class];
+
+    NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
+    if (bundleURL == nil) {
+        // This path is taken when using the SDK from a prebuilt .framework.
+        return classBundle;
+    } else {
+        // This path is taken when using the SDK via Cocoapods module.
+        // Locate our UI resource bundle. This is specified in the podspec file.
+        return [NSBundle bundleWithURL:bundleURL];
+    }
+}
+
+/*
 NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* resourceType) {
     NSBundle* classBundle = [NSBundle bundleForClass:class];
 
@@ -68,6 +83,7 @@ NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* reso
         return [NSBundle bundleWithURL:bundleURL];
     }
 }
+*/
 
 void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kNinchatServerHostName, configurationKey];

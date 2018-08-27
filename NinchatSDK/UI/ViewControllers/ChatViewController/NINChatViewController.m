@@ -12,11 +12,15 @@
 #import "NINChannelMessage.h"
 #import "NINWebRTCClient.h"
 #import "NINVideoCallViewController.h"
+#import "NINChatView.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
 
-@interface NINChatViewController ()
+@interface NINChatViewController () <NINChatViewDataSource>
+
+// The chat messages view
+@property (nonatomic, strong) IBOutlet NINChatView* chatView;
 
 // Reference to the notifications observer that listens to new message -notifications.
 @property (nonatomic, strong) id<NSObject> messagesObserver;
@@ -31,8 +35,10 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 #pragma mark - Private methods
 
 -(void) sendButtonPressed:(id)sender {
-    NSString* text = [self.toolbar clearText];
-    NSLog(@"text to send: %@", text);
+//    NSString* text = [self.toolbar clearText];
+//    NSLog(@"text to send: %@", text);
+
+    NSString* text = @"TODO";
 
     [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
         if (error != nil) {
@@ -76,6 +82,27 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     }
 }
 
+#pragma mark - From NINChatViewDataSource
+
+- (NSString *)chatView:(NINChatView *)chatView avatarURLAtIndex:(NSInteger)index {
+    //TODO implement me
+    return nil;
+}
+
+- (BOOL)chatView:(NINChatView *)chatView isMessageFromMeAtIndex:(NSInteger)index {
+    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
+    return msg.mine;
+}
+
+- (NSString *)chatView:(NINChatView *)chatView messageTextAtIndex:(NSInteger)index {
+    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
+    return msg.textContent;
+}
+
+- (NSInteger)numberOfMessagesForChatView:(NINChatView *)chatView {
+    return self.sessionManager.channelMessages.count;
+}
+
 #pragma mark - Lifecycle etc.
 
 -(void) viewWillAppear:(BOOL)animated {
@@ -85,6 +112,8 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
     self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
+
+        [self.chatView newMessageWasAdded];
 
         return NO;
     });
@@ -109,8 +138,6 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
                 // Create a WebRTC client for the video call
                 NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
-
-                
 
                 // Open the video call view
                 [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
@@ -145,11 +172,7 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
     self.navigationItem.title = self.title;
 
-//    self.node.tableNode.delegate = self;
-//    self.node.tableNode.dataSource = self;
-//    self.node.tableNode.allowsSelection = YES;
-//
-//    [self customizeCellFactory];
+    self.chatView.dataSource = self;
 }
 
 -(void) dealloc {

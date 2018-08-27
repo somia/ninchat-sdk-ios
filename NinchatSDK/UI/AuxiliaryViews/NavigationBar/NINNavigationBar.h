@@ -19,6 +19,6 @@
 @end
 
 /** Storyboard/xib-embeddable subclass of NINNavigationBar */
-@interface NINEmbeddableNavigationBar : UIView
+@interface NINEmbeddableNavigationBar : NINNavigationBar
 
 @end

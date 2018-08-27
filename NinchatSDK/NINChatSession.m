@@ -34,7 +34,8 @@
                                      userInfo:nil];
     }
 
-    NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
+//    NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
+    NSBundle* bundle = findResourceBundle(self.class);
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
 
     // Get the initial view controller for the storyboard

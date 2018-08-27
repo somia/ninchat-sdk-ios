@@ -71,7 +71,6 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCOffer;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
 -(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion;
-//-(void) initWebRTCWithOperatingMode:(NINWebRTCClientOperatingMode)operatindMode completionCallback:(initWebRTCCallbackBlock _Nonnull)completion;
 
 /** Sends a message to the activa channel. Active channel must exist. */
 -(long) sendMessageWithMessageType:(NSString* _Nonnull)messageType payloadDict:(NSDictionary* _Nonnull)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
