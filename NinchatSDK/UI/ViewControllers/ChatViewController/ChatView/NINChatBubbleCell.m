@@ -23,6 +23,9 @@
 // The left side avatar container view
 @property (nonatomic, strong) IBOutlet UIView* leftAvatarContainerView;
 
+// The right side avatar container view
+@property (nonatomic, strong) IBOutlet UIView* rightAvatarContainerView;
+
 // The chat bubble graphic
 @property (nonatomic, strong) IBOutlet UIImageView* bubbleImageView;
 
@@ -67,10 +70,6 @@
         self.containerLeftConstraint.active = YES;
 
 
-//        self.containerLeftConstraint.active = NO;
-//        self.textLeftConstraint.active = NO;
-//        self.textRightConstraint.active = YES;
-
         //TODO enable
 //        self.leftAvatarImageView.image = nil;
     } else {
@@ -78,9 +77,10 @@
         self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
         //TODO set left avatar image from the URL - use a image cache. AFNetworking?
 
-//        self.containerLeftConstraint.active = YES;
-//        self.textLeftConstraint.active = YES;
-//        self.textRightConstraint.active = NO;
+        // Push the bubble to the left edge by setting the right constraint relation to >=
+        self.containerRightConstraint.active = NO;
+        self.containerRightConstraint = [NSLayoutConstraint constraintWithItem:self.rightAvatarContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.containerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+        self.containerRightConstraint.active = YES;
     }
 }
 
