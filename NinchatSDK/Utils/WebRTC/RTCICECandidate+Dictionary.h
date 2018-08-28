@@ -16,5 +16,6 @@
 @interface RTCICECandidate (Dictionary)
 
 -(NSDictionary*) dictionary;
++(RTCICECandidate*) fromDictionary:(NSDictionary*)dictionary;
 
 @end

@@ -16,5 +16,6 @@
 @interface RTCSessionDescription (Dictionary)
 
 -(NSDictionary*) dictionary;
++(RTCSessionDescription*) fromDictionary:(NSDictionary*)dictionary;
 
 @end

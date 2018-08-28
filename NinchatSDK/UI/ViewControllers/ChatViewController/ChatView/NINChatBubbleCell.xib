@@ -65,6 +65,7 @@
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
                                 <rect key="frame" x="30" y="15" width="372" height="89"/>
+                                <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -75,7 +76,7 @@
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="width" secondItem="uZw-OC-QWw" secondAttribute="width" id="2cQ-0s-q4B"/>
                             <constraint firstAttribute="bottom" secondItem="lco-tz-6OM" secondAttribute="bottom" constant="15" id="JTj-CF-j8t"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="centerY" secondItem="uZw-OC-QWw" secondAttribute="centerY" id="Kmx-3b-gnm"/>
-                            <constraint firstItem="lco-tz-6OM" firstAttribute="leading" secondItem="uZw-OC-QWw" secondAttribute="leading" constant="30" id="OUL-aa-Zpp"/>
+                            <constraint firstItem="lco-tz-6OM" firstAttribute="leading" secondItem="uZw-OC-QWw" secondAttribute="leading" priority="999" constant="30" id="OUL-aa-Zpp"/>
                             <constraint firstAttribute="trailing" secondItem="lco-tz-6OM" secondAttribute="trailing" constant="10" id="VkH-7A-iKk"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="centerX" secondItem="uZw-OC-QWw" secondAttribute="centerX" id="Y2W-cz-i07"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="height" secondItem="uZw-OC-QWw" secondAttribute="height" id="sYT-7S-acV"/>
@@ -102,12 +103,14 @@
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
                 <outlet property="rightAvatarWidthConstraint" destination="Gur-SR-UDJ" id="gwM-1T-SYE"/>
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
+                <outlet property="textLeftConstraint" destination="OUL-aa-Zpp" id="1DC-I2-jk2"/>
+                <outlet property="textRightConstraint" destination="VkH-7A-iKk" id="JKm-hi-J9T"/>
             </connections>
             <point key="canvasLocation" x="62" y="-26.5"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="chat_bubble_left" width="280" height="267"/>
+        <image name="chat_bubble_left" width="22" height="24"/>
         <image name="icon_face_happy" width="166" height="160"/>
         <image name="icon_face_sad" width="160" height="156"/>
     </resources>

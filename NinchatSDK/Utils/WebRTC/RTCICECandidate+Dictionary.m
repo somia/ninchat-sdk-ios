@@ -11,7 +11,11 @@
 @implementation RTCICECandidate (Dictionary)
 
 -(NSDictionary*) dictionary {
-    return @{@"type": @"candidate", @"label": @(self.sdpMLineIndex), @"id": self.sdpMid, @"candidate": self.sdp};
+    return @{@"label": @(self.sdpMLineIndex), @"id": self.sdpMid, @"candidate": self.sdp};
+}
+
++(RTCICECandidate*) fromDictionary:(NSDictionary*)dictionary {
+    return [[RTCICECandidate alloc] initWithMid:dictionary[@"id"] index:[dictionary[@"label"] integerValue] sdp:dictionary[@"candidate"]];
 }
 
 @end

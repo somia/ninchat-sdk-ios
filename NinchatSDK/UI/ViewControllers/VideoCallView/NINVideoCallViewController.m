@@ -119,6 +119,18 @@
 
 #pragma mark - Lifecycle etc.
 
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    NSCAssert(self.webrtcClient != nil, @"Must have webrtc client");
+    
+    if (self.offerSDP != nil) {
+        NSLog(@"Video Call view: Starting WebRTC client..");
+        [self.webrtcClient startWithSDP:self.offerSDP];
+        self.offerSDP = nil;
+    }
+}
+
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 

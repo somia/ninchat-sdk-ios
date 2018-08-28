@@ -15,4 +15,7 @@
 /** WebRTC client for the video call. */
 @property (nonatomic, strong) NINWebRTCClient* webrtcClient;
 
+/** Dictionary representing SDP data for initializing the WebRTC client for answering a call. */
+@property (nonatomic, strong) NSDictionary* offerSDP;
+
 @end

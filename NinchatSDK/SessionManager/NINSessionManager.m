@@ -380,6 +380,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" mine:NO]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" mine:YES]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." mine:NO]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" mine:YES]];
 
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});

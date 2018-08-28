@@ -14,4 +14,8 @@
     return @{@"type": self.type, @"sdp": self.description};
 }
 
++(RTCSessionDescription*) fromDictionary:(NSDictionary*)dictionary {
+    return [[RTCSessionDescription alloc] initWithType:dictionary[@"type"] sdp:dictionary[@"sdp"]];
+}
+
 @end

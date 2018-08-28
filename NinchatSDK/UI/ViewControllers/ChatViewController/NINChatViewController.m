@@ -35,9 +35,6 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 #pragma mark - Private methods
 
 -(void) sendButtonPressed:(id)sender {
-//    NSString* text = [self.toolbar clearText];
-//    NSLog(@"text to send: %@", text);
-
     NSString* text = @"TODO";
 
     [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
@@ -46,39 +43,16 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
             NSLog(@"TODO: message failed to send - show error message");
         }
     }];
-    /*
-    if (text.length == 0) return;
-    Message* message = [[Message alloc] init];
-    message.text = text;
-    message.senderID = 0;
-    message.timestamp = [NSDate date].timeIntervalSince1970;
-    [self.messages insertObject:message atIndex:0];
-    [self.cellFactory updateTableNode:self.node.tableNode animated:YES withInsertions:@[[NSIndexPath indexPathForRow:0 inSection:0]] deletions:nil reloads:nil completion:nil];
-     */
 }
-
-//#pragma mark - From MXMessageCellFactoryDataSource
-//
-//- (BOOL)cellFactory:(MXRMessageCellFactory *)cellFactory isMessageFromMeAtRow:(NSInteger)row {
-//    return self.sessionManager.channelMessages[row].mine;
-//}
-//
-//- (NSURL *)cellFactory:(MXRMessageCellFactory *)cellFactory avatarURLAtRow:(NSInteger)row {
-//   // return [self cellFactory:cellFactory isMessageFromMeAtRow:row] ? nil : self.otherPersonsAvatar;
-//    //TODO get the avatar from the message
-//    return [NSURL URLWithString:@"https://ninchat-file-test-eu-central-1.s3-eu-central-1.amazonaws.com/u/5npsj2ag00m3g/5ogokj8m00m3g"];
-//}
-//
-//- (NSTimeInterval)cellFactory:(MXRMessageCellFactory *)cellFactory timeIntervalSince1970AtRow:(NSInteger)row {
-//    return [self.sessionManager.channelMessages[row].timestamp timeIntervalSince1970];
-//}
 
 #pragma mark - From UIViewController
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
         NINVideoCallViewController* vc = segue.destinationViewController;
-        vc.webrtcClient = sender;
+        NSDictionary* params = (NSDictionary*)sender;
+        vc.webrtcClient = params[@"client"];
+        vc.offerSDP = params[@"sdp"];
     }
 }
 
@@ -121,7 +95,7 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
-            NSLog(@"Got WebRTC offer - initializing webrtc for video call");
+            NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
 
             NSData* payloadData = note.userInfo[@"payload"];
             NSError* jsonError = nil;
@@ -132,6 +106,7 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
             }
 
             NSLog(@"Parsed payloadDict: %@", payloadDict);
+            NSLog(@"Offer SDP: %@", payloadDict[@"sdp"]);
 
             // Fetch our STUN / TURN server information
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
@@ -140,7 +115,8 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
                 NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
 
                 // Open the video call view
-                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
+                NSDictionary* params = @{@"client": client, @"sdp": payloadDict[@"sdp"]};
+                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:params];
             }];
         }
 

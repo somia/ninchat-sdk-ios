@@ -121,23 +121,25 @@
 
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
-        NSLog(@"Got WebRTC signaling message: %@", note);
+        NSLog(@"WebRTC: got signaling message: %@", note);
 
         NSDictionary* payload = note.userInfo[@"payload"];
-        NSLog(@"Signaling message payload: %@", payload);
+        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
-            NSLog(@"Adding an ICE candidate");
+            NSLog(@"WebRTC: Adding an ICE candidate");
 
-            RTCICECandidate* candidate = [[RTCICECandidate alloc] initWithMid:payload[@"id"] index:[payload[@"label"] integerValue] sdp:payload[@"candidate"]];
-            NSLog(@"candidate: %@", candidate);
+            RTCICECandidate* candidate = [RTCICECandidate fromDictionary:payload[@"sdp"]];
+            NSLog(@"** candidate: %@", candidate);
             [self.peerConnection addICECandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
-            NSLog(@"Setting remote session description");
+            NSLog(@"WebRTC: Setting remote session description");
 
-            RTCSessionDescription* description = [[RTCSessionDescription alloc] initWithType:@"answer" sdp:payload[@"sdp"]];
-            NSLog(@"description: %@", description);
+            RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
+            NSLog(@"** description: %@", description);
             [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:description];
+        } else {
+            NSLog(@"WebRTC: Received unhandled message type: %@", note.userInfo[@"messageType"]);
         }
 
         return false;
@@ -147,16 +149,17 @@
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:optionalConstraints];
 
     self.peerConnection = [self.peerConnectionFactory peerConnectionWithICEServers:self.iceServers constraints:constraints delegate:self];
-    RTCMediaStream* localStream = [self createLocalMediaStream];
-    [self.peerConnection addStream:localStream];
+    [self.peerConnection addStream:[self createLocalMediaStream]];
 
     if (self.operatingMode == NINWebRTCClientOperatingModeCaller) {
         // We are the 'caller', ie. the connection initiator; create a connection offer
+        NSLog(@"WebRTC: making a call.");
         [self.peerConnection createOfferWithDelegate:self constraints:[self defaultOfferConstraints]];
     } else {
         // We are the 'callee', ie. we are answering.
-        RTCSessionDescription* description = [[RTCSessionDescription alloc] initWithType:sdp[@"type"] sdp:sdp[@"sdp"]];
-        [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:description];
+        NSLog(@"WebRTC: answering call.");
+        NSCAssert(sdp != nil, @"Must have Offer SDP data");
+        [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
     }
 }
 
@@ -211,7 +214,7 @@
 #pragma mark - From RTCSessionDescriptionDelegate
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didCreateSessionDescription:(RTCSessionDescription *)sdp error:(NSError *)error {
-    NSLog(@"didCreateSessionDescription: %@", sdp);
+    NSLog(@"WebRTC: didCreateSessionDescription: %@", sdp);
 
     runOnMainThread(^{
         if (error != nil) {
@@ -223,22 +226,27 @@
 
         [self.peerConnection setLocalDescriptionWithDelegate:self sessionDescription:sdp];
 
+        // Decide what type of signaling message to send based on the SDP type
         NSDictionary* typeMap = @{@"offer": kNINMessageTypeWebRTCOffer, @"answer": kNINMessageTypeWebRTCAnswer};
         NSString* messageType = typeMap[sdp.type];
         if (messageType == nil) {
-            NSLog(@"Unknown SDP type: %@", sdp.type);
+            NSLog(@"WebRTC: Unknown SDP type: %@", sdp.type);
             return;
         }
 
+        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
+
         // Send signaling message about the offer/answer
         [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
-            NSLog(@"WebRTC Message send: %@", error);
+            if (error != nil) {
+                NSLog(@"WebRTC: Message send error: %@", error);
+            }
         }];
     });
 }
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didSetSessionDescriptionWithError:(NSError *)error {
-    NSLog(@"didSetSessionDescriptionWithError: %@", error);
+    NSLog(@"WebRTC: didSetSessionDescriptionWithError: %@", error);
 
     runOnMainThread(^{
         if (error != nil) {
@@ -259,6 +267,8 @@
 #pragma mark - Initializers
 
 +(instancetype) clientWithSessionManager:(NINSessionManager*)sessionManager operatingMode:(NINWebRTCClientOperatingMode)operatingMode stunServers:(NSArray<NINWebRTCServerInfo*>*)stunServers turnServers:(NSArray<NINWebRTCServerInfo*>*)turnServers {
+
+    NSLog(@"Creating new NINWebRTCClient in the %@ mode", (operatingMode == NINWebRTCClientOperatingModeCaller) ? @"CALLER" : @"CALLEE");
 
     NINWebRTCClient* client = [NINWebRTCClient new];
     client.sessionManager = sessionManager;

@@ -29,6 +29,12 @@
 // The text container label
 @property (nonatomic, strong) IBOutlet UILabel* textContentLabel;
 
+// Left side constraint for the label
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* textLeftConstraint;
+
+// Right side constraint for the label
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* textRightConstraint;
+
 // Original width of the avatar image containers
 @property (nonatomic, assign) CGFloat avatarContainerWidth;
 
@@ -45,12 +51,19 @@
     if (isMine) {
         self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
         self.leftAvatarWidthConstraint.constant = 0;
+
+//        self.textLeftConstraint.active = NO;
+//        self.textRightConstraint.active = YES;
+
         //TODO enable
 //        self.leftAvatarImageView.image = nil;
     } else {
         self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
         self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
         //TODO set left avatar image from the URL - use a image cache. AFNetworking?
+
+//        self.textLeftConstraint.active = YES;
+//        self.textRightConstraint.active = NO;
     }
 }
 
