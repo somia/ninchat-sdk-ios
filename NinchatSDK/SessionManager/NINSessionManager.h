@@ -34,6 +34,15 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCAnswer;
 /** Message type for WebRTC signaling: 'offer'. */
 extern NSString* _Nonnull const kNINMessageTypeWebRTCOffer;
 
+/** Message type for WebRTC signaling: 'call'. */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCCall;
+
+/** Message type for WebRTC signaling: 'pick up'. */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCPickup;
+
+/** Message type for WebRTC signaling: 'hang up'. */
+extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
+
 /**
  This class takes care of the chat session and all related state.
  */

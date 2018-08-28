@@ -473,21 +473,25 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EE3-XP-aKB">
-                                <rect key="frame" x="20" y="40" width="48" height="30"/>
-                                <state key="normal" title="CLOSE"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BOu-dV-7He">
+                                <rect key="frame" x="147" y="507" width="80" height="80"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="b7w-x4-knp"/>
+                                    <constraint firstAttribute="width" constant="80" id="ytK-0W-VAb"/>
+                                </constraints>
+                                <state key="normal" title="Button" image="icon_hangup"/>
                                 <connections>
-                                    <action selector="closeButtonPressed:" destination="8ul-sn-uv2" eventType="touchUpInside" id="PDR-vv-JRX"/>
+                                    <action selector="hangupButtonPressed:" destination="8ul-sn-uv2" eventType="touchUpInside" id="WNO-RP-tDn"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="EE3-XP-aKB" firstAttribute="leading" secondItem="0EO-IT-5cg" secondAttribute="leading" constant="20" id="PeD-Kc-7aC"/>
+                            <constraint firstItem="BOu-dV-7He" firstAttribute="centerX" secondItem="MLh-AD-IC2" secondAttribute="centerX" id="Nik-8L-ZAy"/>
+                            <constraint firstItem="0EO-IT-5cg" firstAttribute="bottom" secondItem="BOu-dV-7He" secondAttribute="bottom" constant="80" id="RfE-Wf-hA3"/>
                             <constraint firstItem="JUY-ks-3b3" firstAttribute="leading" secondItem="0EO-IT-5cg" secondAttribute="leading" id="S2Q-29-kMu"/>
                             <constraint firstItem="0EO-IT-5cg" firstAttribute="bottom" secondItem="JUY-ks-3b3" secondAttribute="bottom" id="Ytt-cq-Hbi"/>
                             <constraint firstItem="JUY-ks-3b3" firstAttribute="top" secondItem="0EO-IT-5cg" secondAttribute="top" id="irr-Hl-UjM"/>
-                            <constraint firstItem="EE3-XP-aKB" firstAttribute="top" secondItem="0EO-IT-5cg" secondAttribute="top" constant="20" id="mIX-gO-hiJ"/>
                             <constraint firstItem="0EO-IT-5cg" firstAttribute="trailing" secondItem="JUY-ks-3b3" secondAttribute="trailing" id="z0i-yT-9QE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0EO-IT-5cg"/>
@@ -509,6 +513,7 @@
         <image name="icon_face_happy" width="166" height="160"/>
         <image name="icon_face_neutral" width="158" height="154"/>
         <image name="icon_face_sad" width="160" height="156"/>
+        <image name="icon_hangup" width="512" height="512"/>
         <image name="icon_ninchat_blog" width="142" height="140"/>
         <image name="icon_progress_whirl" width="178" height="164"/>
     </resources>

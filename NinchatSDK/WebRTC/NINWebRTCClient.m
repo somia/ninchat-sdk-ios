@@ -6,6 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+@import AVFoundation;
+
 #import <libjingle_peerconnection/RTCPeerConnection.h>
 #import <libjingle_peerconnection/RTCPeerConnectionDelegate.h>
 #import <libjingle_peerconnection/RTCPeerConnectionFactory.h>
@@ -16,6 +18,7 @@
 #import <libjingle_peerconnection/RTCPair.h>
 #import <libjingle_peerconnection/RTCSessionDescription.h>
 #import <libjingle_peerconnection/RTCICECandidate.h>
+#import <libjingle_peerconnection/RTCVideoCapturer.h>
 
 #import "RTCSessionDescription+Dictionary.h"
 #import "RTCICECandidate+Dictionary.h"
@@ -111,38 +114,33 @@
     self.iceServers = nil;
 
     [NSNotificationCenter.defaultCenter removeObserver:self.signalingObserver];
+    self.signalingObserver = nil;
 }
 
 -(void) startWithSDP:(NSDictionary*)sdp {
     NSCAssert(self.peerConnectionFactory != nil, @"Invalid state - client was disconnected?");
     NSCAssert(self.sessionManager != nil, @"Invalid state - client was disconnected?");
 
-    NSLog(@"WebRTC: Starting with SDP: %@", sdp);
+//    NSLog(@"WebRTC: Starting with SDP: %@", sdp);
+
+    __weak typeof(self) weakSelf = self;
 
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         NSLog(@"WebRTC: got signaling message: %@", note);
 
         NSDictionary* payload = note.userInfo[@"payload"];
-        NSLog(@"WebRTC: Signaling message payload: %@", payload);
+//        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
-            NSLog(@"WebRTC: Adding an ICE candidate");
-
             RTCICECandidate* candidate = [RTCICECandidate fromDictionary:payload[@"sdp"]];
-            NSLog(@"** candidate: %@", candidate);
-            [self.peerConnection addICECandidate:candidate];
+            [weakSelf.peerConnection addICECandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
-            NSLog(@"WebRTC: Setting remote session description");
-
             RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
-            NSLog(@"** description: %@", description);
-            [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:description];
-        } else {
-            NSLog(@"WebRTC: Received unhandled message type: %@", note.userInfo[@"messageType"]);
+            [weakSelf.peerConnection setRemoteDescriptionWithDelegate:weakSelf sessionDescription:description];
         }
 
-        return false;
+        return NO;
     });
 
     NSArray* optionalConstraints = @[[[RTCPair alloc] initWithKey:@"DtlsSrtpKeyAgreement" value:@"true"]];
@@ -185,7 +183,9 @@
 
     runOnMainThread(^{
         [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCIceCandidate payloadDict:@{@"candidate": candidate.dictionary} completion:^(NSError* error) {
-            NSLog(@"WebRTC Message send: %@", error);
+            if (error != nil) {
+                NSLog(@"WebRTC: Failed to send ICE candidate: %@", error);
+            }
         }];
     });
 }
@@ -286,6 +286,10 @@
     }
 
     return client;
+}
+
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 @end

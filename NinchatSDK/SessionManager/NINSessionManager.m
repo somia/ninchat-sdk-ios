@@ -32,6 +32,9 @@ NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotifi
 NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
 NSString* _Nonnull const kNINMessageTypeWebRTCAnswer = @"ninchat.com/rtc/answer";
 NSString* _Nonnull const kNINMessageTypeWebRTCOffer = @"ninchat.com/rtc/offer";
+NSString* _Nonnull const kNINMessageTypeWebRTCCall = @"ninchat.com/rtc/call";
+NSString* _Nonnull const kNINMessageTypeWebRTCPickup = @"ninchat.com/rtc/pick-up";
+NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up";
 
 /**
  This implementation is written against the following API specification:
@@ -310,15 +313,36 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
-    NSLog(@"Got message_type: %@", messageType);
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
+    NSLog(@"Got message_type: %@, actionId: %ld", messageType, actionId);
 
     if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCAnswer] ||
-        [messageType isEqualToString:kNINMessageTypeWebRTCOffer]) {
+        [messageType isEqualToString:kNINMessageTypeWebRTCOffer] ||
+        [messageType isEqualToString:kNINMessageTypeWebRTCCall] ||
+        [messageType isEqualToString:kNINMessageTypeWebRTCHangup]) {
+
+        if (actionId != 0) {
+            // This message originates from me; complete the action and return
+            postNotification(kActionNotification, @{@"action_id": @(actionId)});
+            return;
+        }
 
         for (int i = 0; i < payload.length; i++) {
             // Handle a WebRTC signaling message
-            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": [payload get:i]});
+            NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+            if (error != nil) {
+                NSLog(@"Failed to deserialize message JSON: %@", error);
+                return;
+            }
+
+            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict});
         }
         return;
     }
@@ -326,13 +350,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     if (![messageType isEqualToString:@"ninchat.com/text"]) {
         // Ignore all but text messages
         NSLog(@"Ignoring non-text message.");
-        return;
-    }
-
-    long actionId;
-    [params getInt:@"action_id" val:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get action_id: %@", error);
         return;
     }
 
@@ -350,7 +367,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         NSLog(@"Got new channel message: %@", msg);
     }
 
-    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    if (actionId != 0) {
+        postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    }
 }
 
 -(void) channelJoined:(ClientProps*)params {

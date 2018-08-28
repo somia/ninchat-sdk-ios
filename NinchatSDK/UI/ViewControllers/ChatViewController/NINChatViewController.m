@@ -45,12 +45,54 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     }];
 }
 
+-(void) listenToWebRTCSignaling {
+    if (self.signalingObserver != nil) {
+        // Already listening..
+        return;
+    }
+
+    __weak typeof(self) weakSelf = self;
+    self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
+        if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCCall]) {
+            NSLog(@"Got WebRTC call - replying with pick-up");
+
+            //TODO show UI dialog here; ask the user whether to pick up. if not, must set answer: false below
+
+            [weakSelf.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(YES)} completion:^(NSError* error) {
+                if (error != nil) {
+                    NSLog(@"Failed to send pick-up message: %@", error);
+                    //TODO handle
+                }
+            }];
+        } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
+            NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
+
+            NSDictionary* payload = note.userInfo[@"payload"];
+            NSLog(@"Offer payload: %@", payload);
+
+            // Fetch our STUN / TURN server information
+            [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
+
+                // Create a WebRTC client for the video call
+                NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
+
+                // Open the video call view
+                NSDictionary* params = @{@"client": client, @"sdp": payload[@"sdp"]};
+                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:params];
+            }];
+        }
+
+        return NO;
+    });
+}
+
 #pragma mark - From UIViewController
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
         NINVideoCallViewController* vc = segue.destinationViewController;
         NSDictionary* params = (NSDictionary*)sender;
+        vc.sessionManager = self.sessionManager;
         vc.webrtcClient = params[@"client"];
         vc.offerSDP = params[@"sdp"];
     }
@@ -93,35 +135,7 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     });
 
     // Start listening to WebRTC signaling messages from the chat session manager
-    self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
-        if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
-            NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
-
-            NSData* payloadData = note.userInfo[@"payload"];
-            NSError* jsonError = nil;
-            NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:payloadData options:kNilOptions error:&jsonError];
-            if (jsonError != nil) {
-                NSLog(@"Failed to parse JSON: %@", jsonError);
-                return NO;
-            }
-
-            NSLog(@"Parsed payloadDict: %@", payloadDict);
-            NSLog(@"Offer SDP: %@", payloadDict[@"sdp"]);
-
-            // Fetch our STUN / TURN server information
-            [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
-
-                // Create a WebRTC client for the video call
-                NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
-
-                // Open the video call view
-                NSDictionary* params = @{@"client": client, @"sdp": payloadDict[@"sdp"]};
-                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:params];
-            }];
-        }
-
-        return NO;
-    });
+    [self listenToWebRTCSignaling];
     
     // Listen to channel closed -events
     fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
