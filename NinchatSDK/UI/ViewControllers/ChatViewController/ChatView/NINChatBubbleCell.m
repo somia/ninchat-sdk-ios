@@ -17,6 +17,12 @@
 // Width constraint for the right avatar area; used to hide the right avatar
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* rightAvatarWidthConstraint;
 
+// The bubble container view
+@property (nonatomic, strong) IBOutlet UIView* containerView;
+
+// The left side avatar container view
+@property (nonatomic, strong) IBOutlet UIView* leftAvatarContainerView;
+
 // The chat bubble graphic
 @property (nonatomic, strong) IBOutlet UIImageView* bubbleImageView;
 
@@ -29,11 +35,14 @@
 // The text container label
 @property (nonatomic, strong) IBOutlet UILabel* textContentLabel;
 
-// Left side constraint for the label
-@property (nonatomic, strong) IBOutlet NSLayoutConstraint* textLeftConstraint;
+// Left side constraint for the bubble container
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* containerLeftConstraint;
+
+// Right side constraint for the bubble container
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* containerRightConstraint;
 
 // Right side constraint for the label
-@property (nonatomic, strong) IBOutlet NSLayoutConstraint* textRightConstraint;
+//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* textRightConstraint;
 
 // Original width of the avatar image containers
 @property (nonatomic, assign) CGFloat avatarContainerWidth;
@@ -52,6 +61,13 @@
         self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
         self.leftAvatarWidthConstraint.constant = 0;
 
+        // Push the bubble to the right edge by setting the left constraint relation to >=
+        self.containerLeftConstraint.active = NO;
+        self.containerLeftConstraint = [NSLayoutConstraint constraintWithItem:self.containerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.leftAvatarContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+        self.containerLeftConstraint.active = YES;
+
+
+//        self.containerLeftConstraint.active = NO;
 //        self.textLeftConstraint.active = NO;
 //        self.textRightConstraint.active = YES;
 
@@ -62,6 +78,7 @@
         self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
         //TODO set left avatar image from the URL - use a image cache. AFNetworking?
 
+//        self.containerLeftConstraint.active = YES;
 //        self.textLeftConstraint.active = YES;
 //        self.textRightConstraint.active = NO;
     }

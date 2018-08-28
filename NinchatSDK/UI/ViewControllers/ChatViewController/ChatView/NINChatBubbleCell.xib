@@ -63,8 +63,8 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="f9O-t5-M7M">
                                 <rect key="frame" x="0.0" y="0.0" width="412" height="119"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
-                                <rect key="frame" x="30" y="15" width="372" height="89"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Bubble chat message text content" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
+                                <rect key="frame" x="140.5" y="15" width="261.5" height="89"/>
                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -99,12 +99,14 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
+                <outlet property="containerLeftConstraint" destination="QLD-I4-rPX" id="9Gi-gL-kjZ"/>
+                <outlet property="containerRightConstraint" destination="bHX-ad-1lO" id="ibl-4R-AcR"/>
+                <outlet property="containerView" destination="uZw-OC-QWw" id="625-s2-Ige"/>
+                <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>
                 <outlet property="leftAvatarImageView" destination="5wH-wE-D5T" id="II5-2y-ZGA"/>
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
                 <outlet property="rightAvatarWidthConstraint" destination="Gur-SR-UDJ" id="gwM-1T-SYE"/>
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
-                <outlet property="textLeftConstraint" destination="OUL-aa-Zpp" id="1DC-I2-jk2"/>
-                <outlet property="textRightConstraint" destination="VkH-7A-iKk" id="JKm-hi-J9T"/>
             </connections>
             <point key="canvasLocation" x="62" y="-26.5"/>
         </tableViewCell>
