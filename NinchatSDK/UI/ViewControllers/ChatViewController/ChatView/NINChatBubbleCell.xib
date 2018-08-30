@@ -106,6 +106,7 @@
                 <outlet property="leftAvatarImageView" destination="5wH-wE-D5T" id="II5-2y-ZGA"/>
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
                 <outlet property="rightAvatarContainerView" destination="VDb-fh-S7z" id="dQG-T1-6hw"/>
+                <outlet property="rightAvatarImageView" destination="afl-L6-jcA" id="R5L-Z7-yLx"/>
                 <outlet property="rightAvatarWidthConstraint" destination="Gur-SR-UDJ" id="gwM-1T-SYE"/>
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
             </connections>

@@ -57,7 +57,6 @@
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
-//    NSBundle* bundle = findResourceBundle(self.class, @"NINChatBubbleCell", @"nib");
     NSBundle* bundle = findResourceBundle(self.class);
     NSCAssert(bundle != nil, @"Bundle not found");
     UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
@@ -73,7 +72,6 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINChatView*) loadViewFromNib {
-//    NSBundle* bundle = findResourceBundle([NINChatView class], @"NINChatView", @"nib");
     NSBundle* bundle = findResourceBundle(self.class);
     NSArray* objects = [bundle loadNibNamed:@"NINChatView" owner:nil options:nil];
 

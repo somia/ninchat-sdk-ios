@@ -14,6 +14,7 @@
 #import "NINQueue.h"
 #import "NINChatSession.h"
 #import "NINChannelMessage.h"
+#import "NINChannelUser.h"
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
 #import "NINWebRTCServerInfo.h"
@@ -48,6 +49,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
     /** Mutable channel messages list. */
     NSMutableArray<NINChannelMessage*>* _channelMessages;
+
+    /** Channel user map; ID -> NINChannelUser. */
+    NSMutableDictionary<NSString*, NINChannelUser*>* _channelUsers;
 }
 
 /** Realm ID to use. */
@@ -187,6 +191,58 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 }
 
+-(NINChannelUser*) parseUserAttrs:(ClientProps*)userAttrs userID:(NSString*)userID {
+    NSError* error;
+
+    NSString* iconURL = [userAttrs getString:@"iconurl" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get iconurl: %@", error);
+        return nil;
+    }
+
+    NSString* displayName = [userAttrs getString:@"name" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get name: %@", error);
+        return nil;
+    }
+
+    NSString* realName = [userAttrs getString:@"realname" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get realname: %@", error);
+        return nil;
+    }
+
+    BOOL guest = NO;
+    [userAttrs getBool:@"guest" val:&guest error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get guest: %@", error);
+        return nil;
+    }
+
+    return [NINChannelUser userWithID:userID realName:realName displayName:displayName iconURL:iconURL guest:guest];
+}
+
+/*Event: map[event_id:6 event:user_updated user_attrs:map[realname:Matti Dahlbom connected:true iconurl:https://ninchat-file-test-eu-central-1.s3-eu-central-1.amazonaws.com/u/5npsj2ag00m3g/5ogokj8m00m3g info:map[company:QVIK url:] name:Matti Dahlbom] user_id:5npsj2ag00m3g]*/
+-(void) userUpdated:(ClientProps*)params {
+    NSError* error;
+
+    NSCAssert(self.activeChannelId != nil, @"No active channel");
+
+    NSString* userID = [params getString:@"user_id" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get user_id: %@", error);
+        return;
+    }
+
+    ClientProps* userAttrs = [params getObject:@"user_attrs" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get user_attrs: %@", error);
+        return;
+    }
+
+    _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
+}
+
 -(void) channelUpdated:(ClientProps*)params {
     NSError* error;
 
@@ -294,29 +350,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"stunServers": stunServerArray, @"turnServers": turnServerArray});
 }
 
-/*
- Inbound text message:
-
- Event: map[message_time:1.530784885e+09 message_type:ninchat.com/text event_id:7 frames:1 event:message_received message_id:5nsgf1n2004qs message_user_name:Matti Dahlbom channel_id:5npnrkp1009m message_user_id:5i09opdv0049]
-
- Channel join:
-
- Event: map[message_time:1.530788844e+09 message_type:ninchat.com/info/join event_id:3 frames:1 channel_id:5npnrkp1009m event:message_received message_id:5nsk7s7c009m2]
- */
--(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
-    NSCAssert(self.activeChannelId != nil, @"No active channel");
-
+-(void) handleInboundMessage:(ClientProps*)params payload:(ClientPayload*)payload actionId:(long)actionId {
     NSError* error = nil;
     NSString* messageType = [params getString:@"message_type" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get message_type: %@", error);
-        return;
-    }
-
-    long actionId;
-    [params getInt:@"action_id" val:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get action_id: %@", error);
         return;
     }
 
@@ -329,8 +367,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [messageType isEqualToString:kNINMessageTypeWebRTCHangup]) {
 
         if (actionId != 0) {
-            // This message originates from me; complete the action and return
-            postNotification(kActionNotification, @{@"action_id": @(actionId)});
+            // This message originates from me; we can ignore it.
             return;
         }
 
@@ -353,6 +390,17 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
+    NSString* messageUserID = [params getString:@"message_user_id" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get message_user_id: %@", error);
+        return;
+    }
+
+    NINChannelUser* messageUser = _channelUsers[messageUserID];
+    if (messageUser == nil) {
+        NSLog(@"Message from unknown user: %@", messageUserID);
+    }
+
     NSLog(@"Message payload.length = %ld", payload.length);
     for (int i = 0; i < payload.length; i++) {
         NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
@@ -361,17 +409,34 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
             return;
         }
 
-        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] mine:(actionId != 0)];
+
+        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL mine:(actionId != 0)];
         [_channelMessages insertObject:msg atIndex:0];
         postNotification(kNewChannelMessageNotification, @{@"message": msg});
         NSLog(@"Got new channel message: %@", msg);
     }
+}
+
+-(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
+    NSCAssert(self.activeChannelId != nil, @"No active channel");
+
+    NSError* error = nil;
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get action_id: %@", error);
+        return;
+    }
+
+    [self handleInboundMessage:params payload:payload actionId:actionId];
 
     if (actionId != 0) {
         postNotification(kActionNotification, @{@"action_id": @(actionId)});
     }
 }
 
+/*Event: map[channel_id:5scjf4tm006u8 channel_members:map[5npsj2ag00m3g:map[user_attrs:map[connected:true iconurl:https://ninchat-file-test-eu-central-1.s3-eu-central-1.amazonaws.com/u/5npsj2ag00m3g/5ogokj8m00m3g info:map[company:QVIK url:] name:Matti Dahlbom realname:Matti Dahlbom] member_attrs:map[since:1.535619872e+09 operator:true]] 5scjf0m5006u8:map[user_attrs:map[connected:true guest:true] member_attrs:map[since:1.535619872e+09]]] event:channel_joined realm_id:5lmphjc200m3g event_id:4 channel_attrs:map[anonymous:true audience_id:5scjf26q006u8 private:true requester_id:5scjf0m5006u8 upload:member disclosed:true disclosed_since:1.535619872e+09 owner_id:0498gd6d queue_id:5lmpjrbl00m3g]]
+ */
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
@@ -392,14 +457,40 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     // We are no longer in the queue; clear the queue reference
     self.currentQueueId = nil;
 
-    // Clear current list of messages
+    // Clear current list of messages and users
     [_channelMessages removeAllObjects];
+    [_channelUsers removeAllObjects];
+
+    // Extract the channel members' data
+    ClientProps* members = [params getObject:@"channel_members" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get channel_members: %@", error);
+        return;
+    }
+
+    NINClientPropsParser* memberParser = [NINClientPropsParser new];
+    [members accept:memberParser error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to traverse members array: %@", error);
+        return;
+    }
+
+    for (NSString* userID in memberParser.properties.allKeys) {
+        ClientProps* memberAttrs = memberParser.properties[userID];
+        ClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to get user_attrs: %@", error);
+            continue;
+        }
+
+        _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
+    }
 
     //TODO remove; this is test data
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" mine:NO]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" mine:YES]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." mine:NO]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" mine:YES]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES]];
 
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});
@@ -698,6 +789,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [self channelUpdated:params];
     } else if ([event isEqualToString:@"ice_begun"]) {
         [self iceBegun:params];
+    } else if ([event isEqualToString:@"user_updated"]) {
+        [self userUpdated:params];
     }
 }
 
@@ -751,6 +844,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     if (self != nil) {
         _queues = [NSMutableArray array];
         _channelMessages = [NSMutableArray array];
+        _channelUsers = [NSMutableDictionary dictionary];
     }
 
     return self;

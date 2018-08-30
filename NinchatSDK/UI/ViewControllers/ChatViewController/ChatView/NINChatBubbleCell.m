@@ -6,6 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+@import AFNetworking;
+
 #import "NINChatBubbleCell.h"
 #import "NINUtils.h"
 
@@ -57,30 +59,33 @@
 -(void) populateWithText:(NSString*)text avatarImageUrl:(NSString*)avatarImageUrl isMine:(BOOL)isMine {
     self.textContentLabel.text = text;
 
-    //TODO do ever need a right side avatar?
-    self.rightAvatarWidthConstraint.constant = 0;
-
     if (isMine) {
         self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
-        self.leftAvatarWidthConstraint.constant = 0;
 
         // Push the bubble to the right edge by setting the left constraint relation to >=
         self.containerLeftConstraint.active = NO;
         self.containerLeftConstraint = [NSLayoutConstraint constraintWithItem:self.containerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.leftAvatarContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
         self.containerLeftConstraint.active = YES;
 
+        self.rightAvatarWidthConstraint.constant = 50;
+        self.leftAvatarWidthConstraint.constant = 0;
 
-        //TODO enable
-//        self.leftAvatarImageView.image = nil;
+        self.leftAvatarImageView.image = nil;
+        [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarImageUrl] placeholderImage:[UIImage imageNamed:@"icon_portrait_placeholder" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil]];
     } else {
         self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
         self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
-        //TODO set left avatar image from the URL - use a image cache. AFNetworking?
 
         // Push the bubble to the left edge by setting the right constraint relation to >=
         self.containerRightConstraint.active = NO;
         self.containerRightConstraint = [NSLayoutConstraint constraintWithItem:self.rightAvatarContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.containerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
         self.containerRightConstraint.active = YES;
+
+        self.rightAvatarWidthConstraint.constant = 0;
+        self.leftAvatarWidthConstraint.constant = 50;
+
+        [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarImageUrl] placeholderImage:[UIImage imageNamed:@"icon_portrait_placeholder" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil]];
+        self.rightAvatarImageView.image = nil;
     }
 }
 

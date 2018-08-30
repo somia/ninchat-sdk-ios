@@ -110,8 +110,8 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 #pragma mark - From NINChatViewDataSource
 
 - (NSString *)chatView:(NINChatView *)chatView avatarURLAtIndex:(NSInteger)index {
-    //TODO implement me
-    return nil;
+    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
+    return msg.avatarURL;
 }
 
 - (BOOL)chatView:(NINChatView *)chatView isMessageFromMeAtIndex:(NSInteger)index {
