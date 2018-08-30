@@ -8,14 +8,13 @@
 
 @import UIKit;
 
+#import "NINBaseViewController.h"
+
 @class NINSessionManager;
 
 /**
  * Provides a chat view with message input and chat 'bubbles'.
  */
-@interface NINChatViewController : UIViewController
-
-/** Reference to the session manager instance. */
-@property (nonatomic, strong) NINSessionManager* sessionManager;
+@interface NINChatViewController : NINBaseViewController
 
 @end

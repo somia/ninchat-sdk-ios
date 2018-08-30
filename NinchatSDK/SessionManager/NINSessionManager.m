@@ -519,6 +519,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [params setString:@"action" val:@"send_message"];
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.activeChannelId];
+    //TODO add support for message_recipient_ids ?
 
     if ([messageType hasPrefix:@"ninchat.com/rtc/"]) {
         // Add message_ttl to all rtc signaling messages

@@ -22,6 +22,9 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
 
+// The text input box
+@property (nonatomic, strong) IBOutlet UITextField* textInputField;
+
 // Reference to the notifications observer that listens to new message -notifications.
 @property (nonatomic, strong) id<NSObject> messagesObserver;
 
@@ -33,17 +36,6 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 @implementation NINChatViewController
 
 #pragma mark - Private methods
-
--(void) sendButtonPressed:(id)sender {
-    NSString* text = @"TODO";
-
-    [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
-        if (error != nil) {
-            //TODO show error toast? check with UX people.
-            NSLog(@"TODO: message failed to send - show error message");
-        }
-    }];
-}
 
 -(void) listenToWebRTCSignaling {
     if (self.signalingObserver != nil) {
@@ -86,6 +78,23 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     });
 }
 
+#pragma mark - IBAction handlers
+
+-(IBAction) sendButtonPressed:(id)sender {
+    NSString* text = [self.textInputField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    self.textInputField.text = nil;
+    [self.textInputField resignFirstResponder];
+
+    if ([text length] > 0) {
+        [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
+            if (error != nil) {
+                //TODO show error toast? check with UX people.
+                NSLog(@"TODO: message failed to send - show error message");
+            }
+        }];
+    }
+}
+
 #pragma mark - From UIViewController
 
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -124,8 +133,12 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
     __weak typeof(self) weakSelf = self;
 
+    // Start listening to new messages
     self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
 
@@ -141,9 +154,6 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
         NSLog(@"Channel closed - showing rating view.");
 
-        // First pop the chat view
-        [weakSelf.navigationController popToViewController:self animated:YES];
-
         // Show the rating view
         [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
 
@@ -155,6 +165,13 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
+}
+
+-(void) viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 -(void) viewDidLoad {

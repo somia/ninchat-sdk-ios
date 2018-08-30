@@ -131,11 +131,61 @@
                                 <rect key="frame" x="0.0" y="80" width="375" height="487"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Input controls container">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Controls container">
                                 <rect key="frame" x="0.0" y="567" width="375" height="100"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12n-mg-urX" userLabel="text input container">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter your message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qVo-ml-15d">
+                                                <rect key="frame" x="5" y="5" width="365" height="50"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="qVo-ml-15d" secondAttribute="bottom" constant="5" id="HlZ-UX-VtZ"/>
+                                            <constraint firstItem="qVo-ml-15d" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" constant="5" id="Syv-H4-KWr"/>
+                                            <constraint firstItem="qVo-ml-15d" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" constant="5" id="aLC-33-tlp"/>
+                                            <constraint firstAttribute="trailing" secondItem="qVo-ml-15d" secondAttribute="trailing" constant="5" id="tcY-B9-wAR"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bNc-b4-D5d" userLabel="input buttons container">
+                                        <rect key="frame" x="0.0" y="60" width="375" height="40"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cAh-Q0-iyj">
+                                                <rect key="frame" x="328" y="5" width="42" height="30"/>
+                                                <color key="backgroundColor" red="0.2156862745" green="0.63137254899999995" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="42" id="e7A-ap-Kns"/>
+                                                </constraints>
+                                                <state key="normal" title="SEND"/>
+                                                <connections>
+                                                    <action selector="sendButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="gLy-fb-7NM"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" red="0.69803921570000005" green="0.90196078430000004" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="cAh-Q0-iyj" secondAttribute="trailing" constant="5" id="FcP-jZ-2eD"/>
+                                            <constraint firstAttribute="bottom" secondItem="cAh-Q0-iyj" secondAttribute="bottom" constant="5" id="Ip7-A0-a0b"/>
+                                            <constraint firstAttribute="height" constant="40" id="We9-cC-FFu"/>
+                                            <constraint firstItem="cAh-Q0-iyj" firstAttribute="top" secondItem="bNc-b4-D5d" secondAttribute="top" constant="5" id="cxJ-cN-K7Z"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" red="0.2156862745" green="0.63137254899999995" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
+                                    <constraint firstItem="12n-mg-urX" firstAttribute="leading" secondItem="Kml-pm-EfW" secondAttribute="leading" id="ESK-BW-eka"/>
+                                    <constraint firstAttribute="trailing" secondItem="bNc-b4-D5d" secondAttribute="trailing" id="HqU-5W-8kl"/>
+                                    <constraint firstAttribute="trailing" secondItem="12n-mg-urX" secondAttribute="trailing" id="UK9-q8-FDW"/>
                                     <constraint firstAttribute="height" constant="100" id="YKl-pu-wGd"/>
+                                    <constraint firstItem="bNc-b4-D5d" firstAttribute="leading" secondItem="Kml-pm-EfW" secondAttribute="leading" id="fEf-ga-OcT"/>
+                                    <constraint firstItem="12n-mg-urX" firstAttribute="top" secondItem="Kml-pm-EfW" secondAttribute="top" id="i1W-FH-SyE"/>
+                                    <constraint firstAttribute="bottom" secondItem="bNc-b4-D5d" secondAttribute="bottom" id="wY5-Ye-Fdn"/>
+                                    <constraint firstItem="bNc-b4-D5d" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="bottom" id="win-2a-TFp"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -156,6 +206,7 @@
                     </view>
                     <connections>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
+                        <outlet property="textInputField" destination="qVo-ml-15d" id="P1g-kH-mee"/>
                         <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="V96-PI-mkd"/>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>
                     </connections>

@@ -20,4 +20,10 @@
 /** Reference to the custom navigation bar. */
 @property (nonatomic, strong) IBOutlet NINNavigationBar* customNavigationBar;
 
+/** Default handler for show keyboard -event. */
+-(void) keyboardWillShow:(NSNotification*)notification;
+
+/** Default handler for hide keyboard -event. */
+-(void) keyboardWillHide:(NSNotification*)notification;
+
 @end

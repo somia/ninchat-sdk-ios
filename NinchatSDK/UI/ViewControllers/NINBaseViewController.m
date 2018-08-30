@@ -18,6 +18,29 @@
 
 @implementation NINBaseViewController
 
+#pragma mark - Private methods
+
+-(void) keyboardWillShow:(NSNotification*)notification {
+    CGSize keyboardSize = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    CGFloat animationDuration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.view.transform = CGAffineTransformMakeTranslation(0, -keyboardSize.height);
+    } completion:^(BOOL finished) {
+
+    }];
+}
+
+-(void) keyboardWillHide:(NSNotification*)notification {
+    CGFloat animationDuration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.view.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
 #pragma mark - IBAction handlers
 
 #pragma mark - Lifecycle etc.
