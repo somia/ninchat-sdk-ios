@@ -93,6 +93,12 @@
     [super awakeFromNib];
 
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
+
+    // Rotate the cell 180 degrees; we will use the table view upside down
+    self.transform = CGAffineTransformMakeRotation(M_PI);
+
+    // The cell doesnt have any dynamic content; we can freely rasterize it for better scrolling performance
+    self.layer.shouldRasterize = YES;
 }
 
 @end

@@ -37,6 +37,8 @@
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
+		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
+		496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F5213838E7001FD1C4 /* NINTouchView.m */; };
 		49721CC72122F70500695F33 /* NINWebRTCClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CC52122F70500695F33 /* NINWebRTCClient.h */; };
 		49721CC82122F70500695F33 /* NINWebRTCClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CC62122F70500695F33 /* NINWebRTCClient.m */; };
 		49721CCB2122F87B00695F33 /* NINWebRTCServerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CC92122F87B00695F33 /* NINWebRTCServerInfo.h */; };
@@ -111,6 +113,8 @@
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
+		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
+		496F85F5213838E7001FD1C4 /* NINTouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINTouchView.m; sourceTree = "<group>"; };
 		49721CC52122F70500695F33 /* NINWebRTCClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINWebRTCClient.h; sourceTree = "<group>"; };
 		49721CC62122F70500695F33 /* NINWebRTCClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINWebRTCClient.m; sourceTree = "<group>"; };
 		49721CC92122F87B00695F33 /* NINWebRTCServerInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINWebRTCServerInfo.h; sourceTree = "<group>"; };
@@ -252,6 +256,8 @@
 				49140B7520F2748800A00EA8 /* NINChannelMessage.m */,
 				49F5FA3720F781D600A4A526 /* NINQueue.h */,
 				49F5FA3820F781D600A4A526 /* NINQueue.m */,
+				496F85F4213838E7001FD1C4 /* NINTouchView.h */,
+				496F85F5213838E7001FD1C4 /* NINTouchView.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -423,6 +429,7 @@
 				491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */,
 				49721CD121295AEA00695F33 /* NINChatView.h in Headers */,
 				49140B7D20F27BC900A00EA8 /* NINPrivateTypes.h in Headers */,
+				496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */,
 				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
 				49721CDE212AF84200695F33 /* RTCSessionDescription+Dictionary.h in Headers */,
@@ -593,6 +600,7 @@
 				49721CD221295AEA00695F33 /* NINChatView.m in Sources */,
 				495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */,
 				49140B8820F395A700A00EA8 /* NINQueueViewController.m in Sources */,
+				496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */,
 				496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */,
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,

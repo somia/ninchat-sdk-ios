@@ -13,6 +13,7 @@
 #import "NINWebRTCClient.h"
 #import "NINVideoCallViewController.h"
 #import "NINChatView.h"
+#import "NINTouchView.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
@@ -21,6 +22,9 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
+
+// This view is used to detect a tap outside the keyboard to close it
+@property (nonatomic, strong) NINTouchView* tapRecognizerView;
 
 // The text input box
 @property (nonatomic, strong) IBOutlet UITextField* textInputField;
@@ -126,6 +130,35 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
 - (NSInteger)numberOfMessagesForChatView:(NINChatView *)chatView {
     return self.sessionManager.channelMessages.count;
+}
+
+#pragma mark - From NINBaseViewController
+
+-(void) keyboardWillShow:(NSNotification *)notification {
+    [super keyboardWillShow:notification];
+
+    if (self.tapRecognizerView == nil) {
+        __weak typeof(self) weakSelf = self;
+        self.tapRecognizerView = [[NINTouchView alloc] initWithFrame:self.chatView.bounds];
+        self.tapRecognizerView.tag = 666;
+
+        self.tapRecognizerView.touchCallback = ^{
+            // Get rid of the keyboard
+            [weakSelf.textInputField resignFirstResponder];
+            NSLog(@"touched tapRecognizerView");
+        };
+
+        [self.chatView addSubview:self.tapRecognizerView];
+        NSLog(@"added tapRecognizerView");
+    }
+}
+
+-(void) keyboardWillHide:(NSNotification *)notification {
+    [super keyboardWillHide:notification];
+
+    [self.tapRecognizerView removeFromSuperview];
+    self.tapRecognizerView = nil;
+    NSLog(@"removed tapRecognizerView");
 }
 
 #pragma mark - Lifecycle etc.

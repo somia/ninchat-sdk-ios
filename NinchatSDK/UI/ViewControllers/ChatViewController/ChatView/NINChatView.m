@@ -62,6 +62,9 @@
     UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
     NSCAssert(nib != nil, @"NIB not found");
     [self.tableView registerNib:nib forCellReuseIdentifier:@"NINChatBubbleCell"];
+
+    // Rotate the table view 180 degrees; we will use it upside down
+    self.tableView.transform = CGAffineTransformMakeRotation(M_PI);
 }
 
 @end
