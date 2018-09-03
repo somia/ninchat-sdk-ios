@@ -86,13 +86,21 @@
 // Substitutes the original view content (eg. from Storyboard) with contents of the xib
 -(id) awakeAfterUsingCoder:(NSCoder *)aDecoder {
     NINChatView* newView = [self loadViewFromNib];
-    newView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    // Copy our public properties over
-    newView.dataSource = self.dataSource;
-    
+    newView.frame = self.frame;
+    newView.autoresizingMask = self.autoresizingMask;
+    newView.translatesAutoresizingMaskIntoConstraints = self.translatesAutoresizingMaskIntoConstraints;
+
     // Not to break the layout surrounding this view, we must copy the constraints over
     // to the newly loaded view
+    for (NSLayoutConstraint* constraint in self.constraints) {
+        id firstItem = (constraint.firstItem == self) ? newView : constraint.firstItem;
+        id secondItem = (constraint.secondItem == self) ? newView : constraint.secondItem;
+
+        [newView addConstraint:[NSLayoutConstraint constraintWithItem:firstItem attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:secondItem attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
+    }
+
+    /*
     for (NSLayoutConstraint* constraint in self.constraints) {
         if (constraint.secondItem != nil) {
             [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:newView attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
@@ -100,6 +108,7 @@
             [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:constraint.constant]];
         }
     }
+     */
 
     return newView;
 }

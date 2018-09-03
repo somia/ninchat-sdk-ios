@@ -23,6 +23,14 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
 
+// The chat view height constraint
+//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatViewHeightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint* chatViewHeightConstraint;
+
+//
+//// The video view height constraint
+//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* videoViewHeightConstraint;
+
 // This view is used to detect a tap outside the keyboard to close it
 @property (nonatomic, strong) NINTouchView* tapRecognizerView;
 
@@ -82,6 +90,24 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     });
 }
 
+-(void) adjustConstraints:(BOOL)portrait {
+    if (portrait) {
+        // Portrait; disable chat view height constraint
+        if (self.chatViewHeightConstraint != nil) {
+            self.chatViewHeightConstraint.active = NO;
+            self.chatViewHeightConstraint = nil;
+        }
+    } else {
+        // Landscape; set the chat height constraint to 0. We have to do this
+        // manually here b/c the 'embeddable' view trick cannot catch this change.
+        if (self.chatViewHeightConstraint == nil) {
+            self.chatViewHeightConstraint = [NSLayoutConstraint constraintWithItem:self.chatView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0];
+            self.chatViewHeightConstraint.priority = 999;
+            self.chatViewHeightConstraint.active = YES;
+        }
+    }
+}
+
 #pragma mark - IBAction handlers
 
 -(IBAction) sendButtonPressed:(id)sender {
@@ -109,6 +135,14 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
         vc.webrtcClient = params[@"client"];
         vc.offerSDP = params[@"sdp"];
     }
+}
+
+#pragma mark - From UIContentController
+
+-(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    [self adjustConstraints:(size.height > size.width)];
 }
 
 #pragma mark - From NINChatViewDataSource
@@ -165,6 +199,8 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    [self adjustConstraints:(self.view.frame.size.height > self.view.frame.size.width)];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];

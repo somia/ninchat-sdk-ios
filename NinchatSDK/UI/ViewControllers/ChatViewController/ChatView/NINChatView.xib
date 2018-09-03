@@ -27,10 +27,10 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="0Oc-IJ-1pz" secondAttribute="bottom" id="AjM-UE-a3R"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="0Oc-IJ-1pz" secondAttribute="bottom" priority="999" id="AjM-UE-a3R"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="0Oc-IJ-1pz" secondAttribute="trailing" id="BsD-KI-bgU"/>
                 <constraint firstItem="0Oc-IJ-1pz" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="OGq-PE-NQA"/>
-                <constraint firstItem="0Oc-IJ-1pz" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ixQ-rr-x9Z"/>
+                <constraint firstItem="0Oc-IJ-1pz" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" priority="999" id="ixQ-rr-x9Z"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
