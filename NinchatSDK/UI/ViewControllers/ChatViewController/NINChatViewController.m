@@ -6,6 +6,10 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+#import <libjingle_peerconnection/RTCEAGLVideoView.h>
+#import <AVFoundation/AVFoundation.h>
+#import <libjingle_peerconnection/RTCVideoTrack.h>
+
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"
 #import "NINUtils.h"
@@ -16,20 +20,45 @@
 #import "NINTouchView.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
-static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
+//static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
 
-@interface NINChatViewController () <NINChatViewDataSource>
+@interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate>
+
+// Our video views; one for remote (received) and one for local (capturing device camera feed)
+@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
+@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* localVideoView;
+
+// Remote video view constraints for adjusting aspect ratio
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewTopConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewRightConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewLeftConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewBottomConstraint;
+
+// Local video view constraints for adjusting aspect ratio
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* localViewWidthConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* localViewHeightConstraint;
+
+// The video container view
+@property (nonatomic, strong) IBOutlet UIView* videoContainerView;
 
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
 
-// The chat view height constraint
-//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatViewHeightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint* chatViewHeightConstraint;
+// Remote video track
+@property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
-//
-//// The video view height constraint
-//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* videoViewHeightConstraint;
+// Local video track
+@property (strong, nonatomic) RTCVideoTrack* localVideoTrack;
+
+// Video resolutions - used for adjusting aspect ratio
+@property (assign, nonatomic) CGSize remoteVideoSize;
+@property (assign, nonatomic) CGSize localVideoSize;
+
+// WebRTC client for the video call.
+@property (nonatomic, strong) NINWebRTCClient* webrtcClient;
+
+// The chat view height constraint
+@property (nonatomic, strong) NSLayoutConstraint* chatViewHeightConstraint;
 
 // This view is used to detect a tap outside the keyboard to close it
 @property (nonatomic, strong) NINTouchView* tapRecognizerView;
@@ -71,23 +100,67 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
             NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
 
-            NSDictionary* payload = note.userInfo[@"payload"];
-            NSLog(@"Offer payload: %@", payload);
+            NSDictionary* offerPayload = note.userInfo[@"payload"];
+            NSLog(@"Offer payload: %@", offerPayload);
 
             // Fetch our STUN / TURN server information
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
 
                 // Create a WebRTC client for the video call
-                NINWebRTCClient* client = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
+                self.webrtcClient = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
 
-                // Open the video call view
-                NSDictionary* params = @{@"client": client, @"sdp": payload[@"sdp"]};
-                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:params];
+                NSLog(@"Starting WebRTC client..");
+                self.webrtcClient.delegate = self;
+                [self.webrtcClient startWithSDP:offerPayload[@"sdp"]];
             }];
+        } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
+            NSLog(@"Got WebRTC hang-up - closing the video call.");
+
+            // Disconnect
+            [weakSelf disconnectWebRTC];
+
+            // Close the video view
+            //TODO
+
+            return YES;
         }
 
         return NO;
     });
+}
+
+-(void) disconnectWebRTC {
+    NSLog(@"Disconnecting webrtc resources");
+
+    if (self.webrtcClient != nil) {
+        // Clean up local video view
+        if (self.localVideoTrack != nil) {
+            [self.localVideoTrack removeRenderer:self.localVideoView];
+        }
+        self.localVideoTrack = nil;
+        [self.localVideoView renderFrame:nil];
+
+        // Clean up remote video view
+        if (self.remoteVideoTrack != nil) {
+            [self.remoteVideoTrack removeRenderer:self.remoteVideoView];
+        }
+        self.remoteVideoTrack = nil;
+        [self.remoteVideoView renderFrame:nil];
+
+        // Finally, disconnect the WebRTC client.
+        [self.webrtcClient disconnect];
+        self.webrtcClient = nil;
+    }
+}
+
+-(void) orientationChanged:(NSNotification*)notification {
+    [self videoView:self.remoteVideoView didChangeVideoSize:self.remoteVideoSize];
+    [self videoView:self.localVideoView didChangeVideoSize:self.localVideoSize];
+}
+
+-(void) applicationWillResignActive:(UIApplication*)application {
+    NSLog(@"applicationWillResignActive:");
+    [self disconnectWebRTC];
 }
 
 -(void) adjustConstraints:(BOOL)portrait {
@@ -125,17 +198,108 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     }
 }
 
-#pragma mark - From UIViewController
+-(IBAction) hangupButtonPressed:(UIButton*)button {
+    __weak typeof(self) weakSelf = self;
 
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
-        NINVideoCallViewController* vc = segue.destinationViewController;
-        NSDictionary* params = (NSDictionary*)sender;
-        vc.sessionManager = self.sessionManager;
-        vc.webrtcClient = params[@"client"];
-        vc.offerSDP = params[@"sdp"];
+    [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCHangup payloadDict:@{} completion:^(NSError* error) {
+        if (error != nil) {
+            NSLog(@"Failed to send hang-up: %@", error);
+        }
+
+        // Disconnect the WebRTC client
+        [weakSelf disconnectWebRTC];
+
+        //TODO hide video views
+    }];
+}
+
+#pragma mark - From NINWebRTCClientDelegate
+
+-(void) webrtcClient:(NINWebRTCClient *)client didGetError:(NSError *)error {
+    NSLog(@"NINCHAT: didGetError: %@", error);
+
+    [self disconnectWebRTC];
+}
+
+-(void) webrtcClient:(NINWebRTCClient *)client didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
+    NSLog(@"NINCHAT: didReceiveLocalVideoTrack: %@", localVideoTrack);
+
+    if (self.localVideoTrack != nil) {
+        [self.localVideoTrack removeRenderer:self.localVideoView];
+        self.localVideoTrack = nil;
+        [self.localVideoView renderFrame:nil];
+    }
+
+    self.localVideoTrack = localVideoTrack;
+    [self.localVideoTrack addRenderer:self.localVideoView];
+}
+
+-(void) webrtcClient:(NINWebRTCClient *)client didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
+    NSLog(@"NINCHAT: didReceiveRemoteVideoTrack: %@", remoteVideoTrack);
+
+    self.remoteVideoTrack = remoteVideoTrack;
+    [self.remoteVideoTrack addRenderer:self.remoteVideoView];
+}
+
+#pragma mark - From RTCEAGLVideoViewDelegate
+
+- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
+    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
+
+    CGFloat containerWidth = self.videoContainerView.bounds.size.width;
+    CGFloat containerHeight = self.videoContainerView.bounds.size.height;
+    CGSize defaultAspectRatio = CGSizeMake(4, 3);
+    CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+
+    if (videoView == self.localVideoView) {
+        NSLog(@"Adjusting local video view size");
+        self.localVideoSize = size;
+
+        // Fit the local video view inside a box sized proportionately to the video container
+        CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
+        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+
+        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
+
+        self.localViewWidthConstraint.constant = videoFrame.size.width;
+        self.localViewHeightConstraint.constant = videoFrame.size.height;
+
+        
+    } else {
+        NSLog(@"Adjusting remote video view size");
+        self.remoteVideoSize = size;
+
+        // Fit the remote video view inside the view container with proper aspect ratio
+        CGRect videoRect = self.videoContainerView.bounds;
+        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+        CGFloat topSpace = (containerHeight - videoFrame.size.height) / 2;
+        CGFloat sideSpace = (containerWidth - videoFrame.size.width) / 2;
+
+        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
+
+        self.remoteViewTopConstraint.constant = topSpace;
+        self.remoteViewBottomConstraint.constant = topSpace;
+        self.remoteViewLeftConstraint.constant = sideSpace;
+        self.remoteViewRightConstraint.constant = sideSpace;
+
+        // Animate the frame size change
+        [UIView animateWithDuration:0.4f animations:^{
+            [self.view layoutIfNeeded];
+        }];
     }
 }
+
+#pragma mark - From UIViewController
+
+//-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+//    if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
+//        NINVideoCallViewController* vc = segue.destinationViewController;
+//        NSDictionary* params = (NSDictionary*)sender;
+//        vc.sessionManager = self.sessionManager;
+//        vc.webrtcClient = params[@"client"];
+//        vc.offerSDP = params[@"sdp"];
+//    }
+//}
 
 #pragma mark - From UIContentController
 
@@ -200,6 +364,10 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    NSCAssert(self.sessionManager != nil, @"Must have session manager");
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+
     [self adjustConstraints:(self.view.frame.size.height > self.view.frame.size.width)];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -234,6 +402,7 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
     [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -241,18 +410,27 @@ static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoC
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
+
+    [self disconnectWebRTC];
 }
 
 -(void) viewDidLoad {
     [super viewDidLoad];
 
-    self.navigationItem.title = self.title;
-
     self.chatView.dataSource = self;
+
+    self.remoteVideoView.delegate = self;
+    self.localVideoView.delegate = self;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 }
 
 -(void) dealloc {
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
 }
 
 @end

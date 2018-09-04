@@ -106,9 +106,11 @@
 #pragma mark - Public Methods
 
 -(void) disconnect {
-    [self.peerConnection close];
-    
-    self.peerConnection = nil;
+    if (self.peerConnection != nil) {
+        [self.peerConnection close];
+        self.peerConnection = nil;
+    }
+
     self.peerConnectionFactory = nil;
     self.sessionManager = nil;
     self.iceServers = nil;
@@ -127,16 +129,18 @@
 
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
-        NSLog(@"WebRTC: got signaling message: %@", note);
+        NSLog(@"WebRTC: got signaling message: %@", note.userInfo[@"messageType"]);
 
         NSDictionary* payload = note.userInfo[@"payload"];
-//        NSLog(@"WebRTC: Signaling message payload: %@", payload);
+        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
             RTCICECandidate* candidate = [RTCICECandidate fromDictionary:payload[@"sdp"]];
             [weakSelf.peerConnection addICECandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
             RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
+            NSCAssert(description != nil, @"Session description cannot be null");
+            NSLog(@"Setting local remote description with SDP: %@", description);
             [weakSelf.peerConnection setRemoteDescriptionWithDelegate:weakSelf sessionDescription:description];
         }
 
@@ -155,8 +159,8 @@
         [self.peerConnection createOfferWithDelegate:self constraints:[self defaultOfferConstraints]];
     } else {
         // We are the 'callee', ie. we are answering.
-        NSLog(@"WebRTC: answering call.");
         NSCAssert(sdp != nil, @"Must have Offer SDP data");
+        NSLog(@"WebRTC: answering call with SDP: %@", sdp);
         [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
     }
 }
@@ -224,6 +228,7 @@
             return;
         }
 
+        NSLog(@"Setting local session description with SDP: %@", sdp);
         [self.peerConnection setLocalDescriptionWithDelegate:self sessionDescription:sdp];
 
         // Decide what type of signaling message to send based on the SDP type
@@ -251,8 +256,8 @@
     runOnMainThread(^{
         if (error != nil) {
             NSLog(@"WebRTC: got set session error: %@", error);
-            [self disconnect];
             [self.delegate webrtcClient:self didGetError:error];
+            [self disconnect];
             return;
         }
 

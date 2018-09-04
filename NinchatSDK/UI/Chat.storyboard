@@ -152,7 +152,7 @@
                                                 </constraints>
                                                 <state key="normal" title="Button" image="icon_hangup"/>
                                                 <connections>
-                                                    <action selector="hangupButtonPressed:" destination="8ul-sn-uv2" eventType="touchUpInside" id="HFs-j1-zeY"/>
+                                                    <action selector="hangupButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="AeD-qs-Kg8"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -269,7 +269,16 @@
                     </view>
                     <connections>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
+                        <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
+                        <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
+                        <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>
+                        <outlet property="remoteVideoView" destination="XJz-Z9-GdN" id="A49-YF-jyz"/>
+                        <outlet property="remoteViewBottomConstraint" destination="fQb-KE-KDl" id="eLj-0f-az3"/>
+                        <outlet property="remoteViewLeftConstraint" destination="9aI-1M-zhQ" id="ZrD-tm-oyD"/>
+                        <outlet property="remoteViewRightConstraint" destination="ON3-9v-VfC" id="gf7-Jk-0uM"/>
+                        <outlet property="remoteViewTopConstraint" destination="E1G-aK-Vq3" id="ekZ-zx-huB"/>
                         <outlet property="textInputField" destination="qVo-ml-15d" id="P1g-kH-mee"/>
+                        <outlet property="videoContainerView" destination="rVm-KF-mbW" id="4Md-X0-j7W"/>
                         <segue destination="8ul-sn-uv2" kind="show" identifier="ninchatsdk.segue.ChatToVideoCall" id="V96-PI-mkd"/>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>
                     </connections>
