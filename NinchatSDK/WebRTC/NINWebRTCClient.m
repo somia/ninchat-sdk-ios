@@ -75,7 +75,7 @@
             break;
         }
     }
-    NSAssert(cameraID != nil, @"Unable to get the front camera id");
+    NSCAssert(cameraID != nil, @"Unable to get the front camera id");
 
     RTCVideoCapturer* capturer = [RTCVideoCapturer capturerWithDeviceName:cameraID];
     RTCMediaConstraints* mediaConstraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:nil];
@@ -114,7 +114,7 @@
     self.peerConnectionFactory = nil;
     self.sessionManager = nil;
     self.iceServers = nil;
-
+    
     [NSNotificationCenter.defaultCenter removeObserver:self.signalingObserver];
     self.signalingObserver = nil;
 }

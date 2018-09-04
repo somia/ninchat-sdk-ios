@@ -55,25 +55,11 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
     self.queueIdToJoin = nil;
 
-    __weak typeof(self) weakSelf = self;
-
     // Connect to the queue
     [self.sessionManager joinQueueWithId:queueId completion:^(NSError* error) {
         NSLog(@"Queue join completed, error: %@", error);
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
-
-
-//        //TODO remove
-//        [weakSelf.sessionManager initWebRTC:^(NSError* error, NINWebRTCClient* client) {
-//            NSLog(@"ICE info retrieved with error: %@, client: %@", error, client);
-//
-//            if (error == nil) {
-//                //TODO remove, and show the chat view instead.
-//                [weakSelf performSegueWithIdentifier:kSegueIdChatToVideoCall sender:client];
-//            }
-//        }];
-
 
         [self performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];

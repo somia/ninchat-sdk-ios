@@ -11,6 +11,7 @@
 @class NINSessionManager;
 @class NINWebRTCClient;
 
+//TODO deprecated, will get removed.
 @interface NINVideoCallViewController : UIViewController
 
 /** Reference to the session manager instance. */

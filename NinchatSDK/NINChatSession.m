@@ -74,7 +74,7 @@
         }
 
         weakSelf.sessionManager.siteConfiguration = config;
-        
+
         // Open the chat session
         error = [weakSelf.sessionManager openSession:^(NSError *error) {
             NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
@@ -95,7 +95,7 @@
             }];
         }];
 
-        if (error != nil) {
+ if (error != nil) {
             callbackBlock(error);
         }
     });
@@ -116,13 +116,18 @@
 }
 
 -(void) dealloc {
+    //TODO remove
+    self.sessionManager = nil;
+
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 // Prevent calling the default initializer
 -(id) init {
+    self = [super init];
+
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:@"-init is not a valid initializer for the class NINChat"
+                                   reason:[NSString stringWithFormat:@"-init is not a valid initializer for the class %@", NSStringFromClass(self.class)]
                                  userInfo:nil];
     return nil;
 }

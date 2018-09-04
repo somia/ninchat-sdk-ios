@@ -38,11 +38,19 @@ NSString* _Nonnull const kNINMessageTypeWebRTCPickup = @"ninchat.com/rtc/pick-up
 NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up";
 
 /**
+ * This class is used to work around circular reference memory leaks caused by the gomobile bind.
+ * It cannot hold a reference to 'proxy objects' ie. the ClientSession.
+ */
+@interface SessionCallbackHandler : NSObject <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler>
+@property (nonatomic, weak) NINSessionManager* sessionManager;
+@end
+
+/**
  This implementation is written against the following API specification:
 
  https://github.com/ninchat/ninchat-api/blob/v2/api.md
  */
-@interface NINSessionManager () <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler> {
+@interface NINSessionManager () {
 
     /** Mutable queue list. */
     NSMutableArray<NINQueue*>* _queues;
@@ -651,15 +659,20 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self sendMessageWithMessageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
 }
 
-// Low-level shutdown of the chatsession; invalidates session resource.
--(void) closeChat {
-    NSLog(@"Shutting down chat Session..");
+-(void) disconnect {
     self.activeChannelId = nil;
     [self.session close];
     self.session = nil;
+}
+
+// Low-level shutdown of the chatsession; invalidates session resource.
+-(void) closeChat {
+    NSLog(@"Shutting down chat Session..");
+
+    [self disconnect];
 
     // Signal the delegate that our session has ended
-    [self.ninchatSession.delegate ninchatDidEndChatSession:self.ninchatSession];
+    [self.ninchatSession.delegate ninchatDidEndSession:self.ninchatSession];
 }
 
 // High-level chat ending; sends channel metadata and then closes session.
@@ -719,15 +732,16 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return NO;
     });
 
-    __weak typeof(self) weakSelf = self;
+    SessionCallbackHandler* callbackHandler = [SessionCallbackHandler new];
+    callbackHandler.sessionManager = self;
 
     self.session = [ClientSession new];
     [self.session setAddress:kNinchatServerHostName];
-    [self.session setOnSessionEvent:weakSelf];
-    [self.session setOnEvent:weakSelf];
-    [self.session setOnClose:weakSelf];
-    [self.session setOnConnState:weakSelf];
-    [self.session setOnLog:weakSelf];
+    [self.session setOnClose:callbackHandler];
+    [self.session setOnConnState:callbackHandler];
+    [self.session setOnLog:callbackHandler];
+    [self.session setOnSessionEvent:callbackHandler];
+    [self.session setOnEvent:callbackHandler];
 
     NSError* error = nil;
     [self.session setParams:sessionParams error:&error];
@@ -835,6 +849,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 #pragma mark - Lifecycle etc.
 
 -(void) dealloc {
+    [self disconnect];
+
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
@@ -851,3 +867,32 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 @end
+
+#pragma mark - SessionCallbackHandler
+
+@implementation SessionCallbackHandler
+
+-(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
+    [self.sessionManager onEvent:params payload:payload lastReply:lastReply];
+}
+
+-(void) onClose {
+    [self.sessionManager onClose];
+}
+
+-(void) onSessionEvent:(ClientProps*)params {
+    [self.sessionManager onSessionEvent:params];
+}
+
+-(void) onLog:(NSString*)msg {
+    [self.sessionManager onLog:msg];
+}
+
+-(void) onConnState:(NSString*)state {
+    [self.sessionManager onConnState:state];
+}
+
+
+@end
+
+

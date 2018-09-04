@@ -26,11 +26,11 @@
 -(void) log:(NSString*_Nonnull)format, ...;
 
 /**
- * Indicates that the Ninchat SDK UI has completed its chat and would like
+ * Indicates that the Ninchat SDK UI has completed its chat. and would like
  * to be closed. The API caller should remove the Ninchat SDK UI from
  * its view hierarchy.
  */
--(void) ninchatDidEndChatSession:(NINChatSession* _Nonnull)ninchat;
+-(void) ninchatDidEndSession:(NINChatSession* _Nonnull)ninchat;
 
 @end
 

@@ -41,6 +41,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 // The video container view
 @property (nonatomic, strong) IBOutlet UIView* videoContainerView;
 
+// Height constraint of the video container view
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* videoContainerViewHeightConstraint;
+
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
 
@@ -78,6 +81,14 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 #pragma mark - Private methods
 
+-(void) setVideoVisible:(BOOL)visible {
+    CGFloat height = visible ? self.view.bounds.size.height * 0.45 : 0;
+    self.videoContainerViewHeightConstraint.constant = height;
+    [UIView animateWithDuration:0.4f animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
 -(void) listenToWebRTCSignaling {
     if (self.signalingObserver != nil) {
         // Already listening..
@@ -107,11 +118,14 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
 
                 // Create a WebRTC client for the video call
-                self.webrtcClient = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
+                weakSelf.webrtcClient = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
 
                 NSLog(@"Starting WebRTC client..");
-                self.webrtcClient.delegate = self;
-                [self.webrtcClient startWithSDP:offerPayload[@"sdp"]];
+                weakSelf.webrtcClient.delegate = self;
+                [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
+
+                // Show the video views animatedly
+                [weakSelf setVideoVisible:YES];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
             NSLog(@"Got WebRTC hang-up - closing the video call.");
@@ -120,7 +134,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             [weakSelf disconnectWebRTC];
 
             // Close the video view
-            //TODO
+            [weakSelf setVideoVisible:NO];
 
             return YES;
         }
@@ -209,7 +223,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
         // Disconnect the WebRTC client
         [weakSelf disconnectWebRTC];
 
-        //TODO hide video views
+        // Hide the video views
+        [weakSelf setVideoVisible:NO];
     }];
 }
 
@@ -419,6 +434,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 -(void) viewDidLoad {
     [super viewDidLoad];
 
+    // Video is hidden before a call is made
+    self.videoContainerViewHeightConstraint.constant = 0;
+
     self.chatView.dataSource = self;
 
     self.remoteVideoView.delegate = self;
@@ -428,8 +446,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 }
 
 -(void) dealloc {
-    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
-
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
 }
 

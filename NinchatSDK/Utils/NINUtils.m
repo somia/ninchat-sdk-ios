@@ -89,8 +89,6 @@ void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock ca
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kNinchatServerHostName, configurationKey];
     NSLog(@"Fetching site config from URL: %@", url);
 
-//    callbackBlock([NSDictionary dictionary], nil);
-
     void (^callCallback)(NSDictionary* config, NSError* error) = ^(NSDictionary* config, NSError* error) {
         runOnMainThread(^{
             callbackBlock(config, error);
