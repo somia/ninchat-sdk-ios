@@ -13,9 +13,6 @@
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
 
-// Segue to open video call view
-//static NSString* const kSegueIdMessagesToVideoCall = @"MessagesToVideoCall";
-
 // Segue id to open queue view
 static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 

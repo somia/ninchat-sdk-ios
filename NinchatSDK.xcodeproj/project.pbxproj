@@ -33,6 +33,21 @@
 		491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */; };
 		491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
 		491D5A2420CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
+		494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 494330C5213FB3B5006E2C9C /* NINVideoCallConsentDialog.h */; };
+		494330C8213FB3B5006E2C9C /* NINVideoCallConsentDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 494330C6213FB3B5006E2C9C /* NINVideoCallConsentDialog.m */; };
+		494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 494330C9213FB43C006E2C9C /* NINVideoCallConsentDialog.xib */; };
+		494330D8213FBECD006E2C9C /* SourceSansPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330CC213FBECB006E2C9C /* SourceSansPro-Bold.ttf */; };
+		494330D9213FBECD006E2C9C /* SourceSansPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330CD213FBECC006E2C9C /* SourceSansPro-Light.ttf */; };
+		494330DA213FBECD006E2C9C /* SourceSansPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330CE213FBECC006E2C9C /* SourceSansPro-Italic.ttf */; };
+		494330DB213FBECD006E2C9C /* SourceSansPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330CF213FBECC006E2C9C /* SourceSansPro-LightItalic.ttf */; };
+		494330DC213FBECD006E2C9C /* SourceSansPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D0213FBECC006E2C9C /* SourceSansPro-BlackItalic.ttf */; };
+		494330DD213FBECD006E2C9C /* SourceSansPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D1213FBECC006E2C9C /* SourceSansPro-Black.ttf */; };
+		494330DE213FBECD006E2C9C /* SourceSansPro-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D2213FBECC006E2C9C /* SourceSansPro-ExtraLight.ttf */; };
+		494330DF213FBECD006E2C9C /* SourceSansPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D3213FBECC006E2C9C /* SourceSansPro-BoldItalic.ttf */; };
+		494330E0213FBECD006E2C9C /* SourceSansPro-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D4213FBECC006E2C9C /* SourceSansPro-ExtraLightItalic.ttf */; };
+		494330E1213FBECD006E2C9C /* SourceSansPro-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D5213FBECC006E2C9C /* SourceSansPro-SemiBoldItalic.ttf */; };
+		494330E2213FBECD006E2C9C /* SourceSansPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D6213FBECD006E2C9C /* SourceSansPro-Regular.ttf */; };
+		494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */; };
 		495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
@@ -109,6 +124,21 @@
 		491D5A1D20CFD31B003E2EE9 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallViewController.h; sourceTree = "<group>"; };
 		491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallViewController.m; sourceTree = "<group>"; };
+		494330C5213FB3B5006E2C9C /* NINVideoCallConsentDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallConsentDialog.h; sourceTree = "<group>"; };
+		494330C6213FB3B5006E2C9C /* NINVideoCallConsentDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallConsentDialog.m; sourceTree = "<group>"; };
+		494330C9213FB43C006E2C9C /* NINVideoCallConsentDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINVideoCallConsentDialog.xib; sourceTree = "<group>"; };
+		494330CC213FBECB006E2C9C /* SourceSansPro-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Bold.ttf"; sourceTree = "<group>"; };
+		494330CD213FBECC006E2C9C /* SourceSansPro-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Light.ttf"; sourceTree = "<group>"; };
+		494330CE213FBECC006E2C9C /* SourceSansPro-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Italic.ttf"; sourceTree = "<group>"; };
+		494330CF213FBECC006E2C9C /* SourceSansPro-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-LightItalic.ttf"; sourceTree = "<group>"; };
+		494330D0213FBECC006E2C9C /* SourceSansPro-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-BlackItalic.ttf"; sourceTree = "<group>"; };
+		494330D1213FBECC006E2C9C /* SourceSansPro-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Black.ttf"; sourceTree = "<group>"; };
+		494330D2213FBECC006E2C9C /* SourceSansPro-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-ExtraLight.ttf"; sourceTree = "<group>"; };
+		494330D3213FBECC006E2C9C /* SourceSansPro-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-BoldItalic.ttf"; sourceTree = "<group>"; };
+		494330D4213FBECC006E2C9C /* SourceSansPro-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		494330D5213FBECC006E2C9C /* SourceSansPro-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		494330D6213FBECD006E2C9C /* SourceSansPro-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-Regular.ttf"; sourceTree = "<group>"; };
+		494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBold.ttf"; sourceTree = "<group>"; };
 		495762A020EE1AC700BC39A8 /* NINUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUtils.h; sourceTree = "<group>"; };
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
@@ -217,6 +247,7 @@
 		49140B8A20F4BF3F00A00EA8 /* AuxiliaryViews */ = {
 			isa = PBXGroup;
 			children = (
+				494330C4213FB389006E2C9C /* VideoCallConsentDialog */,
 				49721CCD21295A8600695F33 /* NavigationBar */,
 			);
 			path = AuxiliaryViews;
@@ -243,6 +274,35 @@
 				491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */,
 			);
 			path = VideoCallView;
+			sourceTree = "<group>";
+		};
+		494330C4213FB389006E2C9C /* VideoCallConsentDialog */ = {
+			isa = PBXGroup;
+			children = (
+				494330C5213FB3B5006E2C9C /* NINVideoCallConsentDialog.h */,
+				494330C6213FB3B5006E2C9C /* NINVideoCallConsentDialog.m */,
+				494330C9213FB43C006E2C9C /* NINVideoCallConsentDialog.xib */,
+			);
+			path = VideoCallConsentDialog;
+			sourceTree = "<group>";
+		};
+		494330CB213FBE9A006E2C9C /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				494330D1213FBECC006E2C9C /* SourceSansPro-Black.ttf */,
+				494330D0213FBECC006E2C9C /* SourceSansPro-BlackItalic.ttf */,
+				494330CC213FBECB006E2C9C /* SourceSansPro-Bold.ttf */,
+				494330D3213FBECC006E2C9C /* SourceSansPro-BoldItalic.ttf */,
+				494330D2213FBECC006E2C9C /* SourceSansPro-ExtraLight.ttf */,
+				494330D4213FBECC006E2C9C /* SourceSansPro-ExtraLightItalic.ttf */,
+				494330CE213FBECC006E2C9C /* SourceSansPro-Italic.ttf */,
+				494330CD213FBECC006E2C9C /* SourceSansPro-Light.ttf */,
+				494330CF213FBECC006E2C9C /* SourceSansPro-LightItalic.ttf */,
+				494330D6213FBECD006E2C9C /* SourceSansPro-Regular.ttf */,
+				494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */,
+				494330D5213FBECC006E2C9C /* SourceSansPro-SemiBoldItalic.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		4957629F20EE1A8700BC39A8 /* Utils */ = {
@@ -370,6 +430,7 @@
 		499443BD208F473700101DCA /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				494330CB213FBE9A006E2C9C /* Fonts */,
 				49140B8B20F4BF5A00A00EA8 /* ViewControllers */,
 				49140B8A20F4BF3F00A00EA8 /* AuxiliaryViews */,
 				499443BE208F475200101DCA /* Chat.storyboard */,
@@ -423,6 +484,7 @@
 				496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */,
 				49140B8720F395A700A00EA8 /* NINQueueViewController.h in Headers */,
 				49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */,
+				494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */,
 				49F5FA3920F781D600A4A526 /* NINQueue.h in Headers */,
@@ -522,13 +584,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				49721CD421295B0300695F33 /* NINChatView.xib in Resources */,
+				494330DF213FBECD006E2C9C /* SourceSansPro-BoldItalic.ttf in Resources */,
+				494330DE213FBECD006E2C9C /* SourceSansPro-ExtraLight.ttf in Resources */,
 				49721CDA21295CC000695F33 /* NINChatBubbleCell.xib in Resources */,
+				494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */,
+				494330D9213FBECD006E2C9C /* SourceSansPro-Light.ttf in Resources */,
+				494330E1213FBECD006E2C9C /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				494330E0213FBECD006E2C9C /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
+				494330DD213FBECD006E2C9C /* SourceSansPro-Black.ttf in Resources */,
 				491D5A1E20CFD31B003E2EE9 /* Podfile in Resources */,
+				494330DA213FBECD006E2C9C /* SourceSansPro-Italic.ttf in Resources */,
 				49140B9220F4BFB800A00EA8 /* NINNavigationBar.xib in Resources */,
+				494330DB213FBECD006E2C9C /* SourceSansPro-LightItalic.ttf in Resources */,
 				49140B9520F4C04A00A00EA8 /* Media.xcassets in Resources */,
 				49944377208E05DB00101DCA /* BUILDING.md in Resources */,
+				494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */,
 				49944376208E05DB00101DCA /* README.md in Resources */,
 				499443BF208F475200101DCA /* Chat.storyboard in Resources */,
+				494330E2213FBECD006E2C9C /* SourceSansPro-Regular.ttf in Resources */,
+				494330DC213FBECD006E2C9C /* SourceSansPro-BlackItalic.ttf in Resources */,
+				494330D8213FBECD006E2C9C /* SourceSansPro-Bold.ttf in Resources */,
 				49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -608,6 +683,7 @@
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,
 				49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */,
 				49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */,
+				494330C8213FB3B5006E2C9C /* NINVideoCallConsentDialog.m in Sources */,
 				49721CCC2122F87B00695F33 /* NINWebRTCServerInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

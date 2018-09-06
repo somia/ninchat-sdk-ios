@@ -18,6 +18,7 @@
 #import "NINVideoCallViewController.h"
 #import "NINChatView.h"
 #import "NINTouchView.h"
+#import "NINVideoCallConsentDialog.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 //static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
@@ -89,6 +90,15 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     }];
 }
 
+-(void) pickupWithAnswer:(BOOL)answer {
+    [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(answer)} completion:^(NSError* error) {
+        if (error != nil) {
+            NSLog(@"Failed to send pick-up message: %@", error);
+            //TODO handle
+        }
+    }];
+}
+
 -(void) listenToWebRTCSignaling {
     if (self.signalingObserver != nil) {
         // Already listening..
@@ -98,15 +108,11 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     __weak typeof(self) weakSelf = self;
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCCall]) {
-            NSLog(@"Got WebRTC call - replying with pick-up");
+            NSLog(@"Got WebRTC call");
 
-            //TODO show UI dialog here; ask the user whether to pick up. if not, must set answer: false below
-
-            [weakSelf.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(YES)} completion:^(NSError* error) {
-                if (error != nil) {
-                    NSLog(@"Failed to send pick-up message: %@", error);
-                    //TODO handle
-                }
+            // Show answer / reject dialog for the incoming call
+            [NINVideoCallConsentDialog showOnView:self.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
+                [weakSelf pickupWithAnswer:(result == NINConsentDialogResultAccepted)];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
             NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");

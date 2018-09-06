@@ -368,6 +368,17 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     NSLog(@"Got message_type: %@, actionId: %ld", messageType, actionId);
 
+    NSString* messageUserID = [params getString:@"message_user_id" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get message_user_id: %@", error);
+        return;
+    }
+
+    NINChannelUser* messageUser = _channelUsers[messageUserID];
+    if (messageUser == nil) {
+        NSLog(@"Message from unknown user: %@", messageUserID);
+    }
+
     if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCAnswer] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCOffer] ||
@@ -387,7 +398,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
                 return;
             }
 
-            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict});
+            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict, @"messageUser": messageUser});
         }
         return;
     }
@@ -396,17 +407,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         // Ignore all but text messages
         NSLog(@"Ignoring non-text message.");
         return;
-    }
-
-    NSString* messageUserID = [params getString:@"message_user_id" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get message_user_id: %@", error);
-        return;
-    }
-
-    NINChannelUser* messageUser = _channelUsers[messageUserID];
-    if (messageUser == nil) {
-        NSLog(@"Message from unknown user: %@", messageUserID);
     }
 
     NSLog(@"Message payload.length = %ld", payload.length);
@@ -777,7 +777,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     return nil;
 }
 
-#pragma mark - From ClientEventHandler
+#pragma mark - 
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
     NSLog(@"Event: %@", params.string);
@@ -808,26 +808,18 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 }
 
-#pragma mark - From ClientLogHandler
-
 -(void) onLog:(NSString*)msg {
     NSLog(@"Log: %@", msg);
 }
-
-#pragma mark - From ClientConnStateHandler
 
 -(void) onConnState:(NSString*)state {
     NSLog(@"Connection state: %@", state);
 }
 
-#pragma mark - From ClientCloseHandler
-
 -(void) onClose {
     NSLog(@"Session closed.");
     //[self.statusDelegate statusDidChange:@"closed"];
 }
-
-#pragma mark - From ClientSessionEventHandler
 
 -(void) onSessionEvent:(ClientProps*)params {
     NSLog(@"Session event: %@", [params string]);
