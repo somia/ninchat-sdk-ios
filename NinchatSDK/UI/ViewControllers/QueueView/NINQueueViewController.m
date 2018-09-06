@@ -17,6 +17,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 @interface NINQueueViewController ()
 
+@property (nonatomic, strong) IBOutlet UIImageView* spinnerImageView;
+@property (nonatomic, strong) IBOutlet UILabel* queueInfoLabel;
+
 @end
 
 @implementation NINQueueViewController
@@ -54,6 +57,25 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
         [self performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
+
+    // Spin the whirl icon continuoysly
+    if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
+        CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+        animation.fromValue = @(0.0);
+        animation.toValue = @(2*M_PI);
+        animation.duration = 10.0f;
+        animation.repeatCount = INFINITY;
+        [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
+    }
+}
+
+-(void) viewDidLoad {
+    [super viewDidLoad];
+
+    //TODO queue position; + update it
+    NSString* queueInfo = [NSString stringWithFormat:@"Joined audience queue %@, you are next.", self.queueToJoin.name];
+    //position text : "Joined audience queue {{name}}, you are at position {{position}}."
+    self.queueInfoLabel.text = queueInfo;
 }
 
 @end
