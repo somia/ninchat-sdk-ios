@@ -11,11 +11,12 @@
 #import "NINBaseViewController.h"
 
 @class NINSessionManager;
+@class NINQueue;
 
 /** Displays a waiting view while the user is in a queue. */
 @interface NINQueueViewController : NINBaseViewController
 
-/** ID of the queue to connect to. If nil, does not join a queue. */
-@property (nonatomic, strong) NSString* queueIdToJoin;
+/** Queue to connect to */
+@property (nonatomic, strong) NINQueue* queueToJoin;
 
 @end

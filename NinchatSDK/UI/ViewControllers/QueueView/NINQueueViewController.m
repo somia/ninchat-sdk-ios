@@ -11,9 +11,7 @@
 #import "NINChatViewController.h"
 #import "NINUtils.h"
 #import "NINChatViewController.h"
-//#import "NINRatingViewController.h"
-//TODO remove here
-//#import "NINVideoCallViewController.h"
+#import "NINQueue.h"
 
 static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
@@ -30,15 +28,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         NINChatViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
     }
-
-    /*
-    if ([segue.identifier isEqualToString:kSegueIdQueueToRating]) {
-        NINRatingViewController* vc = segue.destinationViewController;
-        vc.sessionManager = self.sessionManager;
-    } else if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
-        NINVideoCallViewController* vc = segue.destinationViewController;
-        vc.webrtcClient = sender;
-    }*/
 }
 
 #pragma mark - Lifecycle etc.
@@ -46,17 +35,19 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    NSString* queueId = self.queueIdToJoin;
+    //TODO better handling here; prevent back gesture from chat view?
 
-    if (queueId == nil) {
+    NINQueue* queue = self.queueToJoin;
+
+    if (queue == nil) {
         // Nothing to do; this is the case after we have popped the chat controller
         return;
     }
 
-    self.queueIdToJoin = nil;
+    self.queueToJoin = nil;
 
     // Connect to the queue
-    [self.sessionManager joinQueueWithId:queueId completion:^(NSError* error) {
+    [self.sessionManager joinQueueWithId:queue.queueId completion:^(NSError* error) {
         NSLog(@"Queue join completed, error: %@", error);
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");

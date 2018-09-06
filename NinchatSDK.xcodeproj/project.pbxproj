@@ -210,12 +210,8 @@
 		49140B6D20F2492500A00EA8 /* SessionManager */ = {
 			isa = PBXGroup;
 			children = (
-				49F5FA3320F775FF00A4A526 /* NINClientPropsParser.h */,
-				49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */,
 				49140B6E20F2494800A00EA8 /* NINSessionManager.h */,
 				49140B6F20F2494800A00EA8 /* NINSessionManager.m */,
-				496F85F02137DD43001FD1C4 /* NINChannelUser.h */,
-				496F85F12137DD43001FD1C4 /* NINChannelUser.m */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -294,6 +290,10 @@
 			isa = PBXGroup;
 			children = (
 				49721CDB212AF7F200695F33 /* WebRTC */,
+				49F5FA3320F775FF00A4A526 /* NINClientPropsParser.h */,
+				49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */,
+				496F85F02137DD43001FD1C4 /* NINChannelUser.h */,
+				496F85F12137DD43001FD1C4 /* NINChannelUser.m */,
 				49140B7C20F27BC900A00EA8 /* NINPrivateTypes.h */,
 				495762A020EE1AC700BC39A8 /* NINUtils.h */,
 				495762A120EE1AE000BC39A8 /* NINUtils.m */,

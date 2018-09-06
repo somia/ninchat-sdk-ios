@@ -51,7 +51,6 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
  https://github.com/ninchat/ninchat-api/blob/v2/api.md
  */
 @interface NINSessionManager () {
-
     /** Mutable queue list. */
     NSMutableArray<NINQueue*>* _queues;
 

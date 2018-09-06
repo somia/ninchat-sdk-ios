@@ -100,16 +100,6 @@
         [newView addConstraint:[NSLayoutConstraint constraintWithItem:firstItem attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:secondItem attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
     }
 
-    /*
-    for (NSLayoutConstraint* constraint in self.constraints) {
-        if (constraint.secondItem != nil) {
-            [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:newView attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
-        } else {
-            [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:constraint.constant]];
-        }
-    }
-     */
-
     return newView;
 }
 

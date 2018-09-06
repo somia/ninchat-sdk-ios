@@ -38,7 +38,6 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINNavigationBar*) loadViewFromNib {
-//    NSBundle* bundle = findResourceBundle([NINNavigationBar class], @"NINNavigationBar", @"nib");
     NSBundle* bundle = findResourceBundle(self.class);
     NSArray* objects = [bundle loadNibNamed:@"NINNavigationBar" owner:nil options:nil];
 
@@ -48,17 +47,21 @@
 // Substitutes the original view content (eg. from Storyboard) with contents of the xib
 -(id) awakeAfterUsingCoder:(NSCoder *)aDecoder {
     UIView* newView = [self loadViewFromNib];
-    newView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    newView.frame = self.frame;
+    newView.autoresizingMask = self.autoresizingMask;
+    newView.translatesAutoresizingMaskIntoConstraints = self.translatesAutoresizingMaskIntoConstraints;
+    newView.clipsToBounds = self.clipsToBounds;
 
     // Not to break the layout surrounding this view, we must copy the constraints over
     // to the newly loaded view
     for (NSLayoutConstraint* constraint in self.constraints) {
-        if (constraint.secondItem != nil) {
-            [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:newView attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
-        } else {
-            [newView addConstraint:[NSLayoutConstraint constraintWithItem:newView attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:constraint.constant]];
-        }
+        id firstItem = (constraint.firstItem == self) ? newView : constraint.firstItem;
+        id secondItem = (constraint.secondItem == self) ? newView : constraint.secondItem;
+
+        [newView addConstraint:[NSLayoutConstraint constraintWithItem:firstItem attribute:constraint.firstAttribute relatedBy:constraint.relation toItem:secondItem attribute:constraint.secondAttribute multiplier:constraint.multiplier constant:constraint.constant]];
     }
+
 
     return newView;
 }
