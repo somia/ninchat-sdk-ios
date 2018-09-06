@@ -43,9 +43,7 @@ void postNotification(NSString* notificationName, NSDictionary* userInfo) {
 }
 
 id fetchNotification(NSString* notificationName, notificationBlock _Nonnull block) {
-    id observer = nil;
-
-    observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+    id __block observer = [[NSNotificationCenter defaultCenter] addObserverForName:notificationName object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         if (block(note)) {
             [[NSNotificationCenter defaultCenter] removeObserver:observer];
         }

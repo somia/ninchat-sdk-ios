@@ -49,7 +49,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @interface NINSessionManager : NSObject
 
 /** (Circular) Reference to the session object that created this session manager. */
-@property (nonatomic, weak, nullable) NINChatSession* ninchatSession;
+@property (nonatomic, weak) NINChatSession* ninchatSession;
 
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;

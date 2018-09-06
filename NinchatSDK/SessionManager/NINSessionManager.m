@@ -230,7 +230,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     return [NINChannelUser userWithID:userID realName:realName displayName:displayName iconURL:iconURL guest:guest];
 }
 
-/*Event: map[event_id:6 event:user_updated user_attrs:map[realname:Matti Dahlbom connected:true iconurl:https://ninchat-file-test-eu-central-1.s3-eu-central-1.amazonaws.com/u/5npsj2ag00m3g/5ogokj8m00m3g info:map[company:QVIK url:] name:Matti Dahlbom] user_id:5npsj2ag00m3g]*/
 -(void) userUpdated:(ClientProps*)params {
     NSError* error;
 
@@ -443,8 +442,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 }
 
-/*Event: map[channel_id:5scjf4tm006u8 channel_members:map[5npsj2ag00m3g:map[user_attrs:map[connected:true iconurl:https://ninchat-file-test-eu-central-1.s3-eu-central-1.amazonaws.com/u/5npsj2ag00m3g/5ogokj8m00m3g info:map[company:QVIK url:] name:Matti Dahlbom realname:Matti Dahlbom] member_attrs:map[since:1.535619872e+09 operator:true]] 5scjf0m5006u8:map[user_attrs:map[connected:true guest:true] member_attrs:map[since:1.535619872e+09]]] event:channel_joined realm_id:5lmphjc200m3g event_id:4 channel_attrs:map[anonymous:true audience_id:5scjf26q006u8 private:true requester_id:5scjf0m5006u8 upload:member disclosed:true disclosed_since:1.535619872e+09 owner_id:0498gd6d queue_id:5lmpjrbl00m3g]]
- */
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
@@ -884,6 +881,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self.sessionManager onConnState:state];
 }
 
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
+}
 
 @end
 

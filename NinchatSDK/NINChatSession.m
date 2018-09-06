@@ -34,7 +34,6 @@
                                      userInfo:nil];
     }
 
-//    NSBundle* bundle = findResourceBundle(self.class, @"Chat", @"storyboard");
     NSBundle* bundle = findResourceBundle(self.class);
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
 
@@ -65,8 +64,9 @@
     __weak typeof(self) weakSelf = self;
 
     // Fetch the site configuration
-    fetchSiteConfig(self.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
+    fetchSiteConfig(weakSelf.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+        NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
         if (error != nil) {
             callbackBlock(error);
@@ -76,8 +76,9 @@
         weakSelf.sessionManager.siteConfiguration = config;
 
         // Open the chat session
-        error = [weakSelf.sessionManager openSession:^(NSError *error) {
+        NSError* openSessionError = [weakSelf.sessionManager openSession:^(NSError *error) {
             NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+            NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
             if (error != nil) {
                 callbackBlock(error);
@@ -95,7 +96,7 @@
             }];
         }];
 
- if (error != nil) {
+        if (openSessionError != nil) {
             callbackBlock(error);
         }
     });
