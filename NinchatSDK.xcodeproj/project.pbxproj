@@ -30,9 +30,6 @@
 		49140B9520F4C04A00A00EA8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49140B9420F4C04A00A00EA8 /* Media.xcassets */; };
 		49140B9620F4C04A00A00EA8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 49140B9420F4C04A00A00EA8 /* Media.xcassets */; };
 		491D5A1E20CFD31B003E2EE9 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 491D5A1D20CFD31B003E2EE9 /* Podfile */; };
-		491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */; };
-		491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
-		491D5A2420CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */; };
 		494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 494330C5213FB3B5006E2C9C /* NINVideoCallConsentDialog.h */; };
 		494330C8213FB3B5006E2C9C /* NINVideoCallConsentDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 494330C6213FB3B5006E2C9C /* NINVideoCallConsentDialog.m */; };
 		494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 494330C9213FB43C006E2C9C /* NINVideoCallConsentDialog.xib */; };
@@ -122,8 +119,6 @@
 		49140B9120F4BFB800A00EA8 /* NINNavigationBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINNavigationBar.xib; sourceTree = "<group>"; };
 		49140B9420F4C04A00A00EA8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		491D5A1D20CFD31B003E2EE9 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallViewController.h; sourceTree = "<group>"; };
-		491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallViewController.m; sourceTree = "<group>"; };
 		494330C5213FB3B5006E2C9C /* NINVideoCallConsentDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoCallConsentDialog.h; sourceTree = "<group>"; };
 		494330C6213FB3B5006E2C9C /* NINVideoCallConsentDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoCallConsentDialog.m; sourceTree = "<group>"; };
 		494330C9213FB43C006E2C9C /* NINVideoCallConsentDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINVideoCallConsentDialog.xib; sourceTree = "<group>"; };
@@ -260,20 +255,10 @@
 				49140B8420F3957E00A00EA8 /* QueueView */,
 				49140B7E20F28BC400A00EA8 /* ChatViewController */,
 				499443C4208F47F000101DCA /* InitialView */,
-				491D5A1F20CFD42E003E2EE9 /* VideoCallView */,
 				49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */,
 				49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */,
 			);
 			path = ViewControllers;
-			sourceTree = "<group>";
-		};
-		491D5A1F20CFD42E003E2EE9 /* VideoCallView */ = {
-			isa = PBXGroup;
-			children = (
-				491D5A2020CFD45F003E2EE9 /* NINVideoCallViewController.h */,
-				491D5A2120CFD45F003E2EE9 /* NINVideoCallViewController.m */,
-			);
-			path = VideoCallView;
 			sourceTree = "<group>";
 		};
 		494330C4213FB389006E2C9C /* VideoCallConsentDialog */ = {
@@ -488,7 +473,6 @@
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */,
 				49F5FA3920F781D600A4A526 /* NINQueue.h in Headers */,
-				491D5A2220CFD45F003E2EE9 /* NINVideoCallViewController.h in Headers */,
 				49721CD121295AEA00695F33 /* NINChatView.h in Headers */,
 				49140B7D20F27BC900A00EA8 /* NINPrivateTypes.h in Headers */,
 				496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */,
@@ -669,7 +653,6 @@
 				49F5FA3420F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
 				49140B7720F2748800A00EA8 /* NINChannelMessage.m in Sources */,
 				49F5FA3A20F781D600A4A526 /* NINQueue.m in Sources */,
-				491D5A2320CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				49721CC82122F70500695F33 /* NINWebRTCClient.m in Sources */,
 				499443C3208F47EA00101DCA /* NINInitialViewController.m in Sources */,
 				49721CD221295AEA00695F33 /* NINChatView.m in Sources */,
@@ -697,7 +680,6 @@
 				49F5FA3520F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
 				49140B7820F2748800A00EA8 /* NINChannelMessage.m in Sources */,
 				49F5FA3B20F781D600A4A526 /* NINQueue.m in Sources */,
-				491D5A2420CFD45F003E2EE9 /* NINVideoCallViewController.m in Sources */,
 				499443B6208F320700101DCA /* NINChatSession.m in Sources */,
 				495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */,
 				49140B8920F395A700A00EA8 /* NINQueueViewController.m in Sources */,

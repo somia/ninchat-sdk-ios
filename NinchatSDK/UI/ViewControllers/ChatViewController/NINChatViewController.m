@@ -15,13 +15,11 @@
 #import "NINUtils.h"
 #import "NINChannelMessage.h"
 #import "NINWebRTCClient.h"
-#import "NINVideoCallViewController.h"
 #import "NINChatView.h"
 #import "NINTouchView.h"
 #import "NINVideoCallConsentDialog.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
-//static NSString* const kSegueIdChatToVideoCall = @"ninchatsdk.segue.ChatToVideoCall";
 
 @interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate>
 
