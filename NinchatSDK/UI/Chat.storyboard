@@ -334,6 +334,7 @@ you are next.</string>
                                                             <constraint firstAttribute="width" constant="70" id="fEc-Qx-ofi"/>
                                                             <constraint firstAttribute="height" constant="70" id="iDY-lk-he2"/>
                                                         </constraints>
+                                                        <color key="tintColor" red="0.0" green="0.47450980392156861" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
                                                         <state key="normal" image="icon_face_happy"/>
                                                         <connections>
                                                             <action selector="happyFaceButtonPressed:" destination="sVb-C5-GLO" eventType="touchUpInside" id="XeI-c2-o3W"/>
@@ -366,6 +367,7 @@ you are next.</string>
                                                             <constraint firstAttribute="width" constant="70" id="L59-RB-mi2"/>
                                                             <constraint firstAttribute="height" constant="70" id="pnL-d0-eFv"/>
                                                         </constraints>
+                                                        <color key="tintColor" red="0.98039215686274506" green="0.6705882352941176" blue="0.066666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                                         <state key="normal" image="icon_face_neutral"/>
                                                         <connections>
                                                             <action selector="neutralFaceButtonPressed:" destination="sVb-C5-GLO" eventType="touchUpInside" id="San-kW-mjs"/>
@@ -398,6 +400,7 @@ you are next.</string>
                                                             <constraint firstAttribute="height" constant="70" id="QOK-0A-Oad"/>
                                                             <constraint firstAttribute="width" constant="70" id="SlK-bU-JoC"/>
                                                         </constraints>
+                                                        <color key="tintColor" red="0.69019607843137254" green="0.20000000000000001" blue="0.20392156862745098" alpha="1" colorSpace="calibratedRGB"/>
                                                         <state key="normal" image="icon_face_sad"/>
                                                         <connections>
                                                             <action selector="sadFaceButtonPressed:" destination="sVb-C5-GLO" eventType="touchUpInside" id="3xT-QQ-JmZ"/>
@@ -580,9 +583,9 @@ you are next.</string>
         </scene>
     </scenes>
     <resources>
-        <image name="icon_face_happy" width="166" height="160"/>
-        <image name="icon_face_neutral" width="158" height="154"/>
-        <image name="icon_face_sad" width="160" height="156"/>
+        <image name="icon_face_happy" width="898" height="898"/>
+        <image name="icon_face_neutral" width="898" height="898"/>
+        <image name="icon_face_sad" width="898" height="898"/>
         <image name="icon_hangup" width="512" height="512"/>
         <image name="icon_progress_whirl" width="800" height="800"/>
     </resources>
