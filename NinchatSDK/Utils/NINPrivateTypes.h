@@ -12,6 +12,7 @@
 
 typedef void (^emptyBlock)(void);
 typedef void (^callbackWithErrorBlock)(NSError* _Nullable);
+typedef void (^queueProgressCallback)(NSError* _Nullable error, NSInteger queuePosition);
 typedef BOOL (^notificationBlock)(NSNotification* _Nonnull);
 typedef void (^fetchSiteConfigCallbackBlock)(NSDictionary* _Nullable, NSError* _Nullable);
 typedef void (^beginICECallbackBlock)(NSError* _Nullable, NSArray<NINWebRTCServerInfo*>* _Nullable stunServers, NSArray<NINWebRTCServerInfo*>* _Nullable turnServers);

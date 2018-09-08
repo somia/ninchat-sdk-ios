@@ -193,8 +193,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     NSLog(@"Queue position: %ld", position);
 
-    if (actionId != 0) {
-        postNotification(kActionNotification, @{@"action_id": @(actionId)});
+    if ((actionId != 0) || [eventType isEqualToString:@"queue_updated"]) {
+        postNotification(kActionNotification, @{@"event": eventType, @"action_id": @(actionId), @"queue_position": @(position), @"queue_id": queueId});
     }
 }
 
@@ -543,13 +543,16 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
--(void) joinQueueWithId:(NSString*)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined {
+-(void) joinQueueWithId:(NSString*)queueId progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
 
     NSCAssert(self.session != nil, @"No chat session");
+
+    id __block progressNotificationObserver = nil;
 
     NSLog(@"Joining queue %@..", queueId);
 
     fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
+        [NSNotificationCenter.defaultCenter removeObserver:progressNotificationObserver];
         channelJoined();
         return YES;
     });
@@ -563,11 +566,23 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self.session send:params payload:nil actionId:&actionId error:&error];
     if (error != nil) {
         NSLog(@"Error joining queue: %@", error);
-        completion(error);
+        progress(error, -1);
     }
 
-    // When this action completes, trigger the completion block callback
-    connectCallbackToActionCompletion(actionId, completion);
+    // Keep listening to progress events for queue position updates
+    progressNotificationObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+        NSString* eventType = note.userInfo[@"event"];
+        NSString* queueId = note.userInfo[@"queue_id"];
+
+        if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [queueId isEqualToString:queueId])) {
+            NSError* error = note.userInfo[@"error"];
+            NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
+            progress(error, queuePosition);
+        }
+
+        return NO;
+    });
 }
 
 // Retrieves the WebRTC ICE STUN/TURN server details

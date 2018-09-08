@@ -38,20 +38,26 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    //TODO better handling here; prevent back gesture from chat view?
 
     NINQueue* queue = self.queueToJoin;
 
+    //TODO better handling here; prevent back gesture from chat view?
     if (queue == nil) {
         // Nothing to do; this is the case after we have popped the chat controller
         return;
     }
-
     self.queueToJoin = nil;
 
     // Connect to the queue
-    [self.sessionManager joinQueueWithId:queue.queueId completion:^(NSError* error) {
-        NSLog(@"Queue join completed, error: %@", error);
+    __weak typeof(self) weakSelf = self;
+    [self.sessionManager joinQueueWithId:queue.queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+        NSLog(@"Queue progress: position: %ld", (long)queuePosition);
+
+        if (queuePosition == 1) {
+            weakSelf.queueInfoLabel.text = [NSString stringWithFormat:@"Joined audience queue %@, you are next.", queue.name];
+        } else {
+            weakSelf.queueInfoLabel.text = [NSString stringWithFormat:@"Joined audience queue %@, you are at position %ld.", queue.name, queuePosition];
+        }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
@@ -63,7 +69,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
         animation.fromValue = @(0.0);
         animation.toValue = @(2*M_PI);
-        animation.duration = 10.0f;
+        animation.duration = 3.0f;
         animation.repeatCount = INFINITY;
         [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
     }
@@ -72,10 +78,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 -(void) viewDidLoad {
     [super viewDidLoad];
 
-    //TODO queue position; + update it
-    NSString* queueInfo = [NSString stringWithFormat:@"Joined audience queue %@, you are next.", self.queueToJoin.name];
-    //position text : "Joined audience queue {{name}}, you are at position {{position}}."
-    self.queueInfoLabel.text = queueInfo;
+    self.queueInfoLabel.text = nil;
 }
 
 @end

@@ -76,7 +76,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Joins a chat queue. */
--(void) joinQueueWithId:(NSString* _Nonnull)queueId completion:(callbackWithErrorBlock _Nonnull)completion channelJoined:(emptyBlock _Nonnull)channelJoined;
+-(void) joinQueueWithId:(NSString* _Nonnull)queueId progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
 -(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion;
