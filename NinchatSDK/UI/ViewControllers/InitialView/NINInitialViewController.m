@@ -57,8 +57,10 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    NSString* queueButtonText = [NSString stringWithFormat:@"Join %@", self.sessionManager.queues[0].name];
-    [self.startChatButton setTitle:queueButtonText forState:UIControlStateNormal];
+    if (self.sessionManager.queues.count > 0) {
+        NSString* queueButtonText = [NSString stringWithFormat:@"Join %@", self.sessionManager.queues[0].name];
+        [self.startChatButton setTitle:queueButtonText forState:UIControlStateNormal];
+    }
 }
 
 -(void) viewDidLoad {

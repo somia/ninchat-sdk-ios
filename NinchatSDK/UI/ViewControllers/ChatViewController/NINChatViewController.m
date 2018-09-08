@@ -18,6 +18,7 @@
 #import "NINChatView.h"
 #import "NINTouchView.h"
 #import "NINVideoCallConsentDialog.h"
+#import "NINRatingViewController.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
@@ -109,7 +110,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             NSLog(@"Got WebRTC call");
 
             // Show answer / reject dialog for the incoming call
-            [NINVideoCallConsentDialog showOnView:self.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
+            [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
                 [weakSelf pickupWithAnswer:(result == NINConsentDialogResultAccepted)];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
@@ -125,7 +126,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
                 weakSelf.webrtcClient = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
 
                 NSLog(@"Starting WebRTC client..");
-                weakSelf.webrtcClient.delegate = self;
+                weakSelf.webrtcClient.delegate = weakSelf;
                 [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
 
                 // Show the video views animatedly
@@ -310,15 +311,12 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 #pragma mark - From UIViewController
 
-//-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-//    if ([segue.identifier isEqualToString:kSegueIdChatToVideoCall]) {
-//        NINVideoCallViewController* vc = segue.destinationViewController;
-//        NSDictionary* params = (NSDictionary*)sender;
-//        vc.sessionManager = self.sessionManager;
-//        vc.webrtcClient = params[@"client"];
-//        vc.offerSDP = params[@"sdp"];
-//    }
-//}
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdChatToRating]) {
+        NINRatingViewController* vc = segue.destinationViewController;
+        vc.sessionManager = self.sessionManager;
+    }
+}
 
 #pragma mark - From UIContentController
 
@@ -398,7 +396,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
 
-        [self.chatView newMessageWasAdded];
+        [weakSelf.chatView newMessageWasAdded];
 
         return NO;
     });

@@ -38,7 +38,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-
     NINQueue* queue = self.queueToJoin;
 
     //TODO better handling here; prevent back gesture from chat view?
@@ -61,7 +60,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
-        [self performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
+        [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
 
     // Spin the whirl icon continuoysly
