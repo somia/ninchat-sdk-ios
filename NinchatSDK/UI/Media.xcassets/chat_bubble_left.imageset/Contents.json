@@ -1,6 +1,8 @@
 {
   "images" : [
     {
+      "idiom" : "universal",
+      "filename" : "comment bubble repeated agent.pdf",
       "resizing" : {
         "mode" : "9-part",
         "center" : {
@@ -9,27 +11,20 @@
           "height" : 1
         },
         "cap-insets" : {
-          "bottom" : 13,
-          "top" : 10,
-          "right" : 7,
-          "left" : 14
+          "bottom" : 26,
+          "top" : 25,
+          "right" : 15,
+          "left" : 15
         }
-      },
-      "idiom" : "universal",
-      "filename" : "chat_bubble_.right.jpg",
-      "scale" : "1x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "3x"
+      }
     }
   ],
   "info" : {
     "version" : 1,
     "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "template",
+    "preserves-vector-representation" : true
   }
 }

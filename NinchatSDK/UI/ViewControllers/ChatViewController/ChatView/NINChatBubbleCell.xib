@@ -11,6 +11,11 @@
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="SourceSansPro-Regular.ttf">
+            <string>SourceSansPro-Regular</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -24,16 +29,17 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B9w-uE-UUn" userLabel="Left avatar container">
                         <rect key="frame" x="0.0" y="0.0" width="50" height="140.5"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_face_happy" translatesAutoresizingMaskIntoConstraints="NO" id="5wH-wE-D5T">
-                                <rect key="frame" x="5" y="50.5" width="40" height="40"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_avatar_other" translatesAutoresizingMaskIntoConstraints="NO" id="5wH-wE-D5T">
+                                <rect key="frame" x="5" y="15" width="40" height="40"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="5wH-wE-D5T" secondAttribute="height" id="zjq-ox-Xmq"/>
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="5wH-wE-D5T" firstAttribute="centerY" secondItem="B9w-uE-UUn" secondAttribute="centerY" id="3TM-78-bn5"/>
+                            <constraint firstItem="5wH-wE-D5T" firstAttribute="top" secondItem="B9w-uE-UUn" secondAttribute="top" constant="15" id="4JU-LG-mNl"/>
                             <constraint firstItem="5wH-wE-D5T" firstAttribute="width" secondItem="B9w-uE-UUn" secondAttribute="width" multiplier="0.8" id="NdM-ff-g4s"/>
                             <constraint firstItem="5wH-wE-D5T" firstAttribute="centerX" secondItem="B9w-uE-UUn" secondAttribute="centerX" id="h7H-UD-Qsv"/>
                             <constraint firstAttribute="width" constant="50" id="uoH-1d-b8W"/>
@@ -42,19 +48,20 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VDb-fh-S7z" userLabel="Right avatar container">
                         <rect key="frame" x="462" y="0.0" width="50" height="140.5"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_face_sad" translatesAutoresizingMaskIntoConstraints="NO" id="afl-L6-jcA">
-                                <rect key="frame" x="5" y="50.5" width="40" height="40"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_avatar_mine" translatesAutoresizingMaskIntoConstraints="NO" id="afl-L6-jcA">
+                                <rect key="frame" x="5" y="15" width="40" height="40"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="afl-L6-jcA" secondAttribute="height" id="QlZ-sP-CdQ"/>
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="50" id="Gur-SR-UDJ"/>
                             <constraint firstItem="afl-L6-jcA" firstAttribute="centerX" secondItem="VDb-fh-S7z" secondAttribute="centerX" id="JLV-hh-Ga1"/>
                             <constraint firstItem="afl-L6-jcA" firstAttribute="width" secondItem="VDb-fh-S7z" secondAttribute="width" multiplier="0.8" id="aYx-TT-Xyz"/>
-                            <constraint firstItem="afl-L6-jcA" firstAttribute="centerY" secondItem="VDb-fh-S7z" secondAttribute="centerY" id="lLf-fu-ECM"/>
+                            <constraint firstItem="afl-L6-jcA" firstAttribute="top" secondItem="VDb-fh-S7z" secondAttribute="top" constant="15" id="iqo-cM-1qm"/>
                         </constraints>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uZw-OC-QWw" userLabel="Bubble container view">
@@ -62,21 +69,22 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="f9O-t5-M7M">
                                 <rect key="frame" x="0.0" y="0.0" width="412" height="119"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Bubble chat message text content" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
-                                <rect key="frame" x="140.5" y="15" width="261.5" height="89"/>
-                                <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                                <rect key="frame" x="176.5" y="15" width="225.5" height="94"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="width" secondItem="uZw-OC-QWw" secondAttribute="width" id="2cQ-0s-q4B"/>
-                            <constraint firstAttribute="bottom" secondItem="lco-tz-6OM" secondAttribute="bottom" constant="15" id="JTj-CF-j8t"/>
+                            <constraint firstAttribute="bottom" secondItem="lco-tz-6OM" secondAttribute="bottom" constant="10" id="JTj-CF-j8t"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="centerY" secondItem="uZw-OC-QWw" secondAttribute="centerY" id="Kmx-3b-gnm"/>
-                            <constraint firstItem="lco-tz-6OM" firstAttribute="leading" secondItem="uZw-OC-QWw" secondAttribute="leading" priority="999" constant="30" id="OUL-aa-Zpp"/>
+                            <constraint firstItem="lco-tz-6OM" firstAttribute="leading" secondItem="uZw-OC-QWw" secondAttribute="leading" priority="999" constant="10" id="OUL-aa-Zpp"/>
                             <constraint firstAttribute="trailing" secondItem="lco-tz-6OM" secondAttribute="trailing" constant="10" id="VkH-7A-iKk"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="centerX" secondItem="uZw-OC-QWw" secondAttribute="centerX" id="Y2W-cz-i07"/>
                             <constraint firstItem="f9O-t5-M7M" firstAttribute="height" secondItem="uZw-OC-QWw" secondAttribute="height" id="sYT-7S-acV"/>
@@ -84,6 +92,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="B9w-uE-UUn" secondAttribute="bottom" id="HKm-oK-1fl"/>
                     <constraint firstItem="B9w-uE-UUn" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="J44-eG-BLm"/>
@@ -97,6 +106,7 @@
                     <constraint firstItem="VDb-fh-S7z" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="uSV-d6-m9q"/>
                 </constraints>
             </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
                 <outlet property="containerLeftConstraint" destination="QLD-I4-rPX" id="9Gi-gL-kjZ"/>
@@ -114,8 +124,8 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="chat_bubble_left" width="22" height="24"/>
-        <image name="icon_face_happy" width="166" height="160"/>
-        <image name="icon_face_sad" width="160" height="156"/>
+        <image name="chat_bubble_left" width="31" height="52"/>
+        <image name="icon_avatar_mine" width="726" height="725"/>
+        <image name="icon_avatar_other" width="726" height="725"/>
     </resources>
 </document>

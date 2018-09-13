@@ -51,10 +51,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVi-ux-Foo" userLabel="Top content view">
-                                <rect key="frame" x="0.0" y="20" width="375" height="220.5"/>
+                                <rect key="frame" x="0.0" y="20" width="375" height="236"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ybn-aF-s3A">
-                                        <rect key="frame" x="75" y="150" width="225" height="40.5"/>
+                                        <rect key="frame" x="75" y="150" width="225" height="56"/>
                                         <string key="text">Joined audience queue {{name}}, 
 you are next.</string>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -80,10 +80,10 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkT-tD-Ztq" userLabel="Bottom content view">
-                                <rect key="frame" x="0.0" y="240.5" width="375" height="426.5"/>
+                                <rect key="frame" x="0.0" y="256" width="375" height="411"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="inQueueText" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7qD-Fp-YN8">
-                                        <rect key="frame" x="47.5" y="50" width="280.5" height="20.5"/>
+                                        <rect key="frame" x="47.5" y="50" width="280.5" height="19"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -197,7 +197,7 @@ you are next.</string>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINEmbeddableChatView">
                                 <rect key="frame" x="0.0" y="277" width="375" height="290"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Chat input controls container">
                                 <rect key="frame" x="0.0" y="567" width="375" height="100"/>
@@ -259,11 +259,16 @@ you are next.</string>
                                     <constraint firstItem="bNc-b4-D5d" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="bottom" id="win-2a-TFp"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="NINEmbeddableCloseChatButton">
+                                <rect key="frame" x="233" y="30" width="132" height="45"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.69803921570000005" green="0.90196078430000004" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="tZn-zd-Dxr" secondAttribute="trailing" id="A63-zf-iEA"/>
                             <constraint firstItem="rVm-KF-mbW" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="Atj-LB-M3X"/>
+                            <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="Sle-hz-0wC" secondAttribute="trailing" constant="10" id="BgX-ta-dk2"/>
                             <constraint firstItem="brw-f0-DOL" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="IYK-k8-alS"/>
                             <constraint firstItem="brw-f0-DOL" firstAttribute="top" secondItem="rVm-KF-mbW" secondAttribute="bottom" priority="999" id="L8P-tX-odP"/>
                             <constraint firstItem="Kml-pm-EfW" firstAttribute="trailing" secondItem="pew-Xu-b1Q" secondAttribute="trailing" id="Utg-Kn-AfO"/>
@@ -274,12 +279,14 @@ you are next.</string>
                             <constraint firstItem="Kml-pm-EfW" firstAttribute="leading" secondItem="pew-Xu-b1Q" secondAttribute="leading" id="iZn-ai-eoG"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="rVm-KF-mbW" secondAttribute="trailing" id="mly-DR-Web"/>
                             <constraint firstItem="tZn-zd-Dxr" firstAttribute="leading" secondItem="wrn-IT-ZNh" secondAttribute="leading" id="n46-JX-rhi"/>
+                            <constraint firstItem="Sle-hz-0wC" firstAttribute="top" secondItem="tZn-zd-Dxr" secondAttribute="bottom" constant="10" id="rkO-2T-em9"/>
                             <constraint firstItem="rVm-KF-mbW" firstAttribute="top" secondItem="tZn-zd-Dxr" secondAttribute="bottom" id="tGD-B8-WCB"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
                     </view>
                     <connections>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
+                        <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>

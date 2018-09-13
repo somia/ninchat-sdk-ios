@@ -65,6 +65,9 @@
 		49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */; };
 		49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */; };
 		49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */; };
+		497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */; };
+		497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */; };
+		497C4EDC214A8D170090C5E6 /* NINCloseChatButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */; };
 		4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944355208DF33400101DCA /* NinchatSDK.framework */; };
 		49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49944363208DF33400101DCA /* NinchatSDKTests.m */; };
 		49944366208DF33400101DCA /* NinchatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 49944358208DF33400101DCA /* NinchatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -154,6 +157,9 @@
 		49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCSessionDescription+Dictionary.m"; sourceTree = "<group>"; };
 		49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RTCICECandidate+Dictionary.h"; sourceTree = "<group>"; };
 		49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCICECandidate+Dictionary.m"; sourceTree = "<group>"; };
+		497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINCloseChatButton.h; sourceTree = "<group>"; };
+		497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINCloseChatButton.m; sourceTree = "<group>"; };
+		497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINCloseChatButton.xib; sourceTree = "<group>"; };
 		49944355208DF33400101DCA /* NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944358208DF33400101DCA /* NinchatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDK.h; sourceTree = "<group>"; };
 		49944359208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -238,6 +244,7 @@
 		49140B8A20F4BF3F00A00EA8 /* AuxiliaryViews */ = {
 			isa = PBXGroup;
 			children = (
+				497C4ED6214A8CD60090C5E6 /* CloseChatButton */,
 				494330C4213FB389006E2C9C /* VideoCallConsentDialog */,
 				49721CCD21295A8600695F33 /* NavigationBar */,
 			);
@@ -350,6 +357,16 @@
 				49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */,
 			);
 			path = WebRTC;
+			sourceTree = "<group>";
+		};
+		497C4ED6214A8CD60090C5E6 /* CloseChatButton */ = {
+			isa = PBXGroup;
+			children = (
+				497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */,
+				497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */,
+				497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */,
+			);
+			path = CloseChatButton;
 			sourceTree = "<group>";
 		};
 		4994434B208DF33400101DCA = {
@@ -468,6 +485,7 @@
 				49140B7620F2748800A00EA8 /* NINChannelMessage.h in Headers */,
 				496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */,
 				49140B8720F395A700A00EA8 /* NINQueueViewController.h in Headers */,
+				497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */,
 				49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */,
 				494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
@@ -589,6 +607,7 @@
 				494330DC213FBECD006E2C9C /* SourceSansPro-BlackItalic.ttf in Resources */,
 				494330D8213FBECD006E2C9C /* SourceSansPro-Bold.ttf in Resources */,
 				49944375208E05DB00101DCA /* NinchatSDK.podspec in Resources */,
+				497C4EDC214A8D170090C5E6 /* NINCloseChatButton.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,6 +682,7 @@
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,
 				49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */,
+				497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */,
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,
 				49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */,
 				49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */,

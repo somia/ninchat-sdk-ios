@@ -19,6 +19,7 @@
 #import "NINTouchView.h"
 #import "NINVideoCallConsentDialog.h"
 #import "NINRatingViewController.h"
+#import "NINCloseChatButton.h"
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
@@ -46,6 +47,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
+
+// The close chat button
+@property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
 // Remote video track
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
@@ -436,8 +440,19 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 -(void) viewDidLoad {
     [super viewDidLoad];
 
+    // Add tileable pattern image as the view background
+    //TODO get from site config
+    UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
+
     // Video is hidden before a call is made
     self.videoContainerViewHeightConstraint.constant = 0;
+
+    __weak typeof(self) weakSelf = self;
+    self.closeChatButton.pressedCallback = ^{
+        NSLog(@"Close chat button pressed!");
+        //TODO: end video, end chat, call session delegate to end it (all)
+    };
 
     self.chatView.dataSource = self;
 
