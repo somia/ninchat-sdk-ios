@@ -12,20 +12,22 @@
 
 // Writable private definitions for the properties
 @property (nonatomic, assign) BOOL mine;
+@property (nonatomic, assign) BOOL series;
 @property (nonatomic, strong) NSString* senderName;
 @property (nonatomic, strong) NSString* textContent;
 @property (nonatomic, strong) NSDate* timestamp;
 @property (nonatomic, strong) NSString* avatarURL;
+@property (nonatomic, strong) NSString* senderUserID;
 
 @end
 
 @implementation NINChannelMessage
 
 -(NSString*) description {
-    return [NSString stringWithFormat:@"textContent: %@, mine: %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.timestamp];
+    return [NSString stringWithFormat:@"textContent: %@, mine: %@, series %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.series ? @"YES" : @"NO", self.timestamp];
 }
 
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine {
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID {
     NINChannelMessage* msg = [NINChannelMessage new];
 
     msg.senderName = senderName;
@@ -33,6 +35,8 @@
     msg.mine = mine;
     msg.timestamp = [NSDate date];
     msg.avatarURL = avatarURL;
+    msg.series = series;
+    msg.senderUserID = senderUserID;
 
     return msg;
 }

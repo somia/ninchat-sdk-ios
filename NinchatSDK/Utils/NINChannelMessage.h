@@ -14,6 +14,12 @@
 /** Whether this message is sent by the mobile user (this device). */
 @property (nonatomic, assign, readonly) BOOL mine;
 
+/**
+ * YES if this message is a part in a series, ie. the sender of the previous message
+ * also sent this message.
+ */
+@property (nonatomic, assign, readonly) BOOL series;
+
 /** Name of the user who sent the message. */
 @property (nonatomic, strong, readonly) NSString* senderName;
 
@@ -26,7 +32,10 @@
 /** User's avatar URL. */
 @property (nonatomic, strong, readonly) NSString* avatarURL;
 
+/** The sender's user ID. */
+@property (nonatomic, strong, readonly) NSString* senderUserID;
+
 /** Initializer. */
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine;
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
 
 @end

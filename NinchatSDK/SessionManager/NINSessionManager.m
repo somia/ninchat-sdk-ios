@@ -408,7 +408,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
-    NSLog(@"Message payload.length = %ld", payload.length);
     for (int i = 0; i < payload.length; i++) {
         NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
         if (error != nil) {
@@ -416,8 +415,15 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
             return;
         }
 
+        // Check if the previous message was sent by the same user, ie. is the
+        // message part of a series
+        BOOL series = NO;
+        NINChannelMessage* prevMsg = _channelMessages.firstObject;
+        if (prevMsg != nil) {
+            series = [prevMsg.senderUserID isEqualToString:messageUserID];
+        }
 
-        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL mine:(actionId != 0)];
+        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL mine:(actionId != 0) series:series senderUserID:messageUserID];
         [_channelMessages insertObject:msg atIndex:0];
         postNotification(kNewChannelMessageNotification, @{@"message": msg});
         NSLog(@"Got new channel message: %@", msg);
@@ -492,10 +498,10 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     //TODO remove; this is test data
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO series:NO senderUserID:@"1"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES series:NO senderUserID:@"2"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO series:NO senderUserID:@"1"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES series:NO senderUserID:@"2"]];
 
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});

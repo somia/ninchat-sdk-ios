@@ -66,7 +66,7 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T6u-kA-v5Q" userLabel="Top container view">
                         <rect key="frame" x="50" y="0.0" width="412" height="22"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
                                 <rect key="frame" x="5" y="5.5" width="353.5" height="16.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
@@ -149,6 +149,7 @@
                 <outlet property="senderNameLabel" destination="cyP-g1-3PU" id="rsj-rf-xYI"/>
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
                 <outlet property="timeLabel" destination="oRX-UO-W1X" id="9vx-sK-sRV"/>
+                <outlet property="topLabelsContainerHeightConstraint" destination="dPF-N2-ufx" id="83B-0w-Qrr"/>
                 <outlet property="topLabelsLeftConstraint" destination="wRE-ei-hOK" id="mTN-l6-fMN"/>
                 <outlet property="topLabelsRightConstraint" destination="LCp-xO-Bl8" id="uXs-dD-oXu"/>
             </connections>

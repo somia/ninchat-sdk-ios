@@ -273,7 +273,7 @@
 
 +(instancetype) clientWithSessionManager:(NINSessionManager*)sessionManager operatingMode:(NINWebRTCClientOperatingMode)operatingMode stunServers:(NSArray<NINWebRTCServerInfo*>*)stunServers turnServers:(NSArray<NINWebRTCServerInfo*>*)turnServers {
 
-    NSLog(@"Creating new NINWebRTCClient in the %@ mode", (operatingMode == NINWebRTCClientOperatingModeCaller) ? @"CALLER" : @"CALLEE");
+    [sessionManager.ninchatSession sdklog:@"Creating new NINWebRTCClient in the %@ mode", (operatingMode == NINWebRTCClientOperatingModeCaller) ? @"CALLER" : @"CALLEE"];
 
     NINWebRTCClient* client = [NINWebRTCClient new];
     client.sessionManager = sessionManager;

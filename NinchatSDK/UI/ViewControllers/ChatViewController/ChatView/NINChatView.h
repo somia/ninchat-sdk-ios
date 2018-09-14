@@ -12,6 +12,7 @@
 
 @protocol NINChatViewMessage <NSObject>
 @property (nonatomic, assign, readonly) BOOL mine;
+@property (nonatomic, assign, readonly) BOOL series;
 @property (nonatomic, strong, readonly) NSString* senderName;
 @property (nonatomic, strong, readonly) NSString* textContent;
 @property (nonatomic, strong, readonly) NSDate* timestamp;

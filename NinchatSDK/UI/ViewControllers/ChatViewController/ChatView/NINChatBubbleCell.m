@@ -53,6 +53,9 @@
 // Constraint for binding sender name / time labels to right edge
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* topLabelsRightConstraint;
 
+// Height constraint for the top labels container
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* topLabelsContainerHeightConstraint;
+
 // Left side constraint for the bubble container
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* containerLeftConstraint;
 
@@ -62,6 +65,9 @@
 // Original width of the avatar image containers
 @property (nonatomic, assign) CGFloat avatarContainerWidth;
 
+// Original height for the top labels container
+@property (nonatomic, assign) CGFloat topLabelsContainerHeight;
+
 @end
 
 @implementation NINChatBubbleCell
@@ -69,7 +75,8 @@
 #pragma mark - Private methods
 
 -(void) configureForMyMessage:(id<NINChatViewMessage>)message {
-    self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    NSString* imageName = message.series ? @"chat_bubble_right_series" : @"chat_bubble_right";
+    self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
 
     self.topLabelsLeftConstraint.active = NO;
     self.topLabelsRightConstraint.active = YES;
@@ -84,14 +91,15 @@
     self.containerLeftConstraint.active = YES;
 
     self.leftAvatarContainerView.hidden = YES;
-    self.rightAvatarContainerView.hidden = NO;
+    self.rightAvatarContainerView.hidden = message.series;
 
     self.leftAvatarImageView.image = nil;
     [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:message.avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
 }
 
 -(void) configureForOthersMessage:(id<NINChatViewMessage>)message {
-    self.bubbleImageView.image = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    NSString* imageName = message.series ? @"chat_bubble_left_series" : @"chat_bubble_left";
+    self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
     self.topLabelsRightConstraint.active = NO;
@@ -106,7 +114,7 @@
     self.containerRightConstraint = [NSLayoutConstraint constraintWithItem:self.rightAvatarContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.containerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
     self.containerRightConstraint.active = YES;
 
-    self.leftAvatarContainerView.hidden = NO;
+    self.leftAvatarContainerView.hidden = message.series;
     self.rightAvatarContainerView.hidden = YES;
 
     [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:message.avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
@@ -124,6 +132,9 @@
 
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
+
+    self.topLabelsContainerHeightConstraint.constant = message.series ? 0 : self.topLabelsContainerHeight;
 
     if (message.mine) {
         // Visitor's (= phone user) message - on the right
@@ -135,12 +146,6 @@
 
     [self setNeedsUpdateConstraints];
     [self updateConstraintsIfNeeded];
-
-    //
-//    [self.contentView setNeedsLayout];
-//    [self.contentView layoutIfNeeded];
-//    [self setNeedsLayout];
-//    [self layoutIfNeeded];
 }
 
 #pragma mark - Lifecycle etc.
@@ -149,6 +154,7 @@
     [super awakeFromNib];
 
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
+    self.topLabelsContainerHeight = self.topLabelsContainerHeightConstraint.constant;
 
     // Make the avatar image views circles
     self.leftAvatarImageView.layer.cornerRadius = self.leftAvatarImageView.bounds.size.height / 2;
