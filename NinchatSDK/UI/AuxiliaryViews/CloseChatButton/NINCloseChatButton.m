@@ -46,7 +46,7 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINCloseChatButton*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle(self.class);
+    NSBundle* bundle = findResourceBundle();
     NSArray* objects = [bundle loadNibNamed:@"NINCloseChatButton" owner:nil options:nil];
 
     NSCAssert([objects[0] isKindOfClass:[NINCloseChatButton class]], @"Invalid class resource");

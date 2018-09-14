@@ -37,7 +37,7 @@ NSLayoutConstraint* constraint(UIView* view1, UIView* view2, NSLayoutAttribute a
 
 // Loads the NINNavigationBar view from its xib
 +(NINVideoCallConsentDialog*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle(self.class);
+    NSBundle* bundle = findResourceBundle();
     NSArray* objects = [bundle loadNibNamed:@"NINVideoCallConsentDialog" owner:nil options:nil];
 
     NSCAssert([objects[0] isKindOfClass:[NINVideoCallConsentDialog class]], @"Invalid class resource");

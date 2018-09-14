@@ -51,8 +51,7 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
     return observer;
 }
 
-NSBundle* findResourceBundle(Class class) {
-//    NSBundle* classBundle = [NSBundle bundleForClass:class];
+NSBundle* findResourceBundle() {
     NSBundle* classBundle = [NSBundle bundleForClass:[NINInitialViewController class]];
     NSCAssert(classBundle != nil, @"Nil classBundle");
 

@@ -7,7 +7,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -64,15 +63,46 @@
                             <constraint firstItem="afl-L6-jcA" firstAttribute="top" secondItem="VDb-fh-S7z" secondAttribute="top" constant="15" id="iqo-cM-1qm"/>
                         </constraints>
                     </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T6u-kA-v5Q" userLabel="Top container view">
+                        <rect key="frame" x="50" y="0.0" width="412" height="22"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
+                                <rect key="frame" x="282" y="5.5" width="76.5" height="16.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="17:18" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRX-UO-W1X">
+                                <rect key="frame" x="366.5" y="5.5" width="35.5" height="16.5"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="oRX-UO-W1X" secondAttribute="trailing" constant="10" id="LCp-xO-Bl8"/>
+                            <constraint firstItem="oRX-UO-W1X" firstAttribute="leading" secondItem="cyP-g1-3PU" secondAttribute="trailing" constant="8" id="PsY-4Z-eJi"/>
+                            <constraint firstAttribute="height" constant="22" id="dPF-N2-ufx"/>
+                            <constraint firstAttribute="bottom" secondItem="oRX-UO-W1X" secondAttribute="bottom" id="qpS-Oj-siW"/>
+                            <constraint firstItem="oRX-UO-W1X" firstAttribute="bottom" secondItem="cyP-g1-3PU" secondAttribute="bottom" id="vHW-3p-HGO"/>
+                            <constraint firstItem="cyP-g1-3PU" firstAttribute="leading" secondItem="T6u-kA-v5Q" secondAttribute="leading" constant="5" id="wRE-ei-hOK"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="wRE-ei-hOK"/>
+                            </mask>
+                        </variation>
+                    </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uZw-OC-QWw" userLabel="Bubble container view">
-                        <rect key="frame" x="50" y="11" width="412" height="119"/>
+                        <rect key="frame" x="50" y="22" width="412" height="113.5"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="f9O-t5-M7M">
-                                <rect key="frame" x="0.0" y="0.0" width="412" height="119"/>
+                                <rect key="frame" x="0.0" y="0.0" width="412" height="113.5"/>
                                 <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Bubble chat message text content" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
-                                <rect key="frame" x="176.5" y="15" width="225.5" height="94"/>
+                                <rect key="frame" x="156" y="15" width="246" height="88.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -94,15 +124,18 @@
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
+                    <constraint firstItem="VDb-fh-S7z" firstAttribute="leading" secondItem="T6u-kA-v5Q" secondAttribute="trailing" id="AXg-W7-n94"/>
+                    <constraint firstItem="T6u-kA-v5Q" firstAttribute="leading" secondItem="B9w-uE-UUn" secondAttribute="trailing" id="Ayt-SN-FnW"/>
                     <constraint firstAttribute="bottom" secondItem="B9w-uE-UUn" secondAttribute="bottom" id="HKm-oK-1fl"/>
                     <constraint firstItem="B9w-uE-UUn" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="J44-eG-BLm"/>
-                    <constraint firstItem="uZw-OC-QWw" firstAttribute="bottom" secondItem="yDM-3n-XJ5" secondAttribute="bottomMargin" id="LgK-at-5yf"/>
+                    <constraint firstItem="uZw-OC-QWw" firstAttribute="bottom" secondItem="yDM-3n-XJ5" secondAttribute="bottom" priority="999" constant="-5" id="LgK-at-5yf"/>
                     <constraint firstItem="uZw-OC-QWw" firstAttribute="leading" secondItem="B9w-uE-UUn" secondAttribute="trailing" id="QLD-I4-rPX"/>
                     <constraint firstAttribute="bottom" secondItem="VDb-fh-S7z" secondAttribute="bottom" id="Ry4-Rt-VJg"/>
+                    <constraint firstItem="T6u-kA-v5Q" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="Sw1-3k-lub"/>
+                    <constraint firstItem="uZw-OC-QWw" firstAttribute="top" secondItem="T6u-kA-v5Q" secondAttribute="bottom" id="Vmx-gv-7z4"/>
                     <constraint firstAttribute="trailing" secondItem="VDb-fh-S7z" secondAttribute="trailing" id="Yib-Qj-wuW"/>
                     <constraint firstItem="B9w-uE-UUn" firstAttribute="leading" secondItem="yDM-3n-XJ5" secondAttribute="leading" id="ZRF-jA-2Tg"/>
                     <constraint firstItem="VDb-fh-S7z" firstAttribute="leading" secondItem="uZw-OC-QWw" secondAttribute="trailing" id="bHX-ad-1lO"/>
-                    <constraint firstItem="uZw-OC-QWw" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="topMargin" id="gN1-Fw-fiN"/>
                     <constraint firstItem="VDb-fh-S7z" firstAttribute="top" secondItem="yDM-3n-XJ5" secondAttribute="top" id="uSV-d6-m9q"/>
                 </constraints>
             </tableViewCellContentView>
@@ -118,7 +151,11 @@
                 <outlet property="rightAvatarContainerView" destination="VDb-fh-S7z" id="dQG-T1-6hw"/>
                 <outlet property="rightAvatarImageView" destination="afl-L6-jcA" id="R5L-Z7-yLx"/>
                 <outlet property="rightAvatarWidthConstraint" destination="Gur-SR-UDJ" id="gwM-1T-SYE"/>
+                <outlet property="senderNameLabel" destination="cyP-g1-3PU" id="rsj-rf-xYI"/>
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
+                <outlet property="timeLabel" destination="oRX-UO-W1X" id="9vx-sK-sRV"/>
+                <outlet property="topLabelsLeftConstraint" destination="wRE-ei-hOK" id="mTN-l6-fMN"/>
+                <outlet property="topLabelsRightConstraint" destination="LCp-xO-Bl8" id="uXs-dD-oXu"/>
             </connections>
             <point key="canvasLocation" x="62" y="-26.5"/>
         </tableViewCell>

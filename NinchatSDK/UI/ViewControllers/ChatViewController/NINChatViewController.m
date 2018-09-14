@@ -81,6 +81,10 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 @end
 
+// Add NINChatViewMessage conformance to NINChannelMessage
+@interface NINChannelMessage () <NINChatViewMessage>
+@end
+
 @implementation NINChatViewController
 
 #pragma mark - Private methods
@@ -336,23 +340,12 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 #pragma mark - From NINChatViewDataSource
 
-- (NSString *)chatView:(NINChatView *)chatView avatarURLAtIndex:(NSInteger)index {
-    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
-    return msg.avatarURL;
-}
-
-- (BOOL)chatView:(NINChatView *)chatView isMessageFromMeAtIndex:(NSInteger)index {
-    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
-    return msg.mine;
-}
-
-- (NSString *)chatView:(NINChatView *)chatView messageTextAtIndex:(NSInteger)index {
-    NINChannelMessage* msg = self.sessionManager.channelMessages[index];
-    return msg.textContent;
-}
-
 - (NSInteger)numberOfMessagesForChatView:(NINChatView *)chatView {
     return self.sessionManager.channelMessages.count;
+}
+
+-(id<NINChatViewMessage>) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
+    return self.sessionManager.channelMessages[index];
 }
 
 #pragma mark - From NINBaseViewController
@@ -446,7 +439,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
     // Add tileable pattern image as the view background
     //TODO get from site config
-    UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle(self.class) compatibleWithTraitCollection:nil];
+    UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 
     // Video is hidden before a call is made

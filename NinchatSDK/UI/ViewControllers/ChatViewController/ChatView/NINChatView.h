@@ -10,20 +10,22 @@
 
 @class NINChatView;
 
+@protocol NINChatViewMessage <NSObject>
+@property (nonatomic, assign, readonly) BOOL mine;
+@property (nonatomic, strong, readonly) NSString* senderName;
+@property (nonatomic, strong, readonly) NSString* textContent;
+@property (nonatomic, strong, readonly) NSDate* timestamp;
+@property (nonatomic, strong, readonly) NSString* avatarURL;
+@end
+
 /** Data source for the chat view. */
 @protocol NINChatViewDataSource
 
 /** How many messages there are. */
 -(NSInteger) numberOfMessagesForChatView:(NINChatView*)chatView;
 
-/** Must return YES if the message at given index is 'from me'. */
--(BOOL) chatView:(NINChatView*)chatView isMessageFromMeAtIndex:(NSInteger)index;
-
-/** Must return the text content of the message at given index. */
--(NSString*) chatView:(NINChatView*)chatView messageTextAtIndex:(NSInteger)index;
-
-/** Must return the avatar image URL of the message at given index. */
--(NSString*) chatView:(NINChatView*)chatView avatarURLAtIndex:(NSInteger)index;
+/** Returns the chat message at given index. */
+-(id<NINChatViewMessage>) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index;
 
 @end
 

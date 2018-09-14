@@ -31,12 +31,7 @@
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
 
-    NSInteger row = indexPath.row;
-    NSString* text = [self.dataSource chatView:self messageTextAtIndex:row];
-    NSString* avatarURL = [self.dataSource chatView:self avatarURLAtIndex:row];
-    BOOL fromMe = [self.dataSource chatView:self isMessageFromMeAtIndex:row];
-
-    [cell populateWithText:text avatarImageUrl:avatarURL isMine:fromMe];
+    [cell populateWithMessage:[self.dataSource chatView:self messageAtIndex:indexPath.row]];
 
     return cell;
 }
@@ -57,7 +52,7 @@
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
-    NSBundle* bundle = findResourceBundle(self.class);
+    NSBundle* bundle = findResourceBundle();
     NSCAssert(bundle != nil, @"Bundle not found");
     UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
     NSCAssert(nib != nil, @"NIB not found");
@@ -75,7 +70,7 @@
 
 // Loads the NINNavigationBar view from its xib
 -(NINChatView*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle(self.class);
+    NSBundle* bundle = findResourceBundle();
     NSArray* objects = [bundle loadNibNamed:@"NINChatView" owner:nil options:nil];
 
     NSCAssert([objects[0] isKindOfClass:[NINChatView class]], @"Invalid class resource");
