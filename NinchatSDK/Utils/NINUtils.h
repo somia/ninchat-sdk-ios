@@ -38,7 +38,7 @@ id _Nonnull fetchNotification(NSString* _Nonnull notificationName, notificationB
 NSError* _Nonnull newError(NSString* _Nonnull msg);
 
 /** Returns the resource bundle containing the requested resource. */
-NSBundle* findResourceBundle(Class class);
+NSBundle* _Nonnull findResourceBundle(Class _Nonnull class);
 
 /** Asynchronously retrieves the site configuration from the server over HTTPS. */
 void fetchSiteConfig(NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);

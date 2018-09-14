@@ -10,6 +10,7 @@
 #import "NINInitialViewController.h"
 #import "NINUtils.h"
 #import "NINSessionManager.h"
+#import "NINChatSession+Internal.h"
 
 @interface NINChatSession ()
 
@@ -62,6 +63,8 @@
 // 3. Retrieves the queues available for this realm (realm id from site configuration)
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
+
+    [self sdklog:@"Starting a chat session"];
 
     // Fetch the site configuration
     fetchSiteConfig(weakSelf.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {

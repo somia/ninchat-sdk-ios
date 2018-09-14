@@ -221,6 +221,10 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     }
 }
 
+-(IBAction) attachmentButtonPressed:(id)sender {
+    NSLog(@"Attachment button pressed");
+}
+
 -(IBAction) hangupButtonPressed:(UIButton*)button {
     __weak typeof(self) weakSelf = self;
 

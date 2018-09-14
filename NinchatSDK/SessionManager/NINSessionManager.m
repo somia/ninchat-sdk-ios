@@ -19,6 +19,7 @@
 #import "NINClientPropsParser.h"
 #import "NINWebRTCServerInfo.h"
 #import "NINWebRTCClient.h"
+#import "NINChatSession+Internal.h"
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -706,6 +707,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
     NSCAssert(self.session == nil, @"Existing chat session found");
+
+    [self.ninchatSession sdklog:@"Opening new chat session."];
 
     // Make sure our site configuration contains a realm_id
     NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];

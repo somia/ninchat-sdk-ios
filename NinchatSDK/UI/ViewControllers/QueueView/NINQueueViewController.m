@@ -47,6 +47,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     }
     self.queueToJoin = nil;
 
+    [self.sessionManager.ninchatSession sdklog:@"Joining queue %@", queue];
+
     // Connect to the queue
     __weak typeof(self) weakSelf = self;
     [self.sessionManager joinQueueWithId:queue.queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {

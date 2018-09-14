@@ -8,9 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-//#import "AFNetworking.h"
-
 #import "NINUtils.h"
+#import "NINInitialViewController.h"
 
 // Server host name.
 //NSString* const kNinchatServerHostName = @"api.ninchat.com"; // production
@@ -53,7 +52,9 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
 }
 
 NSBundle* findResourceBundle(Class class) {
-    NSBundle* classBundle = [NSBundle bundleForClass:class];
+//    NSBundle* classBundle = [NSBundle bundleForClass:class];
+    NSBundle* classBundle = [NSBundle bundleForClass:[NINInitialViewController class]];
+    NSCAssert(classBundle != nil, @"Nil classBundle");
 
     NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
     if (bundleURL == nil) {
@@ -62,26 +63,12 @@ NSBundle* findResourceBundle(Class class) {
     } else {
         // This path is taken when using the SDK via Cocoapods module.
         // Locate our UI resource bundle. This is specified in the podspec file.
-        return [NSBundle bundleWithURL:bundleURL];
+        NSBundle* resourceBundle = [NSBundle bundleWithURL:bundleURL];
+        NSCAssert(resourceBundle != nil, @"Nil resourceBundle");
+
+        return resourceBundle;
     }
 }
-
-/*
-NSBundle* findResourceBundle(Class class, NSString* resourceName, NSString* resourceType) {
-    NSBundle* classBundle = [NSBundle bundleForClass:class];
-
-    // See if this top level bundle contains our resource
-    if ([classBundle pathForResource:resourceName ofType:resourceType] != nil) {
-        // This path is taken when using the SDK from a prebuilt .framework.
-        return classBundle;
-    } else {
-        // This path is taken when using the SDK via Cocoapods module.
-        // Locate our UI resource bundle. This is specified in the podspec file.
-        NSURL* bundleURL = [classBundle URLForResource:@"NinchatSDKUI" withExtension:@"bundle"];
-        return [NSBundle bundleWithURL:bundleURL];
-    }
-}
-*/
 
 void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kNinchatServerHostName, configurationKey];

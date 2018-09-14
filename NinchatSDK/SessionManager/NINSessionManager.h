@@ -10,6 +10,7 @@
 
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
+#import "NINChatSession+Internal.h" // To provide log: method
 
 @class NINQueue;
 @class NINChannelMessage;
