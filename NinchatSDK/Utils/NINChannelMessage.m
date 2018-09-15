@@ -27,13 +27,13 @@
     return [NSString stringWithFormat:@"textContent: %@, mine: %@, series %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.series ? @"YES" : @"NO", self.timestamp];
 }
 
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID {
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID {
     NINChannelMessage* msg = [NINChannelMessage new];
 
     msg.senderName = senderName;
     msg.textContent = textContent;
     msg.mine = mine;
-    msg.timestamp = [NSDate date];
+    msg.timestamp = timestamp;
     msg.avatarURL = avatarURL;
     msg.series = series;
     msg.senderUserID = senderUserID;

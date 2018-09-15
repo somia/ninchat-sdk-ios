@@ -30,10 +30,12 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* localVideoView;
 
 // Remote video view constraints for adjusting aspect ratio
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewTopConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewRightConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewLeftConstraint;
-@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewBottomConstraint;
+//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewTopConstraint;
+//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewRightConstraint;
+//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewLeftConstraint;
+//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewBottomConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewWidthConstraint;
+@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewHeightConstraint;
 
 // Local video view constraints for adjusting aspect ratio
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint* localViewWidthConstraint;
@@ -44,6 +46,12 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 // Height constraint of the video container view
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* videoContainerViewHeightConstraint;
+
+// Height constraint of the chst view
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatViewHeightConstraint;
+
+// Height constraint of the chst input controls view
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatInputControlsViewHeightConstraint;
 
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
@@ -63,9 +71,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 // WebRTC client for the video call.
 @property (nonatomic, strong) NINWebRTCClient* webrtcClient;
-
-// The chat view height constraint
-@property (nonatomic, strong) NSLayoutConstraint* chatViewHeightConstraint;
 
 // This view is used to detect a tap outside the keyboard to close it
 @property (nonatomic, strong) NINTouchView* tapRecognizerView;
@@ -89,12 +94,45 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 #pragma mark - Private methods
 
--(void) setVideoVisible:(BOOL)visible {
-    CGFloat height = visible ? self.view.bounds.size.height * 0.45 : 0;
-    self.videoContainerViewHeightConstraint.constant = height;
-    [UIView animateWithDuration:0.4f animations:^{
-        [self.view layoutIfNeeded];
-    }];
+-(void) adjustConstraintsForSize:(CGSize)size animate:(BOOL)animate {
+    BOOL portrait = (size.height > size.width);
+
+    if (portrait) {
+        if (self.webrtcClient != nil) {
+            // Video; In portrait we make the video cover about the top half of the screen
+            self.videoContainerViewHeightConstraint.constant = size.height * 0.45;
+        } else {
+            // No video; get rid of the video view
+            self.videoContainerViewHeightConstraint.constant = 0;
+        }
+        self.videoContainerViewHeightConstraint.active = YES;
+
+        // No need for chat view height in portrait; the input container + video will dictate size
+        self.chatViewHeightConstraint.active = NO;
+        self.chatInputControlsViewHeightConstraint.constant = 100;
+    } else {
+        if (self.webrtcClient != nil) {
+            // Video; in landscape we make video fullscreen ie. hide the chat view + input controls
+            self.videoContainerViewHeightConstraint.active = YES;
+            self.videoContainerViewHeightConstraint.constant = size.height;
+            self.chatViewHeightConstraint.constant = 0;
+            self.chatViewHeightConstraint.active = YES;
+            self.chatInputControlsViewHeightConstraint.constant = 0;
+        } else {
+            // No video; get rid of the video view. the input container + video will dictate size
+            self.videoContainerViewHeightConstraint.constant = 0;
+            self.videoContainerViewHeightConstraint.active = YES;
+            self.chatViewHeightConstraint.active = NO;
+            self.chatInputControlsViewHeightConstraint.constant = 100;
+        }
+    }
+
+    if (animate) {
+        // Animate the changes
+        [UIView animateWithDuration:0.3f animations:^{
+            [self.view layoutIfNeeded];
+        }];
+    }
 }
 
 -(void) pickupWithAnswer:(BOOL)answer {
@@ -113,9 +151,13 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     }
 
     __weak typeof(self) weakSelf = self;
+
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCCall]) {
             NSLog(@"Got WebRTC call");
+
+            // Get rid of keyboard if any
+            [self.textInputField resignFirstResponder];
 
             // Show answer / reject dialog for the incoming call
             [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
@@ -137,8 +179,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
                 weakSelf.webrtcClient.delegate = weakSelf;
                 [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
 
-                // Show the video views animatedly
-                [weakSelf setVideoVisible:YES];
+                // Show the video views
+//                [weakSelf setVideoVisible:YES];
+                [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
             NSLog(@"Got WebRTC hang-up - closing the video call.");
@@ -147,7 +190,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             [weakSelf disconnectWebRTC];
 
             // Close the video view
-            [weakSelf setVideoVisible:NO];
+//            [weakSelf setVideoVisible:NO];
+            [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
 
             return YES;
         }
@@ -190,24 +234,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [self disconnectWebRTC];
 }
 
--(void) adjustConstraints:(BOOL)portrait {
-    if (portrait) {
-        // Portrait; disable chat view height constraint
-        if (self.chatViewHeightConstraint != nil) {
-            self.chatViewHeightConstraint.active = NO;
-            self.chatViewHeightConstraint = nil;
-        }
-    } else {
-        // Landscape; set the chat height constraint to 0. We have to do this
-        // manually here b/c the 'embeddable' view trick cannot catch this change.
-        if (self.chatViewHeightConstraint == nil) {
-            self.chatViewHeightConstraint = [NSLayoutConstraint constraintWithItem:self.chatView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0];
-            self.chatViewHeightConstraint.priority = 999;
-            self.chatViewHeightConstraint.active = YES;
-        }
-    }
-}
-
 #pragma mark - IBAction handlers
 
 -(IBAction) sendButtonPressed:(id)sender {
@@ -241,7 +267,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
         [weakSelf disconnectWebRTC];
 
         // Hide the video views
-        [weakSelf setVideoVisible:NO];
+//        [weakSelf setVideoVisible:NO];
+        [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
     }];
 }
 
@@ -251,6 +278,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     NSLog(@"NINCHAT: didGetError: %@", error);
 
     [self disconnectWebRTC];
+//    [self setVideoVisible:NO];
+    [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
 }
 
 -(void) webrtcClient:(NINWebRTCClient *)client didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
@@ -295,8 +324,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
         self.localViewWidthConstraint.constant = videoFrame.size.width;
         self.localViewHeightConstraint.constant = videoFrame.size.height;
-
-        
     } else {
         NSLog(@"Adjusting remote video view size");
         self.remoteVideoSize = size;
@@ -304,21 +331,17 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
         // Fit the remote video view inside the view container with proper aspect ratio
         CGRect videoRect = self.videoContainerView.bounds;
         CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
-        CGFloat topSpace = (containerHeight - videoFrame.size.height) / 2;
-        CGFloat sideSpace = (containerWidth - videoFrame.size.width) / 2;
 
         NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
 
-        self.remoteViewTopConstraint.constant = topSpace;
-        self.remoteViewBottomConstraint.constant = topSpace;
-        self.remoteViewLeftConstraint.constant = sideSpace;
-        self.remoteViewRightConstraint.constant = sideSpace;
-
-        // Animate the frame size change
-        [UIView animateWithDuration:0.4f animations:^{
-            [self.view layoutIfNeeded];
-        }];
+        self.remoteViewWidthConstraint.constant = videoFrame.size.width;
+        self.remoteViewHeightConstraint.constant = videoFrame.size.height;
     }
+
+    // Animate the frame size change
+    [UIView animateWithDuration:0.4f animations:^{
+        [self.view layoutIfNeeded];
+    }];
 }
 
 #pragma mark - From UIViewController
@@ -335,7 +358,12 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 -(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-    [self adjustConstraints:(size.height > size.width)];
+    [self adjustConstraintsForSize:size animate:YES];
+
+    //TODO do we need this at all?
+//    [self adjustConstraints:(size.height > size.width)];
+
+    //TODO must adjust video size
 }
 
 #pragma mark - From NINChatViewDataSource
@@ -386,8 +414,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 
-    [self adjustConstraints:(self.view.frame.size.height > self.view.frame.size.width)];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
@@ -414,6 +440,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
         return YES;
     });
+
+    // Set the constraints so that video is initially hidden
+    [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
 }
 
 -(void) viewWillDisappear:(BOOL)animated {
@@ -441,9 +470,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     //TODO get from site config
     UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
-
-    // Video is hidden before a call is made
-    self.videoContainerViewHeightConstraint.constant = 0;
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{

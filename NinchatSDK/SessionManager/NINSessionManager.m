@@ -373,6 +373,13 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
+    CGFloat messageTime;
+    [params getFloat:@"message_time" val:&messageTime error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get message_time: %@", error);
+        return;
+    }
+
     NINChannelUser* messageUser = _channelUsers[messageUserID];
     if (messageUser == nil) {
         NSLog(@"Message from unknown user: %@", messageUserID);
@@ -423,8 +430,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
             series = [prevMsg.senderUserID isEqualToString:messageUserID];
         }
 
-        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL mine:(actionId != 0) series:series senderUserID:messageUserID];
+        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) series:series senderUserID:messageUserID];
         [_channelMessages insertObject:msg atIndex:0];
+        
         postNotification(kNewChannelMessageNotification, @{@"message": msg});
         NSLog(@"Got new channel message: %@", msg);
     }
@@ -498,10 +506,10 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     //TODO remove; this is test data
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO series:NO senderUserID:@"1"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES series:NO senderUserID:@"2"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" mine:NO series:NO senderUserID:@"1"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" mine:YES series:NO senderUserID:@"2"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
+    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
 
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});

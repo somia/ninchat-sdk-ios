@@ -36,6 +36,6 @@
 @property (nonatomic, strong, readonly) NSString* senderUserID;
 
 /** Initializer. */
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
++(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
 
 @end
