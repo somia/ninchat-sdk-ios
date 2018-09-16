@@ -806,11 +806,14 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams {
-    NSString* unformattedValue = self.siteConfiguration[@"default"][@"translations"][keyName];
+    NSString* translation = self.siteConfiguration[@"default"][@"translations"][keyName];
 
-    //TODO format
+    for (NSString* formatKey in formatParams.allKeys) {
+        NSString* formatValue = formatParams[formatKey];
+        translation = [translation stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{{%@}}", formatKey] withString:formatValue];
+    }
 
-    return unformattedValue;
+    return translation;
 }
 
 #pragma mark - 

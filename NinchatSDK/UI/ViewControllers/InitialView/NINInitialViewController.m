@@ -55,21 +55,15 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 #pragma mark - Lifecycle etc.
 
--(void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    if (self.sessionManager.queues.count > 0) {
-        NSString* queueButtonText = [NSString stringWithFormat:@"Join %@", self.sessionManager.queues[0].name];
-        [self.startChatButton setTitle:queueButtonText forState:UIControlStateNormal];
-    }
-}
-
 -(void) viewDidLoad {
     [super viewDidLoad];
 
     // Internalizations
     self.welcomeTextLabel.text = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];
     [self.closeWindowButton setTitle:[self.sessionManager translation:@"Close window" formatParams:nil]  forState:UIControlStateNormal];
+    if (self.sessionManager.queues.count > 0) {
+        [self.startChatButton setTitle:[self.sessionManager translation:@"Join audience queue {{audienceQueue.queue_attrs.name}}" formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
+    }
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
