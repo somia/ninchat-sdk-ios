@@ -94,4 +94,10 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** (Optionally) sends ratings and finishes the current chat from our end. */
 -(void) finishChat:(NSNumber* _Nullable)rating;
 
+/**
+ * Get a formatted translation from the site configuration.
+ * @param formatParams contains format param mappings key -> value
+ */
+-(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams;
+
 @end

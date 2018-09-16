@@ -805,6 +805,14 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     return nil;
 }
 
+-(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams {
+    NSString* unformattedValue = self.siteConfiguration[@"default"][@"translations"][keyName];
+
+    //TODO format
+
+    return unformattedValue;
+}
+
 #pragma mark - 
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {

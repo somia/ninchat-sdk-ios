@@ -18,6 +18,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 @interface NINInitialViewController ()
 
+@property (nonatomic, strong) IBOutlet UILabel* welcomeTextLabel;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
 
@@ -65,6 +66,10 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 -(void) viewDidLoad {
     [super viewDidLoad];
+
+    // Internalizations
+    self.welcomeTextLabel.text = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];
+    [self.closeWindowButton setTitle:[self.sessionManager translation:@"Close window" formatParams:nil]  forState:UIControlStateNormal];
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
