@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@import AFNetworking;
+
 #import "NINUtils.h"
 #import "NINInitialViewController.h"
 
@@ -71,7 +73,6 @@ NSBundle* findResourceBundle() {
 
 void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, kNinchatServerHostName, configurationKey];
-    NSLog(@"Fetching site config from URL: %@", url);
 
     void (^callCallback)(NSDictionary* config, NSError* error) = ^(NSDictionary* config, NSError* error) {
         runOnMainThread(^{
@@ -79,40 +80,16 @@ void fetchSiteConfig(NSString* configurationKey, fetchSiteConfigCallbackBlock ca
         });
     };
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url] cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10];
-    [request setHTTPMethod: @"GET"];
-
-    NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    sessionConfig.timeoutIntervalForRequest = 10.0;
-    sessionConfig.timeoutIntervalForResource = 10.0;
-
-    NSURLSession* session = [NSURLSession sessionWithConfiguration:sessionConfig];
-
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse* response, NSError* error) {
-        NSHTTPURLResponse* httpResponse = (NSHTTPURLResponse *)response;
-
-        if (error != nil) {
-            callCallback(nil, error);
-            return;
+    AFHTTPSessionManager* manager = [AFHTTPSessionManager manager];
+    [manager GET:url parameters:nil progress:nil success:^(NSURLSessionTask* task, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            callCallback((NSDictionary*)responseObject, nil);
+        } else {
+            callCallback(nil, newError([NSString stringWithFormat:@"Invalid responseObject class: %@", [responseObject class]]));
         }
-
-        if ((httpResponse.statusCode < 200) || (httpResponse.statusCode >= 300)) {
-            callCallback(nil, newError([NSString stringWithFormat:@"Got response code: %ld", (long)httpResponse.statusCode]));
-            return;
-        }
-
-        NSError* parseError = nil;
-        NSDictionary* config = [NSJSONSerialization JSONObjectWithData:data options:0 error:&parseError];
-        if (parseError != nil) {
-            callCallback(nil, error);
-            return;
-        }
-
-        NSLog(@"Got site config: %@", config);
-        callCallback(config, nil);
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        callCallback(nil, error);
     }];
-    
-    [dataTask resume];
 }
 
 
