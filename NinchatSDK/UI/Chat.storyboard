@@ -334,14 +334,14 @@ you are next.</string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
                                 <rect key="frame" x="0.0" y="20" width="375" height="433.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How was our customer service?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hB3-xN-dam">
-                                        <rect key="frame" x="66" y="80" width="243" height="21"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hB3-xN-dam">
+                                        <rect key="frame" x="20" y="80" width="335" height="61"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B6F-ML-XSh" userLabel="Button row container view">
-                                        <rect key="frame" x="0.0" y="151" width="375" height="104.5"/>
+                                        <rect key="frame" x="0.0" y="191" width="375" height="104.5"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Lva-r9-7YD" userLabel="Button container view">
                                                 <rect key="frame" x="59" y="0.0" width="70" height="104.5"/>
@@ -461,8 +461,9 @@ you are next.</string>
                                     <constraint firstItem="hB3-xN-dam" firstAttribute="top" secondItem="L5U-F0-l9Y" secondAttribute="top" constant="80" id="LZJ-MT-lWY"/>
                                     <constraint firstItem="B6F-ML-XSh" firstAttribute="top" secondItem="hB3-xN-dam" secondAttribute="bottom" constant="50" id="PLv-Oe-8yj"/>
                                     <constraint firstAttribute="trailing" secondItem="B6F-ML-XSh" secondAttribute="trailing" id="U7K-Gw-nh7"/>
-                                    <constraint firstItem="hB3-xN-dam" firstAttribute="centerX" secondItem="L5U-F0-l9Y" secondAttribute="centerX" id="adg-DY-rgh"/>
+                                    <constraint firstItem="hB3-xN-dam" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" constant="20" id="eeV-iB-cov"/>
                                     <constraint firstItem="B6F-ML-XSh" firstAttribute="leading" secondItem="L5U-F0-l9Y" secondAttribute="leading" id="yld-kY-mPf"/>
+                                    <constraint firstAttribute="trailing" secondItem="hB3-xN-dam" secondAttribute="trailing" constant="20" id="zEF-rJ-KSn"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PLV-Oi-4sR">
@@ -493,6 +494,9 @@ you are next.</string>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                     </view>
+                    <connections>
+                        <outlet property="titleLabel" destination="hB3-xN-dam" id="k8j-FP-0nq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xNA-rk-MTU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

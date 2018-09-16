@@ -740,12 +740,14 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [sessionParams setString:@"site_secret" val:self.siteSecret];
     }
 
-    //TODO where do we get the username?
-//    if (self.userName != nil) {
-//        ClientProps* attrs = [ClientProps new];
-//        [attrs setString:@"name" val:self.userName];
-//        [sessionParams setObject:@"user_attrs" ref:attrs];
-//    }
+    // Get the username from the site config
+    NSString* userName = self.siteConfiguration[@"default"][@"userName"];
+    if (userName != nil) {
+        ClientProps* attrs = [ClientProps new];
+        [attrs setString:@"name" val:userName];
+        [sessionParams setObject:@"user_attrs" ref:attrs];
+    }
+
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
     //TODO implement a give up -timer?

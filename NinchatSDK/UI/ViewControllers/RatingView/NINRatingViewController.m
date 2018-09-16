@@ -11,6 +11,8 @@
 
 @interface NINRatingViewController ()
 
+@property (nonatomic, strong) IBOutlet UILabel* titleLabel;
+
 @end
 
 @implementation NINRatingViewController
@@ -39,6 +41,15 @@
     NSLog(@"Skip button pressed");
 
     [self.sessionManager finishChat:nil];
+}
+
+#pragma mark - Lifecycle, etc
+
+-(void) viewDidLoad {
+    [super viewDidLoad];
+
+    // Translations
+    self.titleLabel.text = [self.sessionManager translation:@"How was our customer service?" formatParams:@{}];
 }
 
 @end

@@ -56,11 +56,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
-//            weakSelf.queueInfoLabel.text = [NSString stringWithFormat:@"Joined audience queue %@, you are next.", queue.name];
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next." formatParams:nil];
+            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next." formatParams:@{@"audienceQueue.queue_attrs.name": queue.name}];
         } else {
-//            weakSelf.queueInfoLabel.text = [NSString stringWithFormat:@"Joined audience queue %@, you are at position %ld.", queue.name, queuePosition];
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}." formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue}];
+            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}." formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": queue.name}];
         }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
