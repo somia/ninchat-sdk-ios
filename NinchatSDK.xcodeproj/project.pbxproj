@@ -50,6 +50,8 @@
 		494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */; };
 		495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
+		49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49622FAB214FCD3700570D59 /* NINFileInfo.h */; };
+		49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 49622FAC214FCD3700570D59 /* NINFileInfo.m */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
 		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
@@ -143,6 +145,8 @@
 		494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBold.ttf"; sourceTree = "<group>"; };
 		495762A020EE1AC700BC39A8 /* NINUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUtils.h; sourceTree = "<group>"; };
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
+		49622FAB214FCD3700570D59 /* NINFileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINFileInfo.h; sourceTree = "<group>"; };
+		49622FAC214FCD3700570D59 /* NINFileInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINFileInfo.m; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
 		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
@@ -318,6 +322,8 @@
 				4911895B214B9B14008F1748 /* NINChatSession+Internal.m */,
 				4911895E214BE54F008F1748 /* NSDateFormatter+Ninchat.h */,
 				4911895F214BE54F008F1748 /* NSDateFormatter+Ninchat.m */,
+				49622FAB214FCD3700570D59 /* NINFileInfo.h */,
+				49622FAC214FCD3700570D59 /* NINFileInfo.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -499,6 +505,7 @@
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */,
 				49F5FA3920F781D600A4A526 /* NINQueue.h in Headers */,
+				49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */,
 				4911895C214B9B14008F1748 /* NINChatSession+Internal.h in Headers */,
 				49721CD121295AEA00695F33 /* NINChatView.h in Headers */,
 				49140B7D20F27BC900A00EA8 /* NINPrivateTypes.h in Headers */,
@@ -525,6 +532,7 @@
 				49944351208DF33400101DCA /* Frameworks */,
 				49944352208DF33400101DCA /* Headers */,
 				49944353208DF33400101DCA /* Resources */,
+				F3A8812B9BA85BF0835C16A6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -543,6 +551,7 @@
 				4994435A208DF33400101DCA /* Sources */,
 				4994435B208DF33400101DCA /* Frameworks */,
 				4994435C208DF33400101DCA /* Resources */,
+				B20FA72021094C44D4CF6F48 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -647,6 +656,42 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		B20FA72021094C44D4CF6F48 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ImagePicker/ImagePicker.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ImagePicker.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F3A8812B9BA85BF0835C16A6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ImagePicker/ImagePicker.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ImagePicker.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		FAFC3D6DEF9918AA33E4F0FD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -691,6 +736,7 @@
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,
 				49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */,
 				497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */,
+				49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */,
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,
 				49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */,
 				49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */,

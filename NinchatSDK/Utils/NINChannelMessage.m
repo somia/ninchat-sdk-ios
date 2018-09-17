@@ -7,10 +7,12 @@
 //
 
 #import "NINChannelMessage.h"
+#import "NINFileInfo.h"
 
 @interface NINChannelMessage ()
 
 // Writable private definitions for the properties
+@property (nonatomic, strong) NSString* messageID;
 @property (nonatomic, assign) BOOL mine;
 @property (nonatomic, assign) BOOL series;
 @property (nonatomic, strong) NSString* senderName;
@@ -27,9 +29,10 @@
     return [NSString stringWithFormat:@"textContent: %@, mine: %@, series %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.series ? @"YES" : @"NO", self.timestamp];
 }
 
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID {
++(NINChannelMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID {
     NINChannelMessage* msg = [NINChannelMessage new];
 
+    msg.messageID = messageID;
     msg.senderName = senderName;
     msg.textContent = textContent;
     msg.mine = mine;

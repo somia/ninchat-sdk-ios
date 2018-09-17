@@ -8,8 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+@class NINFileInfo;
+
 /** Represents a chat message on a channel. */
 @interface NINChannelMessage : NSObject
+
+/** Message ID. */
+@property (nonatomic, strong, readonly) NSString* messageID;
 
 /** Whether this message is sent by the mobile user (this device). */
 @property (nonatomic, assign, readonly) BOOL mine;
@@ -35,7 +40,10 @@
 /** The sender's user ID. */
 @property (nonatomic, strong, readonly) NSString* senderUserID;
 
+/** Attachment file info. */
+@property (nonatomic, strong) NINFileInfo* attachment;
+
 /** Initializer. */
-+(NINChannelMessage*) messageWithTextContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
++(NINChannelMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
 
 @end

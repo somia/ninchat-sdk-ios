@@ -20,6 +20,9 @@
 #import "NINWebRTCServerInfo.h"
 #import "NINWebRTCClient.h"
 #import "NINChatSession+Internal.h"
+#import "NINFileInfo.h"
+
+typedef void (^getFileInfoCallback)(NSError* _Nullable error, NINFileInfo* fileInfo);
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -57,6 +60,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
     /** Mutable channel messages list. */
     NSMutableArray<NINChannelMessage*>* _channelMessages;
+
+    /** Channel messages by their ID for faster lookup. */
+    NSMutableDictionary<NSString*, NINChannelMessage*>* _channelMessagesById;
 
     /** Channel user map; ID -> NINChannelUser. */
     NSMutableDictionary<NSString*, NINChannelUser*>* _channelUsers;
@@ -250,6 +256,50 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
 }
 
+-(void) fileFound:(ClientProps*)params {
+    NSError* error = nil;
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* fileID = [params getString:@"file_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* url = [params getString:@"file_url" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    double expiry;
+    [params getFloat:@"url_expiry" val:&expiry error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+    NSDate* urlExpiry = [NSDate dateWithTimeIntervalSince1970:expiry];
+
+    //TODO remove
+    NSLog(@"Got urlExpiry: %@", urlExpiry);
+
+    ClientProps* fileAttributes = [params getObject:@"file_attrs" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* mimeType = [fileAttributes getString:@"type" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    long size;
+    [fileAttributes getInt:@"size" val:&size error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+//    long width;
+//    [fileAttributes getInt:@"width" val:&width error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
+//
+//    long height;
+//    [fileAttributes getInt:@"height" val:&height error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
+
+    //TODO handle other file types too?
+    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID mimeType:mimeType size:size url:url urlExpiry:urlExpiry];
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
+}
+
 -(void) channelUpdated:(ClientProps*)params {
     NSError* error;
 
@@ -357,32 +407,119 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"stunServers": stunServerArray, @"turnServers": turnServerArray});
 }
 
+// Asynchronously retrieves file info
+-(void) describeFile:(NSString*)fileID completion:(getFileInfoCallback)completion {
+    // Fetch the file info, including the (temporary) download url for the file
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"describe_file"];
+    [params setString:@"file_id" val:fileID];
+
+    NSError* error = nil;
+    int64_t actionId;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error getting file info: %@", error);
+        completion(error, nil);
+        return;
+    }
+
+    fetchNotification(kActionNotification, ^(NSNotification* note) {
+        NSNumber* eventActionId = note.userInfo[@"action_id"];
+        NSError* error = note.userInfo[@"error"];
+
+        if (eventActionId.longValue == actionId) {
+            completion(error, (NINFileInfo*)note.userInfo[@"fileInfo"]);
+            return YES;
+        }
+
+        return NO;
+    });
+}
+
+-(void) handleInboundChatMessageWithPayload:(ClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
+
+    NSError* error = nil;
+
+    for (int i = 0; i < payload.length; i++) {
+        NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to deserialize message JSON: %@", error);
+            return;
+        }
+
+        BOOL hasAttachment = NO;
+        NSArray* fileObjectsList = payloadDict[@"files"];
+        if ((fileObjectsList != nil) && [fileObjectsList isKindOfClass:NSArray.class] && (fileObjectsList.count > 0)) {
+            // Use the first object in the list
+            NSDictionary* fileObject = fileObjectsList.firstObject;
+
+            // Only process images at this point
+            if ([fileObject[@"file_attrs"][@"type"] hasPrefix:@"image/"]) {
+                hasAttachment = YES;
+
+                __weak typeof(self) weakSelf = self;
+
+                [self describeFile:fileObject[@"file_id"] completion:^(NSError* error, NINFileInfo* fileInfo) {
+                    NSLog(@"Found file info: %@", fileInfo);
+
+                    typeof(self) strongSelf = weakSelf;
+
+                    // Look up the channel message from the map and update its attachment
+                    NINChannelMessage* msg = strongSelf->_channelMessagesById[messageID];
+                    if (msg != nil) {
+                        msg.attachment = fileInfo;
+                        postNotification(kChannelMessageUpdatedNotification, @{@"messageID": messageID});
+                    } else {
+                        NSLog(@"Message not found in _channelMessagesById!");
+                    }
+                }];
+            }
+        }
+
+        // Check if the previous message was sent by the same user, ie. is the
+        // message part of a series
+        BOOL series = NO;
+        NINChannelMessage* prevMsg = _channelMessages.firstObject;
+        if (prevMsg != nil) {
+            series = [prevMsg.senderUserID isEqualToString:messageUser.userID];
+        }
+
+        NSString* text = payloadDict[@"text"];
+
+        // Only allocate a new message if it has useful content (text or attachment)
+        if (hasAttachment || (text.length > 0)) {
+            NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:text senderName:messageUser.displayName avatarURL:messageUser.iconURL timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) series:series senderUserID:messageUser.userID];
+            [_channelMessages insertObject:msg atIndex:0];
+            _channelMessagesById[messageID] = msg;
+
+            postNotification(kNewChannelMessageNotification, @{@"message": msg});
+            NSLog(@"Got new channel message: %@", msg);
+        }
+    }
+}
+
 -(void) handleInboundMessage:(ClientProps*)params payload:(ClientPayload*)payload actionId:(long)actionId {
     NSError* error = nil;
-    NSString* messageType = [params getString:@"message_type" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get message_type: %@", error);
-        return;
-    }
 
-    NSLog(@"Got message_type: %@, actionId: %ld", messageType, actionId);
+    NSString* messageID = [params getString:@"message_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* messageType = [params getString:@"message_type" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSLog(@"Got message_type: %@, message_id: %@, actionId: %ld", messageType, messageID, actionId);
 
     NSString* messageUserID = [params getString:@"message_user_id" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get message_user_id: %@", error);
-        return;
-    }
+    NSCAssert(error == nil, @"Failed to get attribute");
 
     CGFloat messageTime;
     [params getFloat:@"message_time" val:&messageTime error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get message_time: %@", error);
-        return;
-    }
+    NSCAssert(error == nil, @"Failed to get attribute");
 
     NINChannelUser* messageUser = _channelUsers[messageUserID];
     if (messageUser == nil) {
         NSLog(@"Message from unknown user: %@", messageUserID);
+        //TODO how big a problem is this?
     }
 
     if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
@@ -409,33 +546,14 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
-    if (![messageType isEqualToString:@"ninchat.com/text"]) {
-        // Ignore all but text messages
-        NSLog(@"Ignoring non-text message.");
+    if (![messageType isEqualToString:@"ninchat.com/text"] && ![messageType isEqualToString:@"ninchat.com/file"]) {
+        // Ignore all but text/file messages
+        NSLog(@"Ignoring unsupported message type: '%@'", messageType);
         return;
     }
 
-    for (int i = 0; i < payload.length; i++) {
-        NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
-        if (error != nil) {
-            NSLog(@"Failed to deserialize message JSON: %@", error);
-            return;
-        }
-
-        // Check if the previous message was sent by the same user, ie. is the
-        // message part of a series
-        BOOL series = NO;
-        NINChannelMessage* prevMsg = _channelMessages.firstObject;
-        if (prevMsg != nil) {
-            series = [prevMsg.senderUserID isEqualToString:messageUserID];
-        }
-
-        NINChannelMessage* msg = [NINChannelMessage messageWithTextContent:payloadDict[@"text"] senderName:messageUser.displayName avatarURL:messageUser.iconURL timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) series:series senderUserID:messageUserID];
-        [_channelMessages insertObject:msg atIndex:0];
-        
-        postNotification(kNewChannelMessageNotification, @{@"message": msg});
-        NSLog(@"Got new channel message: %@", msg);
-    }
+    // Expect other messages to be chat messages
+    [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
 }
 
 -(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
@@ -478,6 +596,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     // Clear current list of messages and users
     [_channelMessages removeAllObjects];
+    [_channelMessagesById removeAllObjects];
     [_channelUsers removeAllObjects];
 
     // Extract the channel members' data
@@ -506,11 +625,12 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     //TODO remove; this is test data
+    /*
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
-
+*/
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});
 }
@@ -685,6 +805,37 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [self sendMessageWithMessageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
 }
 
+-(void) sendFile:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion {
+    NSCAssert(self.session != nil, @"No chat session");
+
+    if (self.activeChannelId == nil) {
+        completion(newError(@"No active channel"));
+        return;
+    }
+
+    ClientProps* fileAttributes = [ClientProps new];
+    [fileAttributes setString:@"name" val:fileName];
+
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"send_file"];
+    [params setObject:@"file_attrs" ref:fileAttributes];
+    [params setString:@"channel_id" val:self.activeChannelId];
+
+    ClientPayload* payload = [ClientPayload new];
+    [payload append:data];
+
+    NSError* error = nil;
+    int64_t actionId = -1;
+    [self.session send:params payload:payload actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error sending file: %@", error);
+        completion(error);
+    }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
 -(void) disconnect {
     self.activeChannelId = nil;
     [self.session close];
@@ -846,6 +997,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [self iceBegun:params];
     } else if ([event isEqualToString:@"user_updated"]) {
         [self userUpdated:params];
+    } else if ([event isEqualToString:@"file_found"]) {
+        [self fileFound:params];
     }
 }
 
@@ -893,6 +1046,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     if (self != nil) {
         _queues = [NSMutableArray array];
         _channelMessages = [NSMutableArray array];
+        _channelMessagesById = [NSMutableDictionary dictionary];
         _channelUsers = [NSMutableDictionary dictionary];
     }
 

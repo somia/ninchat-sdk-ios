@@ -68,6 +68,12 @@
 // Original height for the top labels container
 @property (nonatomic, assign) CGFloat topLabelsContainerHeight;
 
+// The message this cell is representing
+@property (nonatomic, strong) id<NINChatViewMessage> message;
+
+// Message updated -listener
+@property (nonatomic, assign) id messageUpdatedListener;
+
 @end
 
 @implementation NINChatBubbleCell
@@ -75,6 +81,8 @@
 #pragma mark - Private methods
 
 -(void) configureForMyMessage:(id<NINChatViewMessage>)message {
+    self.message = message;
+
     NSString* imageName = message.series ? @"chat_bubble_right_series" : @"chat_bubble_right";
     self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
 
@@ -150,8 +158,25 @@
 
 #pragma mark - Lifecycle etc.
 
+-(void) dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self.messageUpdatedListener];
+}
+
 -(void) awakeFromNib {
     [super awakeFromNib];
+
+    __weak typeof(self) weakSelf = self;
+    self.messageUpdatedListener = fetchNotification(kChannelMessageUpdatedNotification, ^BOOL(NSNotification* note) {
+        NSLog(@"Detected msg update");
+
+        NSString* messageID = note.userInfo[@"messageID"];
+        if ([messageID isEqualToString:weakSelf.message.messageID]) {
+            //TODO update UI - especially the image
+            NSLog(@"It is my message!");
+        }
+
+        return NO;
+    });
 
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
     self.topLabelsContainerHeight = self.topLabelsContainerHeightConstraint.constant;

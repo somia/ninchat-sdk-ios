@@ -88,6 +88,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
 
+/** Sends a file to the chat. */
+-(void) sendFile:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion;
+
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;
 

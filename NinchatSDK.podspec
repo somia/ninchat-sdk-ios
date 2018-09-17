@@ -40,8 +40,7 @@ Pod::Spec.new do |s|
       "ENABLE_BITCODE" => "NO"
   }
 
-  # TODO drop this for its own dependencies
-  s.dependency "AppRTC", "~> 1.0"
+  s.dependency "AppRTC", "~> 1.0" # TODO drop this for its own dependencies
   s.dependency "AFNetworking", "~> 3.0"
 
   s.requires_arc = true

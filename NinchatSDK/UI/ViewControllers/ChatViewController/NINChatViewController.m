@@ -6,6 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+@import MobileCoreServices;
+
 #import <libjingle_peerconnection/RTCEAGLVideoView.h>
 #import <AVFoundation/AVFoundation.h>
 #import <libjingle_peerconnection/RTCVideoTrack.h>
@@ -23,17 +25,13 @@
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
-@interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate>
+@interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* localVideoView;
 
 // Remote video view constraints for adjusting aspect ratio
-//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewTopConstraint;
-//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewRightConstraint;
-//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewLeftConstraint;
-//@property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewBottomConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewWidthConstraint;
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewHeightConstraint;
 
@@ -253,6 +251,13 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 -(IBAction) attachmentButtonPressed:(id)sender {
     NSLog(@"Attachment button pressed");
+
+    UIImagePickerController* pickerController = [UIImagePickerController new];
+    pickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary; //TODO
+    pickerController.mediaTypes = @[(NSString*)kUTTypeImage];
+    pickerController.delegate = self;
+
+    [self presentViewController:pickerController animated:YES completion:nil];
 }
 
 -(IBAction) hangupButtonPressed:(UIButton*)button {
@@ -267,9 +272,32 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
         [weakSelf disconnectWebRTC];
 
         // Hide the video views
-//        [weakSelf setVideoVisible:NO];
         [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
     }];
+}
+
+
+#pragma mark - From UIImagePickerControllerDelegate
+
+-(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+
+    NSCAssert([info[UIImagePickerControllerMediaType] isEqualToString:(NSString*)kUTTypeImage], @"Invalid media type received");
+
+    UIImage* image = info[UIImagePickerControllerOriginalImage];
+    NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
+
+    [self.sessionManager sendFile:@"image.jpeg" withData:imageData completion:^(NSError* error) {
+        if (error != nil) {
+            NSLog(@"Failed to send image: %@", error);
+            //TODO error? show toast
+        }
+    }];
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+-(void) imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - From NINWebRTCClientDelegate
@@ -460,7 +488,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 
-    [self disconnectWebRTC];
+    //TODO no no cannot do this here. otherwise image picker will disconnect us.
+//    [self disconnectWebRTC];
 }
 
 -(void) viewDidLoad {

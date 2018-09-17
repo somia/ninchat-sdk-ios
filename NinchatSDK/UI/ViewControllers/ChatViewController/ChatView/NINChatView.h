@@ -11,6 +11,8 @@
 @class NINChatView;
 
 @protocol NINChatViewMessage <NSObject>
+
+@property (nonatomic, strong, readonly) NSString* messageID;
 @property (nonatomic, assign, readonly) BOOL mine;
 @property (nonatomic, assign, readonly) BOOL series;
 @property (nonatomic, strong, readonly) NSString* senderName;
