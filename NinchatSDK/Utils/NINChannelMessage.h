@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @class NINFileInfo;
+@class NINChannelUser;
 
 /** Represents a chat message on a channel. */
 @interface NINChannelMessage : NSObject
@@ -23,10 +24,19 @@
  * YES if this message is a part in a series, ie. the sender of the previous message
  * also sent this message.
  */
-@property (nonatomic, assign, readonly) BOOL series;
+@property (nonatomic, assign) BOOL series;
 
 /** Name of the user who sent the message. */
-@property (nonatomic, strong, readonly) NSString* senderName;
+//@property (nonatomic, strong, readonly) NSString* senderName;
+
+/** The sender's user ID. */
+//@property (nonatomic, strong, readonly) NSString* senderUserID;
+
+/** User's avatar URL. */
+//@property (nonatomic, strong, readonly) NSString* avatarURL;
+
+/** The message sender. */
+@property (nonatomic, strong, readonly) NINChannelUser* sender;
 
 /** Message (text) content. */
 @property (nonatomic, strong, readonly) NSString* textContent;
@@ -34,16 +44,10 @@
 /** Message timestamp. */
 @property (nonatomic, strong, readonly) NSDate* timestamp;
 
-/** User's avatar URL. */
-@property (nonatomic, strong, readonly) NSString* avatarURL;
-
-/** The sender's user ID. */
-@property (nonatomic, strong, readonly) NSString* senderUserID;
-
 /** Attachment file info. */
-@property (nonatomic, strong) NINFileInfo* attachment;
+@property (nonatomic, strong, readonly) NINFileInfo* attachment;
 
 /** Initializer. */
-+(NINChannelMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent senderName:(NSString*)senderName avatarURL:(NSString*)avatarURL timestamp:(NSDate*)timestamp mine:(BOOL)mine series:(BOOL)series senderUserID:(NSString*)senderUserID;
++(NINChannelMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine attachment:(NINFileInfo*)attachment;
 
 @end

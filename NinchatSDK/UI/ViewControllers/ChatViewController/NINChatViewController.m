@@ -85,8 +85,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 @end
 
 // Add NINChatViewMessage conformance to NINChannelMessage
-@interface NINChannelMessage () <NINChatViewMessage>
-@end
+//@interface NINChannelMessage () <NINChatViewMessage>
+//@end
 
 @implementation NINChatViewController
 
@@ -400,7 +400,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     return self.sessionManager.channelMessages.count;
 }
 
--(id<NINChatViewMessage>) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
+-(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
     return self.sessionManager.channelMessages[index];
 }
 

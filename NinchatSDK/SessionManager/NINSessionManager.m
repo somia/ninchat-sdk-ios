@@ -286,16 +286,26 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [fileAttributes getInt:@"size" val:&size error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-//    long width;
-//    [fileAttributes getInt:@"width" val:&width error:&error];
-//    NSCAssert(error == nil, @"Failed to get attribute");
-//
-//    long height;
-//    [fileAttributes getInt:@"height" val:&height error:&error];
-//    NSCAssert(error == nil, @"Failed to get attribute");
+    ClientProps* thumbnail = [fileAttributes getObject:@"thumbnail" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    CGFloat aspectRatio = 1.0;
+
+    // If thumbnail object is present, use its dimensions to calculate image aspect ratio
+    if (thumbnail != nil) {
+        long width;
+        [thumbnail getInt:@"width" val:&width error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        long height;
+        [thumbnail getInt:@"height" val:&height error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        aspectRatio = (CGFloat)width / (CGFloat)height;
+    }
 
     //TODO handle other file types too?
-    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID mimeType:mimeType size:size url:url urlExpiry:urlExpiry];
+    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
@@ -436,6 +446,24 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     });
 }
 
+-(void) addNewChannelMessage:(NINChannelMessage*)message {
+    NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
+
+    // Check if the previous message was sent by the same user, ie. is the
+    // message part of a series
+    BOOL series = NO;
+    NINChannelMessage* prevMsg = _channelMessages.firstObject;
+    if (prevMsg != nil) {
+        series = [prevMsg.sender.userID isEqualToString:message.sender.userID];
+    }
+
+    [_channelMessages insertObject:message atIndex:0];
+    _channelMessagesById[message.messageID] = message;
+
+    postNotification(kNewChannelMessageNotification, @{@"message": message});
+    NSLog(@"Added new channel message: %@", message);
+}
+
 -(void) handleInboundChatMessageWithPayload:(ClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
 
     NSError* error = nil;
@@ -462,40 +490,22 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
                 [self describeFile:fileObject[@"file_id"] completion:^(NSError* error, NINFileInfo* fileInfo) {
                     NSLog(@"Found file info: %@", fileInfo);
 
-                    typeof(self) strongSelf = weakSelf;
-
-                    // Look up the channel message from the map and update its attachment
-                    NINChannelMessage* msg = strongSelf->_channelMessagesById[messageID];
-                    if (msg != nil) {
-                        msg.attachment = fileInfo;
-                        postNotification(kChannelMessageUpdatedNotification, @{@"messageID": messageID});
-                    } else {
-                        NSLog(@"Message not found in _channelMessagesById!");
-                    }
+                    NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
+                    [weakSelf addNewChannelMessage:msg];
                 }];
             }
         }
 
-        // Check if the previous message was sent by the same user, ie. is the
-        // message part of a series
-        BOOL series = NO;
-        NINChannelMessage* prevMsg = _channelMessages.firstObject;
-        if (prevMsg != nil) {
-            series = [prevMsg.senderUserID isEqualToString:messageUser.userID];
-        }
-
         NSString* text = payloadDict[@"text"];
 
-        // Only allocate a new message if it has useful content (text or attachment)
-        if (hasAttachment || (text.length > 0)) {
-            NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:text senderName:messageUser.displayName avatarURL:messageUser.iconURL timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) series:series senderUserID:messageUser.userID];
-            [_channelMessages insertObject:msg atIndex:0];
-            _channelMessagesById[messageID] = msg;
-
-            postNotification(kNewChannelMessageNotification, @{@"message": msg});
-            NSLog(@"Got new channel message: %@", msg);
+        // Only allocate a new message now if there is text and no attachment
+        if (!hasAttachment && (text.length > 0)) {
+            NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
+            [self addNewChannelMessage:msg];
         }
     }
+
+    NSLog(@"handleInboundChatMessageWithPayload: returning");
 }
 
 -(void) handleInboundMessage:(ClientProps*)params payload:(ClientPayload*)payload actionId:(long)actionId {
@@ -625,6 +635,12 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     //TODO remove; this is test data
+    /*
+    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
+    msg1.attachment = [NINFileInfo imageFileInfoWithID:@"1" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
+    [_channelMessages addObject:msg1];
+    */
+
     /*
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
@@ -972,6 +988,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 #pragma mark - 
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
+    NSCAssert([NSThread isMainThread], @"Must be called on main thread");
+
     NSLog(@"Event: %@", params.string);
 
     NSError* error = nil;
@@ -1003,19 +1021,27 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(void) onLog:(NSString*)msg {
+    NSCAssert([NSThread isMainThread], @"Must be called on main thread");
+
     NSLog(@"Log: %@", msg);
 }
 
 -(void) onConnState:(NSString*)state {
+    NSCAssert([NSThread isMainThread], @"Must be called on main thread");
+
     NSLog(@"Connection state: %@", state);
 }
 
 -(void) onClose {
+    NSCAssert([NSThread isMainThread], @"Must be called on main thread");
+
     NSLog(@"Session closed.");
     //[self.statusDelegate statusDidChange:@"closed"];
 }
 
 -(void) onSessionEvent:(ClientProps*)params {
+    NSCAssert([NSThread isMainThread], @"Must be called on main thread");
+
     NSLog(@"Session event: %@", [params string]);
 
     NSError* error = nil;
@@ -1060,23 +1086,33 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 @implementation SessionCallbackHandler
 
 -(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
-    [self.sessionManager onEvent:params payload:payload lastReply:lastReply];
+    runOnMainThread(^{
+        [self.sessionManager onEvent:params payload:payload lastReply:lastReply];
+    });
 }
 
 -(void) onClose {
-    [self.sessionManager onClose];
+    runOnMainThread(^{
+        [self.sessionManager onClose];
+    });
 }
 
 -(void) onSessionEvent:(ClientProps*)params {
-    [self.sessionManager onSessionEvent:params];
+    runOnMainThread(^{
+        [self.sessionManager onSessionEvent:params];
+    });
 }
 
 -(void) onLog:(NSString*)msg {
-    [self.sessionManager onLog:msg];
+    runOnMainThread(^{
+        [self.sessionManager onLog:msg];
+    });
 }
 
 -(void) onConnState:(NSString*)state {
-    [self.sessionManager onConnState:state];
+    runOnMainThread(^{
+        [self.sessionManager onConnState:state];
+    });
 }
 
 -(void) dealloc {

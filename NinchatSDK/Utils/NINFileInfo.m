@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSDate* urlExpiry;
 
 // These only apply to images
+@property (nonatomic, assign) CGFloat aspectRatio;
 //@property (nonatomic, assign) NSInteger width;
 //@property (nonatomic, assign) NSInteger height;
 
@@ -29,13 +30,18 @@
     return [NSString stringWithFormat:@"ID: %@, mimeType: %@, size: %ld", self.fileID, self.mimeType, self.size];
 }
 
-+(instancetype) imageFileInfoWithID:(NSString*)fileID mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry {
+-(BOOL) isImage {
+    return [self.mimeType hasPrefix:@"image/"];
+}
+
++(instancetype) imageFileInfoWithID:(NSString*)fileID mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio {
     NINFileInfo* info = [NINFileInfo new];
     info.fileID = fileID;
     info.mimeType = mimeType;
     info.size = size;
     info.url = url;
     info.urlExpiry = urlExpiry;
+    info.aspectRatio = aspectRatio;
 //    info.width = width;
 //    info.height = height;
 

@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol NINChatViewMessage;
+@class NINChannelMessage;
 
 /** Rerepsents a chat message (in a 'bubble') in the chat view. */
 @interface NINChatBubbleCell : UITableViewCell
 
--(void) populateWithMessage:(id<NINChatViewMessage>)message;
+-(void) populateWithMessage:(NINChannelMessage*)message;
 
 @end

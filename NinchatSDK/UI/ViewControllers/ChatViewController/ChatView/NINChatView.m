@@ -49,9 +49,6 @@
 
     _zeroIndexPathArray = @[[NSIndexPath indexPathForRow:0 inSection:0]];
 
-    self.tableView.estimatedRowHeight = 44.0;
-    self.tableView.rowHeight = UITableViewAutomaticDimension;
-
     NSBundle* bundle = findResourceBundle();
     NSCAssert(bundle != nil, @"Bundle not found");
     UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];

@@ -9,6 +9,19 @@
 #import <UIKit/UIKit.h>
 
 @class NINChatView;
+@class NINChannelMessage;
+@class NINFileInfo;
+
+/*
+@protocol NINChatViewMessageAttachment <NSObject>
+
+@property (nonatomic, strong, readonly) NSString* fileID;
+@property (nonatomic, strong, readonly) NSString* mimeType;
+@property (nonatomic, assign, readonly) NSInteger size;
+@property (nonatomic, strong, readonly) NSString* url;
+@property (nonatomic, strong, readonly) NSDate* urlExpiry;
+
+@end
 
 @protocol NINChatViewMessage <NSObject>
 
@@ -19,7 +32,10 @@
 @property (nonatomic, strong, readonly) NSString* textContent;
 @property (nonatomic, strong, readonly) NSDate* timestamp;
 @property (nonatomic, strong, readonly) NSString* avatarURL;
+@property (nonatomic, strong, readonly) id<NINChatViewMessageAttachment> attachment;
+
 @end
+*/
 
 /** Data source for the chat view. */
 @protocol NINChatViewDataSource
@@ -28,7 +44,7 @@
 -(NSInteger) numberOfMessagesForChatView:(NINChatView*)chatView;
 
 /** Returns the chat message at given index. */
--(id<NINChatViewMessage>) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index;
+-(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index;
 
 @end
 
