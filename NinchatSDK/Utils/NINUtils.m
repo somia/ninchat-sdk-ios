@@ -22,7 +22,7 @@ static NSString* const kSiteConfigUrlPattern = @"https://%@/config/%@";
 
 // Notification strings
 NSString* const kNewChannelMessageNotification = @"ninchatsdk.NewChannelMessageNotification";
-NSString* const kChannelMessageUpdatedNotification = @"ninchatsdk.ChannelMessageUpdatedNotification";
+//NSString* const kChannelMessageUpdatedNotification = @"ninchatsdk.ChannelMessageUpdatedNotification";
 
 NSError* newError(NSString* msg) {
     return [NSError errorWithDomain:@"NinchatSDK" code:1 userInfo:@{@"message": msg}];

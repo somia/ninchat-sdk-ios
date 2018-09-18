@@ -60,23 +60,23 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="50" id="Gur-SR-UDJ"/>
+                                    <constraint firstAttribute="width" priority="999" constant="50" id="Gur-SR-UDJ"/>
                                     <constraint firstItem="afl-L6-jcA" firstAttribute="centerX" secondItem="VDb-fh-S7z" secondAttribute="centerX" id="JLV-hh-Ga1"/>
                                     <constraint firstItem="afl-L6-jcA" firstAttribute="width" secondItem="VDb-fh-S7z" secondAttribute="width" multiplier="0.8" id="aYx-TT-Xyz"/>
                                     <constraint firstItem="afl-L6-jcA" firstAttribute="top" secondItem="VDb-fh-S7z" secondAttribute="top" constant="15" id="iqo-cM-1qm"/>
                                 </constraints>
                             </view>
                             <view tag="3" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T6u-kA-v5Q" userLabel="Top container view">
-                                <rect key="frame" x="327" y="0.0" width="135" height="22"/>
+                                <rect key="frame" x="50" y="0.0" width="412" height="22"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
-                                        <rect key="frame" x="5" y="5.5" width="76.5" height="16.5"/>
+                                        <rect key="frame" x="5" y="5.5" width="353.5" height="16.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRX-UO-W1X">
-                                        <rect key="frame" x="89.5" y="5.5" width="35.5" height="16.5"/>
+                                        <rect key="frame" x="366.5" y="5.5" width="35.5" height="16.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
@@ -143,11 +143,12 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="VDb-fh-S7z" firstAttribute="top" secondItem="K5f-au-ogg" secondAttribute="top" id="0jB-yC-P4Y"/>
                             <constraint firstItem="VDb-fh-S7z" firstAttribute="leading" secondItem="T6u-kA-v5Q" secondAttribute="trailing" id="1GL-ob-cHL"/>
                             <constraint firstItem="B9w-uE-UUn" firstAttribute="leading" secondItem="K5f-au-ogg" secondAttribute="leading" id="H6d-C8-ieu"/>
+                            <constraint firstItem="T6u-kA-v5Q" firstAttribute="leading" secondItem="B9w-uE-UUn" secondAttribute="trailing" priority="999" id="Hk7-2T-amP"/>
                             <constraint firstAttribute="bottom" secondItem="VDb-fh-S7z" secondAttribute="bottom" id="HqD-bl-lAl"/>
                             <constraint firstItem="T6u-kA-v5Q" firstAttribute="top" secondItem="K5f-au-ogg" secondAttribute="top" id="Q9u-ev-rsB"/>
                             <constraint firstItem="B9w-uE-UUn" firstAttribute="top" secondItem="K5f-au-ogg" secondAttribute="top" id="UTg-JK-PCs"/>
@@ -170,11 +171,12 @@
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
-                <outlet property="bubbleContentsContainerLeftConstraint" destination="O16-HX-w9b" id="MdF-Ub-nTQ"/>
-                <outlet property="bubbleContentsContainerRightConstraint" destination="EJE-73-eqo" id="Q1a-gb-wqu"/>
+                <outlet property="bubbleContentsContainerLeftConstraint" destination="O16-HX-w9b" id="Kxg-wp-RZu"/>
+                <outlet property="bubbleContentsContainerRightConstraint" destination="EJE-73-eqo" id="4Lt-hq-gG2"/>
                 <outlet property="bubbleContentsContainerView" destination="9Yb-ri-pEB" id="3ax-xQ-dXZ"/>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
                 <outlet property="imageAspectRatioConstraint" destination="cxt-CM-PJj" id="UxK-st-I67"/>
+                <outlet property="imageProportionalWidthConstraint" destination="VDo-Xj-qhv" id="VK6-g8-ASP"/>
                 <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>
                 <outlet property="leftAvatarImageView" destination="5wH-wE-D5T" id="II5-2y-ZGA"/>
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
@@ -186,8 +188,8 @@
                 <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
                 <outlet property="timeLabel" destination="oRX-UO-W1X" id="9vx-sK-sRV"/>
                 <outlet property="topLabelsContainerHeightConstraint" destination="dPF-N2-ufx" id="83B-0w-Qrr"/>
-                <outlet property="topLabelsLeftConstraint" destination="wRE-ei-hOK" id="mTN-l6-fMN"/>
-                <outlet property="topLabelsRightConstraint" destination="LCp-xO-Bl8" id="uXs-dD-oXu"/>
+                <outlet property="topLabelsLeftConstraint" destination="Hk7-2T-amP" id="oZ5-5D-bfe"/>
+                <outlet property="topLabelsRightConstraint" destination="1GL-ob-cHL" id="R5f-SV-DX3"/>
             </connections>
             <point key="canvasLocation" x="62" y="-26.5"/>
         </tableViewCell>

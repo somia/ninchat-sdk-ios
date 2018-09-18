@@ -93,22 +93,27 @@
 #pragma mark - Private methods
 
 -(void) configureForMyMessage:(NINChannelMessage*)message {
-    self.message = message;
-
     NSString* imageName = message.series ? @"chat_bubble_right_series" : @"chat_bubble_right";
     self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
-
-    self.topLabelsLeftConstraint.active = NO;
-    self.topLabelsRightConstraint.active = YES;
 
     // White text on black bubble
     self.bubbleImageView.tintColor = [UIColor colorWithWhite:0 alpha:1];
     self.textContentLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
 
-    // Push the bubble to the right edge by setting the left constraint relation to >=
+    // Push the top label container to the left edge by toggling the constraints
+    self.topLabelsLeftConstraint.active = NO;
+    self.topLabelsRightConstraint.active = YES;
+
+    // Push the bubble to the right edge by setting the left constraint relation to >= ...
     self.bubbleContentsContainerLeftConstraint.active = NO;
     self.bubbleContentsContainerLeftConstraint = [NSLayoutConstraint constraintWithItem:self.bubbleContentsContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.leftAvatarContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+    // .. and right to =
+    self.bubbleContentsContainerRightConstraint.active = NO;
+    self.bubbleContentsContainerRightConstraint = [NSLayoutConstraint constraintWithItem:self.rightAvatarContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.bubbleContentsContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+
+    // Activate both
     self.bubbleContentsContainerLeftConstraint.active = YES;
+    self.bubbleContentsContainerRightConstraint.active = YES;
 
     self.leftAvatarContainerView.hidden = YES;
     self.rightAvatarContainerView.hidden = message.series;
@@ -122,17 +127,24 @@
     self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
-    self.topLabelsRightConstraint.active = NO;
-    self.topLabelsLeftConstraint.active = YES;
-
     // Black text on white bubble
     self.bubbleImageView.tintColor = [UIColor colorWithWhite:1 alpha:1];
     self.textContentLabel.textColor = [UIColor colorWithWhite:0 alpha:1];
 
-    // Push the bubble to the left edge by setting the right constraint relation to >=
+    // Push the top label container to the left edge by toggling the constraints
+    self.topLabelsRightConstraint.active = NO;
+    self.topLabelsLeftConstraint.active = YES;
+
+    // Push the bubble to the left edge by setting the right constraint relation to >= ...
     self.bubbleContentsContainerRightConstraint.active = NO;
     self.bubbleContentsContainerRightConstraint = [NSLayoutConstraint constraintWithItem:self.rightAvatarContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.bubbleContentsContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+    // .. and left to =
+    self.bubbleContentsContainerLeftConstraint.active = NO;
+    self.bubbleContentsContainerLeftConstraint = [NSLayoutConstraint constraintWithItem:self.bubbleContentsContainerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.leftAvatarContainerView attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0.0];
+
+    // Activate both
     self.bubbleContentsContainerRightConstraint.active = YES;
+    self.bubbleContentsContainerLeftConstraint.active = YES;
 
     self.leftAvatarContainerView.hidden = message.series;
     self.rightAvatarContainerView.hidden = YES;
@@ -143,6 +155,8 @@
 
 -(void) updateImage {
     NINFileInfo* attachment = self.message.attachment;
+
+    self.messagaImageView.image = nil;
 
     if ((attachment != nil) && attachment.isImage) {
         // Load the image in message image view over HTTP or from local cache
@@ -169,6 +183,8 @@
 #pragma mark - Public methods
 
 -(void) populateWithMessage:(NINChannelMessage*)message {
+    self.message = message;
+
     self.textContentLabel.text = message.textContent;
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
@@ -202,14 +218,14 @@
 -(void) awakeFromNib {
     [super awakeFromNib];
 
-    __weak typeof(self) weakSelf = self;
-    self.messageUpdatedListener = fetchNotification(kChannelMessageUpdatedNotification, ^BOOL(NSNotification* note) {
-        NSString* messageID = note.userInfo[@"messageID"];
-        if ([messageID isEqualToString:weakSelf.message.messageID]) {
-            [weakSelf updateImage];
-        }
-        return NO;
-    });
+//    __weak typeof(self) weakSelf = self;
+//    self.messageUpdatedListener = fetchNotification(kChannelMessageUpdatedNotification, ^BOOL(NSNotification* note) {
+//        NSString* messageID = note.userInfo[@"messageID"];
+//        if ([messageID isEqualToString:weakSelf.message.messageID]) {
+//            [weakSelf updateImage];
+//        }
+//        return NO;
+//    });
 
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
     self.topLabelsContainerHeight = self.topLabelsContainerHeightConstraint.constant;

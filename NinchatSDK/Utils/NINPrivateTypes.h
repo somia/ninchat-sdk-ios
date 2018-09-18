@@ -37,10 +37,10 @@ typedef NS_ENUM(NSInteger, NINChatRating) {
  */
 extern NSString* _Nonnull const kNewChannelMessageNotification;
 
-/**
- * Notification name for a channel message having been updated, eg. and attachment info
- * was loaded. Userinfo param 'messageID' identifies the message that was updated.
- */
-extern NSString* _Nonnull const kChannelMessageUpdatedNotification;
+///**
+// * Notification name for a channel message having been updated, eg. and attachment info
+// * was loaded. Userinfo param 'messageID' identifies the message that was updated.
+// */
+//extern NSString* _Nonnull const kChannelMessageUpdatedNotification;
 
 #endif /* PrivateTypes_h */
