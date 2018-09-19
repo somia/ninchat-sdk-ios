@@ -158,7 +158,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             NSLog(@"Got WebRTC call");
 
             // Get rid of keyboard if any
-            [self.textInputField resignFirstResponder];
+            [weakSelf.textInputField resignFirstResponder];
 
             // Show answer / reject dialog for the incoming call
             [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
@@ -181,7 +181,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
                 [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
 
                 // Show the video views
-//                [weakSelf setVideoVisible:YES];
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
@@ -191,7 +190,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             [weakSelf disconnectWebRTC];
 
             // Close the video view
-//            [weakSelf setVideoVisible:NO];
             [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
 
             return YES;
@@ -497,9 +495,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
-
-    //TODO no no cannot do this here. otherwise image picker will disconnect us.
-//    [self disconnectWebRTC];
 }
 
 -(void) viewDidLoad {
@@ -526,6 +521,8 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 -(void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+
+    [self disconnectWebRTC];
 }
 
 @end
