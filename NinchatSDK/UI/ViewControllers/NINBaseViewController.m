@@ -12,8 +12,6 @@
 
 @interface NINBaseViewController ()
 
-@property (nonatomic, weak) id<UIGestureRecognizerDelegate> previousPopGestureDelegate;
-
 @end
 
 @implementation NINBaseViewController
@@ -41,32 +39,7 @@
     }];
 }
 
-#pragma mark - IBAction handlers
-
 #pragma mark - Lifecycle etc.
-
--(void) viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    self.navigationController.interactivePopGestureRecognizer.delegate = self.previousPopGestureDelegate;
-}
-
-//-(void) viewWillAppear:(BOOL)animated {
-//    [super viewWillAppear:animated];
-//
-//    [self.navigationController setNavigationBarHidden:YES];
-//}
-
--(void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    self.previousPopGestureDelegate = self.navigationController.interactivePopGestureRecognizer.delegate;
-
-    if (self.navigationController.viewControllers.count > 1) {
-        // Enable default back gesture even without navigation bar
-        self.navigationController.interactivePopGestureRecognizer.delegate = nil;
-    }
-}
 
 -(void) viewDidLoad {
     [super viewDidLoad];
