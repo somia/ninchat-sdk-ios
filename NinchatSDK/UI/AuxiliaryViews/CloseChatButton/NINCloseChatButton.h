@@ -14,6 +14,8 @@
 
 @property (nonatomic, copy) emptyBlock pressedCallback;
 
+-(void) setButtonTitle:(NSString*)title;
+
 @end
 
 /** Storyboard/xib-embeddable subclass of NINCloseChatButton */

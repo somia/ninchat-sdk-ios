@@ -70,7 +70,8 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="2Ce-ek-uON"/>
             <connections>
-                <outlet property="closeButtonImageView" destination="eGq-au-bq4" id="MTO-xn-gBI"/>
+                <outlet property="buttonTitleLabel" destination="t2B-lU-CM7" id="RR9-c6-dox"/>
+                <outlet property="closeButtonImageView" destination="eGq-au-bq4" id="HKN-lf-o4J"/>
             </connections>
             <point key="canvasLocation" x="232" y="-157"/>
         </view>

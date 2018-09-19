@@ -503,6 +503,7 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                     </view>
                     <connections>
+                        <outlet property="skipButton" destination="PLV-Oi-4sR" id="TEx-o3-TeB"/>
                         <outlet property="titleLabel" destination="hB3-xN-dam" id="k8j-FP-0nq"/>
                     </connections>
                 </viewController>

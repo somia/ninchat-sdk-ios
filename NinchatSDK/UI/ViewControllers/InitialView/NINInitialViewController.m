@@ -13,6 +13,10 @@
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
 
+// UI strings
+static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
+static NSString* const kCloseWindowText = @"Close window";
+
 // Segue id to open queue view
 static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
@@ -60,9 +64,9 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
     // Internalizations
     self.welcomeTextLabel.text = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];
-    [self.closeWindowButton setTitle:[self.sessionManager translation:@"Close window" formatParams:nil]  forState:UIControlStateNormal];
+    [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
     if (self.sessionManager.queues.count > 0) {
-        [self.startChatButton setTitle:[self.sessionManager translation:@"Join audience queue {{audienceQueue.queue_attrs.name}}" formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
+        [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
     }
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;

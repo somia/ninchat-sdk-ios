@@ -11,11 +11,18 @@
 
 @interface NINCloseChatButton ()
 
+@property (nonatomic, strong) IBOutlet UILabel* buttonTitleLabel;
 @property (nonatomic, strong) IBOutlet UIImageView* closeButtonImageView;
 
 @end
 
 @implementation NINCloseChatButton
+
+#pragma mark - Public methods
+
+-(void) setButtonTitle:(NSString*)title {
+    self.buttonTitleLabel.text = title;
+}
 
 #pragma mark - IBAction handlers
 

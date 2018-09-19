@@ -809,7 +809,12 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     [params setString:@"action" val:@"send_message"];
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.currentChannelID];
-    //TODO add support for message_recipient_ids ?
+
+    if ([messageType isEqualToString:@"ninchat.com/metadata"] && payloadDict[@"data"][@"rating"] != nil) {
+        NSLog(@"Sending ratings, adding extra params to make message pass on closed channel");
+        [params setStringArray:@"message_recipient_ids" ref:[ClientStrings new]];
+        [params setBool:@"message_fold" val:YES];
+    }
 
     if ([messageType hasPrefix:@"ninchat.com/rtc/"]) {
         // Add message_ttl to all rtc signaling messages
@@ -998,30 +1003,15 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return error;
     }
 
-    /*
-    if (self.queueId != nil) {
-        ClientProps* audienceParams = [ClientProps new];
-        [audienceParams setString:@"action" val:@"request_audience"];
-        [audienceParams setString:@"queue_id" val:self.queueId];
-        if (self.audienceMetadataJSON != nil) {
-            ClientJSON* json = [[ClientJSON alloc] init:self.audienceMetadataJSON];
-            [audienceParams setJSON:@"audience_metadata" ref:json];
-        }
-
-        [self.session send:audienceParams payload:nil error:&error];
-        if (error != nil) {
-            NSLog(@"Error sending message: %@", error);
-            return error;
-        }
-    }
-*/
-   // [self.statusDelegate statusDidChange:@"starting"];
-
     return nil;
 }
 
 -(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams {
+    // Look for a translation. If one is not available for this key, use the key itself.
     NSString* translation = self.siteConfiguration[@"default"][@"translations"][keyName];
+    if (translation == nil) {
+        translation = keyName;
+    }
 
     for (NSString* formatKey in formatParams.allKeys) {
         NSString* formatValue = formatParams[formatKey];

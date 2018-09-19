@@ -27,6 +27,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 static const NSTimeInterval kAnimationDuration = 0.3;
 
+// UI (Localizable) strings
+static NSString* const kCloseChatText = @"Close chat";
+
 @interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
@@ -510,6 +513,8 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     //TODO get from asset loader callback
     UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
+
+    [self.closeChatButton setButtonTitle:[self.sessionManager translation:kCloseChatText formatParams:nil]];
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
