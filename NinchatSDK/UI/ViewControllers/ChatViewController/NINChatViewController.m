@@ -25,6 +25,8 @@
 
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
+static const NSTimeInterval kAnimationDuration = 0.3;
+
 @interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
@@ -87,10 +89,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 @end
 
-// Add NINChatViewMessage conformance to NINChannelMessage
-//@interface NINChannelMessage () <NINChatViewMessage>
-//@end
-
 @implementation NINChatViewController
 
 #pragma mark - Private methods
@@ -134,22 +132,22 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
             [self.view layoutIfNeeded];
         }];
     }
+
+    // Prefer to show or hide status bar depending whether we have video or not
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 -(void) pickupWithAnswer:(BOOL)answer {
     [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(answer)} completion:^(NSError* error) {
         if (error != nil) {
             NSLog(@"Failed to send pick-up message: %@", error);
-            //TODO handle
+            //TODO error toast
         }
     }];
 }
 
 -(void) listenToWebRTCSignaling {
-    if (self.signalingObserver != nil) {
-        // Already listening..
-        return;
-    }
+    NSCAssert(self.signalingObserver == nil, @"Cannot already have active observer");
 
     __weak typeof(self) weakSelf = self;
 
@@ -180,6 +178,11 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
                 weakSelf.webrtcClient.delegate = weakSelf;
                 [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
 
+                // Hide Close Chat button
+                [UIView animateWithDuration:kAnimationDuration animations:^{
+                    self.closeChatButton.alpha = 0.0;
+                }];
+
                 // Show the video views
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
             }];
@@ -191,8 +194,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
             // Close the video view
             [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
-
-            return YES;
         }
 
         return NO;
@@ -221,6 +222,11 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
         [self.webrtcClient disconnect];
         self.webrtcClient = nil;
     }
+
+    // Show Close Chat button
+    [UIView animateWithDuration:kAnimationDuration animations:^{
+        self.closeChatButton.alpha = 1.0;
+    }];
 }
 
 -(void) orientationChanged:(NSNotification*)notification {
@@ -307,7 +313,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     NSLog(@"NINCHAT: didGetError: %@", error);
 
     [self disconnectWebRTC];
-//    [self setVideoVisible:NO];
+
     [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
 }
 
@@ -375,6 +381,11 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
 #pragma mark - From UIViewController
 
+-(BOOL) prefersStatusBarHidden {
+    // Prefer no status bar if video is active
+    return (self.webrtcClient != nil);
+}
+
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:kSegueIdChatToRating]) {
         NINRatingViewController* vc = segue.destinationViewController;
@@ -388,11 +399,6 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
     [self adjustConstraintsForSize:size animate:YES];
-
-    //TODO do we need this at all?
-//    [self adjustConstraints:(size.height > size.width)];
-
-    //TODO must adjust video size
 }
 
 #pragma mark - From NINChatViewDataSource
@@ -501,7 +507,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [super viewDidLoad];
 
     // Add tileable pattern image as the view background
-    //TODO get from site config
+    //TODO get from asset loader callback
     UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 
@@ -515,6 +521,10 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 
     self.remoteVideoView.delegate = self;
     self.localVideoView.delegate = self;
+
+    // Give the local video view a slight border
+    self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
+    self.localVideoView.layer.borderWidth = 1.0;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 }
