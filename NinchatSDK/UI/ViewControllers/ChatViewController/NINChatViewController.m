@@ -82,6 +82,9 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
 // NSNotificationCenter observer for WebRTC signaling events from session manager
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
+// NSNotificationCenter observer for channel closed -events
+@property (nonatomic, strong) id<NSObject> channelClosedObserver;
+
 @end
 
 // Add NINChatViewMessage conformance to NINChannelMessage
@@ -439,6 +442,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [super viewWillAppear:animated];
 
     NSCAssert(self.sessionManager != nil, @"Must have session manager");
+    NSCAssert(self.channelClosedObserver == nil, @"Must not have this observer already");
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 
@@ -460,7 +464,7 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [self listenToWebRTCSignaling];
     
     // Listen to channel closed -events
-    fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
+    self.channelClosedObserver = fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
         NSLog(@"Channel closed - showing rating view.");
 
         // Show the rating view
@@ -477,7 +481,13 @@ static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
     [super viewWillDisappear:animated];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
+    self.messagesObserver = nil;
+
     [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
+    self.signalingObserver = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.channelClosedObserver];
+    self.channelClosedObserver = nil;
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
