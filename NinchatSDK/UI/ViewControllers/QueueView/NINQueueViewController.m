@@ -39,26 +39,15 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    NINQueue* queue = self.queueToJoin;
-
-    //TODO better handling here; prevent back gesture from chat view?
-    if (queue == nil) {
-        // Nothing to do; this is the case after we have popped the chat controller
-        return;
-    }
-    self.queueToJoin = nil;
-
-    [self.sessionManager.ninchatSession sdklog:@"Joining queue %@", queue];
-
     // Connect to the queue
     __weak typeof(self) weakSelf = self;
-    [self.sessionManager joinQueueWithId:queue.queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+    [self.sessionManager joinQueueWithId:self.queueToJoin.queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
         NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next." formatParams:@{@"audienceQueue.queue_attrs.name": queue.name}];
+            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next." formatParams:@{@"audienceQueue.queue_attrs.name": self.queueToJoin.name}];
         } else {
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}." formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": queue.name}];
+            weakSelf.queueInfoLabel.text = [self.sessionManager translation:@"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}." formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": self.queueToJoin.name}];
         }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");

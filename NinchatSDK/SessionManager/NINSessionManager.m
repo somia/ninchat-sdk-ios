@@ -75,10 +75,10 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 @property (nonatomic, strong) ClientSession* session;
 
 /** Current queue id. Nil if not currently in queue. */
-@property (nonatomic, strong) NSString* currentQueueId;
+@property (nonatomic, strong) NSString* currentQueueID;
 
 /** Currently active channel id - or nil if no active channel. */
-@property (nonatomic, strong) NSString* activeChannelId;
+@property (nonatomic, strong) NSString* currentChannelID;
 
 @end
 
@@ -105,13 +105,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
 #pragma mark - Private methods
 
-/*
- Event: map[realm_queues:map[5npnsgnq009m:map[queue_attrs:map[length:0 name:Test queue]]] event_id:2 action_id:1 event:realm_queues_found realm_id:5npnrkp1009m]
- */
 -(void) realmQueuesFound:(ClientProps*)params {
     NSError* error;
 
     // Clear existing queue list
+    [self.ninchatSession sdklog:@"Realm queues found - flushing list of previously available queues."];
     [_queues removeAllObjects];
 
     long actionId;
@@ -170,7 +168,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSError* error;
 
     // Clear existing queue list
-    [_queues removeAllObjects];
+    //TODO but.. why?
+//    [_queues removeAllObjects];
 
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
@@ -186,9 +185,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 
     if ([eventType isEqualToString:@"audience_enqueued"]) {
-        NSCAssert(self.currentQueueId == nil, @"Already have current queue");
+        NSCAssert(self.currentQueueID == nil, @"Already have current queue");
         NSLog(@"Queue %@ joined.", queueId);
-        self.currentQueueId = queueId;
+        self.currentQueueID = queueId;
     }
 
     long position;
@@ -239,7 +238,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) userUpdated:(ClientProps*)params {
     NSError* error;
 
-    NSCAssert(self.activeChannelId != nil, @"No active channel");
+    NSCAssert(self.currentChannelID != nil, @"No active channel");
 
     NSString* userID = [params getString:@"user_id" error:&error];
     if (error != nil) {
@@ -310,10 +309,22 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
 
+-(void) channelParted:(ClientProps*)params {
+    NSError* error = nil;
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* channelID = [params getString:@"channel_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId), @"channel_id": channelID});
+}
+
 -(void) channelUpdated:(ClientProps*)params {
     NSError* error;
 
-    NSCAssert(self.activeChannelId != nil, @"No active channel");
+    NSCAssert(self.currentChannelID != nil, @"No active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -321,7 +332,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         return;
     }
 
-    if (![channelId isEqualToString:self.activeChannelId]) {
+    if (![channelId isEqualToString:self.currentChannelID]) {
         NSLog(@"Got channel_updated for wrong channel '%@'", channelId);
         return;
     }
@@ -567,7 +578,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
-    NSCAssert(self.activeChannelId != nil, @"No active channel");
+    NSCAssert(self.currentChannelID != nil, @"No active channel");
 
     NSError* error = nil;
     long actionId;
@@ -587,8 +598,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) channelJoined:(ClientProps*)params {
     NSError* error = nil;
 
-    NSCAssert(self.currentQueueId != nil, @"No current queue");
-    NSCAssert(self.activeChannelId == nil, @"Already have active channel");
+    NSCAssert(self.currentQueueID != nil, @"No current queue");
+    NSCAssert(self.currentChannelID == nil, @"Already have active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -599,10 +610,10 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSLog(@"Joined channel '%@'", channelId);
 
     // Set the currently active channel
-    self.activeChannelId = channelId;
+    self.currentChannelID = channelId;
 
     // We are no longer in the queue; clear the queue reference
-    self.currentQueueId = nil;
+    self.currentQueueID = nil;
 
     // Clear current list of messages and users
     [_channelMessages removeAllObjects];
@@ -694,46 +705,64 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
--(void) joinQueueWithId:(NSString*)queueId progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
+-(void) joinQueueWithId:(NSString*)queueID progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
 
     NSCAssert(self.session != nil, @"No chat session");
+    NSCAssert(self.currentQueueID == nil, @"Already in queue!");
 
-    id __block progressNotificationObserver = nil;
+    __weak typeof(self) weakSelf = self;
 
-    NSLog(@"Joining queue %@..", queueId);
+    // This block does the actual operation
+    void(^performJoin)(void) = ^() {
+        id __block progressNotificationObserver = nil;
 
-    fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
-        [NSNotificationCenter.defaultCenter removeObserver:progressNotificationObserver];
-        channelJoined();
-        return YES;
-    });
+        [weakSelf.ninchatSession sdklog:@"Joining queue %@..", queueID];
 
-    ClientProps* params = [ClientProps new];
-    [params setString:@"action" val:@"request_audience"];
-    [params setString:@"queue_id" val:queueId];
+        fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
+            [NSNotificationCenter.defaultCenter removeObserver:progressNotificationObserver];
+            channelJoined();
+            return YES;
+        });
 
-    int64_t actionId;
-    NSError* error = nil;
-    [self.session send:params payload:nil actionId:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Error joining queue: %@", error);
-        progress(error, -1);
-    }
+        ClientProps* params = [ClientProps new];
+        [params setString:@"action" val:@"request_audience"];
+        [params setString:@"queue_id" val:queueID];
 
-    // Keep listening to progress events for queue position updates
-    progressNotificationObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
-        NSNumber* eventActionId = note.userInfo[@"action_id"];
-        NSString* eventType = note.userInfo[@"event"];
-        NSString* queueId = note.userInfo[@"queue_id"];
-
-        if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [queueId isEqualToString:queueId])) {
-            NSError* error = note.userInfo[@"error"];
-            NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
-            progress(error, queuePosition);
+        int64_t actionId;
+        NSError* error = nil;
+        [weakSelf.session send:params payload:nil actionId:&actionId error:&error];
+        if (error != nil) {
+            NSLog(@"Error joining queue: %@", error);
+            progress(error, -1);
         }
 
-        return NO;
-    });
+        // Keep listening to progress events for queue position updates
+        progressNotificationObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
+            NSNumber* eventActionId = note.userInfo[@"action_id"];
+            NSString* eventType = note.userInfo[@"event"];
+            NSString* queueId = note.userInfo[@"queue_id"];
+
+            if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [queueId isEqualToString:queueId])) {
+                NSError* error = note.userInfo[@"error"];
+                NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
+                progress(error, queuePosition);
+            }
+
+            return NO;
+        });
+    };
+
+    if (self.currentChannelID != nil) {
+        [self.ninchatSession sdklog:@"Parting current channel first"];
+
+        [self partChannel:self.currentChannelID completion:^(NSError* error) {
+            [weakSelf.ninchatSession sdklog:@"Channel parted; joining queue."];
+            weakSelf.currentChannelID = nil;
+            performJoin();
+        }];
+    } else {
+        performJoin();
+    }
 }
 
 // Retrieves the WebRTC ICE STUN/TURN server details
@@ -771,7 +800,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     NSCAssert(self.session != nil, @"No chat session");
 
-    if (self.activeChannelId == nil) {
+    if (self.currentChannelID == nil) {
         completion(newError(@"No active channel"));
         return -1;
     }
@@ -779,7 +808,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"send_message"];
     [params setString:@"message_type" val:messageType];
-    [params setString:@"channel_id" val:self.activeChannelId];
+    [params setString:@"channel_id" val:self.currentChannelID];
     //TODO add support for message_recipient_ids ?
 
     if ([messageType hasPrefix:@"ninchat.com/rtc/"]) {
@@ -824,7 +853,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) sendFile:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
-    if (self.activeChannelId == nil) {
+    if (self.currentChannelID == nil) {
         completion(newError(@"No active channel"));
         return;
     }
@@ -835,7 +864,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     ClientProps* params = [ClientProps new];
     [params setString:@"action" val:@"send_file"];
     [params setObject:@"file_attrs" ref:fileAttributes];
-    [params setString:@"channel_id" val:self.activeChannelId];
+    [params setString:@"channel_id" val:self.currentChannelID];
 
     ClientPayload* payload = [ClientPayload new];
     [payload append:data];
@@ -852,8 +881,25 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     connectCallbackToActionCompletion(actionId, completion);
 }
 
+-(void) partChannel:(NSString*)channelID completion:(callbackWithErrorBlock _Nonnull)completion {
+    ClientProps* params = [ClientProps new];
+    [params setString:@"action" val:@"part_channel"];
+    [params setString:@"channel_id" val:channelID];
+
+    NSError* error = nil;
+    int64_t actionId = -1;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error parting channel: %@", error);
+        completion(error);
+    }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
 -(void) disconnect {
-    self.activeChannelId = nil;
+    self.currentChannelID = nil;
     [self.session close];
     self.session = nil;
 }
@@ -1017,6 +1063,8 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [self userUpdated:params];
     } else if ([event isEqualToString:@"file_found"]) {
         [self fileFound:params];
+    } else if ([event isEqualToString:@"channel_parted"]) {
+        [self channelParted:params];
     }
 }
 
