@@ -8,14 +8,22 @@
 
 @import UIKit;
 
+// Import the low-level interface
+@import Client;
+
 #import <Foundation/Foundation.h>
 
 #import "NINPublicTypes.h"
 
+// Image asset keys
+typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
+FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
+
 @class NINChatSession;
 
 /**
- * Delegate protocol for NINChatSession class.
+ * Delegate protocol for NINChatSession class. All the methods are called on
+ * the main thread.
  */
 @protocol NINChatSessionDelegate <NSObject>
 
@@ -24,6 +32,21 @@
  */
 @optional
 -(void) ninchat:(NINChatSession*)session didOutputSDKLog:(NSString* _Nonnull)message;
+
+/**
+ * Exposes the low-level events. See the Ninchat API specification for more info.
+ */
+@optional
+-(void) ninchat:(NINChatSession*)session onLowLevelEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply;
+
+/**
+ * This method allows the SDK delegate to override image assets used in the
+ * SDK UI. If the implementation does not wish to override an asset, nil should
+ * be returned.
+ *
+ * For available asset key strings, see documentation.
+ */
+-(UIImage* _Nullable) ninchat:(NINChatSession*)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
 
 /**
  * Indicates that the Ninchat SDK UI has completed its chat. and would like
@@ -42,6 +65,9 @@
  * the chat session are not recycleable either.
  */
 @interface NINChatSession : NSObject
+
+/** Exposes the low-level chat session interface. */
+@property (nonatomic, strong, readonly) ClientSession* session;
 
 /**
  * Delegate object for receiving asynchronous callbacks from the SDK.

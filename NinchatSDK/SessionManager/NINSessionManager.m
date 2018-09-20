@@ -6,7 +6,7 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-// Import the ported Go SDK framework
+// Import the low-level interface
 @import Client;
 
 #import "NINSessionManager.h"
@@ -71,7 +71,7 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 /** Realm ID to use. */
 @property (nonatomic, strong) NSString* _Nonnull realmId;
 
-/** Chat session reference. */
+/** Low-level chat session reference. */
 @property (nonatomic, strong) ClientSession* session;
 
 /** Current queue id. Nil if not currently in queue. */
@@ -79,6 +79,12 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
 /** Currently active channel id - or nil if no active channel. */
 @property (nonatomic, strong) NSString* currentChannelID;
+
+/** Channel join observer; while in queue. */
+@property (nonatomic, strong) id<NSObject> channelJoinObserver;
+
+/** Queue progress observer. */
+@property (nonatomic, strong) id<NSObject> queueProgressObserver;
 
 @end
 
@@ -303,6 +309,73 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
+}
+
+-(void) channelJoined:(ClientProps*)params {
+    NSError* error = nil;
+
+    NSCAssert(self.currentQueueID != nil, @"No current queue");
+    NSCAssert(self.currentChannelID == nil, @"Already have active channel");
+
+    NSString* channelId = [params getString:@"channel_id" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get channel id: %@", error);
+        return;
+    }
+
+    NSLog(@"Joined channel '%@'", channelId);
+
+    // Set the currently active channel
+    self.currentChannelID = channelId;
+
+    // We are no longer in the queue; clear the queue reference
+    self.currentQueueID = nil;
+
+    // Clear current list of messages and users
+    [_channelMessages removeAllObjects];
+    [_channelMessagesById removeAllObjects];
+    [_channelUsers removeAllObjects];
+
+    // Extract the channel members' data
+    ClientProps* members = [params getObject:@"channel_members" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get channel_members: %@", error);
+        return;
+    }
+
+    NINClientPropsParser* memberParser = [NINClientPropsParser new];
+    [members accept:memberParser error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to traverse members array: %@", error);
+        return;
+    }
+
+    for (NSString* userID in memberParser.properties.allKeys) {
+        ClientProps* memberAttrs = memberParser.properties[userID];
+        ClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to get user_attrs: %@", error);
+            continue;
+        }
+
+        _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
+    }
+
+    //TODO remove; this is test data
+    /*
+     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
+     msg1.attachment = [NINFileInfo imageFileInfoWithID:@"1" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
+     [_channelMessages addObject:msg1];
+     */
+
+    /*
+     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
+     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
+     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
+     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
+     */
+    // Signal channel join event to the asynchronous listener
+    postNotification(kChannelJoinedNotification, @{});
 }
 
 -(void) channelParted:(ClientProps*)params {
@@ -591,73 +664,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     }
 }
 
--(void) channelJoined:(ClientProps*)params {
-    NSError* error = nil;
-
-    NSCAssert(self.currentQueueID != nil, @"No current queue");
-    NSCAssert(self.currentChannelID == nil, @"Already have active channel");
-
-    NSString* channelId = [params getString:@"channel_id" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get channel id: %@", error);
-        return;
-    }
-
-    NSLog(@"Joined channel '%@'", channelId);
-
-    // Set the currently active channel
-    self.currentChannelID = channelId;
-
-    // We are no longer in the queue; clear the queue reference
-    self.currentQueueID = nil;
-
-    // Clear current list of messages and users
-    [_channelMessages removeAllObjects];
-    [_channelMessagesById removeAllObjects];
-    [_channelUsers removeAllObjects];
-
-    // Extract the channel members' data
-    ClientProps* members = [params getObject:@"channel_members" error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get channel_members: %@", error);
-        return;
-    }
-
-    NINClientPropsParser* memberParser = [NINClientPropsParser new];
-    [members accept:memberParser error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to traverse members array: %@", error);
-        return;
-    }
-
-    for (NSString* userID in memberParser.properties.allKeys) {
-        ClientProps* memberAttrs = memberParser.properties[userID];
-        ClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
-        if (error != nil) {
-            NSLog(@"Failed to get user_attrs: %@", error);
-            continue;
-        }
-
-        _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
-    }
-
-    //TODO remove; this is test data
-    /*
-    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
-    msg1.attachment = [NINFileInfo imageFileInfoWithID:@"1" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
-    [_channelMessages addObject:msg1];
-    */
-
-    /*
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
-    [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
-*/
-    // Signal channel join event to the asynchronous listener
-    postNotification(kChannelJoinedNotification, @{});
-}
-
 /*
  Event: map[event_id:2 action_id:1 channel_id:5npnrkp1009n error_type:channel_not_found event:error]
  */
@@ -705,17 +711,18 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 
     NSCAssert(self.session != nil, @"No chat session");
     NSCAssert(self.currentQueueID == nil, @"Already in queue!");
+    NSCAssert(self.queueProgressObserver == nil, @"Cannot have observer set already");
 
     __weak typeof(self) weakSelf = self;
 
     // This block does the actual operation
     void(^performJoin)(void) = ^() {
-        id __block progressNotificationObserver = nil;
-
         [weakSelf.ninchatSession sdklog:@"Joining queue %@..", queueID];
 
-        fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
-            [NSNotificationCenter.defaultCenter removeObserver:progressNotificationObserver];
+        weakSelf.channelJoinObserver = fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
+            [NSNotificationCenter.defaultCenter removeObserver:weakSelf.queueProgressObserver];
+            weakSelf.queueProgressObserver = nil;
+
             channelJoined();
             return YES;
         });
@@ -733,12 +740,14 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         }
 
         // Keep listening to progress events for queue position updates
-        progressNotificationObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
+        weakSelf.queueProgressObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
             NSNumber* eventActionId = note.userInfo[@"action_id"];
             NSString* eventType = note.userInfo[@"event"];
             NSString* queueId = note.userInfo[@"queue_id"];
 
             if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [queueId isEqualToString:queueId])) {
+                NSCAssert(weakSelf.currentQueueID != nil, @"Current queue ID must be set by now");
+
                 NSError* error = note.userInfo[@"error"];
                 NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
                 progress(error, queuePosition);
@@ -759,6 +768,26 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     } else {
         performJoin();
     }
+}
+
+// Leaves the current queue, if any
+-(void) leaveCurrentQueueWithCompletionCallback:(callbackWithErrorBlock _Nonnull)completion {
+    if (self.currentQueueID == nil) {
+        [self.ninchatSession sdklog:@"Error: tried to leave current queue but not in queue currently!"];
+        return;
+    }
+
+    [self.ninchatSession sdklog:@"Leaving current queue."];
+
+    // Stop the queue observers
+    [NSNotificationCenter.defaultCenter removeObserver:self.channelJoinObserver];
+    self.channelJoinObserver = nil;
+    [NSNotificationCenter.defaultCenter removeObserver:self.queueProgressObserver];
+    self.queueProgressObserver = nil;
+
+    //TODO call action delete_user with my current user ID.
+
+    completion(nil);
 }
 
 // Retrieves the WebRTC ICE STUN/TURN server details
@@ -1055,6 +1084,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
         [self fileFound:params];
     } else if ([event isEqualToString:@"channel_parted"]) {
         [self channelParted:params];
+    }
+
+    // Forward the event to the SDK delegate
+    if ([self.ninchatSession.delegate respondsToSelector:@selector(ninchat:onLowLevelEvent:payload:lastReply:)]) {
+        [self.ninchatSession.delegate ninchat:self.ninchatSession onLowLevelEvent:params payload:payload lastReply:lastReply];
     }
 }
 

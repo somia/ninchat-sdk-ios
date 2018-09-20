@@ -15,6 +15,7 @@
 @class NINQueue;
 @class NINChannelMessage;
 @class NINChatSession;
+@class ClientSession;
 
 /** Notification that indicates the current channel was closed. */
 extern NSString* _Nonnull const kNINChannelClosedNotification;
@@ -52,6 +53,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** (Circular) Reference to the session object that created this session manager. */
 @property (nonatomic, weak) NINChatSession* ninchatSession;
 
+/** Low-level chat session reference. */
+@property (nonatomic, strong, readonly) ClientSession* session;
+
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;
 
@@ -78,6 +82,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 
 /** Joins a chat queue. */
 -(void) joinQueueWithId:(NSString* _Nonnull)queueId progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined;
+
+/** Leaves the current queue. */
+-(void) leaveCurrentQueueWithCompletionCallback:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Runs ICE (Interactive Connectivity Establishment) for WebRTC connection negotiations. */
 -(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion;

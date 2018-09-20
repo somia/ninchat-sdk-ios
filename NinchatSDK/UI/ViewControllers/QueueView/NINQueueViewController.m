@@ -62,6 +62,12 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
 
+    // Look for customized images
+    UIImage* progressImage = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyQueueViewProgressIndicator];
+    if (progressImage != nil) {
+        self.spinnerImageView.image = progressImage;
+    }
+
     // Spin the whirl icon continuoysly
     if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
         CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
@@ -88,6 +94,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
         NSLog(@"Queue view: Close chat button pressed!");
+        [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {}];
         [weakSelf.sessionManager closeChat];
     };
 }

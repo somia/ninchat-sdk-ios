@@ -12,6 +12,9 @@
 #import "NINSessionManager.h"
 #import "NINChatSession+Internal.h"
 
+// Image asset keys
+NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKeyQueueViewProgressIndicator";
+
 @interface NINChatSession ()
 
 /** Session manager instance. */
@@ -25,6 +28,12 @@
 @implementation NINChatSession
 
 #pragma mark - Public API
+
+-(ClientSession*) session {
+    NSCAssert(self.started, @"API has not been started");
+
+    return self.sessionManager.session;
+}
 
 -(nonnull UIViewController*) viewControllerWithNavigationController:(BOOL)withNavigationController {
     NSCAssert([NSThread isMainThread], @"Must be called in main thread");
