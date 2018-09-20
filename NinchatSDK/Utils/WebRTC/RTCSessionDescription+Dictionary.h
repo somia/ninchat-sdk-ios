@@ -6,7 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "RTCSessionDescription.h"
+//#import "RTCSessionDescription.h"
+@import Libjingle;
 
 /**
  * Methods for converting RTCSessionDescription to / from dictionary representation.

@@ -6,7 +6,7 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
 /** Describes a downloadable file with ID, mime type, size and url. */
 @interface NINFileInfo : NSObject
@@ -19,8 +19,6 @@
 
 // These only apply to images
 @property (nonatomic, assign, readonly) CGFloat aspectRatio; // width : height
-//@property (nonatomic, assign, readonly) NSInteger width;
-//@property (nonatomic, assign, readonly) NSInteger height;
 
 /** Constructs a new file info. */
 +(instancetype) imageFileInfoWithID:(NSString*)fileID mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;

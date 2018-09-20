@@ -51,10 +51,10 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @interface NINSessionManager : NSObject
 
 /** (Circular) Reference to the session object that created this session manager. */
-@property (nonatomic, weak) NINChatSession* ninchatSession;
+@property (nonatomic, weak) NINChatSession* _Nullable ninchatSession;
 
 /** Low-level chat session reference. */
-@property (nonatomic, strong, readonly) ClientSession* session;
+@property (nonatomic, strong, readonly) ClientSession* _Nonnull session;
 
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;
@@ -90,13 +90,13 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 -(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion;
 
 /** Sends a message to the activa channel. Active channel must exist. */
--(long) sendMessageWithMessageType:(NSString* _Nonnull)messageType payloadDict:(NSDictionary* _Nonnull)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
+-(int64_t) sendMessageWithMessageType:(NSString* _Nonnull)messageType payloadDict:(NSDictionary* _Nonnull)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends a file to the chat. */
--(void) sendFile:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) sendFile:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;
@@ -108,6 +108,6 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
  * Get a formatted translation from the site configuration.
  * @param formatParams contains format param mappings key -> value
  */
--(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams;
+-(NSString*_Nullable) translation:(NSString*_Nonnull)keyName formatParams:(NSDictionary<NSString*,NSString*>*_Nullable)formatParams;
 
 @end

@@ -6,7 +6,9 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import <libjingle_peerconnection/RTCICEServer.h>
+//#import <libjingle_peerconnection/RTCICEServer.h>
+//#import "RTCICEServer.h"
+@import Libjingle;
 
 #import "NINWebRTCServerInfo.h"
 

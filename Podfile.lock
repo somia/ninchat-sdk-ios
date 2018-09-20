@@ -14,33 +14,17 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - AppRTC (1.0.3):
-    - libjingle_peerconnection
-    - SocketRocket
-  - ImagePicker (3.0.0)
-  - libjingle_peerconnection (11177.2.0)
-  - SocketRocket (0.5.1)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
-  - AppRTC (~> 1.0)
-  - ImagePicker (~> 3.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
-    - AppRTC
-    - ImagePicker
-    - libjingle_peerconnection
-    - SocketRocket
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  AppRTC: 6543d19ff0965a09b94f3903a4a180da5b8d9293
-  ImagePicker: 973953c25960fe04729a7082a56194321c6762d2
-  libjingle_peerconnection: 3458f646ddd61f08a9f3a0c43fb01fff5c165eb8
-  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
 
-PODFILE CHECKSUM: bf3ae2b978c7af13756c096d3be01a57f61b52ed
+PODFILE CHECKSUM: 68b7738462bd2619e8ae51430d48c3c8191f426d
 
 COCOAPODS: 1.5.3

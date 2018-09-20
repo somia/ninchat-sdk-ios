@@ -90,7 +90,7 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
 // Waits for a matching action notification and calls the specified callback block,
 // then unregisters the notification observer.
-void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock completion) {
+void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock completion) {
     fetchNotification(kActionNotification, ^(NSNotification* note) {
         NSNumber* eventActionId = note.userInfo[@"action_id"];
         NSError* error = note.userInfo[@"error"];
@@ -602,7 +602,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSString* messageUserID = [params getString:@"message_user_id" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    CGFloat messageTime;
+    double messageTime;
     [params getFloat:@"message_time" val:&messageTime error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
@@ -821,7 +821,7 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 // Sends a message to the activa channel. Active channel must exist.
--(long) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
+-(int64_t) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
     NSCAssert(self.session != nil, @"No chat session");
 

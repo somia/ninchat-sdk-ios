@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3415E810D9A9784AC29C5DDA /* libPods-NinchatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53633AC906CB6C3F6071DD64 /* libPods-NinchatSDK.a */; };
-		44B0F8A9A0A62ED0CF04703A /* libPods-NinchatSDKTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85A89625E8463B54EE672298 /* libPods-NinchatSDKTests.a */; };
+		1030B2B7C67D1F28F379CC55 /* Pods_NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AB175A13BC36DF085EFDFFE /* Pods_NinchatSDK.framework */; };
 		4911895C214B9B14008F1748 /* NINChatSession+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4911895A214B9B14008F1748 /* NINChatSession+Internal.h */; };
 		4911895D214B9B14008F1748 /* NINChatSession+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 4911895B214B9B14008F1748 /* NINChatSession+Internal.m */; };
 		49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 4911895E214BE54F008F1748 /* NSDateFormatter+Ninchat.h */; };
@@ -52,6 +51,10 @@
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49622FAB214FCD3700570D59 /* NINFileInfo.h */; };
 		49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 49622FAC214FCD3700570D59 /* NINFileInfo.m */; };
+		496230142153E94800570D59 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
+		496230162153EC2F00570D59 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
+		496230182153EC4A00570D59 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
+		496230192153ED6300570D59 /* NINPublicTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7320F267EE00A00EA8 /* NINPublicTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
 		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
@@ -95,6 +98,7 @@
 		49F5FA3F20F8CF6B00A4A526 /* NINRatingViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */; };
 		49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
 		49F5FA4120F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
+		9C9E57CFFE15140679EFD4B2 /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B068C79D55295F702C253B8E /* Pods_NinchatSDKTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +151,9 @@
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
 		49622FAB214FCD3700570D59 /* NINFileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINFileInfo.h; sourceTree = "<group>"; };
 		49622FAC214FCD3700570D59 /* NINFileInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINFileInfo.m; sourceTree = "<group>"; };
+		496230132153E94800570D59 /* Libjingle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Libjingle.framework; sourceTree = "<group>"; };
+		496230152153EC2F00570D59 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
+		496230172153EC4A00570D59 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
 		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
@@ -192,9 +199,9 @@
 		49F5FA3820F781D600A4A526 /* NINQueue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINQueue.m; sourceTree = "<group>"; };
 		49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINRatingViewController.h; sourceTree = "<group>"; };
 		49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINRatingViewController.m; sourceTree = "<group>"; };
-		53633AC906CB6C3F6071DD64 /* libPods-NinchatSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NinchatSDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		85A89625E8463B54EE672298 /* libPods-NinchatSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NinchatSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AB175A13BC36DF085EFDFFE /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		B068C79D55295F702C253B8E /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -204,8 +211,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				496230182153EC4A00570D59 /* VideoToolbox.framework in Frameworks */,
+				496230162153EC2F00570D59 /* libstdc++.tbd in Frameworks */,
+				496230142153E94800570D59 /* Libjingle.framework in Frameworks */,
 				49944371208E009F00101DCA /* Client.framework in Frameworks */,
-				3415E810D9A9784AC29C5DDA /* libPods-NinchatSDK.a in Frameworks */,
+				1030B2B7C67D1F28F379CC55 /* Pods_NinchatSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,7 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */,
-				44B0F8A9A0A62ED0CF04703A /* libPods-NinchatSDKTests.a in Frameworks */,
+				9C9E57CFFE15140679EFD4B2 /* Pods_NinchatSDKTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,9 +446,12 @@
 		4994436F208E007700101DCA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				496230172153EC4A00570D59 /* VideoToolbox.framework */,
+				496230152153EC2F00570D59 /* libstdc++.tbd */,
+				496230132153E94800570D59 /* Libjingle.framework */,
 				49944370208E009F00101DCA /* Client.framework */,
-				53633AC906CB6C3F6071DD64 /* libPods-NinchatSDK.a */,
-				85A89625E8463B54EE672298 /* libPods-NinchatSDKTests.a */,
+				4AB175A13BC36DF085EFDFFE /* Pods_NinchatSDK.framework */,
+				B068C79D55295F702C253B8E /* Pods_NinchatSDKTests.framework */,
 			);
 			path = Frameworks;
 			sourceTree = "<group>";
@@ -493,6 +506,7 @@
 			files = (
 				49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */,
 				49721CCB2122F87B00695F33 /* NINWebRTCServerInfo.h in Headers */,
+				496230192153ED6300570D59 /* NINPublicTypes.h in Headers */,
 				49F5FA3620F775FF00A4A526 /* NINClientPropsParser.h in Headers */,
 				49F5FA3F20F8CF6B00A4A526 /* NINRatingViewController.h in Headers */,
 				49721CC72122F70500695F33 /* NINWebRTCClient.h in Headers */,
@@ -532,7 +546,6 @@
 				49944351208DF33400101DCA /* Frameworks */,
 				49944352208DF33400101DCA /* Headers */,
 				49944353208DF33400101DCA /* Resources */,
-				F3A8812B9BA85BF0835C16A6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -551,7 +564,7 @@
 				4994435A208DF33400101DCA /* Sources */,
 				4994435B208DF33400101DCA /* Frameworks */,
 				4994435C208DF33400101DCA /* Resources */,
-				B20FA72021094C44D4CF6F48 /* [CP] Copy Pods Resources */,
+				1344AD808D186BA27F2E8D48 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -638,6 +651,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1344AD808D186BA27F2E8D48 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		85C7A92057B69D8404D41D31 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -654,42 +685,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B20FA72021094C44D4CF6F48 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ImagePicker/ImagePicker.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ImagePicker.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F3A8812B9BA85BF0835C16A6 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ImagePicker/ImagePicker.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ImagePicker.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FAFC3D6DEF9918AA33E4F0FD /* [CP] Check Pods Manifest.lock */ = {
@@ -831,6 +826,10 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-Werror",
+				);
 				SDKROOT = iphoneos;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -886,6 +885,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-Werror",
+				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -912,11 +915,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				INFOPLIST_FILE = NinchatSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = fi.qvik.NinchatSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -943,11 +942,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				INFOPLIST_FILE = NinchatSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = fi.qvik.NinchatSDK;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -962,11 +957,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;
 				INFOPLIST_FILE = NinchatSDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = fi.qvik.NinchatSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -981,11 +972,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;
 				INFOPLIST_FILE = NinchatSDKTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = fi.qvik.NinchatSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

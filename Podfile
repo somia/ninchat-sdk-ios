@@ -1,11 +1,11 @@
 platform :ios, '9.0'
-use_modular_headers!
+#use_modular_headers!
+use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'
 
 def all_pods
-    #pod 'AppRTC', path: '.'
-    pod 'AppRTC', '~> 1.0' #TODO drop this and replace it with its dependencies!
+    #pod 'libjingle_peerconnection', '11177.2.0'
     pod 'AFNetworking', '~> 3.0'
 end
 

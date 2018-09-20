@@ -6,7 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import "RTCICECandidate.h"
+//#import "RTCICECandidate.h"
+@import Libjingle;
 
 /**
  * Methods for converting RTCICECandidate to / from dictionary representation.

@@ -6,7 +6,8 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+//#import <Foundation/Foundation.h>
+@import Foundation;
 
 /** Describes a single queue. */
 @interface NINQueue : NSObject

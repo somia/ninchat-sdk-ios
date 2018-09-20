@@ -8,17 +8,29 @@
 
 @import AVFoundation;
 
-#import <libjingle_peerconnection/RTCPeerConnection.h>
-#import <libjingle_peerconnection/RTCPeerConnectionDelegate.h>
-#import <libjingle_peerconnection/RTCPeerConnectionFactory.h>
-#import <libjingle_peerconnection/RTCSessionDescriptionDelegate.h>
-#import <libjingle_peerconnection/RTCICEServer.h>
-#import <libjingle_peerconnection/RTCMediaConstraints.h>
-#import <libjingle_peerconnection/RTCMediaStream.h>
-#import <libjingle_peerconnection/RTCPair.h>
-#import <libjingle_peerconnection/RTCSessionDescription.h>
-#import <libjingle_peerconnection/RTCICECandidate.h>
-#import <libjingle_peerconnection/RTCVideoCapturer.h>
+//#import <libjingle_peerconnection/RTCPeerConnection.h>
+//#import <libjingle_peerconnection/RTCPeerConnectionDelegate.h>
+//#import <libjingle_peerconnection/RTCPeerConnectionFactory.h>
+//#import <libjingle_peerconnection/RTCSessionDescriptionDelegate.h>
+//#import <libjingle_peerconnection/RTCICEServer.h>
+//#import <libjingle_peerconnection/RTCMediaConstraints.h>
+//#import <libjingle_peerconnection/RTCMediaStream.h>
+//#import <libjingle_peerconnection/RTCPair.h>
+//#import <libjingle_peerconnection/RTCSessionDescription.h>
+//#import <libjingle_peerconnection/RTCICECandidate.h>
+//#import <libjingle_peerconnection/RTCVideoCapturer.h>
+//#import "RTCPeerConnection.h"
+//#import "RTCPeerConnectionDelegate.h"
+//#import "RTCPeerConnectionFactory.h"
+//#import "RTCSessionDescriptionDelegate.h"
+//#import "RTCICEServer.h"
+//#import "RTCMediaConstraints.h"
+//#import "RTCMediaStream.h"
+//#import "RTCPair.h"
+//#import "RTCSessionDescription.h"
+//#import "RTCICECandidate.h"
+//#import "RTCVideoCapturer.h"
+@import Libjingle;
 
 #import "RTCSessionDescription+Dictionary.h"
 #import "RTCICECandidate+Dictionary.h"
@@ -171,7 +183,7 @@
 #pragma mark - From RTCPeerConnectionDelegate
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream {
-    NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", stream.videoTracks.count, stream.audioTracks.count);
+    NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
 
     runOnMainThread(^{
         if (stream.videoTracks.count > 0) {

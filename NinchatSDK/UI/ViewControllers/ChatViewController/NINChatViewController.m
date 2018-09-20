@@ -7,10 +7,16 @@
 //
 
 @import MobileCoreServices;
+@import AVFoundation;
 
-#import <libjingle_peerconnection/RTCEAGLVideoView.h>
-#import <AVFoundation/AVFoundation.h>
-#import <libjingle_peerconnection/RTCVideoTrack.h>
+//#import <AVFoundation/AVFoundation.h>
+
+//#import <libjingle_peerconnection/RTCEAGLVideoView.h>
+//#import <libjingle_peerconnection/RTCVideoTrack.h>
+//#import "RTCEAGLVideoView.h"
+//#import "RTCVideoTrack.h"
+@import Libjingle;
+
 
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"

@@ -10,14 +10,13 @@
 
 // Import the low-level interface
 @import Client;
-
-#import <Foundation/Foundation.h>
+//#import "Client.h"
 
 #import "NINPublicTypes.h"
 
 // Image asset keys
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
-FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
 
 @class NINChatSession;
 
@@ -31,13 +30,13 @@ FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
  * Implemeent this if you want to receive debug/error logging from the SDK.
  */
 @optional
--(void) ninchat:(NINChatSession*)session didOutputSDKLog:(NSString* _Nonnull)message;
+-(void) ninchat:(NINChatSession*_Nonnull)session didOutputSDKLog:(NSString* _Nonnull)message;
 
 /**
  * Exposes the low-level events. See the Ninchat API specification for more info.
  */
 @optional
--(void) ninchat:(NINChatSession*)session onLowLevelEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply;
+-(void) ninchat:(NINChatSession*_Nonnull)session onLowLevelEvent:(ClientProps*_Nonnull)params payload:(ClientPayload*_Nonnull)payload lastReply:(BOOL)lastReply;
 
 /**
  * This method allows the SDK delegate to override image assets used in the
@@ -46,7 +45,7 @@ FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
  *
  * For available asset key strings, see documentation.
  */
--(UIImage* _Nullable) ninchat:(NINChatSession*)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
+-(UIImage* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
 
 /**
  * Indicates that the Ninchat SDK UI has completed its chat. and would like
@@ -66,8 +65,8 @@ FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
  */
 @interface NINChatSession : NSObject
 
-/** Exposes the low-level chat session interface. */
-@property (nonatomic, strong, readonly) ClientSession* session;
+/** Exposes the low-level chat session interface. Only available after startWithCallback: has been called. */
+@property (nonatomic, strong, readonly) ClientSession* _Nonnull session;
 
 /**
  * Delegate object for receiving asynchronous callbacks from the SDK.

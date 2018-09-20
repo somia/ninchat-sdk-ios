@@ -19,15 +19,13 @@
 
 // These only apply to images
 @property (nonatomic, assign) CGFloat aspectRatio;
-//@property (nonatomic, assign) NSInteger width;
-//@property (nonatomic, assign) NSInteger height;
 
 @end
 
 @implementation NINFileInfo
 
 -(NSString*) description {
-    return [NSString stringWithFormat:@"ID: %@, mimeType: %@, size: %ld", self.fileID, self.mimeType, self.size];
+    return [NSString stringWithFormat:@"ID: %@, mimeType: %@, size: %ld", self.fileID, self.mimeType, (long)self.size];
 }
 
 -(BOOL) isImage {
@@ -42,8 +40,6 @@
     info.url = url;
     info.urlExpiry = urlExpiry;
     info.aspectRatio = aspectRatio;
-//    info.width = width;
-//    info.height = height;
 
     return info;
 }
