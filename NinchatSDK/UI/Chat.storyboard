@@ -35,7 +35,7 @@
         <!--Queue View Controller-->
         <scene sceneID="KNa-t7-ctL">
             <objects>
-                <viewController id="XUt-Du-Jff" customClass="NINQueueViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NINQueueViewController" id="XUt-Du-Jff" customClass="NINQueueViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Uao-Kk-UXV">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

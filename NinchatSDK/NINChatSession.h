@@ -76,8 +76,10 @@ FOUNDATION_EXPORT NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator;
 
 /**
  * Initializes the API.
+ *
+ * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
  */
--(id _Nonnull) initWithConfigurationKey:(NSString* _Nonnull)configurationKey siteSecret:(NSString* _Nullable)siteSecret;
+-(id _Nonnull) initWithConfigurationKey:(NSString* _Nonnull)configurationKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString* _Nullable)queueID;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

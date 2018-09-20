@@ -11,6 +11,8 @@
 #import "NINUtils.h"
 #import "NINSessionManager.h"
 #import "NINChatSession+Internal.h"
+#import "NINQueue.h"
+#import "NINQueueViewController.h"
 
 // Image asset keys
 NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKeyQueueViewProgressIndicator";
@@ -22,6 +24,9 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
 
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
+
+/** ID of the queue to join automatically. Nil to not join automatically to a queue. */
+@property (nonatomic, strong) NSString* queueID;
 
 @end
 
@@ -46,6 +51,26 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
 
     NSBundle* bundle = findResourceBundle();
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Chat" bundle:bundle];
+
+    // If a queue ID is specified, look that queue up and join it automatically
+    if (self.queueID != nil) {
+        // Find the queue object by its ID
+        for (NINQueue* queue in self.sessionManager.queues) {
+            if ([queue.queueID isEqualToString:self.queueID]) {
+                // Load queue view controller directly
+                NINQueueViewController* vc = [storyboard instantiateViewControllerWithIdentifier:@"NINQueueViewController"];
+                NSCAssert([vc isKindOfClass:NINQueueViewController.class], @"Invalid NINQueueViewController");
+                vc.sessionManager = self.sessionManager;
+                vc.queueToJoin = queue;
+
+                return vc;
+            }
+        }
+
+        NSCAssert(false, @"Queue not found!");
+        [self sdklog:@"Queue with id '%@' not found!", self.queueID];
+        return nil;
+    }
 
     // Get the initial view controller for the storyboard
     UIViewController* vc = [storyboard instantiateInitialViewController];
@@ -114,7 +139,7 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
     });
 }
 
--(id) initWithConfigurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret {
+-(id) initWithConfigurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString*)queueID {
     self = [super init];
 
     if (self != nil) {
@@ -122,6 +147,7 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
         self.sessionManager.ninchatSession = self;
         self.sessionManager.configurationKey = configKey;
         self.sessionManager.siteSecret = siteSecret;
+        self.queueID = queueID;
         self.started = NO;
     }
 

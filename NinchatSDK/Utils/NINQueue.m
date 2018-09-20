@@ -11,7 +11,7 @@
 @interface NINQueue ()
 
 // Private writable versions of the properties
-@property (nonatomic, strong) NSString* queueId;
+@property (nonatomic, strong) NSString* queueID;
 @property (nonatomic, strong) NSString* name;
 
 @end
@@ -19,12 +19,12 @@
 @implementation NINQueue
 
 -(NSString*) description {
-    return [NSString stringWithFormat:@"Queue ID: %@, Name: %@", self.queueId, self.name];
+    return [NSString stringWithFormat:@"Queue ID: %@, Name: %@", self.queueID, self.name];
 }
 
 +(NINQueue*) queueWithId:(NSString*)queueId andName:(NSString*)name {
     NINQueue* queue = [NINQueue new];
-    queue.queueId = queueId;
+    queue.queueID = queueId;
     queue.name = name;
 
     return queue;

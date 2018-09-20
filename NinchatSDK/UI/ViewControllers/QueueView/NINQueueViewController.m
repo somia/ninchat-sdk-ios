@@ -48,7 +48,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
     // Connect to the queue
     __weak typeof(self) weakSelf = self;
-    [self.sessionManager joinQueueWithId:self.queueToJoin.queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+    [self.sessionManager joinQueueWithId:self.queueToJoin.queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
         NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
@@ -81,6 +81,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 -(void) viewDidLoad {
     [super viewDidLoad];
+
+    NSCAssert(self.sessionManager != nil, @"Must have session manager set");
 
     // Translations
     //TODO support HTML styling
