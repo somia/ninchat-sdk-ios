@@ -34,7 +34,7 @@
 @interface NINWebRTCClient () <RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate>
 
 // Session manager, used for signaling
-@property (nonatomic, strong) NINSessionManager* sessionManager;
+@property (nonatomic, weak) NINSessionManager* sessionManager;
 
 // Operation mode; caller or callee.
 @property (nonatomic, assign) NINWebRTCClientOperatingMode operatingMode;
@@ -106,6 +106,8 @@
 #pragma mark - Public Methods
 
 -(void) disconnect {
+    [self.sessionManager.ninchatSession sdklog:@"NINWebRTCClient disconnecting."];
+
     if (self.peerConnection != nil) {
         [self.peerConnection close];
         self.peerConnection = nil;
@@ -122,6 +124,7 @@
 -(void) startWithSDP:(NSDictionary*)sdp {
     NSCAssert(self.peerConnectionFactory != nil, @"Invalid state - client was disconnected?");
     NSCAssert(self.sessionManager != nil, @"Invalid state - client was disconnected?");
+    NSCAssert(self.signalingObserver == nil, @"Cannot have active observer already");
 
 //    NSLog(@"WebRTC: Starting with SDP: %@", sdp);
 
@@ -245,6 +248,7 @@
         [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
             if (error != nil) {
                 NSLog(@"WebRTC: Message send error: %@", error);
+                //TODO show error toast
             }
         }];
     });

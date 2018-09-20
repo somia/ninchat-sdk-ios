@@ -12,6 +12,7 @@
 #import "NINUtils.h"
 #import "NINChatViewController.h"
 #import "NINQueue.h"
+#import "NINCloseChatButton.h"
 
 // UI strings
 static NSString* const kQueuePositionN = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.";
@@ -24,6 +25,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 @property (nonatomic, strong) IBOutlet UIImageView* spinnerImageView;
 @property (nonatomic, strong) IBOutlet UILabel* queueInfoLabel;
 @property (nonatomic, strong) IBOutlet UILabel* inQueueTextLabel;
+@property (nonatomic, strong) IBOutlet UILabel* motdLabel;
+@property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
 @end
 
@@ -49,9 +52,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": self.queueToJoin.name}];
+            weakSelf.queueInfoLabel.text = [weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}];
         } else {
-            weakSelf.queueInfoLabel.text = [self.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": self.queueToJoin.name}];
+            weakSelf.queueInfoLabel.text = [weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}];
         }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
@@ -74,9 +77,19 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     [super viewDidLoad];
 
     // Translations
+    //TODO support HTML styling
     self.inQueueTextLabel.text = self.sessionManager.siteConfiguration[@"default"][@"inQueueText"];
 
+    //TODO support HTML styling
+    self.motdLabel.text = self.sessionManager.siteConfiguration[@"default"][@"motd"];
+
     self.queueInfoLabel.text = nil;
+
+    __weak typeof(self) weakSelf = self;
+    self.closeChatButton.pressedCallback = ^{
+        NSLog(@"Queue view: Close chat button pressed!");
+        [weakSelf.sessionManager closeChat];
+    };
 }
 
 @end

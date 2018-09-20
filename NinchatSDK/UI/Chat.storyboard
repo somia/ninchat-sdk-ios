@@ -85,12 +85,27 @@ you are next.</string>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is the current MOTD text. It might have some HTML formatting added to it." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XJ5-6x-OBq">
+                                        <rect key="frame" x="15" y="109" width="345" height="37.5"/>
+                                        <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" placeholderIntrinsicWidth="135" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="8zZ-5c-Lgm" customClass="NINEmbeddableCloseChatButton">
+                                        <rect key="frame" x="120" y="196.5" width="135" height="45"/>
+                                        <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="7qD-Fp-YN8" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="FM6-2A-Pze"/>
+                                    <constraint firstItem="8zZ-5c-Lgm" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="JIZ-bn-UmW"/>
+                                    <constraint firstAttribute="trailing" secondItem="XJ5-6x-OBq" secondAttribute="trailing" constant="15" id="LWo-Qh-wXD"/>
+                                    <constraint firstItem="XJ5-6x-OBq" firstAttribute="top" secondItem="7qD-Fp-YN8" secondAttribute="bottom" constant="40" id="QbC-n0-f4N"/>
                                     <constraint firstItem="7qD-Fp-YN8" firstAttribute="top" secondItem="dkT-tD-Ztq" secondAttribute="top" constant="50" id="YWx-xf-9gX"/>
+                                    <constraint firstItem="XJ5-6x-OBq" firstAttribute="leading" secondItem="dkT-tD-Ztq" secondAttribute="leading" constant="15" id="e32-ry-a3W"/>
                                     <constraint firstItem="7qD-Fp-YN8" firstAttribute="width" secondItem="dkT-tD-Ztq" secondAttribute="width" multiplier="0.75" id="k5h-xW-uUb"/>
+                                    <constraint firstItem="8zZ-5c-Lgm" firstAttribute="top" secondItem="XJ5-6x-OBq" secondAttribute="bottom" constant="50" id="qeg-DD-78w"/>
+                                    <constraint firstItem="XJ5-6x-OBq" firstAttribute="centerX" secondItem="dkT-tD-Ztq" secondAttribute="centerX" id="wrh-2E-xW9"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -110,6 +125,7 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="yzb-y7-ihz"/>
                     </view>
                     <connections>
+                        <outlet property="closeChatButton" destination="8zZ-5c-Lgm" id="64T-9E-3DA"/>
                         <outlet property="inQueueTextLabel" destination="7qD-Fp-YN8" id="st2-4J-ZhA"/>
                         <outlet property="queueInfoLabel" destination="ybn-aF-s3A" id="nDJ-pi-FA2"/>
                         <outlet property="spinnerImageView" destination="9Zh-Yi-kTD" id="8EU-4Y-vjc"/>

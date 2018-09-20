@@ -167,10 +167,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 -(void) queueUpdated:(NSString*)eventType params:(ClientProps*)params {
     NSError* error;
 
-    // Clear existing queue list
-    //TODO but.. why?
-//    [_queues removeAllObjects];
-
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
     if (error != nil) {
@@ -904,7 +900,11 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
 }
 
 -(void) disconnect {
+    [self.ninchatSession sdklog:@"disconnect: Closing Ninchat session."];
+
     self.currentChannelID = nil;
+    self.currentQueueID = nil;
+
     [self.session close];
     self.session = nil;
 }
@@ -1074,7 +1074,6 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
     NSLog(@"Session closed.");
-    //[self.statusDelegate statusDidChange:@"closed"];
 }
 
 -(void) onSessionEvent:(ClientProps*)params {
@@ -1085,11 +1084,9 @@ void connectCallbackToActionCompletion(long actionId, callbackWithErrorBlock com
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
     if (error != nil) {
-        //TODO what to do here?
         NSLog(@"Error getting session event data: %@", error);
+        //TODO show error toast
     } else {
-        //[self.statusDelegate statusDidChange:event];
-
         if ([event isEqualToString:@"session_created"]) {
             postNotification(kActionNotification, @{@"event_type": event});
         }

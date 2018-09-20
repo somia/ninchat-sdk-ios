@@ -183,7 +183,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
                 // Hide Close Chat button
                 [UIView animateWithDuration:kAnimationDuration animations:^{
-                    self.closeChatButton.alpha = 0.0;
+                    weakSelf.closeChatButton.alpha = 0.0;
                 }];
 
                 // Show the video views
@@ -204,9 +204,9 @@ static NSString* const kCloseChatText = @"Close chat";
 }
 
 -(void) disconnectWebRTC {
-    NSLog(@"Disconnecting webrtc resources");
-
     if (self.webrtcClient != nil) {
+        NSLog(@"Disconnecting webrtc resources");
+
         // Clean up local video view
         if (self.localVideoTrack != nil) {
             [self.localVideoTrack removeRenderer:self.localVideoView];
@@ -224,12 +224,12 @@ static NSString* const kCloseChatText = @"Close chat";
         // Finally, disconnect the WebRTC client.
         [self.webrtcClient disconnect];
         self.webrtcClient = nil;
-    }
 
-    // Show Close Chat button
-    [UIView animateWithDuration:kAnimationDuration animations:^{
-        self.closeChatButton.alpha = 1.0;
-    }];
+        // Show Close Chat button
+        [UIView animateWithDuration:kAnimationDuration animations:^{
+            self.closeChatButton.alpha = 1.0;
+        }];
+    }
 }
 
 -(void) orientationChanged:(NSNotification*)notification {
@@ -519,7 +519,8 @@ static NSString* const kCloseChatText = @"Close chat";
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
         NSLog(@"Close chat button pressed!");
-        //TODO: end video, end chat, call session delegate to end it (all)
+        [weakSelf disconnectWebRTC];
+        [weakSelf.sessionManager closeChat];
     };
 
     self.chatView.dataSource = self;
