@@ -13,7 +13,6 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = "9.0"
 
   s.vendored_frameworks = "Frameworks/Client.framework"
-# s.source_files = "Frameworks/Client.framework/Headers/*.h"
 
 end
 

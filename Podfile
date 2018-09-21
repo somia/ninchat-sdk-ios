@@ -1,13 +1,13 @@
 platform :ios, '9.0'
-#use_modular_headers!
 use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/somia/ninchat-podspecs.git'
 
 def all_pods
     pod 'AFNetworking', '~> 3.0'
-    #pod 'NinchatLowLevel', '~> 0'
-    pod 'NinchatLowLevel', :path => '.'
+    pod 'NinchatLowLevel', '~> 0'
+    #pod 'NinchatLowLevel', :path => '.'
 end
 
 target 'NinchatSDK' do

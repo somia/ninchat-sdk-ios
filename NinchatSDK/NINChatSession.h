@@ -8,16 +8,13 @@
 
 @import UIKit;
 
+// Import our low-level library
 @import Client;
 
 #import "NINPublicTypes.h"
 
 // Forward declarations
 @class NINChatSession;
-
-//@class ClientSession;
-//@class ClientProps;
-//@class ClientPayload;
 
 // Image asset keys
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;

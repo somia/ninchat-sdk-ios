@@ -18,20 +18,18 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
-  - NinchatLowLevel (from `.`)
+  - NinchatLowLevel (~> 0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
-
-EXTERNAL SOURCES:
-  NinchatLowLevel:
-    :path: "."
+  https://github.com/somia/ninchat-podspecs.git:
+    - NinchatLowLevel
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
   NinchatLowLevel: 6d9f79dc7412b1d7b203e7a5f9a9d3111c86d9c5
 
-PODFILE CHECKSUM: f60eb083c8c474e463eb1407fc1cef213fc4da82
+PODFILE CHECKSUM: 5d4d58c159e2c6d9e93337ec17983af2cd1ec025
 
 COCOAPODS: 1.5.3

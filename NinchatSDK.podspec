@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.9"
+  s.version      = "0.0.10"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -12,14 +12,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "9.0"
 
-  # Handle the Go library as a subspec
-  #s.subspec "Client" do |cl|
-  #  cl.vendored_frameworks = "Frameworks/Client.framework"
-  #  cl.source_files = "Frameworks/Client.framework/Headers/*.h"
-    #cl.module_name = "Client"
-    #end
-
-  # Handle libjingle_peerconnection as a subspec
+  # Handle libjingle_peerconnection as a subspec; its static binary is vendored as a framework
   s.subspec "Libjingle" do |lj|
     lj.vendored_frameworks = "Frameworks/Libjingle.framework"
     lj.frameworks = "VideoToolbox", "AVFoundation", "CoreMedia", "AudioToolbox", "GLKit"
@@ -37,27 +30,10 @@ Pod::Spec.new do |s|
     ss.resource_bundles = {
         "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets}"],
     }
- end
+  end
 
- # The SDK is our main spec
- s.default_subspec = "SDK"
-
-  # Provide our Go library Client.framework and Libjingle as vendored frameworks
-  #s.vendored_frameworks = "Frameworks/Client.framework", "Frameworks/Libjingle.framework"
-
-#s.dependency "#{s.name}/Client"
-#  s.dependency "#{s.name}/Libjingle"
-
-  # Frameworks / libraries required by our vendored frameworks
-  #s.frameworks = "VideoToolbox"
-  #s.libraries = "stdc++"
-
-  # SDK sources / resources
-  #s.source_files = "NinchatSDK/**/*.{h,m}"
-  #s.public_header_files = "NinchatSDK/*.h"
-  #s.resource_bundles = {
-  #  "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets}"],
-  #}
+  # The SDK is our main spec
+  s.default_subspec = "SDK"
 
   # Due to gomobile bind not supporting bitcode we must switch it off - for
   # the pod as well as the user target (app using the SDK). This is unfortunate,
@@ -70,6 +46,9 @@ Pod::Spec.new do |s|
   s.user_target_xcconfig = {
       "ENABLE_BITCODE" => "NO"
   }
+
+  # Our dependency (NinchatLowLevel) is a static library, so we must also be
+  s.static_framework = true
 
   # Cocoapods dependencies
   s.dependency "AFNetworking", "~> 3.0"
