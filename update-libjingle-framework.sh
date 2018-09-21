@@ -1,20 +1,14 @@
 #!/bin/bash
 
+echo "Will recreate the Libjingle framework."
+
 framework="Frameworks/Libjingle.framework"
 archive="https://s3.amazonaws.com/libjingle/11177/Release/0/libWebRTC.tar.bz2"
-work="`pwd`/libjingle-extraction-temp"
+workdir=`mktemp -d -t libjingle`
 
-if [ -d $work ]
-then 
-    echo "Working directory $work already exists."
-    echo "If it is not there for a purpose, delete it and try again."
-    exit 1
-fi
+echo "work dir: $workdir"
 
-echo "Will (re)create the $framework from cocoapod."
-
-mkdir -p $work
-cd $work
+cd $workdir
 
 echo "Fetching the libWebRTC archive over HTTP"
 wget $archive -O libWebRTC.tar.bz2
@@ -30,12 +24,14 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd ..
+cd -
 
 echo "Copying the extracted headers + binary into the framework structure"
 
-cp "$work/libjingle_peerconnection/Headers/*" "$framework/Headers"
-cp "$work/libjingle_peerconnection/libWebRTC.a" "$framework/Libjingle"
+cp $workdir/libjingle_peerconnection/Headers/* "$framework/Headers"
+cp $workdir/libjingle_peerconnection/libWebRTC.a "$framework/Libjingle"
 
-rm -r $work
-echo "All done!"
+# Cleanup 
+rm -r $workdir
+
+echo "Done."
