@@ -1,8 +1,6 @@
 framework module "Client" {
-	header "ref.h"
-    header "Client.objc.h"
-    header "universe.objc.h"
-    header "Client.h"
+    umbrella header "Client.h"
 
     export *
+    module * { export * }
 }

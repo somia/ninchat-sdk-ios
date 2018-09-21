@@ -7,7 +7,7 @@
 #define __Client_H__
 
 @import Foundation;
-#include "Universe.objc.h"
+#include "universe.objc.h"
 
 
 @class ClientCaller;

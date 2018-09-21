@@ -1,35 +1,6 @@
 framework module Libjingle {
+  umbrella header "Libjingle.h"
 
-  header "Libjingle.h"
-  header "RTCAVFoundationVideoSource.h"
-  header "RTCAudioSource.h"
-  header "RTCAudioTrack.h"
-  header "RTCDataChannel.h"
-  header "RTCEAGLVideoView.h"
-  header "RTCFileLogger.h"
-  header "RTCI420Frame.h"
-  header "RTCICECandidate.h"
-  header "RTCICEServer.h"
-  header "RTCLogging.h"
-  header "RTCMediaConstraints.h"
-  header "RTCMediaSource.h"
-  header "RTCMediaStream.h"
-  header "RTCMediaStreamTrack.h"
-  header "RTCOpenGLVideoRenderer.h"
-  header "RTCPair.h"
-  header "RTCPeerConnection.h"
-  header "RTCPeerConnectionDelegate.h"
-  header "RTCPeerConnectionFactory.h"
-  header "RTCPeerConnectionInterface.h"
-  header "RTCSessionDescription.h"
-  header "RTCSessionDescriptionDelegate.h"
-  header "RTCStatsDelegate.h"
-  header "RTCStatsReport.h"
-  header "RTCTypes.h"
-  header "RTCVideoCapturer.h"
-  header "RTCVideoRenderer.h"
-  header "RTCVideoSource.h"
-  header "RTCVideoTrack.h"
-  
   export *
+  module * { export * }
 }

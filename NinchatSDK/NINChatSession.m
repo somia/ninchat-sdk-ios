@@ -6,6 +6,9 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+//TODO remove, and put into header.
+//@import Client;
+
 #import "NINChatSession.h"
 #import "NINInitialViewController.h"
 #import "NINUtils.h"

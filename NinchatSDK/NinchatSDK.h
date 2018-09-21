@@ -14,7 +14,6 @@ FOUNDATION_EXPORT double NinchatSDKVersionNumber;
 //! Project version string for NinchatSDK.
 FOUNDATION_EXPORT const unsigned char NinchatSDKVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <NinchatSDK/PublicHeader.h>
+// This the umbrella header; include all public headers
 
 #import <NinchatSDK/NINChatSession.h>
-

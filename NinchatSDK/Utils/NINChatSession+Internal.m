@@ -6,6 +6,9 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
+//#import <Client/Client.h>
+@import Client;
+
 #import "NINChatSession+Internal.h"
 
 @implementation NINChatSession (Internal)

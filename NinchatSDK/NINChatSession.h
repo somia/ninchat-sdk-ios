@@ -8,17 +8,21 @@
 
 @import UIKit;
 
-// Import the low-level interface
 @import Client;
-//#import "Client.h"
 
 #import "NINPublicTypes.h"
+
+// Forward declarations
+@class NINChatSession;
+
+//@class ClientSession;
+//@class ClientProps;
+//@class ClientPayload;
 
 // Image asset keys
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
 
-@class NINChatSession;
 
 /**
  * Delegate protocol for NINChatSession class. All the methods are called on

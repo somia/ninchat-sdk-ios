@@ -7,6 +7,7 @@
 #ifndef __Client_FRAMEWORK_H__
 #define __Client_FRAMEWORK_H__
 
+#include "ref.h"
 #include "Client.objc.h"
 #include "universe.objc.h"
 
