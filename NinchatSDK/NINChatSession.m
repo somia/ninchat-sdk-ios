@@ -34,7 +34,7 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
 
 #pragma mark - Public API
 
--(ClientSession*) session {
+-(NINLowLevelClientSession*) session {
     NSCAssert(self.started, @"API has not been started");
 
     return self.sessionManager.session;

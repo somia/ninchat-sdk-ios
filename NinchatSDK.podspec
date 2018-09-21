@@ -52,7 +52,7 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "AFNetworking", "~> 3.0"
-  s.dependency "NinchatLowLevel", "~> 0"
+  s.dependency "NinchatLowLevelClient", "~> 0"
 
   s.module_name = "NinchatSDK"
   s.requires_arc = true

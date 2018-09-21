@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@import NinchatLowLevelClient;
+
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
 #import "NINChatSession+Internal.h" // To provide log: method
@@ -15,7 +17,6 @@
 @class NINQueue;
 @class NINChannelMessage;
 @class NINChatSession;
-@class ClientSession;
 
 /** Notification that indicates the current channel was closed. */
 extern NSString* _Nonnull const kNINChannelClosedNotification;
@@ -54,7 +55,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @property (nonatomic, weak) NINChatSession* _Nullable ninchatSession;
 
 /** Low-level chat session reference. */
-@property (nonatomic, strong, readonly) ClientSession* _Nonnull session;
+@property (nonatomic, strong, readonly) NINLowLevelClientSession* _Nonnull session;
 
 /** Configuration key; used to retrieve service configuration (site config) */
 @property (nonatomic, strong) NSString* _Nonnull configurationKey;

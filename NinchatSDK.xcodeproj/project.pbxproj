@@ -55,7 +55,6 @@
 		496230162153EC2F00570D59 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
 		496230182153EC4A00570D59 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
 		496230192153ED6300570D59 /* NINPublicTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7320F267EE00A00EA8 /* NINPublicTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4962301B215500E500570D59 /* NinchatLowLevel.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 4962301A215500E400570D59 /* NinchatLowLevel.podspec */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
 		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
@@ -86,6 +85,7 @@
 		499443BF208F475200101DCA /* Chat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 499443BE208F475200101DCA /* Chat.storyboard */; };
 		499443C2208F47EA00101DCA /* NINInitialViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 499443C0208F47EA00101DCA /* NINInitialViewController.h */; };
 		499443C3208F47EA00101DCA /* NINInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 499443C1208F47EA00101DCA /* NINInitialViewController.m */; };
+		49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */; };
 		49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */; };
 		49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
 		49F5FA2620F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
@@ -154,7 +154,6 @@
 		496230132153E94800570D59 /* Libjingle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Libjingle.framework; sourceTree = "<group>"; };
 		496230152153EC2F00570D59 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		496230172153EC4A00570D59 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
-		4962301A215500E400570D59 /* NinchatLowLevel.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatLowLevel.podspec; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
 		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
@@ -191,6 +190,7 @@
 		499443BE208F475200101DCA /* Chat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Chat.storyboard; sourceTree = "<group>"; };
 		499443C0208F47EA00101DCA /* NINInitialViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINInitialViewController.h; sourceTree = "<group>"; };
 		499443C1208F47EA00101DCA /* NINInitialViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINInitialViewController.m; sourceTree = "<group>"; };
+		49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatLowLevelClient.podspec; sourceTree = "<group>"; };
 		49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINBaseViewController.h; sourceTree = "<group>"; };
 		49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINBaseViewController.m; sourceTree = "<group>"; };
 		49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINClientPropsParser.m; sourceTree = "<group>"; };
@@ -396,7 +396,7 @@
 			isa = PBXGroup;
 			children = (
 				491D5A1D20CFD31B003E2EE9 /* Podfile */,
-				4962301A215500E400570D59 /* NinchatLowLevel.podspec */,
+				49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */,
 				49944372208E05DB00101DCA /* NinchatSDK.podspec */,
 				49944374208E05DB00101DCA /* BUILDING.md */,
 				49944373208E05DB00101DCA /* README.md */,
@@ -623,6 +623,7 @@
 				494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */,
 				494330D9213FBECD006E2C9C /* SourceSansPro-Light.ttf in Resources */,
 				494330E1213FBECD006E2C9C /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */,
 				494330E0213FBECD006E2C9C /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
 				494330DD213FBECD006E2C9C /* SourceSansPro-Black.ttf in Resources */,
 				494330DA213FBECD006E2C9C /* SourceSansPro-Italic.ttf in Resources */,
@@ -630,7 +631,6 @@
 				494330DB213FBECD006E2C9C /* SourceSansPro-LightItalic.ttf in Resources */,
 				49140B9520F4C04A00A00EA8 /* Media.xcassets in Resources */,
 				494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */,
-				4962301B215500E500570D59 /* NinchatLowLevel.podspec in Resources */,
 				499443BF208F475200101DCA /* Chat.storyboard in Resources */,
 				494330E2213FBECD006E2C9C /* SourceSansPro-Regular.ttf in Resources */,
 				494330DC213FBECD006E2C9C /* SourceSansPro-BlackItalic.ttf in Resources */,

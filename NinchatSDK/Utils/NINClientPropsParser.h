@@ -7,15 +7,10 @@
 
 #import <Foundation/Foundation.h>
 
-// Import the ported Go SDK framework
-#if __has_feature(modules)
-@import Client;
-#else
-#import <Client/Client.h>
-#endif
+@import NinchatLowLevelClient;
 
 /** Parses a ClientProps object via its -accept method. */
-@interface NINClientPropsParser : NSObject <ClientPropVisitor>
+@interface NINClientPropsParser : NSObject <NINLowLevelClientPropVisitor>
 
 /** Parsed properties. The value types will be NSString, NSNumber, ClientProps, ClientObjects or ClientStrings. */
 @property (nonatomic, strong) NSDictionary<NSString*, id>* properties;

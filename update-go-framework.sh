@@ -2,7 +2,7 @@
 
 echo "Rebuilding Go SDK framework.."
 
-framework="Client.framework"
+framework="NinchatLowLevelClient.framework"
 
 mygopath="$GOPATH:`pwd`/go-sdk"
 gocodedir="go-sdk/src/github.com/ninchat/ninchat-go/mobile"
@@ -12,24 +12,23 @@ frameworkdir="Frameworks/$framework"
 # Clean up previous builds
 rm -rf "$tmpframework"
 
-cd $gocodedir
-if [ $? -ne 0 ]; then
-    echo "Failed to find go code dir. Did you run this from the ios dir?"
+# Check that the go code dir exists
+if [ -d $gocodedir ]
+then
+    echo "Could not find go code dir: $gocodedir"
     exit 1
 fi
 
 echo "Running gomobile tool.."
-GOPATH=$mygopath gomobile bind -target ios -o $tmpframework github.com/ninchat/ninchat-go/mobile
+GOPATH=$mygopath gomobile bind -target ios -prefix NINLowLevel \
+      -o $tmpframework github.com/ninchat/ninchat-go/mobile
 if [ $? -ne 0 ]; then
     echo "gomobile cmd failed, aborting."
     exit 1
 fi
 
-# Return to the previous dir quietly
-cd ~-
-                      
-echo "Replacing framework contents"
-rm -rf $frameworkdir
-cp -r $tmpframework $frameworkdir
+# Copy the main header + the binary over to the framework dir
+cp "$tmpframework/Headers/NINLowLevelClient.objc.h" "$frameworkdir/Headers/"
+cp "$tmpframework/NinchatLowLevelClient" "$frameworkdir/"
 
 echo "Done."

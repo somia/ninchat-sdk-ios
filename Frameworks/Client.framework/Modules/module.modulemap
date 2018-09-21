@@ -1,6 +1,0 @@
-framework module "Client" {
-    umbrella header "Client.h"
-
-    export *
-    module * { export * }
-}

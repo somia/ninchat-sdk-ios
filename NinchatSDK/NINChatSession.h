@@ -8,8 +8,7 @@
 
 @import UIKit;
 
-// Import our low-level library
-@import Client;
+@import NinchatLowLevelClient;
 
 #import "NINPublicTypes.h"
 
@@ -19,7 +18,6 @@
 // Image asset keys
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
-
 
 /**
  * Delegate protocol for NINChatSession class. All the methods are called on
@@ -37,7 +35,7 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressInd
  * Exposes the low-level events. See the Ninchat API specification for more info.
  */
 @optional
--(void) ninchat:(NINChatSession*_Nonnull)session onLowLevelEvent:(ClientProps*_Nonnull)params payload:(ClientPayload*_Nonnull)payload lastReply:(BOOL)lastReply;
+-(void) ninchat:(NINChatSession*_Nonnull)session onLowLevelEvent:(NINLowLevelClientProps*_Nonnull)params payload:(NINLowLevelClientPayload*_Nonnull)payload lastReply:(BOOL)lastReply;
 
 /**
  * This method allows the SDK delegate to override image assets used in the
@@ -67,7 +65,7 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressInd
 @interface NINChatSession : NSObject
 
 /** Exposes the low-level chat session interface. Only available after startWithCallback: has been called. */
-@property (nonatomic, strong, readonly) ClientSession* _Nonnull session;
+@property (nonatomic, strong, readonly) NINLowLevelClientSession* _Nonnull session;
 
 /**
  * Delegate object for receiving asynchronous callbacks from the SDK.

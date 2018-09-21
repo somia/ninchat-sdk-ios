@@ -6,9 +6,6 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-// Import the low-level interface
-@import Client;
-
 #import "NINSessionManager.h"
 #import "NINUtils.h"
 #import "NINQueue.h"
@@ -45,7 +42,7 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
  * This class is used to work around circular reference memory leaks caused by the gomobile bind.
  * It cannot hold a reference to 'proxy objects' ie. the ClientSession.
  */
-@interface SessionCallbackHandler : NSObject <ClientSessionEventHandler, ClientEventHandler, ClientCloseHandler, ClientLogHandler, ClientConnStateHandler>
+@interface SessionCallbackHandler : NSObject <NINLowLevelClientSessionEventHandler, NINLowLevelClientEventHandler, NINLowLevelClientCloseHandler, NINLowLevelClientLogHandler, NINLowLevelClientConnStateHandler>
 @property (nonatomic, weak) NINSessionManager* sessionManager;
 @end
 
@@ -72,7 +69,7 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 @property (nonatomic, strong) NSString* _Nonnull realmId;
 
 /** Low-level chat session reference. */
-@property (nonatomic, strong) ClientSession* session;
+@property (nonatomic, strong) NINLowLevelClientSession* session;
 
 /** Current queue id. Nil if not currently in queue. */
 @property (nonatomic, strong) NSString* currentQueueID;
@@ -111,7 +108,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 #pragma mark - Private methods
 
--(void) realmQueuesFound:(ClientProps*)params {
+-(void) realmQueuesFound:(NINLowLevelClientProps*)params {
     NSError* error;
 
     // Clear existing queue list
@@ -125,7 +122,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    ClientProps* queues = [params getObject:@"realm_queues" error:&error];
+    NINLowLevelClientProps* queues = [params getObject:@"realm_queues" error:&error];
     if (error != nil) {
         postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
         return;
@@ -142,13 +139,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Parsed queue map: %@", queuesParser.properties);
 
     for (NSString* queueId in queuesParser.properties.allKeys) {
-        ClientProps* queueProps = [queues getObject:queueId error:&error];
+        NINLowLevelClientProps* queueProps = [queues getObject:queueId error:&error];
         if (error != nil) {
             postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
             return;
         }
 
-        ClientProps* queueAttrs = [queueProps getObject:@"queue_attrs" error:&error];
+        NINLowLevelClientProps* queueAttrs = [queueProps getObject:@"queue_attrs" error:&error];
         if (error != nil) {
             postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
             return;
@@ -170,7 +167,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#audience_enqueued
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#queue_updated
--(void) queueUpdated:(NSString*)eventType params:(ClientProps*)params {
+-(void) queueUpdated:(NSString*)eventType params:(NINLowLevelClientProps*)params {
     NSError* error;
 
     long actionId;
@@ -206,7 +203,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 }
 
--(NINChannelUser*) parseUserAttrs:(ClientProps*)userAttrs userID:(NSString*)userID {
+-(NINChannelUser*) parseUserAttrs:(NINLowLevelClientProps*)userAttrs userID:(NSString*)userID {
     NSError* error;
 
     NSString* iconURL = [userAttrs getString:@"iconurl" error:&error];
@@ -237,7 +234,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     return [NINChannelUser userWithID:userID realName:realName displayName:displayName iconURL:iconURL guest:guest];
 }
 
--(void) userUpdated:(ClientProps*)params {
+-(void) userUpdated:(NINLowLevelClientProps*)params {
     NSError* error;
 
     NSCAssert(self.currentChannelID != nil, @"No active channel");
@@ -248,7 +245,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    ClientProps* userAttrs = [params getObject:@"user_attrs" error:&error];
+    NINLowLevelClientProps* userAttrs = [params getObject:@"user_attrs" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get user_attrs: %@", error);
         return;
@@ -257,7 +254,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
 }
 
--(void) fileFound:(ClientProps*)params {
+-(void) fileFound:(NINLowLevelClientProps*)params {
     NSError* error = nil;
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
@@ -277,7 +274,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     //TODO remove
     NSLog(@"Got urlExpiry: %@", urlExpiry);
 
-    ClientProps* fileAttributes = [params getObject:@"file_attrs" error:&error];
+    NINLowLevelClientProps* fileAttributes = [params getObject:@"file_attrs" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
     NSString* mimeType = [fileAttributes getString:@"type" error:&error];
@@ -287,7 +284,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [fileAttributes getInt:@"size" val:&size error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    ClientProps* thumbnail = [fileAttributes getObject:@"thumbnail" error:&error];
+    NINLowLevelClientProps* thumbnail = [fileAttributes getObject:@"thumbnail" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
     CGFloat aspectRatio = 1.0;
@@ -311,7 +308,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
 
--(void) channelJoined:(ClientProps*)params {
+-(void) channelJoined:(NINLowLevelClientProps*)params {
     NSError* error = nil;
 
     NSCAssert(self.currentQueueID != nil, @"No current queue");
@@ -337,7 +334,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [_channelUsers removeAllObjects];
 
     // Extract the channel members' data
-    ClientProps* members = [params getObject:@"channel_members" error:&error];
+    NINLowLevelClientProps* members = [params getObject:@"channel_members" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get channel_members: %@", error);
         return;
@@ -351,8 +348,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     for (NSString* userID in memberParser.properties.allKeys) {
-        ClientProps* memberAttrs = memberParser.properties[userID];
-        ClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
+        NINLowLevelClientProps* memberAttrs = memberParser.properties[userID];
+        NINLowLevelClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
         if (error != nil) {
             NSLog(@"Failed to get user_attrs: %@", error);
             continue;
@@ -378,7 +375,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kChannelJoinedNotification, @{});
 }
 
--(void) channelParted:(ClientProps*)params {
+-(void) channelParted:(NINLowLevelClientProps*)params {
     NSError* error = nil;
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
@@ -390,7 +387,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"channel_id": channelID});
 }
 
--(void) channelUpdated:(ClientProps*)params {
+-(void) channelUpdated:(NINLowLevelClientProps*)params {
     NSError* error;
 
     NSCAssert(self.currentChannelID != nil, @"No active channel");
@@ -406,7 +403,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    ClientProps* channelAttrs = [params getObject:@"channel_attrs" error:&error];
+    NINLowLevelClientProps* channelAttrs = [params getObject:@"channel_attrs" error:&error];
     if (error != nil) {
         NSLog(@"Could not get channel attrs: %@", error);
         return;
@@ -432,7 +429,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 // Processes the response to the WebRTC connectivity ICE query
--(void) iceBegun:(ClientProps*)params {
+-(void) iceBegun:(NINLowLevelClientProps*)params {
     NSError* error = nil;
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
@@ -442,15 +439,15 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     // Parse the STUN server list
-    ClientObjects* stunServers = [params getObjectArray:@"stun_servers" error:&error];
+    NINLowLevelClientObjects* stunServers = [params getObjectArray:@"stun_servers" error:&error];
     if (error != nil) {
         NSLog(@"Could not get stun_servers: %@", error);
         return;
     }
     NSMutableArray<NINWebRTCServerInfo*>* stunServerArray = [NSMutableArray array];
     for (int i = 0; i < stunServers.length; i++) {
-        ClientProps* serverProps = [stunServers get:i];
-        ClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
+        NINLowLevelClientProps* serverProps = [stunServers get:i];
+        NINLowLevelClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
         if (error != nil) {
             NSLog(@"Could not get stun_servers.urls: %@", error);
             return;
@@ -462,14 +459,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Parsed STUN servers: %@", stunServerArray);
 
     // Parse the TURN server list
-    ClientObjects* turnServers = [params getObjectArray:@"turn_servers" error:&error];
+    NINLowLevelClientObjects* turnServers = [params getObjectArray:@"turn_servers" error:&error];
     if (error != nil) {
         NSLog(@"Could not get turn_servers: %@", error);
         return;
     }
     NSMutableArray<NINWebRTCServerInfo*>* turnServerArray = [NSMutableArray array];
     for (int i = 0; i < turnServers.length; i++) {
-        ClientProps* serverProps = [turnServers get:i];
+        NINLowLevelClientProps* serverProps = [turnServers get:i];
 
         NSString* username = [serverProps getString:@"username" error:&error];
         if (error != nil) {
@@ -483,7 +480,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return;
         }
 
-        ClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
+        NINLowLevelClientStrings* urls = [serverProps getStringArray:@"urls" error:&error];
         if (error != nil) {
             NSLog(@"Could not get turn_servers.urls: %@", error);
             return;
@@ -500,7 +497,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 // Asynchronously retrieves file info
 -(void) describeFile:(NSString*)fileID completion:(getFileInfoCallback)completion {
     // Fetch the file info, including the (temporary) download url for the file
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"describe_file"];
     [params setString:@"file_id" val:fileID];
 
@@ -544,7 +541,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Added new channel message: %@", message);
 }
 
--(void) handleInboundChatMessageWithPayload:(ClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
+-(void) handleInboundChatMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
 
     NSError* error = nil;
 
@@ -588,7 +585,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"handleInboundChatMessageWithPayload: returning");
 }
 
--(void) handleInboundMessage:(ClientProps*)params payload:(ClientPayload*)payload actionId:(long)actionId {
+-(void) handleInboundMessage:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload actionId:(long)actionId {
     NSError* error = nil;
 
     NSString* messageID = [params getString:@"message_id" error:&error];
@@ -646,7 +643,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
 }
 
--(void) messageReceived:(ClientProps*)params payload:(ClientPayload*)payload {
+-(void) messageReceived:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
     NSCAssert(self.currentChannelID != nil, @"No active channel");
 
     NSError* error = nil;
@@ -667,7 +664,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 /*
  Event: map[event_id:2 action_id:1 channel_id:5npnrkp1009n error_type:channel_not_found event:error]
  */
--(void) handleError:(ClientProps*)params {
+-(void) handleError:(NINLowLevelClientProps*)params {
     NSError* error = nil;
     NSString* errorType = [params getString:@"error_type" error:&error];
     if (error != nil) {
@@ -690,7 +687,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"describe_realm_queues"];
     [params setString:@"realm_id" val:self.realmId];
 
@@ -727,7 +724,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return YES;
         });
 
-        ClientProps* params = [ClientProps new];
+        NINLowLevelClientProps* params = [NINLowLevelClientProps new];
         [params setString:@"action" val:@"request_audience"];
         [params setString:@"queue_id" val:queueID];
 
@@ -792,7 +789,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 // Retrieves the WebRTC ICE STUN/TURN server details
 -(void) beginICEWithCompletionCallback:(beginICECallbackBlock _Nonnull)completion {
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"begin_ice"];
 
     int64_t actionId;
@@ -830,14 +827,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return -1;
     }
 
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"send_message"];
     [params setString:@"message_type" val:messageType];
     [params setString:@"channel_id" val:self.currentChannelID];
 
     if ([messageType isEqualToString:@"ninchat.com/metadata"] && payloadDict[@"data"][@"rating"] != nil) {
         NSLog(@"Sending ratings, adding extra params to make message pass on closed channel");
-        [params setStringArray:@"message_recipient_ids" ref:[ClientStrings new]];
+        [params setStringArray:@"message_recipient_ids" ref:[NINLowLevelClientStrings new]];
         [params setBool:@"message_fold" val:YES];
     }
 
@@ -856,7 +853,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return -1;
     }
 
-    ClientPayload* payload = [ClientPayload new];
+    NINLowLevelClientPayload* payload = [NINLowLevelClientPayload new];
     [payload append:payloadContentJsonData];
 
     int64_t actionId = -1;
@@ -888,15 +885,15 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    ClientProps* fileAttributes = [ClientProps new];
+    NINLowLevelClientProps* fileAttributes = [NINLowLevelClientProps new];
     [fileAttributes setString:@"name" val:fileName];
 
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"send_file"];
     [params setObject:@"file_attrs" ref:fileAttributes];
     [params setString:@"channel_id" val:self.currentChannelID];
 
-    ClientPayload* payload = [ClientPayload new];
+    NINLowLevelClientPayload* payload = [NINLowLevelClientPayload new];
     [payload append:data];
 
     NSError* error = nil;
@@ -912,7 +909,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 -(void) partChannel:(NSString*)channelID completion:(callbackWithErrorBlock _Nonnull)completion {
-    ClientProps* params = [ClientProps new];
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"part_channel"];
     [params setString:@"channel_id" val:channelID];
 
@@ -979,10 +976,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     self.realmId = realmId;
 
-    ClientStrings* messageTypes = [ClientStrings new];
+    NINLowLevelClientStrings* messageTypes = [NINLowLevelClientStrings new];
     [messageTypes append:@"ninchat.com/*"];
 
-    ClientProps* sessionParams = [ClientProps new];
+    NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
     if (self.siteSecret != nil) {
         [sessionParams setString:@"site_secret" val:self.siteSecret];
     }
@@ -990,7 +987,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     // Get the username from the site config
     NSString* userName = self.siteConfiguration[@"default"][@"userName"];
     if (userName != nil) {
-        ClientProps* attrs = [ClientProps new];
+        NINLowLevelClientProps* attrs = [NINLowLevelClientProps new];
         [attrs setString:@"name" val:userName];
         [sessionParams setObject:@"user_attrs" ref:attrs];
     }
@@ -1012,7 +1009,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     SessionCallbackHandler* callbackHandler = [SessionCallbackHandler new];
     callbackHandler.sessionManager = self;
 
-    self.session = [ClientSession new];
+    self.session = [NINLowLevelClientSession new];
     [self.session setAddress:kNinchatServerHostName];
     [self.session setOnClose:callbackHandler];
     [self.session setOnConnState:callbackHandler];
@@ -1052,7 +1049,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 #pragma mark - 
 
--(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
+-(void) onEvent:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload lastReply:(BOOL)lastReply {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
     NSLog(@"Event: %@", params.string);
@@ -1110,7 +1107,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Session closed.");
 }
 
--(void) onSessionEvent:(ClientProps*)params {
+-(void) onSessionEvent:(NINLowLevelClientProps*)params {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
     NSLog(@"Session event: %@", [params string]);
@@ -1154,7 +1151,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 @implementation SessionCallbackHandler
 
--(void) onEvent:(ClientProps*)params payload:(ClientPayload*)payload lastReply:(BOOL)lastReply {
+-(void) onEvent:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload lastReply:(BOOL)lastReply {
     runOnMainThread(^{
         [self.sessionManager onEvent:params payload:payload lastReply:lastReply];
     });
@@ -1166,7 +1163,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     });
 }
 
--(void) onSessionEvent:(ClientProps*)params {
+-(void) onSessionEvent:(NINLowLevelClientProps*)params {
     runOnMainThread(^{
         [self.sessionManager onSessionEvent:params];
     });
