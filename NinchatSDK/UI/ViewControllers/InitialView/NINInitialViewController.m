@@ -12,7 +12,7 @@
 #import "NINSessionManager.h"
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
-#import "NSString+Ninchat.h"
+#import "UITextView+Ninchat.h"
 
 // UI strings
 static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
@@ -68,7 +68,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
     // Translations
     NSString* welcomeText = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];;
-    self.welcomeTextView.attributedText = [welcomeText htmlAttributedStringWithFont:self.welcomeTextView.font];
+    [self.welcomeTextView setFormattedText:welcomeText];
     self.welcomeTextView.delegate = self;
     
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
@@ -78,7 +78,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
     //TODO use translation
     NSString* text = @"<center><b>Well hello there!</b><br><br>This is example of HTML formatted text with link support.<br><br>Contact email: <a href=\"mailto:matti@qvik.fi\">matti@qvik.fi</a><br><br>Or call me: <a href=\"tel:+358405216859\">+358405216859</a> </center>";
-    self.bottomTextView.attributedText = [text htmlAttributedStringWithFont:self.bottomTextView.font];
+    [self.bottomTextView setFormattedText:text];
     self.bottomTextView.delegate = self;
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;

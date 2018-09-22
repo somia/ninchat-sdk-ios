@@ -94,6 +94,8 @@
 		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
 		49D77F2321563FAC00900224 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
+		49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D77F242156497600900224 /* UITextView+Ninchat.h */; };
+		49D77F272156497600900224 /* UITextView+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F252156497600900224 /* UITextView+Ninchat.m */; };
 		49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */; };
 		49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
 		49F5FA2620F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
@@ -204,6 +206,8 @@
 		49B699C82156312000E6C83D /* NSString+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Ninchat.h"; sourceTree = "<group>"; };
 		49B699C92156312000E6C83D /* NSString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Ninchat.m"; sourceTree = "<group>"; };
 		49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NinchatTests.m"; sourceTree = "<group>"; };
+		49D77F242156497600900224 /* UITextView+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITextView+Ninchat.h"; sourceTree = "<group>"; };
+		49D77F252156497600900224 /* UITextView+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITextView+Ninchat.m"; sourceTree = "<group>"; };
 		49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINBaseViewController.h; sourceTree = "<group>"; };
 		49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINBaseViewController.m; sourceTree = "<group>"; };
 		49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINClientPropsParser.m; sourceTree = "<group>"; };
@@ -487,6 +491,8 @@
 			children = (
 				496F85F4213838E7001FD1C4 /* NINTouchView.h */,
 				496F85F5213838E7001FD1C4 /* NINTouchView.m */,
+				49D77F242156497600900224 /* UITextView+Ninchat.h */,
+				49D77F252156497600900224 /* UITextView+Ninchat.m */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -548,6 +554,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */,
 				49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */,
 				49721CCB2122F87B00695F33 /* NINWebRTCServerInfo.h in Headers */,
 				496230192153ED6300570D59 /* NINPublicTypes.h in Headers */,
@@ -772,6 +779,7 @@
 				49721CD221295AEA00695F33 /* NINChatView.m in Sources */,
 				495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */,
 				49140B8820F395A700A00EA8 /* NINQueueViewController.m in Sources */,
+				49D77F272156497600900224 /* UITextView+Ninchat.m in Sources */,
 				496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */,
 				496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */,
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
