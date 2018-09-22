@@ -8,6 +8,7 @@
 
 #import "NINRatingViewController.h"
 #import "NINSessionManager.h"
+#import "UITextView+Ninchat.h"
 
 // UI strings
 static NSString* const kTitleText = @"How was our customer service?";
@@ -15,7 +16,7 @@ static NSString* const kSkipText = @"Skip";
 
 @interface NINRatingViewController ()
 
-@property (nonatomic, strong) IBOutlet UILabel* titleLabel;
+@property (nonatomic, strong) IBOutlet UITextView* titleTextView;
 @property (nonatomic, strong) IBOutlet UIButton* skipButton;
 
 @end
@@ -54,7 +55,7 @@ static NSString* const kSkipText = @"Skip";
     [super viewDidLoad];
 
     // Translations
-    self.titleLabel.text = [self.sessionManager translation:kTitleText formatParams:nil];
+    [self.titleTextView setFormattedText:[self.sessionManager translation:kTitleText formatParams:nil]];
     [self.skipButton setTitle:[self.sessionManager translation:kSkipText formatParams:nil] forState:UIControlStateNormal];
 }
 
