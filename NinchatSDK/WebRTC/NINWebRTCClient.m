@@ -8,28 +8,6 @@
 
 @import AVFoundation;
 
-//#import <libjingle_peerconnection/RTCPeerConnection.h>
-//#import <libjingle_peerconnection/RTCPeerConnectionDelegate.h>
-//#import <libjingle_peerconnection/RTCPeerConnectionFactory.h>
-//#import <libjingle_peerconnection/RTCSessionDescriptionDelegate.h>
-//#import <libjingle_peerconnection/RTCICEServer.h>
-//#import <libjingle_peerconnection/RTCMediaConstraints.h>
-//#import <libjingle_peerconnection/RTCMediaStream.h>
-//#import <libjingle_peerconnection/RTCPair.h>
-//#import <libjingle_peerconnection/RTCSessionDescription.h>
-//#import <libjingle_peerconnection/RTCICECandidate.h>
-//#import <libjingle_peerconnection/RTCVideoCapturer.h>
-//#import "RTCPeerConnection.h"
-//#import "RTCPeerConnectionDelegate.h"
-//#import "RTCPeerConnectionFactory.h"
-//#import "RTCSessionDescriptionDelegate.h"
-//#import "RTCICEServer.h"
-//#import "RTCMediaConstraints.h"
-//#import "RTCMediaStream.h"
-//#import "RTCPair.h"
-//#import "RTCSessionDescription.h"
-//#import "RTCICECandidate.h"
-//#import "RTCVideoCapturer.h"
 @import Libjingle;
 
 #import "RTCSessionDescription+Dictionary.h"
@@ -39,6 +17,7 @@
 #import "NINWebRTCClient.h"
 #import "NINWebRTCServerInfo.h"
 #import "NINUtils.h"
+#import "NINToast.h"
 
 // See the WebRTC signaling diagram:
 // https://mdn.mozillademos.org/files/12363/WebRTC%20-%20Signaling%20Diagram.svg
@@ -260,7 +239,7 @@
         [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
             if (error != nil) {
                 NSLog(@"WebRTC: Message send error: %@", error);
-                //TODO show error toast
+                [NINToast showWithMessage:@"Failed to send RTC signaling message" callback:nil];
             }
         }];
     });

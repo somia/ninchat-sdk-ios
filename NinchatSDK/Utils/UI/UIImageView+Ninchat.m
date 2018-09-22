@@ -9,6 +9,7 @@
 @import AFNetworking;
 
 #import "UIImageView+Ninchat.h"
+#import "NINToast.h"
 
 @implementation UIImageView (Ninchat)
 
@@ -30,7 +31,7 @@
             }];
         }
     } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
-        //TODO show error toast
+        [NINToast showWithMessage:@"Failed to fetch image" callback:nil];
     }];
 }
 

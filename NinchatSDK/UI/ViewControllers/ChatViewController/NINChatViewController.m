@@ -22,6 +22,7 @@
 #import "NINRatingViewController.h"
 #import "NINCloseChatButton.h"
 #import "NINFullScreenImageViewController.h"
+#import "NINToast.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -146,7 +147,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(answer)} completion:^(NSError* error) {
         if (error != nil) {
             NSLog(@"Failed to send pick-up message: %@", error);
-            //TODO error toast
+            [NINToast showWithMessage:@"Failed to send WebRTC pickup message" callback:nil];
         }
     }];
 }
@@ -254,8 +255,8 @@ static NSString* const kCloseChatText = @"Close chat";
     if ([text length] > 0) {
         [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
             if (error != nil) {
-                //TODO show error toast? check with UX people.
                 NSLog(@"TODO: message failed to send - show error message");
+                [NINToast showWithMessage:@"Failed to send message" callback:nil];
             }
         }];
     }
@@ -301,7 +302,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [self.sessionManager sendFile:@"image.jpeg" withData:imageData completion:^(NSError* error) {
         if (error != nil) {
             NSLog(@"Failed to send image: %@", error);
-            //TODO error? show toast
+            [NINToast showWithMessage:@"Failed to send file" callback:nil];
         }
     }];
 

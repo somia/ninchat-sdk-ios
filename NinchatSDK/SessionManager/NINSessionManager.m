@@ -18,6 +18,7 @@
 #import "NINWebRTCClient.h"
 #import "NINChatSession+Internal.h"
 #import "NINFileInfo.h"
+#import "NINToast.h"
 
 typedef void (^getFileInfoCallback)(NSError* _Nullable error, NINFileInfo* fileInfo);
 
@@ -1115,13 +1116,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
-    if (error != nil) {
-        NSLog(@"Error getting session event data: %@", error);
-        //TODO show error toast
-    } else {
-        if ([event isEqualToString:@"session_created"]) {
-            postNotification(kActionNotification, @{@"event_type": event});
-        }
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    if ([event isEqualToString:@"session_created"]) {
+        postNotification(kActionNotification, @{@"event_type": event});
     }
 }
 
