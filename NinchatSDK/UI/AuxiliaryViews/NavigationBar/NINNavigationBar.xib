@@ -19,7 +19,7 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9ip-tb-US3" userLabel="Content view">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ninchat_logo" translatesAutoresizingMaskIntoConstraints="NO" id="x4a-sC-FH7">
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="x4a-sC-FH7">
                             <rect key="frame" x="10" y="5" width="50" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="7de-rV-Bcw"/>
@@ -38,7 +38,6 @@
                                 <constraint firstAttribute="width" constant="40" id="jiP-vc-SHU"/>
                                 <constraint firstAttribute="height" constant="40" id="wrf-uz-PVU"/>
                             </constraints>
-                            <state key="normal" image="icon_arrow_down"/>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JhC-qT-Z4s">
                             <rect key="frame" x="325" y="10" width="40" height="40"/>
@@ -57,7 +56,6 @@
                                 <constraint firstAttribute="width" constant="40" id="0WE-Ll-Z9o"/>
                                 <constraint firstAttribute="height" constant="40" id="gDS-eR-wZe"/>
                             </constraints>
-                            <state key="normal" image="icon_three_dots"/>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -90,9 +88,6 @@
         </view>
     </objects>
     <resources>
-        <image name="icon_arrow_down" width="88" height="82"/>
-        <image name="icon_close_x" width="76" height="58"/>
-        <image name="icon_three_dots" width="98" height="72"/>
-        <image name="ninchat_logo" width="98" height="102"/>
+        <image name="icon_close_x" width="375" height="375"/>
     </resources>
 </document>

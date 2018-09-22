@@ -12,7 +12,7 @@
 #import "NINSessionManager.h"
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
-#import "NSMutableAttributedString+Ninchat.h"
+#import "NSString+Ninchat.h"
 
 // UI strings
 static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
@@ -21,14 +21,14 @@ static NSString* const kCloseWindowText = @"Close window";
 // Segue id to open queue view
 static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
-@interface NINInitialViewController ()
+@interface NINInitialViewController () <UITextViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel* welcomeTextLabel;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
 
 //TODO figure out which text this is and rename
-@property (nonatomic, strong) IBOutlet UILabel* bottomTextLabel;
+@property (nonatomic, strong) IBOutlet UITextView* bottomTextView;
 
 @end
 
@@ -61,6 +61,18 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     }
 }
 
+#pragma mark - From UITextViewDelegate
+
+// Pre-iOS 10
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    return YES;
+}
+
+// iOS 10 and up
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction API_AVAILABLE(ios(10.0)) {
+    return YES;
+}
+
 #pragma mark - Lifecycle etc.
 
 -(void) viewDidLoad {
@@ -74,13 +86,9 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     }
 
     //TODO use translation
-    UIFont* font = self.bottomTextLabel.font;
-
-    NSString* text = @"<center><b>Subject line</b><br><br>Bla bla bla bla.<br><br>Contact: <a href=\"mailto:matti@qvik.fi\">matti@qvik.fi</a></center>";
-    NSData* data = [text dataUsingEncoding:NSUTF8StringEncoding];
-    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithData:data options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:NULL error:NULL];
-    [attrString overrideFont:font];
-    self.bottomTextLabel.attributedText = attrString;
+    NSString* text = @"<center><b>Well hello there!</b><br><br>This is example of HTML formatted text with link support.<br><br>Contact email: <a href=\"mailto:matti@qvik.fi\">matti@qvik.fi</a><br><br>Or call me: <a href=\"tel:+358405216859\">+358405216859</a> </center>";
+    self.bottomTextView.attributedText = [text htmlAttributedStringWithFont:self.bottomTextView.font];
+    self.bottomTextView.delegate = self;
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;

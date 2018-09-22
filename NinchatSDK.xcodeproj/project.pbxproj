@@ -88,6 +88,8 @@
 		49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */; };
 		49B699C3215625E200E6C83D /* NSMutableAttributedString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C1215625E200E6C83D /* NSMutableAttributedString+Ninchat.h */; };
 		49B699C4215625E200E6C83D /* NSMutableAttributedString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */; };
+		49B699CA2156312000E6C83D /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
+		49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
 		49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */; };
 		49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
 		49F5FA2620F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
@@ -195,6 +197,8 @@
 		49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NinchatLowLevelClient.podspec; sourceTree = "<group>"; };
 		49B699C1215625E200E6C83D /* NSMutableAttributedString+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableAttributedString+Ninchat.h"; sourceTree = "<group>"; };
 		49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+Ninchat.m"; sourceTree = "<group>"; };
+		49B699C82156312000E6C83D /* NSString+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Ninchat.h"; sourceTree = "<group>"; };
+		49B699C92156312000E6C83D /* NSString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Ninchat.m"; sourceTree = "<group>"; };
 		49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINBaseViewController.h; sourceTree = "<group>"; };
 		49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINBaseViewController.m; sourceTree = "<group>"; };
 		49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINClientPropsParser.m; sourceTree = "<group>"; };
@@ -502,6 +506,8 @@
 				4911895F214BE54F008F1748 /* NSDateFormatter+Ninchat.m */,
 				49B699C1215625E200E6C83D /* NSMutableAttributedString+Ninchat.h */,
 				49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */,
+				49B699C82156312000E6C83D /* NSString+Ninchat.h */,
+				49B699C92156312000E6C83D /* NSString+Ninchat.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -560,6 +566,7 @@
 				499443C2208F47EA00101DCA /* NINInitialViewController.h in Headers */,
 				49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */,
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
+				49B699CA2156312000E6C83D /* NSString+Ninchat.h in Headers */,
 				49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -746,6 +753,7 @@
 				49721CD821295C7F00695F33 /* NINChatBubbleCell.m in Sources */,
 				49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */,
 				49140B7120F2494800A00EA8 /* NINSessionManager.m in Sources */,
+				49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */,
 				49F5FA3420F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
 				49140B7720F2748800A00EA8 /* NINChannelMessage.m in Sources */,
 				4911895D214B9B14008F1748 /* NINChatSession+Internal.m in Sources */,
