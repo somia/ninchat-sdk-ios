@@ -53,6 +53,13 @@
 
 #pragma mark - Lifecycle etc.
 
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // Make sure we have a navigation controller
+    NSCAssert(self.navigationController != nil, @"Must have a navigation controller");
+}
+
 -(void) viewDidLoad {
     [super viewDidLoad];
 

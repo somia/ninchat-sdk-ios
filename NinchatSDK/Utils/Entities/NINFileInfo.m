@@ -12,6 +12,7 @@
 
 // Writable versions of properties
 @property (nonatomic, strong) NSString* fileID;
+@property (nonatomic, strong) NSString* name;
 @property (nonatomic, strong) NSString* mimeType;
 @property (nonatomic, assign) NSInteger size;
 @property (nonatomic, strong) NSString* url;
@@ -32,9 +33,10 @@
     return [self.mimeType hasPrefix:@"image/"];
 }
 
-+(instancetype) imageFileInfoWithID:(NSString*)fileID mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio {
++(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio {
     NINFileInfo* info = [NINFileInfo new];
     info.fileID = fileID;
+    info.name = name;
     info.mimeType = mimeType;
     info.size = size;
     info.url = url;

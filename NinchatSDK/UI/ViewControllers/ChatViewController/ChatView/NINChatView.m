@@ -31,7 +31,12 @@
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
 
+    __weak typeof(self) weakSelf = self;
+
     [cell populateWithMessage:[self.dataSource chatView:self messageAtIndex:indexPath.row]];
+    cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
+        [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
+    };
 
     return cell;
 }

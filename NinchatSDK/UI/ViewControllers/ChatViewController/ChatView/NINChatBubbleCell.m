@@ -14,6 +14,7 @@
 #import "NINChannelMessage.h"
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
+#import "UIImageView+Ninchat.h"
 
 @interface NINChatBubbleCell ()
 
@@ -48,7 +49,7 @@
 @property (nonatomic, strong) IBOutlet UILabel* textContentLabel;
 
 // The message's image
-@property (nonatomic, strong) IBOutlet UIImageView* messagaImageView;
+@property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
 
 // Constraint for binding sender name / time labels to left edge
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* topLabelsLeftConstraint;
@@ -85,6 +86,9 @@
 
 // Message updated -listener
 @property (nonatomic, assign) id messageUpdatedListener;
+
+// Image / video tap recognizer
+@property (nonatomic, strong) UITapGestureRecognizer* imageTapRecognizer;
 
 @end
 
@@ -153,14 +157,27 @@
     self.rightAvatarImageView.image = nil;
 }
 
+-(void) imagePressed {
+    NSLog(@"Image pressed: %@", self.messageImageView.image);
+
+    if ((self.imagePressedCallback != nil) && (self.messageImageView.image != nil)) {
+        self.imagePressedCallback(self.message.attachment, self.messageImageView.image);
+    }
+}
+
 -(void) updateImage {
     NINFileInfo* attachment = self.message.attachment;
 
-    self.messagaImageView.image = nil;
+    self.messageImageView.image = nil;
 
     if ((attachment != nil) && attachment.isImage) {
         // Load the image in message image view over HTTP or from local cache
-        [self.messagaImageView setImageWithURL:[NSURL URLWithString:attachment.url]];
+        [self.messageImageView setImageURL:attachment.url];
+
+        if (self.imageTapRecognizer == nil) {
+            self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imagePressed)];
+            [self.messageImageView addGestureRecognizer:self.imageTapRecognizer];
+        }
 
         // Allow the image to have a width
         self.imageProportionalWidthConstraint.active = YES;
@@ -168,15 +185,19 @@
         if (attachment.aspectRatio > 0) {
             // Set message image's aspect ratio
             self.imageAspectRatioConstraint.active = NO;
-            self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messagaImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messagaImageView attribute:NSLayoutAttributeWidth multiplier:(1.0 / attachment.aspectRatio) constant:0];
+            self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:(1.0 / attachment.aspectRatio) constant:0];
             self.imageAspectRatioConstraint.active = YES;
         }
     } else {
         // No image; clear image constraints etc so it wont affect layout
         self.imageProportionalWidthConstraint.active = NO;
         self.imageAspectRatioConstraint.active = NO;
-        self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messagaImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messagaImageView attribute:NSLayoutAttributeWidth multiplier:0 constant:0];
+        self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:0 constant:0];
         self.imageAspectRatioConstraint.active = YES;
+        if (self.imageTapRecognizer != nil) {
+            [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
+            self.imageTapRecognizer = nil;
+        }
     }
 }
 
@@ -204,6 +225,9 @@
         // Other's message - on the left
         [self configureForOthersMessage:message];
     }
+
+    // Make Image view background match the bubble color
+    self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
 
     // Update the message image, if any
     [self updateImage];

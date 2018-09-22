@@ -9,14 +9,7 @@
 @import MobileCoreServices;
 @import AVFoundation;
 
-//#import <AVFoundation/AVFoundation.h>
-
-//#import <libjingle_peerconnection/RTCEAGLVideoView.h>
-//#import <libjingle_peerconnection/RTCVideoTrack.h>
-//#import "RTCEAGLVideoView.h"
-//#import "RTCVideoTrack.h"
 @import Libjingle;
-
 
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"
@@ -28,15 +21,18 @@
 #import "NINVideoCallConsentDialog.h"
 #import "NINRatingViewController.h"
 #import "NINCloseChatButton.h"
+#import "NINFullScreenImageViewController.h"
 
+// Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
+static NSString* const kSegueIdChatToFullScreenImage = @"ninchatsdk.segue.ChatToFullScreenImage";
 
 static const NSTimeInterval kAnimationDuration = 0.3;
 
 // UI (Localizable) strings
 static NSString* const kCloseChatText = @"Close chat";
 
-@interface NINChatViewController () <NINChatViewDataSource, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
@@ -175,7 +171,7 @@ static NSString* const kCloseChatText = @"Close chat";
             NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
 
             NSDictionary* offerPayload = note.userInfo[@"payload"];
-            NSLog(@"Offer payload: %@", offerPayload);
+//            NSLog(@"Offer payload: %@", offerPayload);
 
             // Fetch our STUN / TURN server information
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
@@ -183,7 +179,7 @@ static NSString* const kCloseChatText = @"Close chat";
                 // Create a WebRTC client for the video call
                 weakSelf.webrtcClient = [NINWebRTCClient clientWithSessionManager:weakSelf.sessionManager operatingMode:NINWebRTCClientOperatingModeCallee stunServers:stunServers turnServers:turnServers];
 
-                NSLog(@"Starting WebRTC client..");
+//                NSLog(@"Starting WebRTC client..");
                 weakSelf.webrtcClient.delegate = weakSelf;
                 [weakSelf.webrtcClient startWithSDP:offerPayload[@"sdp"]];
 
@@ -399,6 +395,11 @@ static NSString* const kCloseChatText = @"Close chat";
     if ([segue.identifier isEqualToString:kSegueIdChatToRating]) {
         NINRatingViewController* vc = segue.destinationViewController;
         vc.sessionManager = self.sessionManager;
+    } else if ([segue.identifier isEqualToString:kSegueIdChatToFullScreenImage]) {
+        NINFullScreenImageViewController* vc = segue.destinationViewController;
+        NSDictionary* dict = (NSDictionary*)sender;
+        vc.image = dict[@"image"];
+        vc.attachment = dict[@"attachment"];
     }
 }
 
@@ -418,6 +419,13 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
     return self.sessionManager.channelMessages[index];
+}
+
+#pragma mark - From NINChatViewDelegate
+
+-(void) chatView:(NINChatView *)chatView imageSelected:(UIImage*)image forAttachment:(NINFileInfo*)attachment {
+    // Open the selected image in a full-screen image view
+    [self performSegueWithIdentifier:kSegueIdChatToFullScreenImage sender:@{@"image": image, @"attachment": attachment}];
 }
 
 #pragma mark - From NINBaseViewController
@@ -530,6 +538,7 @@ static NSString* const kCloseChatText = @"Close chat";
     };
 
     self.chatView.dataSource = self;
+    self.chatView.delegate = self;
 
     self.remoteVideoView.delegate = self;
     self.localVideoView.delegate = self;

@@ -271,13 +271,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(error == nil, @"Failed to get attribute");
     NSDate* urlExpiry = [NSDate dateWithTimeIntervalSince1970:expiry];
 
-    //TODO remove
-    NSLog(@"Got urlExpiry: %@", urlExpiry);
-
     NINLowLevelClientProps* fileAttributes = [params getObject:@"file_attrs" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
     NSString* mimeType = [fileAttributes getString:@"type" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* name = [fileAttributes getString:@"name" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
     long size;
@@ -303,7 +303,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     //TODO handle other file types too?
-    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
+    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID name:name mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
@@ -359,11 +359,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     //TODO remove; this is test data
-    /*
-     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
-     msg1.attachment = [NINFileInfo imageFileInfoWithID:@"1" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
-     [_channelMessages addObject:msg1];
-     */
+
+//     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
+    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"Matti Dahlbom" displayName:@"Matti Dahlbom" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
+    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
+    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
+    [self addNewChannelMessage:msg1];
 
     /*
      [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];

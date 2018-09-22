@@ -12,6 +12,7 @@
 @interface NINFileInfo : NSObject
 
 @property (nonatomic, strong, readonly) NSString* fileID;
+@property (nonatomic, strong, readonly) NSString* name;
 @property (nonatomic, strong, readonly) NSString* mimeType;
 @property (nonatomic, assign, readonly) NSInteger size;
 @property (nonatomic, strong, readonly) NSString* url;
@@ -21,7 +22,7 @@
 @property (nonatomic, assign, readonly) CGFloat aspectRatio; // width : height
 
 /** Constructs a new file info. */
-+(instancetype) imageFileInfoWithID:(NSString*)fileID mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;
++(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;
 
 /** Whether or not this file represents an image. */
 -(BOOL) isImage;

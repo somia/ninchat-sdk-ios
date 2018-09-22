@@ -9,9 +9,14 @@
 #import <UIKit/UIKit.h>
 
 @class NINChannelMessage;
+@class NINFileInfo;
+
+typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
 
 /** Rerepsents a chat message (in a 'bubble') in the chat view. */
 @interface NINChatBubbleCell : UITableViewCell
+
+@property (nonatomic, copy) imagePressedCallback imagePressedCallback;
 
 -(void) populateWithMessage:(NINChannelMessage*)message;
 

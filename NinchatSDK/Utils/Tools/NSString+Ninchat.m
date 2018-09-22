@@ -22,7 +22,7 @@
 }
 
 -(BOOL) containsTags {
-    NSString* matchPattern = @"(<\\w+>|<\\w+\\/>|<\\/\\w+>)";
+    NSString* matchPattern = @"(<\\w+>|<\\w+/>|</\\w+>)";
     NSError* error = nil;
     NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:matchPattern options:0 error:&error];
     NSCAssert(error == nil, @"Regex creation failed");
