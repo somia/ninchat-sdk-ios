@@ -37,6 +37,9 @@ id _Nonnull fetchNotification(NSString* _Nonnull notificationName, notificationB
 /** Creates a new NSError with a message. */
 NSError* _Nonnull newError(NSString* _Nonnull msg);
 
+/** Util method for creating a constraint that matches given attribute exactly between two views. */
+NSLayoutConstraint* _Nonnull constraint(UIView* _Nonnull view1, UIView* _Nonnull view2, NSLayoutAttribute attr);
+
 /** Returns the resource bundle containing the requested resource. */
 NSBundle* _Nonnull findResourceBundle(void);
 

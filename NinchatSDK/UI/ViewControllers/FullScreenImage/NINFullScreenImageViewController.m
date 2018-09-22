@@ -73,6 +73,7 @@ static const NSTimeInterval kTopBarAnimationDuration = 0.3;
 
     NSCAssert(self.image != nil, @"Opened with nil image");
     NSCAssert(self.attachment != nil, @"Opened with nil attachment");
+    NSCAssert(UIApplication.sharedApplication.keyWindow != nil, @"No key window");
 
     self.fullScreenImageView.image = self.image;
     self.fileNameLabel.text = self.attachment.name;

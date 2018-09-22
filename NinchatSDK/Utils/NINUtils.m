@@ -53,6 +53,10 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
     return observer;
 }
 
+NSLayoutConstraint* constraint(UIView* view1, UIView* view2, NSLayoutAttribute attr) {
+    return [NSLayoutConstraint constraintWithItem:view1 attribute:attr relatedBy:NSLayoutRelationEqual toItem:view2 attribute:attr multiplier:1 constant:0];
+}
+
 NSBundle* findResourceBundle() {
     NSBundle* classBundle = [NSBundle bundleForClass:[NINInitialViewController class]];
     NSCAssert(classBundle != nil, @"Nil classBundle");

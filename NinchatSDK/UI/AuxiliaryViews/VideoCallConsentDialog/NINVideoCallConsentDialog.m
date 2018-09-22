@@ -28,11 +28,6 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 @implementation NINVideoCallConsentDialog
 
-// Util method for creating a constraint that matches given attribute exactly between two views
-NSLayoutConstraint* constraint(UIView* view1, UIView* view2, NSLayoutAttribute attr) {
-    return [NSLayoutConstraint constraintWithItem:view1 attribute:attr relatedBy:NSLayoutRelationEqual toItem:view2 attribute:attr multiplier:1 constant:0];
-}
-
 #pragma mark - Private methods
 
 // Loads the NINNavigationBar view from its xib
