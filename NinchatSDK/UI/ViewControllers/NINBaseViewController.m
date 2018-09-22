@@ -10,7 +10,7 @@
 #import "NINSessionManager.h"
 #import "NINNavigationBar.h"
 
-@interface NINBaseViewController ()
+@interface NINBaseViewController () 
 
 @end
 
@@ -37,6 +37,18 @@
     } completion:^(BOOL finished) {
         
     }];
+}
+
+#pragma mark - From UITextViewDelegate
+
+// Pre-iOS 10
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    return YES;
+}
+
+// iOS 10 and up
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction API_AVAILABLE(ios(10.0)) {
+    return YES;
 }
 
 #pragma mark - Lifecycle etc.

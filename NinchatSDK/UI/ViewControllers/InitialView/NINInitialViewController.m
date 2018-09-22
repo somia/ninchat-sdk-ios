@@ -21,9 +21,9 @@ static NSString* const kCloseWindowText = @"Close window";
 // Segue id to open queue view
 static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
-@interface NINInitialViewController () <UITextViewDelegate>
+@interface NINInitialViewController () 
 
-@property (nonatomic, strong) IBOutlet UILabel* welcomeTextLabel;
+@property (nonatomic, strong) IBOutlet UITextView* welcomeTextView;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
 
@@ -61,25 +61,16 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     }
 }
 
-#pragma mark - From UITextViewDelegate
-
-// Pre-iOS 10
--(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-    return YES;
-}
-
-// iOS 10 and up
--(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction API_AVAILABLE(ios(10.0)) {
-    return YES;
-}
-
 #pragma mark - Lifecycle etc.
 
 -(void) viewDidLoad {
     [super viewDidLoad];
 
     // Translations
-    self.welcomeTextLabel.text = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];
+    NSString* welcomeText = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];;
+    self.welcomeTextView.attributedText = [welcomeText htmlAttributedStringWithFont:self.welcomeTextView.font];
+    self.welcomeTextView.delegate = self;
+    
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
     if (self.sessionManager.queues.count > 0) {
         [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];

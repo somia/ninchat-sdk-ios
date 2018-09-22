@@ -21,4 +21,19 @@
     return attrString;
 }
 
+-(BOOL) containsTags {
+    NSString* matchPattern = @"(<\\w+>|<\\w+\\/>|<\\/\\w+>)";
+    NSError* error = nil;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:matchPattern options:0 error:&error];
+    NSCAssert(error == nil, @"Regex creation failed");
+    NSArray<NSTextCheckingResult*>* results = [regex matchesInString:self options:0 range:NSMakeRange(0, self.length)];
+//    if (results.count > 0) {
+//        NSTextCheckingResult* res = results.firstObject;
+//        NSString* match = [self substringWithRange:res.range];
+//        NSLog(@"Match: '%@'", match);
+//    }
+
+    return results.count > 0;
+}
+
 @end

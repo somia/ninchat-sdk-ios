@@ -90,6 +90,10 @@
 		49B699C4215625E200E6C83D /* NSMutableAttributedString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */; };
 		49B699CA2156312000E6C83D /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
 		49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
+		49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */; };
+		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
+		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
+		49D77F2321563FAC00900224 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
 		49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */; };
 		49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
 		49F5FA2620F4E89A00A4A526 /* NINBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */; };
@@ -199,6 +203,7 @@
 		49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+Ninchat.m"; sourceTree = "<group>"; };
 		49B699C82156312000E6C83D /* NSString+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Ninchat.h"; sourceTree = "<group>"; };
 		49B699C92156312000E6C83D /* NSString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Ninchat.m"; sourceTree = "<group>"; };
+		49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NinchatTests.m"; sourceTree = "<group>"; };
 		49F5FA2220F4E89A00A4A526 /* NINBaseViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINBaseViewController.h; sourceTree = "<group>"; };
 		49F5FA2320F4E89A00A4A526 /* NINBaseViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINBaseViewController.m; sourceTree = "<group>"; };
 		49F5FA3220F775FF00A4A526 /* NINClientPropsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINClientPropsParser.m; sourceTree = "<group>"; };
@@ -230,6 +235,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */,
+				49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */,
+				49D77F2321563FAC00900224 /* VideoToolbox.framework in Frameworks */,
 				4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */,
 				7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */,
 			);
@@ -434,8 +442,9 @@
 		49944362208DF33400101DCA /* NinchatSDKTests */ = {
 			isa = PBXGroup;
 			children = (
-				49944363208DF33400101DCA /* NinchatSDKTests.m */,
 				49944365208DF33400101DCA /* Info.plist */,
+				49944363208DF33400101DCA /* NinchatSDKTests.m */,
+				49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */,
 			);
 			path = NinchatSDKTests;
 			sourceTree = "<group>";
@@ -787,6 +796,7 @@
 				49F5FA2620F4E89A00A4A526 /* NINBaseViewController.m in Sources */,
 				49140B7220F2494800A00EA8 /* NINSessionManager.m in Sources */,
 				49F5FA3520F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
+				49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */,
 				49140B7820F2748800A00EA8 /* NINChannelMessage.m in Sources */,
 				49F5FA3B20F781D600A4A526 /* NINQueue.m in Sources */,
 				499443B6208F320700101DCA /* NINChatSession.m in Sources */,
@@ -1004,6 +1014,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
 				INFOPLIST_FILE = NinchatSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1023,6 +1037,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2RLYKMD3U8;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
 				INFOPLIST_FILE = NinchatSDKTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

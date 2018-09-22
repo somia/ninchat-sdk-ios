@@ -12,4 +12,7 @@
 
 -(NSAttributedString*) htmlAttributedStringWithFont:(UIFont*)font;
 
+/** Returns YES if the string appears to have html / xml tags, eg <br> <p> <foo/> </bar> etc */
+-(BOOL) containsTags;
+
 @end
