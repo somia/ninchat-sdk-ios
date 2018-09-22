@@ -12,6 +12,7 @@
 #import "NINSessionManager.h"
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
+#import "NSMutableAttributedString+Ninchat.h"
 
 // UI strings
 static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
@@ -25,6 +26,9 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 @property (nonatomic, strong) IBOutlet UILabel* welcomeTextLabel;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
+
+//TODO figure out which text this is and rename
+@property (nonatomic, strong) IBOutlet UILabel* bottomTextLabel;
 
 @end
 
@@ -62,12 +66,21 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 -(void) viewDidLoad {
     [super viewDidLoad];
 
-    // Internalizations
+    // Translations
     self.welcomeTextLabel.text = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
     if (self.sessionManager.queues.count > 0) {
         [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
     }
+
+    //TODO use translation
+    UIFont* font = self.bottomTextLabel.font;
+
+    NSString* text = @"<center><b>Subject line</b><br><br>Bla bla bla bla.<br><br>Contact: <a href=\"mailto:matti@qvik.fi\">matti@qvik.fi</a></center>";
+    NSData* data = [text dataUsingEncoding:NSUTF8StringEncoding];
+    NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithData:data options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:NULL error:NULL];
+    [attrString overrideFont:font];
+    self.bottomTextLabel.attributedText = attrString;
 
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;

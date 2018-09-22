@@ -14,24 +14,22 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - NinchatLowLevelClient (0.0.10)
+  - NinchatLowLevelClient (0.0.11)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
-  - NinchatLowLevelClient (from `.`)
+  - NinchatLowLevelClient (~> 0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
-
-EXTERNAL SOURCES:
-  NinchatLowLevelClient:
-    :path: "."
+  https://github.com/somia/ninchat-podspecs.git:
+    - NinchatLowLevelClient
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  NinchatLowLevelClient: 1b634b2d63b2b4472b88a5be653f7838c828089b
+  NinchatLowLevelClient: ecd9900e5795e60e3e5f5065f3bb1f61b566acb7
 
-PODFILE CHECKSUM: e2e68f34aec698fd8f9cbd810ddeba5277043b86
+PODFILE CHECKSUM: 296ce02410a26c53443136713a9e35e3cfdf66c7
 
 COCOAPODS: 1.5.3
