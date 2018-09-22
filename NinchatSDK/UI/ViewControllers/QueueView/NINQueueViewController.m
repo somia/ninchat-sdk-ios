@@ -13,6 +13,7 @@
 #import "NINChatViewController.h"
 #import "NINQueue.h"
 #import "NINCloseChatButton.h"
+#import "UITextView+Ninchat.h"
 
 // UI strings
 static NSString* const kQueuePositionN = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.";
@@ -23,9 +24,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 @interface NINQueueViewController ()
 
 @property (nonatomic, strong) IBOutlet UIImageView* spinnerImageView;
-@property (nonatomic, strong) IBOutlet UILabel* queueInfoLabel;
-@property (nonatomic, strong) IBOutlet UILabel* inQueueTextLabel;
-@property (nonatomic, strong) IBOutlet UILabel* motdLabel;
+@property (nonatomic, strong) IBOutlet UITextView* queueInfoTextView;
+@property (nonatomic, strong) IBOutlet UITextView* inQueueTextTextView;
+@property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 @property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
 @end
@@ -52,9 +53,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
-            weakSelf.queueInfoLabel.text = [weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}];
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         } else {
-            weakSelf.queueInfoLabel.text = [weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}];
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
@@ -85,13 +86,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     NSCAssert(self.sessionManager != nil, @"Must have session manager set");
 
     // Translations
-    //TODO support HTML styling
-    self.inQueueTextLabel.text = self.sessionManager.siteConfiguration[@"default"][@"inQueueText"];
-
-    //TODO support HTML styling
-    self.motdLabel.text = self.sessionManager.siteConfiguration[@"default"][@"motd"];
-
-    self.queueInfoLabel.text = nil;
+    [self.inQueueTextTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"inQueueText"]];
+    [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+    self.queueInfoTextView.text = nil;
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
