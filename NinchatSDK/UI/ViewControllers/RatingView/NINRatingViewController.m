@@ -49,7 +49,20 @@ static NSString* const kSkipText = @"Skip";
     [self.sessionManager finishChat:nil];
 }
 
+#pragma mark - From UIViewController
+
+-(UIInterfaceOrientationMask) supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
 #pragma mark - Lifecycle, etc
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // Force device orientation to portrait
+    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+}
 
 -(void) viewDidLoad {
     [super viewDidLoad];

@@ -42,7 +42,18 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     }
 }
 
+-(UIInterfaceOrientationMask) supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
 #pragma mark - Lifecycle etc.
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // Force device orientation to portrait
+    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+}
 
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];

@@ -39,6 +39,12 @@
     }];
 }
 
+#pragma mark - From UINavigationControllerDelegate
+
+-(UIInterfaceOrientationMask) navigationControllerSupportedInterfaceOrientations:(UINavigationController*)navigationController {
+    return navigationController.topViewController.supportedInterfaceOrientations;
+}
+
 #pragma mark - From UITextViewDelegate
 
 // Pre-iOS 10
@@ -58,6 +64,8 @@
 
     // Make sure we have a navigation controller
     NSCAssert(self.navigationController != nil, @"Must have a navigation controller");
+
+    self.navigationController.delegate = self;
 }
 
 -(void) viewDidLoad {

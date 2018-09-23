@@ -12,7 +12,7 @@
 @class NINNavigationBar;
 
 /** Intended base class for all Ninchat SDK view controllers. */
-@interface NINBaseViewController : UIViewController <UITextViewDelegate>
+@interface NINBaseViewController : UIViewController <UITextViewDelegate, UINavigationControllerDelegate>
 
 /** Reference to the session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;

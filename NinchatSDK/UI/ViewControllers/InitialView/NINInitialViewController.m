@@ -53,6 +53,10 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 #pragma mark - From UIViewController
 
+-(UIInterfaceOrientationMask) supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
 -(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:kSegueIdInitialToQueue]) {
         NINQueueViewController* vc = segue.destinationViewController;
@@ -62,6 +66,13 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 }
 
 #pragma mark - Lifecycle etc.
+
+-(void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // Force device orientation to portrait
+    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+}
 
 -(void) viewDidLoad {
     [super viewDidLoad];
