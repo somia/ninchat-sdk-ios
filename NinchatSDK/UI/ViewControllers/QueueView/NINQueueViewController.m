@@ -25,7 +25,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 @property (nonatomic, strong) IBOutlet UIImageView* spinnerImageView;
 @property (nonatomic, strong) IBOutlet UITextView* queueInfoTextView;
-@property (nonatomic, strong) IBOutlet UITextView* inQueueTextTextView;
 @property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 @property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
@@ -47,13 +46,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 }
 
 #pragma mark - Lifecycle etc.
-
--(void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    // Force device orientation to portrait
-    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
-}
 
 -(void) viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -97,8 +89,12 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     NSCAssert(self.sessionManager != nil, @"Must have session manager set");
 
     // Translations
-    [self.inQueueTextTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"inQueueText"]];
-    [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+    NSString* inQueueText = self.sessionManager.siteConfiguration[@"default"][@"inQueueText"];
+    if (inQueueText != nil) {
+        [self.motdTextView setFormattedText:inQueueText];
+    } else {
+        [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+    }
     self.queueInfoTextView.text = nil;
 
     __weak typeof(self) weakSelf = self;

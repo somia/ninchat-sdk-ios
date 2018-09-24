@@ -16,11 +16,8 @@
 @property (nonatomic, strong) NSString* messageID;
 @property (nonatomic, assign) BOOL mine;
 @property (nonatomic, strong) NINChannelUser* sender;
-//@property (nonatomic, strong) NSString* senderName;
 @property (nonatomic, strong) NSString* textContent;
 @property (nonatomic, strong) NSDate* timestamp;
-//@property (nonatomic, strong) NSString* avatarURL;
-//@property (nonatomic, strong) NSString* senderUserID;
 @property (nonatomic, strong) NINFileInfo* attachment;
 
 @end
@@ -28,7 +25,7 @@
 @implementation NINChannelMessage
 
 -(NSString*) description {
-    return [NSString stringWithFormat:@"textContent: %@, mine: %@, series %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.series ? @"YES" : @"NO", self.timestamp];
+    return [NSString stringWithFormat:@"NINChannelMessage textContent: %@, mine: %@, series %@, timestamp: %@", self.textContent, self.mine ? @"YES" : @"NO", self.series ? @"YES" : @"NO", self.timestamp];
 }
 
 +(NINChannelMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine attachment:(NINFileInfo*)attachment {

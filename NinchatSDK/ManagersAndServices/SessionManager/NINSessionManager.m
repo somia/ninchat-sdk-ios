@@ -10,7 +10,9 @@
 #import "NINUtils.h"
 #import "NINQueue.h"
 #import "NINChatSession.h"
+#import "NINChatMessage.h"
 #import "NINChannelMessage.h"
+#import "NINChatMetaMessage.h"
 #import "NINChannelUser.h"
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
@@ -21,6 +23,11 @@
 #import "NINToast.h"
 
 typedef void (^getFileInfoCallback)(NSError* _Nullable error, NINFileInfo* fileInfo);
+
+// UI texts
+static NSString* const kConversationStartedText = @"Audience in queue {{queue}} accepted.";
+static NSString* const kConversationEndedText = @"Conversation ended";
+static NSString* const kCloseChatButtonText = @"Close chat";
 
 /** Notification name for handling asynchronous completions for actions. */
 static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
@@ -57,10 +64,7 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
     NSMutableArray<NINQueue*>* _queues;
 
     /** Mutable channel messages list. */
-    NSMutableArray<NINChannelMessage*>* _channelMessages;
-
-    /** Channel messages by their ID for faster lookup. */
-    NSMutableDictionary<NSString*, NINChannelMessage*>* _channelMessagesById;
+    NSMutableArray<id<NINChatMessage>>* _chatMessages;
 
     /** Channel user map; ID -> NINChannelUser. */
     NSMutableDictionary<NSString*, NINChannelUser*>* _channelUsers;
@@ -330,9 +334,11 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     self.currentQueueID = nil;
 
     // Clear current list of messages and users
-    [_channelMessages removeAllObjects];
-    [_channelMessagesById removeAllObjects];
+    [_chatMessages removeAllObjects];
     [_channelUsers removeAllObjects];
+
+    // Insert a meta message about the conversation start
+    [self addNewChatMessage:[NINChatMetaMessage messageWithText:[self translation:kConversationStartedText formatParams:nil] timestamp:[NSDate date] closeChatButtonTitle:nil]];
 
     // Extract the channel members' data
     NINLowLevelClientProps* members = [params getObject:@"channel_members" error:&error];
@@ -365,7 +371,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"Matti Dahlbom" displayName:@"Matti Dahlbom" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
     NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
-    [self addNewChannelMessage:msg1];
+    [self addNewChatMessage:msg1];
 
     /*
      [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
@@ -426,6 +432,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     if (closed || suspended) {
+        NSString* text = [self translation:kConversationEndedText formatParams:nil];
+        NSString* closeButtonTitle = [self translation:kCloseChatButtonText formatParams:nil];
+        [self addNewChatMessage:[NINChatMetaMessage messageWithText:text timestamp:[NSDate date] closeChatButtonTitle:closeButtonTitle]];
+
         postNotification(kNINChannelClosedNotification, @{});
     }
 }
@@ -525,19 +535,21 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     });
 }
 
--(void) addNewChannelMessage:(NINChannelMessage*)message {
+-(void) addNewChatMessage:(id<NINChatMessage>)message {
     NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
 
-    // Check if the previous message was sent by the same user, ie. is the
-    // message part of a series
-    BOOL series = NO;
-    NINChannelMessage* prevMsg = _channelMessages.firstObject;
-    if (prevMsg != nil) {
-        series = [prevMsg.sender.userID isEqualToString:message.sender.userID];
+    if ([message isKindOfClass:NINChannelMessage.class]) {
+        // Check if the previous message was sent by the same user, ie. is the
+        // message part of a series
+        NINChannelMessage* channelMessage = (NINChannelMessage*)message;
+        channelMessage.series = NO;
+        NINChannelMessage* prevMsg = (NINChannelMessage*)_chatMessages.firstObject;
+        if ((prevMsg != nil) && [prevMsg isKindOfClass:NINChannelMessage.class]) {
+            channelMessage.series = [prevMsg.sender.userID isEqualToString:channelMessage.sender.userID];
+        }
     }
 
-    [_channelMessages insertObject:message atIndex:0];
-    _channelMessagesById[message.messageID] = message;
+    [_chatMessages insertObject:message atIndex:0];
 
     postNotification(kNewChannelMessageNotification, @{@"message": message});
     NSLog(@"Added new channel message: %@", message);
@@ -570,7 +582,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                     NSLog(@"Found file info: %@", fileInfo);
 
                     NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
-                    [weakSelf addNewChannelMessage:msg];
+                    [weakSelf addNewChatMessage:msg];
                 }];
             }
         }
@@ -580,7 +592,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         // Only allocate a new message now if there is text and no attachment
         if (!hasAttachment && (text.length > 0)) {
             NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
-            [self addNewChannelMessage:msg];
+            [self addNewChatMessage:msg];
         }
     }
 
@@ -1136,8 +1148,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     if (self != nil) {
         _queues = [NSMutableArray array];
-        _channelMessages = [NSMutableArray array];
-        _channelMessagesById = [NSMutableDictionary dictionary];
+        _chatMessages = [NSMutableArray array];
         _channelUsers = [NSMutableDictionary dictionary];
     }
 

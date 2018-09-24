@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NINChatMessage.h"
+
 @class NINFileInfo;
 @class NINChannelUser;
 
 /** Represents a chat message on a channel. */
-@interface NINChannelMessage : NSObject
+@interface NINChannelMessage : NSObject <NINChatMessage>
 
 /** Message ID. */
 @property (nonatomic, strong, readonly) NSString* messageID;
@@ -25,15 +27,6 @@
  * also sent this message.
  */
 @property (nonatomic, assign) BOOL series;
-
-/** Name of the user who sent the message. */
-//@property (nonatomic, strong, readonly) NSString* senderName;
-
-/** The sender's user ID. */
-//@property (nonatomic, strong, readonly) NSString* senderUserID;
-
-/** User's avatar URL. */
-//@property (nonatomic, strong, readonly) NSString* avatarURL;
 
 /** The message sender. */
 @property (nonatomic, strong, readonly) NINChannelUser* sender;

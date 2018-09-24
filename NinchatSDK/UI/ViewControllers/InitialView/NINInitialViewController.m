@@ -13,6 +13,7 @@
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
 #import "UITextView+Ninchat.h"
+#import "NINUtils.h"
 
 // UI strings
 static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
@@ -26,9 +27,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 @property (nonatomic, strong) IBOutlet UITextView* welcomeTextView;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
-
-//TODO figure out which text this is and rename
-@property (nonatomic, strong) IBOutlet UITextView* bottomTextView;
+@property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 
 @end
 
@@ -67,11 +66,21 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 #pragma mark - Lifecycle etc.
 
--(void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 
-    // Force device orientation to portrait
-    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+    if (!UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        // Presenting a view controller will trigger a re-evaluation of
+        // supportedInterfaceOrientations: and thus will force this view controller into portrait
+        static dispatch_once_t presentVcOnceToken;
+        dispatch_once(&presentVcOnceToken, ^{
+            runOnMainThreadWithDelay(^{
+                UIViewController* vc = [UIViewController new];
+                [self presentViewController:vc animated:NO completion:nil];
+                [self dismissViewControllerAnimated:NO completion:nil];
+            }, 0.1);
+        });
+    }
 }
 
 -(void) viewDidLoad {
@@ -81,17 +90,14 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     NSString* welcomeText = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];;
     [self.welcomeTextView setFormattedText:welcomeText];
     self.welcomeTextView.delegate = self;
-    
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
     if (self.sessionManager.queues.count > 0) {
         [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
     }
+    [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+    self.motdTextView.delegate = self;
 
-    //TODO use translation
-    NSString* text = @"<center><b>Well hello there!</b><br><br>This is example of HTML formatted text with link support.<br><br>Contact email: <a href=\"mailto:matti@qvik.fi\">matti@qvik.fi</a><br><br>Or call me: <a href=\"tel:+358405216859\">+358405216859</a> </center>";
-    [self.bottomTextView setFormattedText:text];
-    self.bottomTextView.delegate = self;
-
+    // Rounded button corners
     self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
     self.closeWindowButton.layer.borderColor = [UIColor colorWithRed:73/255.0 green:172/255.0 blue:253/255.0 alpha:1].CGColor;

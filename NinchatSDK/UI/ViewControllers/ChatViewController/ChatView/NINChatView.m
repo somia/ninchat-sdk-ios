@@ -7,8 +7,11 @@
 //
 
 #import "NINChatView.h"
-#import "NINChatBubbleCell.h"
 #import "NINUtils.h"
+#import "NINChannelMessage.h"
+#import "NINChatMetaMessage.h"
+#import "NINChatBubbleCell.h"
+#import "NINChatMetaCell.h"
 
 @interface NINChatView () <UITableViewDelegate, UITableViewDataSource> {
     NSArray<NSIndexPath*>* _zeroIndexPathArray;
@@ -29,16 +32,30 @@
 #pragma mark - From UITableViewDelegate
 
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
 
     __weak typeof(self) weakSelf = self;
+    id<NINChatMessage> message = [self.dataSource chatView:self messageAtIndex:indexPath.row];
 
-    [cell populateWithMessage:[self.dataSource chatView:self messageAtIndex:indexPath.row]];
-    cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
-        [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
-    };
+    if ([message isKindOfClass:NINChannelMessage.class]) {
+        NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
+        [cell populateWithMessage:message];
+        cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
+            [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
+        };
+        return cell;
+    } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
+        NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];
 
-    return cell;
+        [cell populateWithMessage:message];
+        cell.closeChatCallback = ^{
+            [weakSelf.delegate closeChatRequestedByChatView:weakSelf];
+        };
+
+        return cell;
+    } else {
+        NSCAssert(NO, @"Invalid message type");
+        return nil;
+    }
 }
 
 #pragma mark - From UITableViewDataSource
@@ -56,9 +73,14 @@
 
     NSBundle* bundle = findResourceBundle();
     NSCAssert(bundle != nil, @"Bundle not found");
-    UINib* nib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
-    NSCAssert(nib != nil, @"NIB not found");
-    [self.tableView registerNib:nib forCellReuseIdentifier:@"NINChatBubbleCell"];
+
+    UINib* bubbleNib = [UINib nibWithNibName:@"NINChatBubbleCell" bundle:bundle];
+    NSCAssert(bubbleNib != nil, @"NIB not found");
+    [self.tableView registerNib:bubbleNib forCellReuseIdentifier:@"NINChatBubbleCell"];
+
+    UINib* metaNib = [UINib nibWithNibName:@"NINChatMetaCell" bundle:bundle];
+    NSCAssert(metaNib != nil, @"NIB not found");
+    [self.tableView registerNib:metaNib forCellReuseIdentifier:@"NINChatMetaCell"];
 
     // Rotate the table view 180 degrees; we will use it upside down
     self.tableView.transform = CGAffineTransformMakeRotation(M_PI);

@@ -9,6 +9,8 @@
 #import "NINRatingViewController.h"
 #import "NINSessionManager.h"
 #import "UITextView+Ninchat.h"
+#import "NINUtils.h"
+
 
 // UI strings
 static NSString* const kTitleText = @"How was our customer service?";
@@ -57,11 +59,21 @@ static NSString* const kSkipText = @"Skip";
 
 #pragma mark - Lifecycle, etc
 
--(void) viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 
-    // Force device orientation to portrait
-    [[UIDevice currentDevice] setValue:@(UIInterfaceOrientationPortrait) forKey:@"orientation"];
+    if (!UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        // Presenting a view controller will trigger a re-evaluation of
+        // supportedInterfaceOrientations: and thus will force this view controller into portrait
+        static dispatch_once_t presentVcOnceToken;
+        dispatch_once(&presentVcOnceToken, ^{
+            runOnMainThreadWithDelay(^{
+                UIViewController* vc = [UIViewController new];
+                [self presentViewController:vc animated:NO completion:nil];
+                [self dismissViewControllerAnimated:NO completion:nil];
+            }, 0.1);
+        });
+    }
 }
 
 -(void) viewDidLoad {

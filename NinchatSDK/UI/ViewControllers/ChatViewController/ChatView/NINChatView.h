@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINChatMessage.h"
+
 @class NINChatView;
-@class NINChannelMessage;
+//@class NINChannelMessage;
 @class NINFileInfo;
 
 /** Data source for the chat view. */
@@ -19,7 +21,7 @@
 -(NSInteger) numberOfMessagesForChatView:(NINChatView*)chatView;
 
 /** Returns the chat message at given index. */
--(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index;
+-(id<NINChatMessage>) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index;
 
 @end
 
@@ -28,6 +30,9 @@
 
 /** An image in a cell was selected (tapped). */
 -(void) chatView:(NINChatView*)chatView imageSelected:(UIImage*)image forAttachment:(NINFileInfo*)attachment;
+
+/** "Close Chat" button was pressed inside the chat view; the used requests closing the chat SDK. */
+-(void) closeChatRequestedByChatView:(NINChatView*)chatView;
 
 @end
 

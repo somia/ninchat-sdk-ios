@@ -37,6 +37,12 @@ void runOnMainThread(emptyBlock block) {
     }
 }
 
+void runOnMainThreadWithDelay(emptyBlock _Nonnull block, NSTimeInterval delay) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        block();
+    });
+}
+
 void postNotification(NSString* notificationName, NSDictionary* userInfo) {
     runOnMainThread(^{
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:nil userInfo:userInfo];

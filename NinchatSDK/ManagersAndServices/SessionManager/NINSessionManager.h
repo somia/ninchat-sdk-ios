@@ -13,6 +13,7 @@
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
 #import "NINChatSession+Internal.h" // To provide log: method
+#import "NINChatMessage.h"
 
 @class NINQueue;
 @class NINChannelMessage;
@@ -73,7 +74,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
  * Chronological list of messages on the current channel. The list is ordered by the message
  * timestamp in decending order (most recent first).
  */
-@property (nonatomic, strong, readonly) NSArray<NINChannelMessage*>* _Nonnull channelMessages;
+@property (nonatomic, strong, readonly) NSArray<id<NINChatMessage>>* _Nonnull chatMessages;
 
 /** Opens the session with an asynchronous completion callback. */
 -(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;

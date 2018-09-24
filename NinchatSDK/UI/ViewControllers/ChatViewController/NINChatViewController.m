@@ -90,9 +90,6 @@ static NSString* const kCloseChatText = @"Close chat";
 // NSNotificationCenter observer for WebRTC signaling events from session manager
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
-// NSNotificationCenter observer for channel closed -events
-@property (nonatomic, strong) id<NSObject> channelClosedObserver;
-
 @end
 
 @implementation NINChatViewController
@@ -415,11 +412,11 @@ static NSString* const kCloseChatText = @"Close chat";
 #pragma mark - From NINChatViewDataSource
 
 - (NSInteger)numberOfMessagesForChatView:(NINChatView *)chatView {
-    return self.sessionManager.channelMessages.count;
+    return self.sessionManager.chatMessages.count;
 }
 
 -(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
-    return self.sessionManager.channelMessages[index];
+    return self.sessionManager.chatMessages[index];
 }
 
 #pragma mark - From NINChatViewDelegate
@@ -427,6 +424,10 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) chatView:(NINChatView *)chatView imageSelected:(UIImage*)image forAttachment:(NINFileInfo*)attachment {
     // Open the selected image in a full-screen image view
     [self performSegueWithIdentifier:kSegueIdChatToFullScreenImage sender:@{@"image": image, @"attachment": attachment}];
+}
+
+-(void) closeChatRequestedByChatView:(NINChatView*)chatView {
+    [self.sessionManager closeChat];
 }
 
 #pragma mark - From NINBaseViewController
@@ -464,7 +465,6 @@ static NSString* const kCloseChatText = @"Close chat";
     [super viewWillAppear:animated];
 
     NSCAssert(self.sessionManager != nil, @"Must have session manager");
-    NSCAssert(self.channelClosedObserver == nil, @"Must not have this observer already");
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationChanged:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 
@@ -484,16 +484,6 @@ static NSString* const kCloseChatText = @"Close chat";
 
     // Start listening to WebRTC signaling messages from the chat session manager
     [self listenToWebRTCSignaling];
-    
-    // Listen to channel closed -events
-    self.channelClosedObserver = fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* note) {
-        NSLog(@"Channel closed - showing rating view.");
-
-        // Show the rating view
-        [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
-
-        return YES;
-    });
 
     // Set the constraints so that video is initially hidden
     [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
@@ -507,9 +497,6 @@ static NSString* const kCloseChatText = @"Close chat";
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
     self.signalingObserver = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self.channelClosedObserver];
-    self.channelClosedObserver = nil;
 }
 
 -(void) viewDidDisappear:(BOOL)animated {

@@ -20,6 +20,11 @@ extern NSString* _Nonnull const kNinchatServerHostName;
 void runOnMainThread(emptyBlock _Nonnull block);
 
 /**
+ * Runs the given block on the main thread (queue) after 'delay' seconds.
+ */
+void runOnMainThreadWithDelay(emptyBlock _Nonnull block, NSTimeInterval delay);
+
+/**
  * Posts a named notification, using the default notification center instance,
  * with given user info data on the main thread.
  */
