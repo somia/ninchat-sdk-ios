@@ -11,9 +11,6 @@
 
 #import "NINPrivateTypes.h"
 
-// Server host name.
-extern NSString* _Nonnull const kNinchatServerHostName;
-
 /**
  * Runs the given block on the main thread (queue).
  */
@@ -49,6 +46,6 @@ NSLayoutConstraint* _Nonnull constraint(UIView* _Nonnull view1, UIView* _Nonnull
 NSBundle* _Nonnull findResourceBundle(void);
 
 /** Asynchronously retrieves the site configuration from the server over HTTPS. */
-void fetchSiteConfig(NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);
+void fetchSiteConfig(NSString* _Nonnull serverAddress, NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);
 
 #endif /* NINUtils_h */

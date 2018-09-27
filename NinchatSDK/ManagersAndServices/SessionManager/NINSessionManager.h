@@ -52,14 +52,14 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
  */
 @interface NINSessionManager : NSObject
 
-/** (Circular) Reference to the session object that created this session manager. */
+/** Weak reference to the session object that created this session manager. */
 @property (nonatomic, weak) NINChatSession* _Nullable ninchatSession;
+
+/** The server address as host[:port]. */
+@property (nonatomic, strong) NSString* _Nonnull serverAddress;
 
 /** Low-level chat session reference. */
 @property (nonatomic, strong, readonly) NINLowLevelClientSession* _Nonnull session;
-
-/** Configuration key; used to retrieve service configuration (site config) */
-@property (nonatomic, strong) NSString* _Nonnull configurationKey;
 
 /** Site secret; used to authenticate to eg. test servers. */
 @property (nonatomic, strong) NSString* _Nullable siteSecret; 

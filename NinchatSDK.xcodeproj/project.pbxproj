@@ -96,8 +96,9 @@
 		49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 49B699BF2155550100E6C83D /* NinchatLowLevelClient.podspec */; };
 		49B699C3215625E200E6C83D /* NSMutableAttributedString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C1215625E200E6C83D /* NSMutableAttributedString+Ninchat.h */; };
 		49B699C4215625E200E6C83D /* NSMutableAttributedString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */; };
-		49B699CA2156312000E6C83D /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
 		49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
+		49CD0777215CB18D00046AB9 /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
+		49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
 		49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */; };
 		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
@@ -661,11 +662,11 @@
 				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				49D77F2F21566E5700900224 /* UIImageView+Ninchat.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
+				49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */,
 				49721CDE212AF84200695F33 /* RTCSessionDescription+Dictionary.h in Headers */,
 				499443C2208F47EA00101DCA /* NINInitialViewController.h in Headers */,
 				49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */,
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
-				49B699CA2156312000E6C83D /* NSString+Ninchat.h in Headers */,
 				49D77F2B215651DE00900224 /* NINFullScreenImageViewController.h in Headers */,
 				49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */,
 			);
@@ -902,6 +903,7 @@
 				499443B6208F320700101DCA /* NINChatSession.m in Sources */,
 				495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */,
 				49140B8920F395A700A00EA8 /* NINQueueViewController.m in Sources */,
+				49CD0777215CB18D00046AB9 /* NSString+Ninchat.m in Sources */,
 				49140B9020F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49140B8320F28BE000A00EA8 /* NINChatViewController.m in Sources */,
 				49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */,

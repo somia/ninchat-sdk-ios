@@ -22,6 +22,9 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
 /** Session manager instance. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;
 
+/** Configuration key; used to retrieve service configuration (site config) */
+@property (nonatomic, strong) NSString* configurationKey;
+
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
 
@@ -101,7 +104,7 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
     [self sdklog:@"Starting a chat session"];
 
     // Fetch the site configuration
-    fetchSiteConfig(weakSelf.sessionManager.configurationKey, ^(NSDictionary* config, NSError* error) {
+    fetchSiteConfig(weakSelf.sessionManager.serverAddress, weakSelf.configurationKey, ^(NSDictionary* config, NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
@@ -139,13 +142,14 @@ NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKey
     });
 }
 
--(id) initWithConfigurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString*)queueID {
+-(id) initWithServerAddress:(NSString*)serverAddress configurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString*)queueID {
     self = [super init];
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
         self.sessionManager.ninchatSession = self;
-        self.sessionManager.configurationKey = configKey;
+        self.sessionManager.serverAddress = serverAddress;
+        self.configurationKey = configKey;
         self.sessionManager.siteSecret = siteSecret;
         self.queueID = queueID;
         self.started = NO;

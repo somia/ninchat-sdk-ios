@@ -979,6 +979,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
     NSCAssert(self.session == nil, @"Existing chat session found");
+    NSCAssert(self.serverAddress != nil, @"Must have server address");
 
     [self.ninchatSession sdklog:@"Opening new chat session."];
 
@@ -1024,7 +1025,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     callbackHandler.sessionManager = self;
 
     self.session = [NINLowLevelClientSession new];
-    [self.session setAddress:kNinchatServerHostName];
+    [self.session setAddress:self.serverAddress];
     [self.session setOnClose:callbackHandler];
     [self.session setOnConnState:callbackHandler];
     [self.session setOnLog:callbackHandler];
