@@ -23,6 +23,13 @@
 extern NSString* _Nonnull const kNINChannelClosedNotification;
 
 /**
+ * Notification that indicates a user is currently typing into the chat.
+ * Userinfo contains user_id to indicate which user. These are not sent
+ * for the SDK user's own user id.
+ */
+extern NSString* _Nonnull const kNINUserIsTypingNotification;
+
+/**
  * Notification that indicates a WebRTC signaling message was received.
  * Userinfo 'messageType' contains a kNINMessageTypeWebRTC* value, 'payload'
  * contains the message payload.
@@ -99,6 +106,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 
 /** Sends a file to the chat. */
 -(void) sendFile:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
+
+/** Indicate whether or not the user is currently typing into the chat. */
+-(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;

@@ -37,6 +37,7 @@ static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNo
 
 NSString* _Nonnull const kNINWebRTCSignalNotification = @"ninchatsdk.NWebRTCSignalNotification";
 NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
+NSString* const kNINUserIsTypingNotification = @"ninchatsdk.UserIsTypingNotification";
 
 // WebRTC related message types
 NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
@@ -75,6 +76,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
 /** Low-level chat session reference. */
 @property (nonatomic, strong) NINLowLevelClientSession* session;
+
+/** My user's user ID. */
+@property (nonatomic, strong) NSString* myUserID;
 
 /** Current queue id. Nil if not currently in queue. */
 @property (nonatomic, strong) NSString* currentQueueID;
@@ -661,18 +665,48 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(self.currentChannelID != nil, @"No active channel");
 
     NSError* error = nil;
+
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
-    if (error != nil) {
-        NSLog(@"Failed to get action_id: %@", error);
-        return;
-    }
+    NSCAssert(error == nil, @"Failed to get attribute");
 
     [self handleInboundMessage:params payload:payload actionId:actionId];
 
     if (actionId != 0) {
         postNotification(kActionNotification, @{@"action_id": @(actionId)});
     }
+}
+
+-(void) channelMemberUpdated:(NINLowLevelClientProps*)params {
+    NSError* error = nil;
+
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* channelID = [params getString:@"channel_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    if (![channelID isEqualToString:self.currentChannelID]) {
+        [self.ninchatSession sdklog:@"Error: Got event for wrong channel: %@", channelID];
+        return;
+    }
+
+    NSString* userID = [params getString:@"user_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    if (![userID isEqualToString:self.myUserID]) {
+        NINLowLevelClientProps* memberAttrs = [params getObject:@"member_attrs" error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        BOOL writing = NO;
+        [memberAttrs getBool:@"writing" val:&writing error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        postNotification(kNINUserIsTypingNotification, @{@"user_id": userID});
+    }
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
 /*
@@ -939,6 +973,29 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     connectCallbackToActionCompletion(actionId, completion);
 }
 
+-(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion {
+    NSCAssert(self.currentChannelID != nil, @"Must have current channel");
+
+    NINLowLevelClientProps* memberAttrs = [NINLowLevelClientProps new];
+    [memberAttrs setBool:@"writing" val:isWriting];
+
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+    [params setString:@"action" val:@"update_member"];
+    [params setString:@"channel_id" val:self.currentChannelID];
+    [params setObject:@"member_attrs" ref:memberAttrs];
+
+    NSError* error = nil;
+    int64_t actionId = -1;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error parting channel: %@", error);
+        completion(error);
+    }
+
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
 -(void) disconnect {
     [self.ninchatSession sdklog:@"disconnect: Closing Ninchat session."];
 
@@ -1009,7 +1066,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     [sessionParams setStringArray:@"message_types" ref:messageTypes];
 
-    //TODO implement a give up -timer?
     // Wait for the session creation event
     fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSString* eventType = note.userInfo[@"event_type"];
@@ -1096,6 +1152,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [self fileFound:params];
     } else if ([event isEqualToString:@"channel_parted"]) {
         [self channelParted:params];
+    } else if ([event isEqualToString:@"channel_member_updated"]) {
+        [self channelMemberUpdated:params];
     }
 
     // Forward the event to the SDK delegate
@@ -1132,6 +1190,11 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(error == nil, @"Failed to get attribute");
 
     if ([event isEqualToString:@"session_created"]) {
+        self.myUserID = [params getString:@"user_id" error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        [self.ninchatSession sdklog:@"Session created - my user ID is: %@", self.myUserID];
+        
         postNotification(kActionNotification, @{@"event_type": event});
     }
 }
