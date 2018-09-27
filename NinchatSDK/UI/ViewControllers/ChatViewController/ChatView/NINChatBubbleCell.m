@@ -12,6 +12,7 @@
 #import "NINUtils.h"
 #import "NINChatView.h"
 #import "NINChannelMessage.h"
+#import "NINUserTypingMessage.h"
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
@@ -72,6 +73,9 @@
 // Message's image (proportional) width constraint
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageProportionalWidthConstraint;
 
+// Message's image (absolute) width constraint. Used for user typing.. mode.
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageWidthConstraint;
+
 // Message image's aspect ratio constraint
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageAspectRatioConstraint;
 
@@ -96,13 +100,13 @@
 
 #pragma mark - Private methods
 
--(void) configureForMyMessage:(NINChannelMessage*)message {
-    NSString* imageName = message.series ? @"chat_bubble_right_series" : @"chat_bubble_right";
+-(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL {
+    NSString* imageName = series ? @"chat_bubble_right_series" : @"chat_bubble_right";
     self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
 
     // White text on black bubble
-    self.bubbleImageView.tintColor = [UIColor colorWithWhite:0 alpha:1];
-    self.textContentLabel.textColor = [UIColor colorWithWhite:1 alpha:1];
+    self.bubbleImageView.tintColor = [UIColor blackColor];
+    self.textContentLabel.textColor = [UIColor whiteColor];
 
     // Push the top label container to the left edge by toggling the constraints
     self.topLabelsLeftConstraint.active = NO;
@@ -120,20 +124,20 @@
     self.bubbleContentsContainerRightConstraint.active = YES;
 
     self.leftAvatarContainerView.hidden = YES;
-    self.rightAvatarContainerView.hidden = message.series;
+    self.rightAvatarContainerView.hidden = series;
 
     self.leftAvatarImageView.image = nil;
-    [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:message.sender.iconURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
+    [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
 }
 
--(void) configureForOthersMessage:(NINChannelMessage*)message {
-    NSString* imageName = message.series ? @"chat_bubble_left_series" : @"chat_bubble_left";
+-(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL {
+    NSString* imageName = series ? @"chat_bubble_left_series" : @"chat_bubble_left";
     self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
     // Black text on white bubble
-    self.bubbleImageView.tintColor = [UIColor colorWithWhite:1 alpha:1];
-    self.textContentLabel.textColor = [UIColor colorWithWhite:0 alpha:1];
+    self.bubbleImageView.tintColor = [UIColor whiteColor];
+    self.textContentLabel.textColor = [UIColor blackColor];
 
     // Push the top label container to the left edge by toggling the constraints
     self.topLabelsRightConstraint.active = NO;
@@ -150,10 +154,10 @@
     self.bubbleContentsContainerRightConstraint.active = YES;
     self.bubbleContentsContainerLeftConstraint.active = YES;
 
-    self.leftAvatarContainerView.hidden = message.series;
+    self.leftAvatarContainerView.hidden = series;
     self.rightAvatarContainerView.hidden = YES;
 
-    [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:message.sender.iconURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
+    [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
     self.rightAvatarImageView.image = nil;
 }
 
@@ -165,6 +169,12 @@
     }
 }
 
+-(void) setImageAspectRatio:(CGFloat)aspectRatio {
+    self.imageAspectRatioConstraint.active = NO;
+    self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:aspectRatio constant:0];
+    self.imageAspectRatioConstraint.active = YES;
+}
+
 -(void) updateImage {
     NINFileInfo* attachment = self.message.attachment;
 
@@ -172,6 +182,8 @@
 
     if ((attachment != nil) && attachment.isImage) {
         // Load the image in message image view over HTTP or from local cache
+        NSLog(@"Message has an image with URL: %@", attachment.url);
+        
         [self.messageImageView setImageURL:attachment.url];
 
         if (self.imageTapRecognizer == nil) {
@@ -179,21 +191,18 @@
             [self.messageImageView addGestureRecognizer:self.imageTapRecognizer];
         }
 
-        // Allow the image to have a width
+        // Allow the image to have a width propertional to the cell content view
         self.imageProportionalWidthConstraint.active = YES;
+        self.imageWidthConstraint.active = NO;
 
         if (attachment.aspectRatio > 0) {
             // Set message image's aspect ratio
-            self.imageAspectRatioConstraint.active = NO;
-            self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:(1.0 / attachment.aspectRatio) constant:0];
-            self.imageAspectRatioConstraint.active = YES;
+            [self setImageAspectRatio:(1.0 / attachment.aspectRatio)];
         }
     } else {
         // No image; clear image constraints etc so it wont affect layout
         self.imageProportionalWidthConstraint.active = NO;
-        self.imageAspectRatioConstraint.active = NO;
-        self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:0 constant:0];
-        self.imageAspectRatioConstraint.active = YES;
+        [self setImageAspectRatio:0];
         if (self.imageTapRecognizer != nil) {
             [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
             self.imageTapRecognizer = nil;
@@ -203,7 +212,7 @@
 
 #pragma mark - Public methods
 
--(void) populateWithMessage:(NINChannelMessage*)message {
+-(void) populateWithChannelMessage:(NINChannelMessage*)message {
     self.message = message;
 
     self.textContentLabel.text = message.textContent;
@@ -220,10 +229,10 @@
 
     if (message.mine) {
         // Visitor's (= phone user) message - on the right
-        [self configureForMyMessage:message];
+        [self configureForMyMessageWithSeries:message.series avatarURL:message.sender.iconURL];
     } else {
         // Other's message - on the left
-        [self configureForOthersMessage:message];
+        [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL];
     }
 
     // Make Image view background match the bubble color
@@ -231,6 +240,28 @@
 
     // Update the message image, if any
     [self updateImage];
+}
+
+-(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message typingIcon:(UIImage*)typingIcon {
+    NSCAssert(typingIcon != nil, @"Typing icon cannot be nil!");
+
+    self.senderNameLabel.text = message.user.displayName;
+    self.textContentLabel.text = nil;
+    self.messageImageView.image = typingIcon;
+
+    self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;
+
+    [self configureForOthersMessageWithSeries:NO avatarURL:message.user.iconURL];
+
+    // Make Image view background match the bubble color
+    self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
+
+    // Allow the image to have absolute width
+    self.imageProportionalWidthConstraint.active = NO;
+    self.imageWidthConstraint.active = YES;
+
+    // Set the image aspect ratio to match the animation frames' size 40x20
+    [self setImageAspectRatio:0.5];
 }
 
 #pragma mark - Lifecycle etc.
@@ -241,15 +272,6 @@
 
 -(void) awakeFromNib {
     [super awakeFromNib];
-
-//    __weak typeof(self) weakSelf = self;
-//    self.messageUpdatedListener = fetchNotification(kChannelMessageUpdatedNotification, ^BOOL(NSNotification* note) {
-//        NSString* messageID = note.userInfo[@"messageID"];
-//        if ([messageID isEqualToString:weakSelf.message.messageID]) {
-//            [weakSelf updateImage];
-//        }
-//        return NO;
-//    });
 
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
     self.topLabelsContainerHeight = self.topLabelsContainerHeightConstraint.constant;

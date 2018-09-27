@@ -13,6 +13,7 @@
 #import "NINChatMessage.h"
 #import "NINChannelMessage.h"
 #import "NINChatMetaMessage.h"
+#import "NINUserTypingMessage.h"
 #import "NINChannelUser.h"
 #import "NINPrivateTypes.h"
 #import "NINClientPropsParser.h"
@@ -35,9 +36,11 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
 
-NSString* _Nonnull const kNINWebRTCSignalNotification = @"ninchatsdk.NWebRTCSignalNotification";
+// Notification strings
+NSString* const kChannelMessageNotification = @"ninchatsdk.ChannelMessageNotification";
+NSString* const kNINWebRTCSignalNotification = @"ninchatsdk.NWebRTCSignalNotification";
 NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
-NSString* const kNINUserIsTypingNotification = @"ninchatsdk.UserIsTypingNotification";
+//NSString* const kNINUserIsTypingNotification = @"ninchatsdk.UserIsTypingNotification";
 
 // WebRTC related message types
 NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
@@ -145,8 +148,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    NSLog(@"Parsed queue map: %@", queuesParser.properties);
-
     for (NSString* queueId in queuesParser.properties.allKeys) {
         NINLowLevelClientProps* queueProps = [queues getObject:queueId error:&error];
         if (error != nil) {
@@ -169,8 +170,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [_queues addObject:[NINQueue queueWithId:queueId andName:queueName]];
     }
 
-    NSLog(@"Got queues: %@", _queues);
-    
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
@@ -370,12 +369,21 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     //TODO remove; this is test data
+//    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"The other guy" displayName:@"The other guy" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
+//    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
+//    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
+//    [self addNewChatMessage:msg1];
+//    [self addNewChatMessage:[NINUserTypingMessage messageWithUser:user1 timestamp:NSDate.date]];
+//
+//    runOnMainThreadWithDelay(^{
+//        [self removeChatMessageAtIndex:0];
+//    }, 5.0);
 
 //     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
-    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"Matti Dahlbom" displayName:@"Matti Dahlbom" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
-    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
-    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
-    [self addNewChatMessage:msg1];
+//    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"Matti Dahlbom" displayName:@"Matti Dahlbom" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
+//    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
+//    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
+//    [self addNewChatMessage:msg1];
 
     /*
      [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
@@ -555,8 +563,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     [_chatMessages insertObject:message atIndex:0];
 
-    postNotification(kNewChannelMessageNotification, @{@"message": message});
-    NSLog(@"Added new channel message: %@", message);
+    postNotification(kChannelMessageNotification, @{@"newMessage": message});
+}
+
+-(void) removeChatMessageAtIndex:(NSInteger)index {
+    [_chatMessages removeObjectAtIndex:index];
+    postNotification(kChannelMessageNotification, @{@"removedMessageAtIndex": @(index)});
 }
 
 -(void) handleInboundChatMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
@@ -579,6 +591,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             // Only process images at this point
             if ([fileObject[@"file_attrs"][@"type"] hasPrefix:@"image/"]) {
                 hasAttachment = YES;
+
+                NSLog(@"messages has a file of type: %@", fileObject[@"file_attrs"][@"type"]);
 
                 __weak typeof(self) weakSelf = self;
 
@@ -695,6 +709,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSString* userID = [params getString:@"user_id" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
+    NINChannelUser* messageUser = _channelUsers[userID];
+    if (messageUser == nil) {
+        [self.ninchatSession sdklog:@"Update from unknown user: %@", userID];
+        return;
+    }
+
     if (![userID isEqualToString:self.myUserID]) {
         NINLowLevelClientProps* memberAttrs = [params getObject:@"member_attrs" error:&error];
         NSCAssert(error == nil, @"Failed to get attribute");
@@ -703,7 +723,28 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [memberAttrs getBool:@"writing" val:&writing error:&error];
         NSCAssert(error == nil, @"Failed to get attribute");
 
-        postNotification(kNINUserIsTypingNotification, @{@"user_id": userID});
+        // Check if that user already has a 'writing' message
+        NSInteger messageIndex = -1;
+
+        for (NSInteger i = 0; i < _chatMessages.count; i++) {
+            NINUserTypingMessage* msg = (NINUserTypingMessage*)_chatMessages[i];
+            if ([msg isKindOfClass:NINUserTypingMessage.class] && [msg.user.userID isEqualToString:userID]) {
+                messageIndex = i;
+                break;
+            }
+        }
+
+        if (writing) {
+            if (messageIndex > 0) {
+                // There's no 'typing' message for this user yet, lets create one
+                [self addNewChatMessage:[NINUserTypingMessage messageWithUser:messageUser timestamp:NSDate.date]];
+            }
+        } else {
+            if (messageIndex > 0) {
+                // There's a 'typing' message for this user - lets remove that.
+                [self removeChatMessageAtIndex:messageIndex];
+            }
+        }
     }
 
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
@@ -982,6 +1023,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"update_member"];
     [params setString:@"channel_id" val:self.currentChannelID];
+    [params setString:@"user_id" val:self.myUserID];
     [params setObject:@"member_attrs" ref:memberAttrs];
 
     NSError* error = nil;
@@ -1194,7 +1236,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         NSCAssert(error == nil, @"Failed to get attribute");
 
         [self.ninchatSession sdklog:@"Session created - my user ID is: %@", self.myUserID];
-        
+
         postNotification(kActionNotification, @{@"event_type": event});
     }
 }

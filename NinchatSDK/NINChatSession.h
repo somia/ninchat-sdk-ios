@@ -15,10 +15,6 @@
 // Forward declarations
 @class NINChatSession;
 
-// Image asset keys
-typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
-FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
-
 /**
  * Delegate protocol for NINChatSession class. All the methods are called on
  * the main thread.

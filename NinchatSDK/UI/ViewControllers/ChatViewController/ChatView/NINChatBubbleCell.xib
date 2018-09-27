@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -70,13 +68,13 @@
                                 <rect key="frame" x="50" y="0.0" width="412" height="22"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
-                                        <rect key="frame" x="5" y="4" width="357.5" height="18"/>
+                                        <rect key="frame" x="5" y="5.5" width="353.5" height="16.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRX-UO-W1X">
-                                        <rect key="frame" x="370.5" y="4" width="31.5" height="18"/>
+                                        <rect key="frame" x="366.5" y="5.5" width="35.5" height="16.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
@@ -93,17 +91,17 @@
                                 </constraints>
                             </view>
                             <view tag="123" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uZw-OC-QWw" userLabel="Message body container view">
-                                <rect key="frame" x="50" y="22" width="412" height="119"/>
+                                <rect key="frame" x="50" y="22" width="412" height="118.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chat_bubble_left" translatesAutoresizingMaskIntoConstraints="NO" id="f9O-t5-M7M">
-                                        <rect key="frame" x="20" y="0.0" width="392" height="119"/>
+                                        <rect key="frame" x="20" y="0.0" width="392" height="118.5"/>
                                         <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                     <view tag="222" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Yb-ri-pEB" userLabel="Bubble contents container">
-                                        <rect key="frame" x="20" y="0.0" width="392" height="119"/>
+                                        <rect key="frame" x="20" y="0.0" width="392" height="118.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Bubble chat message text content" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
-                                                <rect key="frame" x="156.5" y="76" width="225.5" height="33"/>
+                                                <rect key="frame" x="136" y="76" width="246" height="32.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -113,8 +111,14 @@
                                                 <rect key="frame" x="10" y="15" width="372" height="56"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
+                                                    <constraint firstAttribute="width" constant="40" id="OBY-Vp-eda"/>
                                                     <constraint firstAttribute="height" secondItem="uba-VT-R7U" secondAttribute="width" multiplier="0.15" id="cxt-CM-PJj"/>
                                                 </constraints>
+                                                <variation key="default">
+                                                    <mask key="constraints">
+                                                        <exclude reference="OBY-Vp-eda"/>
+                                                    </mask>
+                                                </variation>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -177,6 +181,7 @@
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
                 <outlet property="imageAspectRatioConstraint" destination="cxt-CM-PJj" id="UxK-st-I67"/>
                 <outlet property="imageProportionalWidthConstraint" destination="VDo-Xj-qhv" id="VK6-g8-ASP"/>
+                <outlet property="imageWidthConstraint" destination="OBY-Vp-eda" id="XQ3-cA-kEh"/>
                 <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>
                 <outlet property="leftAvatarImageView" destination="5wH-wE-D5T" id="II5-2y-ZGA"/>
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
@@ -195,7 +200,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="chat_bubble_left" width="31" height="52"/>
+        <image name="chat_bubble_left" width="31" height="45"/>
         <image name="icon_avatar_mine" width="726" height="725"/>
         <image name="icon_avatar_other" width="726" height="725"/>
     </resources>

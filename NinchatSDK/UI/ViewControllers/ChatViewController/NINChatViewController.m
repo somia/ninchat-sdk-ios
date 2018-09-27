@@ -90,11 +90,36 @@ static NSString* const kCloseChatText = @"Close chat";
 // NSNotificationCenter observer for WebRTC signaling events from session manager
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
+// NSNotificationCenter observer for user is ryping into the chat
+@property (nonatomic, strong) id<NSObject> typingObserver;
+
+// Image to use for "user is typing" indication. This should be an animation.
+@property (nonatomic, strong) UIImage* userTypingIcon;
+
 @end
 
 @implementation NINChatViewController
 
 #pragma mark - Private methods
+
+-(UIImage*) createUserTypingIcon {
+    // Use overridden one if it is available
+    UIImage* userTypingIcon = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
+
+    if (self.userTypingIcon == nil) {
+        // No override; use default image set
+        NSMutableArray* frames = [NSMutableArray arrayWithCapacity:25];
+        for (NSInteger i = 1; i <= 23; i++) {
+            NSString* imageName = [NSString stringWithFormat:@"icon_writing_%02ld", (long)i];
+            [frames addObject:[UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
+        }
+        userTypingIcon = [UIImage animatedImageWithImages:frames duration:1.0];
+    }
+
+    NSCAssert(userTypingIcon != nil, @"Must have typing icon");
+
+    return userTypingIcon;
+}
 
 -(void) adjustConstraintsForSize:(CGSize)size animate:(BOOL)animate {
     BOOL portrait = (size.height > size.width);
@@ -443,12 +468,12 @@ static NSString* const kCloseChatText = @"Close chat";
         self.tapRecognizerView.touchCallback = ^{
             // Get rid of the keyboard
             [weakSelf.textInputField resignFirstResponder];
-            NSLog(@"touched tapRecognizerView");
         };
 
         [self.chatView addSubview:self.tapRecognizerView];
-        NSLog(@"added tapRecognizerView");
     }
+
+    [self.sessionManager setIsWriting:YES completion:^(NSError* error) {}];
 }
 
 -(void) keyboardWillHide:(NSNotification *)notification {
@@ -456,7 +481,8 @@ static NSString* const kCloseChatText = @"Close chat";
 
     [self.tapRecognizerView removeFromSuperview];
     self.tapRecognizerView = nil;
-    NSLog(@"removed tapRecognizerView");
+
+    [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
 }
 
 #pragma mark - Lifecycle etc.
@@ -474,10 +500,15 @@ static NSString* const kCloseChatText = @"Close chat";
     __weak typeof(self) weakSelf = self;
 
     // Start listening to new messages
-    self.messagesObserver = fetchNotification(kNewChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
+    self.messagesObserver = fetchNotification(kChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSLog(@"There is a new message");
 
-        [weakSelf.chatView newMessageWasAdded];
+        NSNumber* removedAtIndex = note.userInfo[@"removedMessageAtIndex"];
+        if (removedAtIndex == nil) {
+            [weakSelf.chatView newMessageWasAdded];
+        } else {
+            [weakSelf.chatView messageWasRemovedAtIndex:removedAtIndex.integerValue];
+        }
 
         return NO;
     });
@@ -492,11 +523,16 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
+    [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
+
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
     self.messagesObserver = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
     self.signalingObserver = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self.typingObserver];
+    self.typingObserver = nil;
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -534,6 +570,12 @@ static NSString* const kCloseChatText = @"Close chat";
     // Give the local video view a slight border
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
     self.localVideoView.layer.borderWidth = 1.0;
+
+    UIImage* userTypingIcon = [self createUserTypingIcon];
+
+    //TODO add all the required assets (overloads) here
+    NSMutableDictionary* chatImageAssetOverrides = [NSMutableDictionary dictionaryWithDictionary:@{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon}];
+    self.chatView.imageAssetOverrides = chatImageAssetOverrides;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 }

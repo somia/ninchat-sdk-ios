@@ -12,4 +12,9 @@
 /** Asynchronous completion callback for the -start operation. */
 typedef void (^startCallbackBlock)(NSError* error);
 
+// Image asset keys
+typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatUserTypingIndicator;
+
 #endif /* PublicTypes_h */

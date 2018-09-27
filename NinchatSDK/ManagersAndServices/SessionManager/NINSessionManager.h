@@ -23,11 +23,20 @@
 extern NSString* _Nonnull const kNINChannelClosedNotification;
 
 /**
+ * Notification name for channel messages notification. Userinfo param 'newMessage'
+ * contains a ChannelMessage* object for when there is a new message; that
+ * message is inserted at the top of the list at index 0.
+ * When a message is removed, 'removedMessageAtIndex' contains a NSNumber
+ * representing NSInteger describing the index of the removed message.
+ */
+extern NSString* _Nonnull const kChannelMessageNotification;
+
+/**
  * Notification that indicates a user is currently typing into the chat.
  * Userinfo contains user_id to indicate which user. These are not sent
  * for the SDK user's own user id.
  */
-extern NSString* _Nonnull const kNINUserIsTypingNotification;
+//extern NSString* _Nonnull const kNINUserIsTypingNotification;
 
 /**
  * Notification that indicates a WebRTC signaling message was received.

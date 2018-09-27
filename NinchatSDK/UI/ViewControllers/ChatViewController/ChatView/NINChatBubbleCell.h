@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class NINChannelMessage;
+@class NINUserTypingMessage;
 @class NINFileInfo;
 
 typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
@@ -18,6 +19,7 @@ typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
 
 @property (nonatomic, copy) imagePressedCallback imagePressedCallback;
 
--(void) populateWithMessage:(NINChannelMessage*)message;
+-(void) populateWithChannelMessage:(NINChannelMessage*)message;
+-(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message typingIcon:(UIImage*)typingIcon;
 
 @end

@@ -99,6 +99,8 @@
 		49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
 		49CD0777215CB18D00046AB9 /* NSString+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 49B699C92156312000E6C83D /* NSString+Ninchat.m */; };
 		49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
+		49CD077B215CD4AD00046AB9 /* NINUserTypingMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CD0779215CD4AD00046AB9 /* NINUserTypingMessage.h */; };
+		49CD077C215CD4AD00046AB9 /* NINUserTypingMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CD077A215CD4AD00046AB9 /* NINUserTypingMessage.m */; };
 		49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */; };
 		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
@@ -229,6 +231,8 @@
 		49B699C2215625E200E6C83D /* NSMutableAttributedString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableAttributedString+Ninchat.m"; sourceTree = "<group>"; };
 		49B699C82156312000E6C83D /* NSString+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+Ninchat.h"; sourceTree = "<group>"; };
 		49B699C92156312000E6C83D /* NSString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Ninchat.m"; sourceTree = "<group>"; };
+		49CD0779215CD4AD00046AB9 /* NINUserTypingMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUserTypingMessage.h; sourceTree = "<group>"; };
+		49CD077A215CD4AD00046AB9 /* NINUserTypingMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUserTypingMessage.m; sourceTree = "<group>"; };
 		49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NinchatTests.m"; sourceTree = "<group>"; };
 		49D77F242156497600900224 /* UITextView+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITextView+Ninchat.h"; sourceTree = "<group>"; };
 		49D77F252156497600900224 /* UITextView+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITextView+Ninchat.m"; sourceTree = "<group>"; };
@@ -567,6 +571,8 @@
 				493044172158D37700DECB0C /* NINChatMessage.h */,
 				493044192158D90700DECB0C /* NINChatMetaMessage.h */,
 				4930441A2158D90700DECB0C /* NINChatMetaMessage.m */,
+				49CD0779215CD4AD00046AB9 /* NINUserTypingMessage.h */,
+				49CD077A215CD4AD00046AB9 /* NINUserTypingMessage.m */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -668,6 +674,7 @@
 				49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */,
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
 				49D77F2B215651DE00900224 /* NINFullScreenImageViewController.h in Headers */,
+				49CD077B215CD4AD00046AB9 /* NINUserTypingMessage.h in Headers */,
 				49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -873,6 +880,7 @@
 				49D77F272156497600900224 /* UITextView+Ninchat.m in Sources */,
 				49D77F2C215651DE00900224 /* NINFullScreenImageViewController.m in Sources */,
 				496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */,
+				49CD077C215CD4AD00046AB9 /* NINUserTypingMessage.m in Sources */,
 				496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */,
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49118961214BE54F008F1748 /* NSDateFormatter+Ninchat.m in Sources */,

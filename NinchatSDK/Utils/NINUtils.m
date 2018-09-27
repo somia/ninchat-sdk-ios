@@ -16,9 +16,6 @@
 // Site config URL pattern. Populate with kServerHostName & configuration key
 static NSString* const kSiteConfigUrlPattern = @"https://%@/config/%@";
 
-// Notification strings
-NSString* const kNewChannelMessageNotification = @"ninchatsdk.NewChannelMessageNotification";
-
 NSError* newError(NSString* msg) {
     return [NSError errorWithDomain:@"NinchatSDK" code:1 userInfo:@{@"message": msg}];
 }

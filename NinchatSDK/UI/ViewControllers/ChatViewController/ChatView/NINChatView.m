@@ -10,6 +10,7 @@
 #import "NINUtils.h"
 #import "NINChannelMessage.h"
 #import "NINChatMetaMessage.h"
+#import "NINUserTypingMessage.h"
 #import "NINChatBubbleCell.h"
 #import "NINChatMetaCell.h"
 
@@ -29,6 +30,11 @@
     [self.tableView insertRowsAtIndexPaths:_zeroIndexPathArray withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
+-(void) messageWasRemovedAtIndex:(NSInteger)index {
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
 #pragma mark - From UITableViewDelegate
 
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -38,10 +44,15 @@
 
     if ([message isKindOfClass:NINChannelMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
-        [cell populateWithMessage:message];
+        [cell populateWithChannelMessage:message];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
+        return cell;
+    } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
+        NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
+        [cell populateWithUserTypingMessage:message typingIcon:self.imageAssetOverrides[NINImageAssetKeyChatUserTypingIndicator]];
+        cell.imagePressedCallback = nil;
         return cell;
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];

@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 
 #import "NINChatMessage.h"
+#import "NINPublicTypes.h"
 
 @class NINChatView;
-//@class NINChannelMessage;
 @class NINFileInfo;
 
 /** Data source for the chat view. */
@@ -44,8 +44,14 @@
 /** My delegate. */
 @property (nonatomic, weak) id<NINChatViewDelegate> delegate;
 
+/** The image asset overrides as map. Only contains items used by chat view. */
+@property (nonatomic, strong) NSDictionary<NINImageAssetKey,UIImage*>* imageAssetOverrides;
+
 /** A new message was added at the bottom of the list (index = 0). Updates the view. */
 -(void) newMessageWasAdded;
+
+/** A message was removed from given index. */
+-(void) messageWasRemovedAtIndex:(NSInteger)index;
 
 @end
 
