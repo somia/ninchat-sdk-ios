@@ -40,6 +40,10 @@
     return [self.mimeType hasPrefix:@"video/"];
 }
 
+-(BOOL) isPDF {
+    return [self.mimeType isEqualToString:@"application/pdf"];
+}
+
 -(void) updateInfoWithCompletionCallback:(callbackWithErrorBlock)completion {
     // The URL must not expire within the next 15 minutes
     NSDate* comparisonDate = [NSDate dateWithTimeIntervalSinceNow:-(15 * 60)];

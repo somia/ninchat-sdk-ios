@@ -605,7 +605,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                 __weak typeof(self) weakSelf = self;
 
                 NSLog(@"Fetching file info.");
-                
+
                 NINFileInfo* fileInfo = [NINFileInfo fileWithSessionManager:self fileID:fileObject[@"file_id"] name:filename mimeType:fileMediaType size:fileSize];
                 [fileInfo updateInfoWithCompletionCallback:^(NSError* error) {
                     if (error != nil) {
@@ -615,15 +615,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                         [weakSelf addNewChatMessage:msg];
                     }
                 }];
-
-                /*
-                [self describeFile:fileObject[@"file_id"] completion:^(NSError* error, NINFileInfo* fileInfo) {
-                    NSLog(@"Found file info: %@", fileInfo);
-
-                    NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
-                    [weakSelf addNewChatMessage:msg];
-                }];
-                */
             }
         }
 

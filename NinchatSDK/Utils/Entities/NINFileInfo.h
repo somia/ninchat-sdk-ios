@@ -40,4 +40,6 @@
 /** Whether or not this file represents a video. */
 -(BOOL) isVideo;
 
+-(BOOL) isPDF;
+
 @end

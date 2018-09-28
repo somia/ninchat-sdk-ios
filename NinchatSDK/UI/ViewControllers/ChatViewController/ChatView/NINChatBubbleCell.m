@@ -16,6 +16,7 @@
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
+#import "UITextView+Ninchat.h"
 
 @interface NINChatBubbleCell () <UITextViewDelegate>
 
@@ -215,7 +216,11 @@
 -(void) populateWithChannelMessage:(NINChannelMessage*)message {
     self.message = message;
 
-    self.messageTextView.text = message.textContent;
+    if (self.message.attachment.isPDF) {
+        [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", self.message.attachment.url, self.message.attachment.name]];
+    } else {
+        self.messageTextView.text = message.textContent;
+    }
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
         self.senderNameLabel.text = @"Guest";
