@@ -46,8 +46,8 @@
 // The message time stamp label
 @property (nonatomic, strong) IBOutlet UILabel* timeLabel;
 
-// The text container label
-@property (nonatomic, strong) IBOutlet UILabel* textContentLabel;
+// Bubble message text view
+@property (nonatomic, strong) IBOutlet UITextView* messageTextView;
 
 // The message's image
 @property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
@@ -106,7 +106,7 @@
 
     // White text on black bubble
     self.bubbleImageView.tintColor = [UIColor blackColor];
-    self.textContentLabel.textColor = [UIColor whiteColor];
+    self.messageTextView.textColor = [UIColor whiteColor];
 
     // Push the top label container to the left edge by toggling the constraints
     self.topLabelsLeftConstraint.active = NO;
@@ -137,7 +137,7 @@
 
     // Black text on white bubble
     self.bubbleImageView.tintColor = [UIColor whiteColor];
-    self.textContentLabel.textColor = [UIColor blackColor];
+    self.messageTextView.textColor = [UIColor blackColor];
 
     // Push the top label container to the left edge by toggling the constraints
     self.topLabelsRightConstraint.active = NO;
@@ -215,7 +215,7 @@
 -(void) populateWithChannelMessage:(NINChannelMessage*)message {
     self.message = message;
 
-    self.textContentLabel.text = message.textContent;
+    self.messageTextView.text = message.textContent;
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
         self.senderNameLabel.text = @"Guest";
@@ -246,7 +246,7 @@
     NSCAssert(typingIcon != nil, @"Typing icon cannot be nil!");
 
     self.senderNameLabel.text = message.user.displayName;
-    self.textContentLabel.text = nil;
+    self.messageTextView.text = nil;
     self.messageImageView.image = typingIcon;
 
     self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;

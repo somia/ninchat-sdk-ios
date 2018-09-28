@@ -100,13 +100,14 @@
                                     <view tag="222" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Yb-ri-pEB" userLabel="Bubble contents container">
                                         <rect key="frame" x="20" y="0.0" width="392" height="118.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Bubble chat message text content" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lco-tz-6OM">
-                                                <rect key="frame" x="136" y="76" width="246" height="32.5"/>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Bubble chat message content text" translatesAutoresizingMaskIntoConstraints="NO" id="9Og-bJ-chR">
+                                                <rect key="frame" x="126" y="76" width="256" height="32.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                                            </textView>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uba-VT-R7U">
                                                 <rect key="frame" x="10" y="15" width="372" height="56"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -123,13 +124,13 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstItem="lco-tz-6OM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="143-Ol-fN5"/>
-                                            <constraint firstAttribute="trailing" secondItem="lco-tz-6OM" secondAttribute="trailing" constant="10" id="Dsf-bh-svQ"/>
                                             <constraint firstAttribute="trailing" secondItem="uba-VT-R7U" secondAttribute="trailing" constant="10" id="MnJ-s5-Lre"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="QzG-SE-TkM"/>
-                                            <constraint firstAttribute="bottom" secondItem="lco-tz-6OM" secondAttribute="bottom" constant="10" id="ZHk-hI-SWQ"/>
+                                            <constraint firstAttribute="trailing" secondItem="9Og-bJ-chR" secondAttribute="trailing" constant="10" id="RhV-VV-9z1"/>
+                                            <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="10" id="bVo-nE-WgS"/>
+                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="fvg-TI-KGO"/>
+                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" constant="5" id="ga7-Ih-CLf"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" constant="15" id="mhi-h0-la2"/>
-                                            <constraint firstItem="lco-tz-6OM" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" priority="999" constant="5" id="ycG-2V-nKQ"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -186,17 +187,17 @@
                 <outlet property="leftAvatarImageView" destination="5wH-wE-D5T" id="II5-2y-ZGA"/>
                 <outlet property="leftAvatarWidthConstraint" destination="uoH-1d-b8W" id="Kwj-9y-NrS"/>
                 <outlet property="messageImageView" destination="uba-VT-R7U" id="djD-VP-bcD"/>
+                <outlet property="messageTextView" destination="9Og-bJ-chR" id="1qb-MA-UPq"/>
                 <outlet property="rightAvatarContainerView" destination="VDb-fh-S7z" id="dQG-T1-6hw"/>
                 <outlet property="rightAvatarImageView" destination="afl-L6-jcA" id="R5L-Z7-yLx"/>
                 <outlet property="rightAvatarWidthConstraint" destination="Gur-SR-UDJ" id="gwM-1T-SYE"/>
                 <outlet property="senderNameLabel" destination="cyP-g1-3PU" id="rsj-rf-xYI"/>
-                <outlet property="textContentLabel" destination="lco-tz-6OM" id="t2V-IH-Sb5"/>
                 <outlet property="timeLabel" destination="oRX-UO-W1X" id="9vx-sK-sRV"/>
                 <outlet property="topLabelsContainerHeightConstraint" destination="dPF-N2-ufx" id="83B-0w-Qrr"/>
                 <outlet property="topLabelsLeftConstraint" destination="Hk7-2T-amP" id="oZ5-5D-bfe"/>
                 <outlet property="topLabelsRightConstraint" destination="1GL-ob-cHL" id="R5f-SV-DX3"/>
             </connections>
-            <point key="canvasLocation" x="62" y="-26.5"/>
+            <point key="canvasLocation" x="60.799999999999997" y="-26.53673163418291"/>
         </tableViewCell>
     </objects>
     <resources>
