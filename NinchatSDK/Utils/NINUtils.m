@@ -95,4 +95,15 @@ void fetchSiteConfig(NSString* serverAddress, NSString* configurationKey, fetchS
     }];
 }
 
+NSString* guessMIMETypeFromFileName(NSString* fileName) {
+    NSString* fileExtension = [[fileName pathExtension] lowercaseString];
+    CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
+    CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
+    CFRelease(uti);
 
+    if (mimeType == nil) {
+        return @"application/octet-stream";
+    }
+
+    return (__bridge NSString*)mimeType;
+}

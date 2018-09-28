@@ -27,4 +27,7 @@
 /** Whether or not this file represents an image. */
 -(BOOL) isImage;
 
+/** Whether or not this file represents a video. */
+-(BOOL) isVideo;
+
 @end

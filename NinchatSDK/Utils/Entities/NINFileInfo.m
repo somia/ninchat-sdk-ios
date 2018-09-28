@@ -33,6 +33,10 @@
     return [self.mimeType hasPrefix:@"image/"];
 }
 
+-(BOOL) isVideo {
+    return [self.mimeType hasPrefix:@"video/"];
+}
+
 +(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio {
     NINFileInfo* info = [NINFileInfo new];
     info.fileID = fileID;

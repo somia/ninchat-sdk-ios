@@ -10,7 +10,7 @@
 #define PublicTypes_h
 
 /** Asynchronous completion callback for the -start operation. */
-typedef void (^startCallbackBlock)(NSError* error);
+typedef void (^startCallbackBlock)(NSError* _Nonnull error);
 
 // Image asset keys
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;

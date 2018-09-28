@@ -588,12 +588,18 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             // Use the first object in the list
             NSDictionary* fileObject = fileObjectsList.firstObject;
 
+            NSLog(@"File object: %@", fileObject);
+
+            NSString* fileMediaType = fileObject[@"file_attrs"][@"type"];
+            if (fileMediaType == nil) {
+                fileMediaType = guessMIMETypeFromFileName(fileObject[@"file_attrs"][@"name"]);
+            }
+            NSLog(@"fileMediaType = %@", fileMediaType);
+
             // Only process images at this point
-            if ([fileObject[@"file_attrs"][@"type"] hasPrefix:@"image/"]) {
+            if ([fileMediaType hasPrefix:@"image/"] || [fileMediaType hasPrefix:@"video/"] ||[fileMediaType isEqualToString:@"application/pdf"]) {
+
                 hasAttachment = YES;
-
-                NSLog(@"messages has a file of type: %@", fileObject[@"file_attrs"][@"type"]);
-
                 __weak typeof(self) weakSelf = self;
 
                 [self describeFile:fileObject[@"file_id"] completion:^(NSError* error, NINFileInfo* fileInfo) {

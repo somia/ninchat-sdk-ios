@@ -48,4 +48,7 @@ NSBundle* _Nonnull findResourceBundle(void);
 /** Asynchronously retrieves the site configuration from the server over HTTPS. */
 void fetchSiteConfig(NSString* _Nonnull serverAddress, NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);
 
+/** Looks up a MIME type for a file name. */
+NSString* _Nonnull guessMIMETypeFromFileName(NSString* _Nonnull fileName);
+
 #endif /* NINUtils_h */
