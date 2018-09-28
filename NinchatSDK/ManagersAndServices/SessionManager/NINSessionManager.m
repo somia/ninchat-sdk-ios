@@ -23,8 +23,6 @@
 #import "NINFileInfo.h"
 #import "NINToast.h"
 
-typedef void (^getFileInfoCallback)(NSError* _Nullable error, NINFileInfo* fileInfo);
-
 // UI texts
 static NSString* const kConversationStartedText = @"Audience in queue {{queue}} accepted.";
 static NSString* const kConversationEndedText = @"Conversation ended";
@@ -268,8 +266,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [params getInt:@"action_id" val:&actionId error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    NSString* fileID = [params getString:@"file_id" error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
+//    NSString* fileID = [params getString:@"file_id" error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
 
     NSString* url = [params getString:@"file_url" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
@@ -282,15 +280,15 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NINLowLevelClientProps* fileAttributes = [params getObject:@"file_attrs" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    NSString* mimeType = [fileAttributes getString:@"type" error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
-
-    NSString* name = [fileAttributes getString:@"name" error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
-
-    long size;
-    [fileAttributes getInt:@"size" val:&size error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
+//    NSString* mimeType = [fileAttributes getString:@"type" error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
+//
+//    NSString* name = [fileAttributes getString:@"name" error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
+//
+//    long size;
+//    [fileAttributes getInt:@"size" val:&size error:&error];
+//    NSCAssert(error == nil, @"Failed to get attribute");
 
     NINLowLevelClientProps* thumbnail = [fileAttributes getObject:@"thumbnail" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
@@ -311,7 +309,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     //TODO handle other file types too?
-    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID name:name mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
+//    NINFileInfo* fileInfo = [NINFileInfo imageFileInfoWithID:fileID name:name mimeType:mimeType size:size url:url urlExpiry:urlExpiry aspectRatio:aspectRatio];
+    NSDictionary* fileInfo = @{@"aspectRatio": @(aspectRatio), @"url": url, @"urlExpiry": urlExpiry};
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
@@ -539,7 +538,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         NSError* error = note.userInfo[@"error"];
 
         if (eventActionId.longValue == actionId) {
-            completion(error, (NINFileInfo*)note.userInfo[@"fileInfo"]);
+            completion(error, note.userInfo[@"fileInfo"]);
             return YES;
         }
 
@@ -590,9 +589,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
             NSLog(@"File object: %@", fileObject);
 
+            NSString* filename = fileObject[@"file_attrs"][@"name"];
             NSString* fileMediaType = fileObject[@"file_attrs"][@"type"];
+            NSInteger fileSize = [fileObject[@"file_attrs"][@"size"] integerValue];
+
             if (fileMediaType == nil) {
-                fileMediaType = guessMIMETypeFromFileName(fileObject[@"file_attrs"][@"name"]);
+                fileMediaType = guessMIMETypeFromFileName(filename);
             }
             NSLog(@"fileMediaType = %@", fileMediaType);
 
@@ -602,12 +604,26 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                 hasAttachment = YES;
                 __weak typeof(self) weakSelf = self;
 
+                NSLog(@"Fetching file info.");
+                
+                NINFileInfo* fileInfo = [NINFileInfo fileWithSessionManager:self fileID:fileObject[@"file_id"] name:filename mimeType:fileMediaType size:fileSize];
+                [fileInfo updateInfoWithCompletionCallback:^(NSError* error) {
+                    if (error != nil) {
+                        [NINToast showWithMessage:@"Failed to update file info" callback:nil];
+                    } else {
+                        NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
+                        [weakSelf addNewChatMessage:msg];
+                    }
+                }];
+
+                /*
                 [self describeFile:fileObject[@"file_id"] completion:^(NSError* error, NINFileInfo* fileInfo) {
                     NSLog(@"Found file info: %@", fileInfo);
 
                     NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
                     [weakSelf addNewChatMessage:msg];
                 }];
+                */
             }
         }
 

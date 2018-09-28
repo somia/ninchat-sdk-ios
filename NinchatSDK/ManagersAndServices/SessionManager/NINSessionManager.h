@@ -18,6 +18,9 @@
 @class NINQueue;
 @class NINChannelMessage;
 @class NINChatSession;
+@class NINFileInfo;
+
+typedef void (^getFileInfoCallback)(NSError* _Nullable error, NSDictionary* _Nullable fileInfo);
 
 /** Notification that indicates the current channel was closed. */
 extern NSString* _Nonnull const kNINChannelClosedNotification;
@@ -115,6 +118,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 
 /** Sends a file to the chat. */
 -(void) sendFile:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
+
+/** Describe a file by its ID. */
+-(void) describeFile:(NSString* _Nonnull)fileID completion:(getFileInfoCallback _Nonnull)completion;
 
 /** Indicate whether or not the user is currently typing into the chat. */
 -(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion;

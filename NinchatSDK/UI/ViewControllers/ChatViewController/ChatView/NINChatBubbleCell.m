@@ -17,7 +17,7 @@
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
 
-@interface NINChatBubbleCell ()
+@interface NINChatBubbleCell () <UITextViewDelegate>
 
 // Width constraint for the left avatar area; used to hide the left avatar
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* leftAvatarWidthConstraint;
@@ -264,6 +264,18 @@
     [self setImageAspectRatio:0.5];
 }
 
+#pragma mark - From UITextViewDelegate
+
+// Pre-iOS 10
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    return YES;
+}
+
+// iOS 10 and up
+-(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction API_AVAILABLE(ios(10.0)) {
+    return YES;
+}
+
 #pragma mark - Lifecycle etc.
 
 -(void) dealloc {
@@ -276,6 +288,8 @@
     self.avatarContainerWidth = self.leftAvatarWidthConstraint.constant;
     self.topLabelsContainerHeight = self.topLabelsContainerHeightConstraint.constant;
 
+    self.messageTextView.delegate = self;
+    
     // Make the avatar image views circles
     self.leftAvatarImageView.layer.cornerRadius = self.leftAvatarImageView.bounds.size.height / 2;
     self.leftAvatarImageView.layer.masksToBounds = YES;

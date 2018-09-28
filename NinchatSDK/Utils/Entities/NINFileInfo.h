@@ -8,6 +8,10 @@
 
 @import UIKit;
 
+#import "NINPrivateTypes.h"
+
+@class NINSessionManager;
+
 /** Describes a downloadable file with ID, mime type, size and url. */
 @interface NINFileInfo : NSObject
 
@@ -22,7 +26,13 @@
 @property (nonatomic, assign, readonly) CGFloat aspectRatio; // width : height
 
 /** Constructs a new file info. */
-+(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;
+//+(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;
+
+/** Constructs a new file info. */
++(instancetype) fileWithSessionManager:(NINSessionManager*)sessionManager fileID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size;
+
+/** Calls describe_file to retrieve / refresh file info (including the temporary URL). */
+-(void) updateInfoWithCompletionCallback:(callbackWithErrorBlock)completion;
 
 /** Whether or not this file represents an image. */
 -(BOOL) isImage;
