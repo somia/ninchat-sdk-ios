@@ -82,6 +82,9 @@
 // Message's image (absolute) width constraint. Used for user typing.. mode.
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageWidthConstraint;
 
+// Height constraint for the message text to set it to 0 for when there is no text.
+@property (nonatomic, strong) NSLayoutConstraint* textHeightConstraint;
+
 // Message image's aspect ratio constraint
 @property (nonatomic, strong) NSLayoutConstraint* imageAspectRatioConstraint;
 
@@ -251,6 +254,7 @@
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
+//    NSCAssert(self.textHeightConstraint != nil, @"Cannot be nil");
 
     self.message = message;
     NINFileInfo* attachment = message.attachment;
@@ -261,7 +265,15 @@
         [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", attachment.url, attachment.name]];
     } else {
         self.messageTextView.text = message.textContent;
-        self.messageTextView.hidden = (message.textContent.length == 0);
+        if (message.textContent == nil) {
+            if (self.textHeightConstraint == nil) {
+                self.textHeightConstraint = [self.messageTextView.heightAnchor constraintEqualToConstant:0];
+                self.textHeightConstraint.active = YES;
+            } else {
+                self.textHeightConstraint.active = NO;
+                self.textHeightConstraint = nil;
+            }
+        }
     }
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {

@@ -101,7 +101,7 @@
                                         <rect key="frame" x="20" y="0.0" width="392" height="118.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Bubble chat message content text" translatesAutoresizingMaskIntoConstraints="NO" id="9Og-bJ-chR">
-                                                <rect key="frame" x="126" y="78" width="256" height="35.5"/>
+                                                <rect key="frame" x="126" y="73" width="256" height="35.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -109,7 +109,7 @@
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uba-VT-R7U">
-                                                <rect key="frame" x="10" y="10" width="372" height="68"/>
+                                                <rect key="frame" x="10" y="10" width="372" height="63"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="40" id="OBY-Vp-eda"/>
@@ -121,7 +121,7 @@
                                                 </variation>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="GOj-1m-Klp">
-                                                <rect key="frame" x="184" y="32" width="24" height="24"/>
+                                                <rect key="frame" x="184" y="29.5" width="24" height="24"/>
                                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -136,7 +136,7 @@
                                             <constraint firstItem="GOj-1m-Klp" firstAttribute="centerY" secondItem="uba-VT-R7U" secondAttribute="centerY" id="PmT-Zo-sT4"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="QzG-SE-TkM"/>
                                             <constraint firstAttribute="trailing" secondItem="9Og-bJ-chR" secondAttribute="trailing" constant="10" id="RhV-VV-9z1"/>
-                                            <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="5" id="bVo-nE-WgS"/>
+                                            <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="10" id="bVo-nE-WgS"/>
                                             <constraint firstItem="9Og-bJ-chR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="fvg-TI-KGO"/>
                                             <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" id="ga7-Ih-CLf"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" constant="10" id="mhi-h0-la2"/>
