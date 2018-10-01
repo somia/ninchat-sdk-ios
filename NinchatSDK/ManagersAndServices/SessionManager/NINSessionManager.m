@@ -786,6 +786,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 #pragma mark - Public methods
 
+-(BOOL) connected {
+    return self.session != nil;
+}
+
 -(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
@@ -998,6 +1002,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NINLowLevelClientPayload* payload = [NINLowLevelClientPayload new];
     [payload append:data];
 
+    [self.ninchatSession sdklog:@"Sending file: %@, length: %ld", params.string, data.length];
+
     NSError* error = nil;
     int64_t actionId = -1;
     [self.session send:params payload:payload actionId:&actionId error:&error];
@@ -1029,6 +1035,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion {
     NSCAssert(self.currentChannelID != nil, @"Must have current channel");
+
+    NSLog(@"SETTING 'Is Writing' to %@", isWriting ? @"YES" : @"NO");
 
     NINLowLevelClientProps* memberAttrs = [NINLowLevelClientProps new];
     [memberAttrs setBool:@"writing" val:isWriting];

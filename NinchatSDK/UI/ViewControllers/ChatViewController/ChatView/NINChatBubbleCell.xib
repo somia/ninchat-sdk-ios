@@ -101,7 +101,7 @@
                                         <rect key="frame" x="20" y="0.0" width="392" height="118.5"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Bubble chat message content text" translatesAutoresizingMaskIntoConstraints="NO" id="9Og-bJ-chR">
-                                                <rect key="frame" x="126" y="76" width="256" height="32.5"/>
+                                                <rect key="frame" x="126" y="78" width="256" height="35.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
@@ -109,11 +109,10 @@
                                                 <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
                                             </textView>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uba-VT-R7U">
-                                                <rect key="frame" x="10" y="15" width="372" height="56"/>
+                                                <rect key="frame" x="10" y="10" width="372" height="68"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="40" id="OBY-Vp-eda"/>
-                                                    <constraint firstAttribute="height" secondItem="uba-VT-R7U" secondAttribute="width" multiplier="0.15" id="cxt-CM-PJj"/>
                                                 </constraints>
                                                 <variation key="default">
                                                     <mask key="constraints">
@@ -121,16 +120,27 @@
                                                     </mask>
                                                 </variation>
                                             </imageView>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="GOj-1m-Klp">
+                                                <rect key="frame" x="184" y="32" width="24" height="24"/>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="24" id="Mdv-vt-AYF"/>
+                                                    <constraint firstAttribute="height" constant="24" id="cBg-ot-fIF"/>
+                                                </constraints>
+                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="uba-VT-R7U" secondAttribute="trailing" constant="10" id="MnJ-s5-Lre"/>
+                                            <constraint firstItem="GOj-1m-Klp" firstAttribute="centerY" secondItem="uba-VT-R7U" secondAttribute="centerY" id="PmT-Zo-sT4"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="QzG-SE-TkM"/>
                                             <constraint firstAttribute="trailing" secondItem="9Og-bJ-chR" secondAttribute="trailing" constant="10" id="RhV-VV-9z1"/>
-                                            <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="10" id="bVo-nE-WgS"/>
+                                            <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="5" id="bVo-nE-WgS"/>
                                             <constraint firstItem="9Og-bJ-chR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="fvg-TI-KGO"/>
-                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" constant="5" id="ga7-Ih-CLf"/>
-                                            <constraint firstItem="uba-VT-R7U" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" constant="15" id="mhi-h0-la2"/>
+                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" id="ga7-Ih-CLf"/>
+                                            <constraint firstItem="uba-VT-R7U" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" constant="10" id="mhi-h0-la2"/>
+                                            <constraint firstItem="GOj-1m-Klp" firstAttribute="centerX" secondItem="uba-VT-R7U" secondAttribute="centerX" id="rIb-RO-6RP"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -180,7 +190,6 @@
                 <outlet property="bubbleContentsContainerRightConstraint" destination="EJE-73-eqo" id="4Lt-hq-gG2"/>
                 <outlet property="bubbleContentsContainerView" destination="9Yb-ri-pEB" id="3ax-xQ-dXZ"/>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
-                <outlet property="imageAspectRatioConstraint" destination="cxt-CM-PJj" id="UxK-st-I67"/>
                 <outlet property="imageProportionalWidthConstraint" destination="VDo-Xj-qhv" id="VK6-g8-ASP"/>
                 <outlet property="imageWidthConstraint" destination="OBY-Vp-eda" id="XQ3-cA-kEh"/>
                 <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>
@@ -196,6 +205,7 @@
                 <outlet property="topLabelsContainerHeightConstraint" destination="dPF-N2-ufx" id="83B-0w-Qrr"/>
                 <outlet property="topLabelsLeftConstraint" destination="Hk7-2T-amP" id="oZ5-5D-bfe"/>
                 <outlet property="topLabelsRightConstraint" destination="1GL-ob-cHL" id="R5f-SV-DX3"/>
+                <outlet property="videoPlayImageView" destination="GOj-1m-Klp" id="gk9-0b-7pg"/>
             </connections>
             <point key="canvasLocation" x="60.799999999999997" y="-26.53673163418291"/>
         </tableViewCell>
@@ -204,5 +214,6 @@
         <image name="chat_bubble_left" width="31" height="45"/>
         <image name="icon_avatar_mine" width="726" height="725"/>
         <image name="icon_avatar_other" width="726" height="725"/>
+        <image name="icon_play" width="17" height="19"/>
     </resources>
 </document>

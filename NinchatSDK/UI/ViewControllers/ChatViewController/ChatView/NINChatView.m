@@ -13,9 +13,11 @@
 #import "NINUserTypingMessage.h"
 #import "NINChatBubbleCell.h"
 #import "NINChatMetaCell.h"
+#import "NINVideoThumbnailManager.h"
 
 @interface NINChatView () <UITableViewDelegate, UITableViewDataSource> {
     NSArray<NSIndexPath*>* _zeroIndexPathArray;
+    NINVideoThumbnailManager* _videoThumbnailManager;
 }
 
 @property (nonatomic, strong) IBOutlet UITableView* tableView;
@@ -44,6 +46,7 @@
 
     if ([message isKindOfClass:NINChannelMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
+        cell.videoThumbnailManager = _videoThumbnailManager;
         [cell populateWithChannelMessage:message];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
@@ -51,6 +54,7 @@
         return cell;
     } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
+        cell.videoThumbnailManager = nil;
         [cell populateWithUserTypingMessage:message typingIcon:self.imageAssetOverrides[NINImageAssetKeyChatUserTypingIndicator]];
         cell.imagePressedCallback = nil;
         return cell;
@@ -80,6 +84,7 @@
 -(void) awakeFromNib {
     [super awakeFromNib];
 
+    _videoThumbnailManager = [NINVideoThumbnailManager new];
     _zeroIndexPathArray = @[[NSIndexPath indexPathForRow:0 inSection:0]];
 
     NSBundle* bundle = findResourceBundle();
@@ -95,6 +100,10 @@
 
     // Rotate the table view 180 degrees; we will use it upside down
     self.tableView.transform = CGAffineTransformMakeRotation(M_PI);
+}
+
+-(void) dealloc {
+    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
 @end

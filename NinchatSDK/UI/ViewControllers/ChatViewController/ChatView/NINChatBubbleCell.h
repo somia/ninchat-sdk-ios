@@ -11,12 +11,14 @@
 @class NINChannelMessage;
 @class NINUserTypingMessage;
 @class NINFileInfo;
+@class NINVideoThumbnailManager;
 
 typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
 
 /** Rerepsents a chat message (in a 'bubble') in the chat view. */
 @interface NINChatBubbleCell : UITableViewCell
 
+@property (nonatomic, strong) NINVideoThumbnailManager* videoThumbnailManager;
 @property (nonatomic, copy) imagePressedCallback imagePressedCallback;
 
 -(void) populateWithChannelMessage:(NINChannelMessage*)message;

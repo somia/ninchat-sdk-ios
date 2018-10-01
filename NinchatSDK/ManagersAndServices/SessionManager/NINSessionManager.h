@@ -89,6 +89,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** List of available queues for the realm_id. */
 @property (nonatomic, strong) NSArray<NINQueue*>* _Nonnull queues;
 
+/** Whether or not this session is connected. */
+@property (nonatomic, assign, readonly) BOOL connected;
+
 /**
  * Chronological list of messages on the current channel. The list is ordered by the message
  * timestamp in decending order (most recent first).

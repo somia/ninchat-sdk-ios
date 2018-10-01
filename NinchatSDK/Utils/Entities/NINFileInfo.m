@@ -21,9 +21,6 @@
 @property (nonatomic, strong) NSString* url;
 @property (nonatomic, strong) NSDate* urlExpiry;
 
-// These only apply to images
-@property (nonatomic, assign) CGFloat aspectRatio;
-
 @end
 
 @implementation NINFileInfo
@@ -44,11 +41,15 @@
     return [self.mimeType isEqualToString:@"application/pdf"];
 }
 
+-(BOOL) isImageOrVideo {
+    return self.isImage || self.isVideo;
+}
+
 -(void) updateInfoWithCompletionCallback:(callbackWithErrorBlock)completion {
     // The URL must not expire within the next 15 minutes
     NSDate* comparisonDate = [NSDate dateWithTimeIntervalSinceNow:-(15 * 60)];
 
-    if ((self.url == nil) || (self.urlExpiry == nil) || ([self.urlExpiry compare:comparisonDate] == NSOrderedDescending)) {
+    if ((self.url == nil) || (self.urlExpiry == nil) || ([self.urlExpiry compare:comparisonDate] == NSOrderedAscending)) {
         NSLog(@"Must update file info; call describe_file");
         [self.sessionManager describeFile:self.fileID completion:^(NSError* error, NSDictionary* fileInfo) {
             if (error != nil) {

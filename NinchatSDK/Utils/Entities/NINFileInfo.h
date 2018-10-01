@@ -22,11 +22,8 @@
 @property (nonatomic, strong, readonly) NSString* url;
 @property (nonatomic, strong, readonly) NSDate* urlExpiry;
 
-// These only apply to images
-@property (nonatomic, assign, readonly) CGFloat aspectRatio; // width : height
-
-/** Constructs a new file info. */
-//+(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio;
+// These only apply to images / videos (from their thumbnails)
+@property (nonatomic, assign) CGFloat aspectRatio; // width : height
 
 /** Constructs a new file info. */
 +(instancetype) fileWithSessionManager:(NINSessionManager*)sessionManager fileID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size;
@@ -39,6 +36,9 @@
 
 /** Whether or not this file represents a video. */
 -(BOOL) isVideo;
+
+/** Whether this file is an image or video file. */
+-(BOOL) isImageOrVideo;
 
 -(BOOL) isPDF;
 

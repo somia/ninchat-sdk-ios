@@ -8,6 +8,7 @@
 
 @import MobileCoreServices;
 @import AVFoundation;
+@import AVKit;
 
 @import Libjingle;
 
@@ -23,6 +24,7 @@
 #import "NINCloseChatButton.h"
 #import "NINFullScreenImageViewController.h"
 #import "NINToast.h"
+#import "NINFileInfo.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -447,8 +449,16 @@ static NSString* const kCloseChatText = @"Close chat";
 #pragma mark - From NINChatViewDelegate
 
 -(void) chatView:(NINChatView *)chatView imageSelected:(UIImage*)image forAttachment:(NINFileInfo*)attachment {
-    // Open the selected image in a full-screen image view
-    [self performSegueWithIdentifier:kSegueIdChatToFullScreenImage sender:@{@"image": image, @"attachment": attachment}];
+    if (attachment.isImage) {
+        // Open the selected image in a full-screen image view
+        [self performSegueWithIdentifier:kSegueIdChatToFullScreenImage sender:@{@"image": image, @"attachment": attachment}];
+    } else if (attachment.isVideo) {
+        // Open the selected video in a full-screen player
+        AVPlayerViewController* playerController = [AVPlayerViewController new];
+        playerController.player = [AVPlayer playerWithURL:[NSURL URLWithString:attachment.url]];
+        [playerController.player play];
+        [self presentViewController:playerController animated:YES completion:nil];
+    }
 }
 
 -(void) closeChatRequestedByChatView:(NINChatView*)chatView {
@@ -523,7 +533,9 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-    [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
+//    if (self.sessionManager.connected) {
+//        [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
+//    }
 
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
     self.messagesObserver = nil;

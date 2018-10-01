@@ -101,6 +101,8 @@
 		49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B699C82156312000E6C83D /* NSString+Ninchat.h */; };
 		49CD077B215CD4AD00046AB9 /* NINUserTypingMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CD0779215CD4AD00046AB9 /* NINUserTypingMessage.h */; };
 		49CD077C215CD4AD00046AB9 /* NINUserTypingMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CD077A215CD4AD00046AB9 /* NINUserTypingMessage.m */; };
+		49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CD077E216205C600046AB9 /* NINVideoThumbnailManager.h */; };
+		49CD0781216205C600046AB9 /* NINVideoThumbnailManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CD077F216205C600046AB9 /* NINVideoThumbnailManager.m */; };
 		49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */; };
 		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
@@ -233,6 +235,8 @@
 		49B699C92156312000E6C83D /* NSString+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+Ninchat.m"; sourceTree = "<group>"; };
 		49CD0779215CD4AD00046AB9 /* NINUserTypingMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUserTypingMessage.h; sourceTree = "<group>"; };
 		49CD077A215CD4AD00046AB9 /* NINUserTypingMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUserTypingMessage.m; sourceTree = "<group>"; };
+		49CD077E216205C600046AB9 /* NINVideoThumbnailManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINVideoThumbnailManager.h; sourceTree = "<group>"; };
+		49CD077F216205C600046AB9 /* NINVideoThumbnailManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINVideoThumbnailManager.m; sourceTree = "<group>"; };
 		49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NinchatTests.m"; sourceTree = "<group>"; };
 		49D77F242156497600900224 /* UITextView+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UITextView+Ninchat.h"; sourceTree = "<group>"; };
 		49D77F252156497600900224 /* UITextView+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UITextView+Ninchat.m"; sourceTree = "<group>"; };
@@ -341,6 +345,7 @@
 		493044232159013200DECB0C /* ManagersAndServices */ = {
 			isa = PBXGroup;
 			children = (
+				49CD077D216205AA00046AB9 /* VideoThumbnailManager */,
 				493044242159014A00DECB0C /* DiskIOService */,
 				49140B6D20F2492500A00EA8 /* SessionManager */,
 			);
@@ -592,6 +597,15 @@
 			path = Tools;
 			sourceTree = "<group>";
 		};
+		49CD077D216205AA00046AB9 /* VideoThumbnailManager */ = {
+			isa = PBXGroup;
+			children = (
+				49CD077E216205C600046AB9 /* NINVideoThumbnailManager.h */,
+				49CD077F216205C600046AB9 /* NINVideoThumbnailManager.m */,
+			);
+			path = VideoThumbnailManager;
+			sourceTree = "<group>";
+		};
 		49D77F28215651A200900224 /* FullScreenImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -638,6 +652,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */,
 				49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */,
 				4930441B2158D90700DECB0C /* NINChatMetaMessage.h in Headers */,
 				49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */,
@@ -864,6 +879,7 @@
 				49721CD821295C7F00695F33 /* NINChatBubbleCell.m in Sources */,
 				49D77F3521569C0400900224 /* NINToast.m in Sources */,
 				49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */,
+				49CD0781216205C600046AB9 /* NINVideoThumbnailManager.m in Sources */,
 				493044282159016200DECB0C /* NINDiskIOService.m in Sources */,
 				49140B7120F2494800A00EA8 /* NINSessionManager.m in Sources */,
 				49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */,

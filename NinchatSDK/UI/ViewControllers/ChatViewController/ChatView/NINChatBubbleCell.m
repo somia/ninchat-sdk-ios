@@ -17,6 +17,8 @@
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
 #import "UITextView+Ninchat.h"
+#import "NINVideoThumbnailManager.h"
+#import "NINToast.h"
 
 @interface NINChatBubbleCell () <UITextViewDelegate>
 
@@ -53,6 +55,9 @@
 // The message's image
 @property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
 
+// Video play image
+@property (nonatomic, strong) IBOutlet UIImageView* videoPlayImageView;
+
 // Constraint for binding sender name / time labels to left edge
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* topLabelsLeftConstraint;
 
@@ -78,7 +83,7 @@
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageWidthConstraint;
 
 // Message image's aspect ratio constraint
-@property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageAspectRatioConstraint;
+@property (nonatomic, strong) NSLayoutConstraint* imageAspectRatioConstraint;
 
 // Original width of the avatar image containers
 @property (nonatomic, assign) CGFloat avatarContainerWidth;
@@ -163,72 +168,105 @@
 }
 
 -(void) imagePressed {
-    NSLog(@"Image pressed: %@", self.messageImageView.image);
-
-    if ((self.imagePressedCallback != nil) && (self.messageImageView.image != nil)) {
-        self.imagePressedCallback(self.message.attachment, self.messageImageView.image);
+    if (self.imagePressedCallback != nil) {
+        if (self.message.attachment.isVideo) {
+            self.imagePressedCallback(self.message.attachment, nil);
+        } else if (self.message.attachment.isImage && (self.messageImageView.image != nil)) {
+            self.imagePressedCallback(self.message.attachment, self.messageImageView.image);
+        }
     }
 }
 
 -(void) setImageAspectRatio:(CGFloat)aspectRatio {
+    NSLog(@"Setting image view aspect ratio to %f", aspectRatio);
+
     self.imageAspectRatioConstraint.active = NO;
-    self.imageAspectRatioConstraint = [NSLayoutConstraint constraintWithItem:self.messageImageView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.messageImageView attribute:NSLayoutAttributeWidth multiplier:aspectRatio constant:0];
+    self.imageAspectRatioConstraint = [self.messageImageView.heightAnchor constraintEqualToAnchor:self.messageImageView.widthAnchor multiplier:aspectRatio];
     self.imageAspectRatioConstraint.active = YES;
 }
 
 -(void) updateImage {
+    NSCAssert(self.message.attachment != nil, @"Must have attachment here");
+    NSCAssert(self.message.attachment.isImageOrVideo, @"Attachment must be image or video");
+    NSCAssert(self.videoThumbnailManager != nil, @"Must have videoThumbnailManager");
+    
     NINFileInfo* attachment = self.message.attachment;
-
     self.messageImageView.image = nil;
 
-    if ((attachment != nil) && attachment.isImage) {
+    if (attachment.isImage) {
         // Load the image in message image view over HTTP or from local cache
-        NSLog(@"Message has an image with URL: %@", attachment.url);
-        
         [self.messageImageView setImageURL:attachment.url];
-
-        if (self.imageTapRecognizer == nil) {
-            self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imagePressed)];
-            [self.messageImageView addGestureRecognizer:self.imageTapRecognizer];
-        }
-
-        // Allow the image to have a width propertional to the cell content view
-        self.imageProportionalWidthConstraint.active = YES;
-        self.imageWidthConstraint.active = NO;
-
-        if (attachment.aspectRatio > 0) {
-            // Set message image's aspect ratio
-            [self setImageAspectRatio:(1.0 / attachment.aspectRatio)];
-        }
     } else {
-        // No image; clear image constraints etc so it wont affect layout
-        self.imageProportionalWidthConstraint.active = NO;
-        [self setImageAspectRatio:0];
-        if (self.imageTapRecognizer != nil) {
-            [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
-            self.imageTapRecognizer = nil;
-        }
+        // For video we must fetch the thumbnail image
+        __weak typeof(self) weakSelf = self;
+        NSLog(@"Extracting video thumbnail.");
+        [self.videoThumbnailManager extractThumbnail:attachment.url completion:^(NSError * _Nullable error, BOOL fromCache, UIImage * _Nullable thumbnail) {
+            if (error != nil) {
+                //TODO localize error msg
+                [NINToast showWithMessage:@"Failed to get video thumbnail" callback:nil];
+            } else {
+                attachment.aspectRatio = thumbnail.size.width / thumbnail.size.height;
+
+                // Update constraints to match new thumbnail image size
+                weakSelf.messageImageView.image = thumbnail;
+                [weakSelf setImageAspectRatio:thumbnail.size.height / thumbnail.size.width];
+                [weakSelf.contentView setNeedsLayout];//TODO needed?
+
+                if (fromCache) {
+                    // Animate the thumbnail in
+                    weakSelf.messageImageView.alpha = 0;
+                    [UIView animateWithDuration:0.3 animations:^{
+                        weakSelf.messageImageView.alpha = 1;
+                    } completion:^(BOOL finished) {
+                    }];
+                }
+            }
+        }];
     }
+
+    if (self.imageTapRecognizer == nil) {
+        self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imagePressed)];
+        [self.messageImageView addGestureRecognizer:self.imageTapRecognizer];
+    }
+
+    // Allow the image to have a width propertional to the cell content view
+    self.imageWidthConstraint.active = NO;
+    self.imageProportionalWidthConstraint.active = YES;
+
+    if (attachment.aspectRatio > 0) {
+        // Set message image's aspect ratio
+        [self setImageAspectRatio:(1.0 / attachment.aspectRatio)];
+    }
+
+    [self.contentView setNeedsLayout];//TODO needed?
+
+    NSLog(@"updateImage returning.");
 }
 
 #pragma mark - Public methods
 
 -(void) populateWithChannelMessage:(NINChannelMessage*)message {
+    NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
+
     self.message = message;
+    NINFileInfo* attachment = message.attachment;
+
+    self.videoPlayImageView.hidden = !message.attachment.isVideo;
 
     if (self.message.attachment.isPDF) {
-        [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", self.message.attachment.url, self.message.attachment.name]];
+        [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", attachment.url, attachment.name]];
     } else {
         self.messageTextView.text = message.textContent;
+        self.messageTextView.hidden = (message.textContent.length == 0);
     }
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
         self.senderNameLabel.text = @"Guest";
     }
-
-    NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
-    NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
-    NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
 
     self.topLabelsContainerHeightConstraint.constant = message.series ? 0 : self.topLabelsContainerHeight;
 
@@ -244,15 +282,40 @@
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
 
     // Update the message image, if any
-    [self updateImage];
+    if (attachment == nil) {
+        // No image; clear image constraints etc so it wont affect layout
+        self.imageProportionalWidthConstraint.active = NO;
+        self.imageAspectRatioConstraint.active = NO;
+        self.imageAspectRatioConstraint = nil;
+        self.imageWidthConstraint.active = NO;
+        self.messageImageView.image = nil;
+
+        if (self.imageTapRecognizer != nil) {
+            [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
+            self.imageTapRecognizer = nil;
+        }
+    } else if (attachment.isImage || attachment.isVideo) {
+        __weak typeof(self) weakSelf = self;
+
+        [attachment updateInfoWithCompletionCallback:^(NSError* error) {
+            [weakSelf updateImage];
+        }];
+    }
+
+    NSLog(@"populateWithChannelMessage: returning.");
 }
 
 -(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message typingIcon:(UIImage*)typingIcon {
     NSCAssert(typingIcon != nil, @"Typing icon cannot be nil!");
+    NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
+    NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
 
     self.senderNameLabel.text = message.user.displayName;
     self.messageTextView.text = nil;
     self.messageImageView.image = typingIcon;
+    self.videoPlayImageView.hidden = YES;
 
     self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;
 

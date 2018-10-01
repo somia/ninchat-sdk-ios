@@ -21,8 +21,10 @@
 
     [self setImageWithURLRequest:request placeholderImage:nil success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
         weakSelf.image = image;
+        NSLog(@"Set image: %@", weakSelf.image);
 
         if (response != nil) {
+            NSLog(@"Animating the new image in.");
             // The image got loaded over the internet; fade it in.
             weakSelf.alpha = 0;
             [UIView animateWithDuration:0.3 animations:^{
