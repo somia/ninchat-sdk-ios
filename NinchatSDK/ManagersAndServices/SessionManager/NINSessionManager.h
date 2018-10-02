@@ -120,7 +120,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends a file to the chat. */
--(void) sendFile:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) sendFileWithFilename:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Describe a file by its ID. */
 -(void) describeFile:(NSString* _Nonnull)fileID completion:(getFileInfoCallback _Nonnull)completion;

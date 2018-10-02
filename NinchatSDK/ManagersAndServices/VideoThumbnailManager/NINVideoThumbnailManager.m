@@ -29,25 +29,29 @@
 
     // Cache miss; must extract it from the video
     //TODO run on bg thread
-    AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:videoURL]];
+//    runInBackgroundThread(^{
+        AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:videoURL]];
 
-    // Grab the thumbnail a few seconds into the video
-    CMTime duration = [asset duration];
-    CMTime thumbTime = CMTimeMakeWithSeconds(2, 30);
-    thumbTime = CMTimeMaximum(duration, thumbTime);
+        //TODO check the video orientation so that portrait video gives out a portrait image!
 
-    AVAssetImageGenerator* generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
-    NSError* error = nil;
-    CGImageRef imageRef = [generator copyCGImageAtTime:thumbTime actualTime:nil error:&error];
+        // Grab the thumbnail a few seconds into the video
+        CMTime duration = [asset duration];
+        CMTime thumbTime = CMTimeMakeWithSeconds(2, 30);
+        thumbTime = CMTimeMaximum(duration, thumbTime);
 
-    UIImage* thumbnail = [UIImage imageWithCGImage:imageRef];
-    CGImageRelease(imageRef);
+        AVAssetImageGenerator* generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+        NSError* error = nil;
+        CGImageRef imageRef = [generator copyCGImageAtTime:thumbTime actualTime:nil error:&error];
 
-    [self.imageCache setObject:thumbnail forKey:videoURL];
+        UIImage* thumbnail = [UIImage imageWithCGImage:imageRef];
+        CGImageRelease(imageRef);
 
-    runOnMainThread(^{
-        completion(error, NO, thumbnail);
-    });
+        [self.imageCache setObject:thumbnail forKey:videoURL];
+
+        runOnMainThread(^{
+            completion(error, NO, thumbnail);
+        });
+//    });
 }
 
 -(id) init {

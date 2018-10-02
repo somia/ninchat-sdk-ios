@@ -121,12 +121,12 @@
                                                 </variation>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="GOj-1m-Klp">
-                                                <rect key="frame" x="184" y="29.5" width="24" height="24"/>
-                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <rect key="frame" x="175" y="20.5" width="42" height="42"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="24" id="Mdv-vt-AYF"/>
-                                                    <constraint firstAttribute="height" constant="24" id="cBg-ot-fIF"/>
+                                                    <constraint firstAttribute="width" constant="42" id="Mdv-vt-AYF"/>
+                                                    <constraint firstAttribute="height" constant="42" id="cBg-ot-fIF"/>
                                                 </constraints>
                                             </imageView>
                                         </subviews>

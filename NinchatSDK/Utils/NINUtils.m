@@ -20,20 +20,20 @@ NSError* newError(NSString* msg) {
     return [NSError errorWithDomain:@"NinchatSDK" code:1 userInfo:@{@"message": msg}];
 }
 
+void runInBackgroundThread(emptyBlock block) {
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), block);
+}
+
 void runOnMainThread(emptyBlock block) {
     if ([NSThread isMainThread]) {
         block();
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            block();
-        });
+        dispatch_async(dispatch_get_main_queue(), block);
     }
 }
 
 void runOnMainThreadWithDelay(emptyBlock _Nonnull block, NSTimeInterval delay) {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        block();
-    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), block);
 }
 
 void postNotification(NSString* notificationName, NSDictionary* userInfo) {

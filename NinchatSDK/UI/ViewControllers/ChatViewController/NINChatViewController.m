@@ -291,7 +291,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
     UIImagePickerController* pickerController = [UIImagePickerController new];
     pickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary; //TODO
-    pickerController.mediaTypes = @[(NSString*)kUTTypeImage];
+    pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
     pickerController.delegate = self;
 
     [self presentViewController:pickerController animated:YES completion:nil];
@@ -316,19 +316,46 @@ static NSString* const kCloseChatText = @"Close chat";
 
 #pragma mark - From UIImagePickerControllerDelegate
 
--(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info {
+-(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString*,id> *)info {
 
-    NSCAssert([info[UIImagePickerControllerMediaType] isEqualToString:(NSString*)kUTTypeImage], @"Invalid media type received");
+    NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
 
-    UIImage* image = info[UIImagePickerControllerOriginalImage];
-    NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
+    //TODO use UIImagePickerControllerReferenceURL to get PHAsset --> filename
+    
+    if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
+        UIImage* image = info[UIImagePickerControllerOriginalImage];
+        NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
 
-    [self.sessionManager sendFile:@"image.jpeg" withData:imageData completion:^(NSError* error) {
-        if (error != nil) {
-            NSLog(@"Failed to send image: %@", error);
-            [NINToast showWithMessage:@"Failed to send file" callback:nil];
-        }
-    }];
+        //TODO do this in background thread!
+        //TODO fix filename if it is available
+        [self.sessionManager sendFileWithFilename:@"image.jpeg" withData:imageData completion:^(NSError* error) {
+            if (error != nil) {
+                NSLog(@"Failed to send image: %@", error);
+                [NINToast showWithMessage:@"Failed to send file" callback:nil];
+            }
+        }];
+    } if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
+        runInBackgroundThread(^{
+            // Read the video file into RAM (hoping it will fit).
+            NSURL* videoURL = info[UIImagePickerControllerMediaURL];
+            NSLog(@"videoURL: %@", videoURL.absoluteString);
+            //TODO can we use this API or should we use this:
+            //https://developer.apple.com/documentation/foundation/nsinputstream/1564838-inputstreamwithurl
+            NSData* videoFileData = [NSData dataWithContentsOfURL:videoURL];
+            NSLog(@"Read %lu bytes of the video file.", (unsigned long)videoFileData.length);
+
+            [self.sessionManager sendFileWithFilename:@"video.mov" withData:videoFileData completion:^(NSError* error) {
+                NSCAssert([NSThread isMainThread], @"Must be called on the main thread!");
+                if (error != nil) {
+                    //TODO localize
+                    [NINToast showWithMessage:@"Failed to send video file." callback:nil];
+                }
+            }];
+        });
+
+    } else {
+        NSCAssert(false, @"Invalid media type!");
+    }
 
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -370,7 +397,7 @@ static NSString* const kCloseChatText = @"Close chat";
 #pragma mark - From RTCEAGLVideoViewDelegate
 
 - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
-    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
+//    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
 
     CGFloat containerWidth = self.videoContainerView.bounds.size.width;
     CGFloat containerHeight = self.videoContainerView.bounds.size.height;
@@ -378,26 +405,26 @@ static NSString* const kCloseChatText = @"Close chat";
     CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
 
     if (videoView == self.localVideoView) {
-        NSLog(@"Adjusting local video view size");
+//        NSLog(@"Adjusting local video view size");
         self.localVideoSize = size;
 
         // Fit the local video view inside a box sized proportionately to the video container
         CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
         CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
 
-        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
+//        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
 
         self.localViewWidthConstraint.constant = videoFrame.size.width;
         self.localViewHeightConstraint.constant = videoFrame.size.height;
     } else {
-        NSLog(@"Adjusting remote video view size");
+//        NSLog(@"Adjusting remote video view size");
         self.remoteVideoSize = size;
 
         // Fit the remote video view inside the view container with proper aspect ratio
         CGRect videoRect = self.videoContainerView.bounds;
         CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
 
-        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
+//        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
 
         self.remoteViewWidthConstraint.constant = videoFrame.size.width;
         self.remoteViewHeightConstraint.constant = videoFrame.size.height;

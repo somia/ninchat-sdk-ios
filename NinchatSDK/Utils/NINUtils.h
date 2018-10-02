@@ -12,6 +12,11 @@
 #import "NINPrivateTypes.h"
 
 /**
+ * Run the given block in a background thread.
+ */
+void runInBackgroundThread(emptyBlock _Nonnull block);
+
+/**
  * Runs the given block on the main thread (queue).
  */
 void runOnMainThread(emptyBlock _Nonnull block);

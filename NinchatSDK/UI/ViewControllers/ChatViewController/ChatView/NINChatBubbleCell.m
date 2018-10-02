@@ -266,8 +266,10 @@
     } else {
         self.messageTextView.text = message.textContent;
         if (message.textContent == nil) {
+            //TODO try to make this an IBOutlet and just activate/deactive
             if (self.textHeightConstraint == nil) {
                 self.textHeightConstraint = [self.messageTextView.heightAnchor constraintEqualToConstant:0];
+                self.textHeightConstraint.priority = 999;
                 self.textHeightConstraint.active = YES;
             } else {
                 self.textHeightConstraint.active = NO;
@@ -378,6 +380,11 @@
 
     // Rotate the cell 180 degrees; we will use the table view upside down
     self.transform = CGAffineTransformMakeRotation(M_PI);
+
+    // Workaround for https://openradar.appspot.com/18448072
+    UIImage* image = self.videoPlayImageView.image;
+    self.videoPlayImageView.image = nil;
+    self.videoPlayImageView.image = image;
 
     // The cell doesnt have any dynamic content; we can freely rasterize it for better scrolling performance
     self.layer.shouldRasterize = YES;

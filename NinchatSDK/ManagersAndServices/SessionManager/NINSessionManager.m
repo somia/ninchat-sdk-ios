@@ -594,11 +594,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             NSInteger fileSize = [fileObject[@"file_attrs"][@"size"] integerValue];
 
             if (fileMediaType == nil) {
+                NSLog(@"No MIME type in file attributes; have to guess it.");
                 fileMediaType = guessMIMETypeFromFileName(filename);
             }
-            NSLog(@"fileMediaType = %@", fileMediaType);
 
-            // Only process images at this point
+            [self.ninchatSession sdklog:@"Got file with MIME type: '%@'", fileMediaType];
+
+            // Only process certain files at this point
             if ([fileMediaType hasPrefix:@"image/"] || [fileMediaType hasPrefix:@"video/"] ||[fileMediaType isEqualToString:@"application/pdf"]) {
 
                 hasAttachment = YES;
@@ -983,7 +985,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self sendMessageWithMessageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
 }
 
--(void) sendFile:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion {
+-(void) sendFileWithFilename:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
     if (self.currentChannelID == nil) {
