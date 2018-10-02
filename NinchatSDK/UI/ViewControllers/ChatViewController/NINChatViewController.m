@@ -9,6 +9,7 @@
 @import MobileCoreServices;
 @import AVFoundation;
 @import AVKit;
+@import Photos;
 
 @import Libjingle;
 
@@ -318,23 +319,27 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString*,id> *)info {
 
+    //TODO do in bg thread?
+    NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
+    PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
+    NSString* fileName = [phAsset valueForKey:@"filename"];
+    NSLog(@"fileName = %@", fileName);
+
     NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
 
-    //TODO use UIImagePickerControllerReferenceURL to get PHAsset --> filename
-    
     if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
         UIImage* image = info[UIImagePickerControllerOriginalImage];
         NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
 
         //TODO do this in background thread!
         //TODO fix filename if it is available
-        [self.sessionManager sendFileWithFilename:@"image.jpeg" withData:imageData completion:^(NSError* error) {
+        [self.sessionManager sendFileWithFilename:fileName withData:imageData completion:^(NSError* error) {
             if (error != nil) {
                 NSLog(@"Failed to send image: %@", error);
                 [NINToast showWithMessage:@"Failed to send file" callback:nil];
             }
         }];
-    } if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
+    } else if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
         runInBackgroundThread(^{
             // Read the video file into RAM (hoping it will fit).
             NSURL* videoURL = info[UIImagePickerControllerMediaURL];
@@ -344,7 +349,7 @@ static NSString* const kCloseChatText = @"Close chat";
             NSData* videoFileData = [NSData dataWithContentsOfURL:videoURL];
             NSLog(@"Read %lu bytes of the video file.", (unsigned long)videoFileData.length);
 
-            [self.sessionManager sendFileWithFilename:@"video.mov" withData:videoFileData completion:^(NSError* error) {
+            [self.sessionManager sendFileWithFilename:fileName withData:videoFileData completion:^(NSError* error) {
                 NSCAssert([NSThread isMainThread], @"Must be called on the main thread!");
                 if (error != nil) {
                     //TODO localize

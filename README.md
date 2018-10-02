@@ -43,7 +43,7 @@ You must keep a reference to the created API client instance until the SDK UI te
 ```swift
 import NinchatSDK
 
-self.ninchatSession = NINChatSession(serverAddress: serverAddress, configurationKey: configurationKey, siteSecret: siteSecret, queueID: queueID)
+self.ninchatSession = NINChatSession(configKey: configKey, queueID: queueID)
 self.ninchatSession.delegate = self
 ```
 
@@ -132,6 +132,14 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
     log.debug("** NINCHAT SDK **: \(message)")
 }
 ```
+
+#### Info.plist keys Required by the SDK
+
+The host application must define the following keys in its `Info.plist` file:
+
+* `NSPhotoLibraryUsageDescription` - For accessing photos
+* `NSMicrophoneUsageDescription` - For video conferencing
+* `NSCameraUsageDescription` - For video conferencing
 
 ## Low level API
 

@@ -24,7 +24,7 @@ NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyCha
 @property (nonatomic, strong) NINSessionManager* sessionManager;
 
 /** Configuration key; used to retrieve service configuration (site config) */
-@property (nonatomic, strong) NSString* configurationKey;
+@property (nonatomic, strong) NSString* configKey;
 
 /** Whether the SDK engine has been started ok */
 @property (nonatomic, assign) BOOL started;
@@ -37,6 +37,14 @@ NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyCha
 @implementation NINChatSession
 
 #pragma mark - Public API
+
+-(void) setServerAddress:(NSString*)serverAddress {
+    self.sessionManager.serverAddress = serverAddress;
+}
+
+-(void) setSiteSecret:(NSString*)siteSecret {
+    self.sessionManager.siteSecret = siteSecret;
+}
 
 -(NINLowLevelClientSession*) session {
     NSCAssert(self.started, @"API has not been started");
@@ -105,7 +113,7 @@ NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyCha
     [self sdklog:@"Starting a chat session"];
 
     // Fetch the site configuration
-    fetchSiteConfig(weakSelf.sessionManager.serverAddress, weakSelf.configurationKey, ^(NSDictionary* config, NSError* error) {
+    fetchSiteConfig(weakSelf.sessionManager.serverAddress, weakSelf.configKey, ^(NSDictionary* config, NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
@@ -143,15 +151,13 @@ NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyCha
     });
 }
 
--(id) initWithServerAddress:(NSString*)serverAddress configurationKey:(NSString*)configKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString*)queueID {
+-(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID {
     self = [super init];
 
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
         self.sessionManager.ninchatSession = self;
-        self.sessionManager.serverAddress = serverAddress;
-        self.configurationKey = configKey;
-        self.sessionManager.siteSecret = siteSecret;
+        self.configKey = configKey;
         self.queueID = queueID;
         self.started = NO;
     }

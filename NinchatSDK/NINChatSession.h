@@ -68,16 +68,20 @@
  */
 @property (nonatomic, weak, nullable) id<NINChatSessionDelegate> delegate;
 
+/** Set this prior to calling startWithCallback: if you need to supply a site secret. */
+@property (nonatomic, strong) NSString* serverAddress;
+
+/** Set this prior to calling startWithCallback: if you need to override server address. */
+@property (nonatomic, strong) NSString* siteSecret;
+
 /**
  * Initializes the API.
  *
- * @param serverAddress server address as host[:port]
- * @param configurationKey configuration key; this decides the chat realm
- * @param siteSecret optional secret for fetching the site configuration. Can be nil if not needed.
+ * @param configKey configuration key; this decides the chat realm
  * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
  * @return new API facade instance
  */
--(id _Nonnull) initWithServerAddress:(NSString*_Nonnull)serverAddress configurationKey:(NSString* _Nonnull)configurationKey siteSecret:(NSString* _Nullable)siteSecret queueID:(NSString* _Nullable)queueID;
+-(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

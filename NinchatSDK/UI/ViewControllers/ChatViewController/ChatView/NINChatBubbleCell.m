@@ -83,7 +83,7 @@
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* imageWidthConstraint;
 
 // Height constraint for the message text to set it to 0 for when there is no text.
-@property (nonatomic, strong) NSLayoutConstraint* textHeightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint* textZeroHeightConstraint;
 
 // Message image's aspect ratio constraint
 @property (nonatomic, strong) NSLayoutConstraint* imageAspectRatioConstraint;
@@ -108,6 +108,18 @@
 @implementation NINChatBubbleCell
 
 #pragma mark - Private methods
+
+-(void) enableTextHeightZeroConstraint:(BOOL)enable {
+    if (enable) {
+        if (self.textZeroHeightConstraint == nil) {
+            self.textZeroHeightConstraint = [self.messageTextView.heightAnchor constraintEqualToConstant:0];
+            self.textZeroHeightConstraint.active = YES;
+        }
+    } else {
+        self.textZeroHeightConstraint.active = NO;
+        self.textZeroHeightConstraint = nil;
+    }
+}
 
 -(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL {
     NSString* imageName = series ? @"chat_bubble_right_series" : @"chat_bubble_right";
@@ -241,8 +253,6 @@
         [self setImageAspectRatio:(1.0 / attachment.aspectRatio)];
     }
 
-    [self.contentView setNeedsLayout];//TODO needed?
-
     NSLog(@"updateImage returning.");
 }
 
@@ -254,7 +264,6 @@
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
-//    NSCAssert(self.textHeightConstraint != nil, @"Cannot be nil");
 
     self.message = message;
     NINFileInfo* attachment = message.attachment;
@@ -263,19 +272,10 @@
 
     if (self.message.attachment.isPDF) {
         [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", attachment.url, attachment.name]];
+        [self enableTextHeightZeroConstraint:NO];
     } else {
         self.messageTextView.text = message.textContent;
-        if (message.textContent == nil) {
-            //TODO try to make this an IBOutlet and just activate/deactive
-            if (self.textHeightConstraint == nil) {
-                self.textHeightConstraint = [self.messageTextView.heightAnchor constraintEqualToConstant:0];
-                self.textHeightConstraint.priority = 999;
-                self.textHeightConstraint.active = YES;
-            } else {
-                self.textHeightConstraint.active = NO;
-                self.textHeightConstraint = nil;
-            }
-        }
+        [self enableTextHeightZeroConstraint:(message.textContent == nil)];
     }
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
@@ -313,8 +313,11 @@
 
         [attachment updateInfoWithCompletionCallback:^(NSError* error) {
             [weakSelf updateImage];
+            [self.contentView setNeedsLayout];//TODO needed?
         }];
     }
+
+    [self.contentView setNeedsLayout];//TODO needed?
 
     NSLog(@"populateWithChannelMessage: returning.");
 }
@@ -325,6 +328,8 @@
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
+
+    [self enableTextHeightZeroConstraint:YES];
 
     self.senderNameLabel.text = message.user.displayName;
     self.messageTextView.text = nil;
