@@ -551,12 +551,22 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
 
     if ([message isKindOfClass:NINChannelMessage.class]) {
-        // Check if the previous message was sent by the same user, ie. is the
+        // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
         NINChannelMessage* channelMessage = (NINChannelMessage*)message;
         channelMessage.series = NO;
-        NINChannelMessage* prevMsg = (NINChannelMessage*)_chatMessages.firstObject;
-        if ((prevMsg != nil) && [prevMsg isKindOfClass:NINChannelMessage.class]) {
+
+        // Find the previous channel message
+        NINChannelMessage* prevMsg = nil;
+        for (NSInteger i = _chatMessages.count - 1; i >= 0; i--) {
+            id<NINChatMessage> msg = _chatMessages[i];
+            if ([msg isKindOfClass:NINChannelMessage.class]) {
+                prevMsg = msg;
+                break;
+            }
+        }
+
+        if (prevMsg != nil) {
             channelMessage.series = [prevMsg.sender.userID isEqualToString:channelMessage.sender.userID];
         }
     }
@@ -750,12 +760,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         }
 
         if (writing) {
-            if (messageIndex > 0) {
+            if (messageIndex < 0) {
                 // There's no 'typing' message for this user yet, lets create one
                 [self addNewChatMessage:[NINUserTypingMessage messageWithUser:messageUser timestamp:NSDate.date]];
             }
         } else {
-            if (messageIndex > 0) {
+            if (messageIndex >= 0) {
                 // There's a 'typing' message for this user - lets remove that.
                 [self removeChatMessageAtIndex:messageIndex];
             }

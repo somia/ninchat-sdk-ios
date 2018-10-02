@@ -349,7 +349,6 @@
 
     self.senderNameLabel.text = message.user.displayName;
     self.messageTextView.text = nil;
-    self.messageImageView.image = typingIcon;
     self.videoPlayImageView.hidden = YES;
 
     self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;
@@ -358,6 +357,9 @@
 
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
+    self.messageImageView.image = nil;
+    self.messageImageView.image = typingIcon;
+    self.messageImageView.tintColor = [UIColor blackColor];
 
     // Allow the image to have absolute width
     self.imageProportionalWidthConstraint.active = NO;

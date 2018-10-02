@@ -323,7 +323,6 @@ static NSString* const kCloseChatText = @"Close chat";
         NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
         PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
         NSString* fileName = [phAsset valueForKey:@"filename"];
-        NSLog(@"fileName = %@", fileName);
 
         NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
 
