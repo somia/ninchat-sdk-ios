@@ -10,6 +10,8 @@
 
 #import "NINPrivateTypes.h"
 
+typedef void (^updateFileInfoCallback)(NSError* _Nullable error, BOOL didNetworkRefresh);
+
 @class NINSessionManager;
 
 /** Describes a downloadable file with ID, mime type, size and url. */
@@ -29,7 +31,7 @@
 +(instancetype) fileWithSessionManager:(NINSessionManager*)sessionManager fileID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size;
 
 /** Calls describe_file to retrieve / refresh file info (including the temporary URL). */
--(void) updateInfoWithCompletionCallback:(callbackWithErrorBlock)completion;
+-(void) updateInfoWithCompletionCallback:(updateFileInfoCallback)completion;
 
 /** Whether or not this file represents an image. */
 -(BOOL) isImage;

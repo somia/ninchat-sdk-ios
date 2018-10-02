@@ -319,28 +319,26 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString*,id> *)info {
 
-    //TODO do in bg thread?
-    NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
-    PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
-    NSString* fileName = [phAsset valueForKey:@"filename"];
-    NSLog(@"fileName = %@", fileName);
+    runInBackgroundThread(^{
+        NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
+        PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
+        NSString* fileName = [phAsset valueForKey:@"filename"];
+        NSLog(@"fileName = %@", fileName);
 
-    NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
+        NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
 
-    if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
-        UIImage* image = info[UIImagePickerControllerOriginalImage];
-        NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
+        if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
+            UIImage* image = info[UIImagePickerControllerOriginalImage];
+            NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
 
-        //TODO do this in background thread!
-        //TODO fix filename if it is available
-        [self.sessionManager sendFileWithFilename:fileName withData:imageData completion:^(NSError* error) {
-            if (error != nil) {
-                NSLog(@"Failed to send image: %@", error);
-                [NINToast showWithMessage:@"Failed to send file" callback:nil];
-            }
-        }];
-    } else if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
-        runInBackgroundThread(^{
+            [self.sessionManager sendFileWithFilename:fileName withData:imageData completion:^(NSError* error) {
+                NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+                if (error != nil) {
+                    [NINToast showWithMessage:@"Failed to send image file" callback:nil];
+                }
+            }];
+        } else if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
             // Read the video file into RAM (hoping it will fit).
             NSURL* videoURL = info[UIImagePickerControllerMediaURL];
             NSLog(@"videoURL: %@", videoURL.absoluteString);
@@ -351,16 +349,16 @@ static NSString* const kCloseChatText = @"Close chat";
 
             [self.sessionManager sendFileWithFilename:fileName withData:videoFileData completion:^(NSError* error) {
                 NSCAssert([NSThread isMainThread], @"Must be called on the main thread!");
+
                 if (error != nil) {
                     //TODO localize
                     [NINToast showWithMessage:@"Failed to send video file." callback:nil];
                 }
             }];
-        });
-
-    } else {
-        NSCAssert(false, @"Invalid media type!");
-    }
+        } else {
+            NSCAssert(false, @"Invalid media type!");
+        }
+    });
 
     [self dismissViewControllerAnimated:YES completion:nil];
 }

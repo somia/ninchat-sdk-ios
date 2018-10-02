@@ -607,10 +607,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                 hasAttachment = YES;
                 __weak typeof(self) weakSelf = self;
 
-                NSLog(@"Fetching file info.");
-
                 NINFileInfo* fileInfo = [NINFileInfo fileWithSessionManager:self fileID:fileObject[@"file_id"] name:filename mimeType:fileMediaType size:fileSize];
-                [fileInfo updateInfoWithCompletionCallback:^(NSError* error) {
+
+                [fileInfo updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
                     if (error != nil) {
                         [NINToast showWithMessage:@"Failed to update file info" callback:nil];
                     } else {

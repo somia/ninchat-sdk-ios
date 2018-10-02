@@ -45,7 +45,7 @@
     return self.isImage || self.isVideo;
 }
 
--(void) updateInfoWithCompletionCallback:(callbackWithErrorBlock)completion {
+-(void) updateInfoWithCompletionCallback:(updateFileInfoCallback)completion {
     // The URL must not expire within the next 15 minutes
     NSDate* comparisonDate = [NSDate dateWithTimeIntervalSinceNow:-(15 * 60)];
 
@@ -53,33 +53,20 @@
         NSLog(@"Must update file info; call describe_file");
         [self.sessionManager describeFile:self.fileID completion:^(NSError* error, NSDictionary* fileInfo) {
             if (error != nil) {
-                completion(error);
+                completion(error, YES);
             } else {
                 self.url = fileInfo[@"url"];
                 self.urlExpiry = fileInfo[@"urlExpiry"];
                 self.aspectRatio = [fileInfo[@"aspectRatio"] floatValue];
-                completion(nil);
+                completion(nil, YES);
             }
         }];
     } else {
         NSLog(@"No need to update file, it is up to date.");
         // No need to update; everything is up to date
-        completion(nil);
+        completion(nil, NO);
     }
 }
-
-//+(instancetype) imageFileInfoWithID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size url:(NSString*)url urlExpiry:(NSDate*)urlExpiry aspectRatio:(CGFloat)aspectRatio {
-//    NINFileInfo* info = [NINFileInfo new];
-//    info.fileID = fileID;
-//    info.name = name;
-//    info.mimeType = mimeType;
-//    info.size = size;
-//    info.url = url;
-//    info.urlExpiry = urlExpiry;
-//    info.aspectRatio = aspectRatio;
-//
-//    return info;
-//}
 
 +(instancetype) fileWithSessionManager:(NINSessionManager*)sessionManager fileID:(NSString*)fileID name:(NSString*)name mimeType:(NSString*)mimeType size:(NSInteger)size {
 

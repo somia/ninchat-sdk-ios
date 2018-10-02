@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINPrivateTypes.h"
+
 @class NINChannelMessage;
 @class NINUserTypingMessage;
 @class NINFileInfo;
@@ -20,6 +22,7 @@ typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
 
 @property (nonatomic, strong) NINVideoThumbnailManager* videoThumbnailManager;
 @property (nonatomic, copy) imagePressedCallback imagePressedCallback;
+@property (nonatomic, copy) emptyBlock cellConstraintsUpdatedCallback;
 
 -(void) populateWithChannelMessage:(NINChannelMessage*)message;
 -(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message typingIcon:(UIImage*)typingIcon;

@@ -113,6 +113,7 @@
     if (enable) {
         if (self.textZeroHeightConstraint == nil) {
             self.textZeroHeightConstraint = [self.messageTextView.heightAnchor constraintEqualToConstant:0];
+            self.textZeroHeightConstraint.priority = 999;
             self.textZeroHeightConstraint.active = YES;
         }
     } else {
@@ -200,7 +201,31 @@
     self.imageAspectRatioConstraint.active = YES;
 }
 
--(void) updateImage {
+-(void) updateVideoThumbnail:(UIImage*)thumbnail fromCache:(BOOL)fromCache {
+    // Update constraints to match new thumbnail image size
+    [self setImageAspectRatio:thumbnail.size.height / thumbnail.size.width];
+
+    self.messageImageView.image = thumbnail;
+    if (!fromCache) {
+        // Animate the thumbnail in
+        self.messageImageView.alpha = 0;
+        [UIView animateWithDuration:0.3 animations:^{
+            self.messageImageView.alpha = 1;
+        } completion:nil];
+    }
+
+    if (self.cellConstraintsUpdatedCallback != nil) {
+        // Inform the chat view that our cell might need resizing due to new constraints.
+        // We do this regardless of fromCache -value as this method may have been called asynchronously
+        // from updateInfoWithCompletionCallback completion block in populate method.
+        [self.contentView setNeedsLayout];
+        self.cellConstraintsUpdatedCallback();
+    }
+}
+
+// asynchronous = YES implies we're calling this asynchronously from the
+// updateInfoWithCompletionCallback completion block (meaning it did a network update)
+-(void) updateImage:(BOOL)asynchronous {
     NSCAssert(self.message.attachment != nil, @"Must have attachment here");
     NSCAssert(self.message.attachment.isImageOrVideo, @"Attachment must be image or video");
     NSCAssert(self.videoThumbnailManager != nil, @"Must have videoThumbnailManager");
@@ -208,37 +233,7 @@
     NINFileInfo* attachment = self.message.attachment;
     self.messageImageView.image = nil;
 
-    if (attachment.isImage) {
-        // Load the image in message image view over HTTP or from local cache
-        [self.messageImageView setImageURL:attachment.url];
-    } else {
-        // For video we must fetch the thumbnail image
-        __weak typeof(self) weakSelf = self;
-        NSLog(@"Extracting video thumbnail.");
-        [self.videoThumbnailManager extractThumbnail:attachment.url completion:^(NSError * _Nullable error, BOOL fromCache, UIImage * _Nullable thumbnail) {
-            if (error != nil) {
-                //TODO localize error msg
-                [NINToast showWithMessage:@"Failed to get video thumbnail" callback:nil];
-            } else {
-                attachment.aspectRatio = thumbnail.size.width / thumbnail.size.height;
-
-                // Update constraints to match new thumbnail image size
-                weakSelf.messageImageView.image = thumbnail;
-                [weakSelf setImageAspectRatio:thumbnail.size.height / thumbnail.size.width];
-                [weakSelf.contentView setNeedsLayout];//TODO needed?
-
-                if (fromCache) {
-                    // Animate the thumbnail in
-                    weakSelf.messageImageView.alpha = 0;
-                    [UIView animateWithDuration:0.3 animations:^{
-                        weakSelf.messageImageView.alpha = 1;
-                    } completion:^(BOOL finished) {
-                    }];
-                }
-            }
-        }];
-    }
-
+    // Make sure we have an image tap recognizer in place
     if (self.imageTapRecognizer == nil) {
         self.imageTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imagePressed)];
         [self.messageImageView addGestureRecognizer:self.imageTapRecognizer];
@@ -251,6 +246,30 @@
     if (attachment.aspectRatio > 0) {
         // Set message image's aspect ratio
         [self setImageAspectRatio:(1.0 / attachment.aspectRatio)];
+    }
+
+    if (attachment.isImage) {
+        // Load the image in message image view over HTTP or from local cache
+        [self.messageImageView setImageURL:attachment.url];
+
+        if (asynchronous) {
+            // Inform the chat view that our cell might need resizing due to new constraints.
+            [self.contentView setNeedsLayout];
+            self.cellConstraintsUpdatedCallback();
+        }
+    } else {
+        // For video we must fetch the thumbnail image
+        __weak typeof(self) weakSelf = self;
+        [self.videoThumbnailManager getVideoThumbnail:attachment.url completion:^(NSError * _Nullable error, BOOL fromCache, UIImage * _Nullable thumbnail) {
+            NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+            if (error != nil) {
+                //TODO localize error msg
+                [NINToast showWithMessage:@"Failed to get video thumbnail" callback:nil];
+            } else {
+                [weakSelf updateVideoThumbnail:thumbnail fromCache:fromCache];
+            }
+        }];
     }
 
     NSLog(@"updateImage returning.");
@@ -308,16 +327,13 @@
             [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
             self.imageTapRecognizer = nil;
         }
-    } else if (attachment.isImage || attachment.isVideo) {
+    } else if (attachment.isImageOrVideo) {
         __weak typeof(self) weakSelf = self;
 
-        [attachment updateInfoWithCompletionCallback:^(NSError* error) {
-            [weakSelf updateImage];
-            [self.contentView setNeedsLayout];//TODO needed?
+        [attachment updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
+            [weakSelf updateImage:didNetworkRefresh];
         }];
     }
-
-    [self.contentView setNeedsLayout];//TODO needed?
 
     NSLog(@"populateWithChannelMessage: returning.");
 }
@@ -361,6 +377,13 @@
 // iOS 10 and up
 -(BOOL) textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction API_AVAILABLE(ios(10.0)) {
     return YES;
+}
+
+-(void) prepareForReuse {
+    [super prepareForReuse];
+
+    self.cellConstraintsUpdatedCallback = nil;
+    self.imagePressedCallback = nil;
 }
 
 #pragma mark - Lifecycle etc.

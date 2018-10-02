@@ -51,12 +51,17 @@
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
+        cell.cellConstraintsUpdatedCallback = ^{
+            [UIView animateWithDuration:0.3 animations:^{
+                [weakSelf.tableView beginUpdates];
+                [weakSelf.tableView endUpdates];
+            }];
+        };
         return cell;
     } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = nil;
         [cell populateWithUserTypingMessage:message typingIcon:self.imageAssetOverrides[NINImageAssetKeyChatUserTypingIndicator]];
-        cell.imagePressedCallback = nil;
         return cell;
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];

@@ -14,7 +14,7 @@ typedef void (^extractThumbnailCallback)(NSError* _Nullable error, BOOL fromCach
 
 @interface NINVideoThumbnailManager : NSObject
 
--(void) extractThumbnail:(NSString*)videoURL completion:(extractThumbnailCallback)completion;
+-(void) getVideoThumbnail:(NSString*)videoURL completion:(extractThumbnailCallback)completion;
 
 @end
 

@@ -19,8 +19,10 @@
 
 @implementation NINVideoThumbnailManager
 
--(void) extractThumbnail:(NSString*)videoURL completion:(extractThumbnailCallback)completion {
-    // Check if have a cached thumbnail
+-(void) getVideoThumbnail:(NSString*)videoURL completion:(extractThumbnailCallback)completion {
+    NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+    // Check if we have a cached thumbnail
     UIImage* cached = [self.imageCache objectForKey:videoURL];
     if (cached != nil) {
         completion(nil, YES, cached);
@@ -28,20 +30,19 @@
     }
 
     // Cache miss; must extract it from the video
-    //TODO run on bg thread
-//    runInBackgroundThread(^{
+    runInBackgroundThread(^{
         AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:videoURL]];
 
         // Grab the thumbnail a few seconds into the video
         CMTime duration = [asset duration];
         CMTime thumbTime = CMTimeMakeWithSeconds(2, 30);
         thumbTime = CMTimeMaximum(duration, thumbTime);
-
-    // Create an AVAssetImageGenerator that applies the proper image orientation
+        
+        // Create an AVAssetImageGenerator that applies the proper image orientation
         AVAssetImageGenerator* generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
         generator.appliesPreferredTrackTransform = YES;
 
-    // Extract the thumbnail image as a snapshot from a video frame
+        // Extract the thumbnail image as a snapshot from a video frame
         NSError* error = nil;
         CGImageRef imageRef = [generator copyCGImageAtTime:thumbTime actualTime:nil error:&error];
         UIImage* thumbnail = [UIImage imageWithCGImage:imageRef];
@@ -52,7 +53,7 @@
         runOnMainThread(^{
             completion(error, NO, thumbnail);
         });
-//    });
+    });
 }
 
 -(id) init {
