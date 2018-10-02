@@ -489,7 +489,9 @@ static NSString* const kCloseChatText = @"Close chat";
 }
 
 -(void) closeChatRequestedByChatView:(NINChatView*)chatView {
-    [self.sessionManager closeChat];
+//    [self.sessionManager closeChat];
+    [self disconnectWebRTC];
+    [self performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
 }
 
 #pragma mark - From NINBaseViewController
@@ -597,7 +599,8 @@ static NSString* const kCloseChatText = @"Close chat";
     self.closeChatButton.pressedCallback = ^{
         NSLog(@"Close chat button pressed!");
         [weakSelf disconnectWebRTC];
-        [weakSelf.sessionManager closeChat];
+//        [weakSelf.sessionManager closeChat];
+        [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
     };
 
     self.chatView.dataSource = self;

@@ -372,8 +372,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 //    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
 //    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
 //    [self addNewChatMessage:msg1];
+
+    // Simulate the other guy sending "Writing.." event
 //    [self addNewChatMessage:[NINUserTypingMessage messageWithUser:user1 timestamp:NSDate.date]];
-//
 //    runOnMainThreadWithDelay(^{
 //        [self removeChatMessageAtIndex:0];
 //    }, 5.0);
