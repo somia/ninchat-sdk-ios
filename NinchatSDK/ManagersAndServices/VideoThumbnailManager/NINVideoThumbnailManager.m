@@ -32,17 +32,18 @@
 //    runInBackgroundThread(^{
         AVAsset *asset = [AVAsset assetWithURL:[NSURL URLWithString:videoURL]];
 
-        //TODO check the video orientation so that portrait video gives out a portrait image!
-
         // Grab the thumbnail a few seconds into the video
         CMTime duration = [asset duration];
         CMTime thumbTime = CMTimeMakeWithSeconds(2, 30);
         thumbTime = CMTimeMaximum(duration, thumbTime);
 
+    // Create an AVAssetImageGenerator that applies the proper image orientation
         AVAssetImageGenerator* generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+        generator.appliesPreferredTrackTransform = YES;
+
+    // Extract the thumbnail image as a snapshot from a video frame
         NSError* error = nil;
         CGImageRef imageRef = [generator copyCGImageAtTime:thumbTime actualTime:nil error:&error];
-
         UIImage* thumbnail = [UIImage imageWithCGImage:imageRef];
         CGImageRelease(imageRef);
 
