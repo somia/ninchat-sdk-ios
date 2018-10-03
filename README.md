@@ -138,6 +138,7 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
 The host application must define the following keys in its `Info.plist` file:
 
 * `NSPhotoLibraryUsageDescription` - For accessing photos
+* `NSPhotoLibraryAddUsageDescription` - For saving chat images to photos album
 * `NSMicrophoneUsageDescription` - For video conferencing
 * `NSCameraUsageDescription` - For video conferencing
 

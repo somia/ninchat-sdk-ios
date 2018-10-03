@@ -11,6 +11,7 @@
 
 @interface NINToast ()
 
+@property (nonatomic, strong) IBOutlet UIView* containerView;
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* topInsetHeightConstraint;
 @property (nonatomic, strong) IBOutlet UILabel* messageLabel;
 
@@ -31,12 +32,16 @@ static const CGFloat kHiddenAlpha = 0.6;
     return (NINToast*)objects.firstObject;
 }
 
-+(void) showWithErrorMessage:(NSString*)message callback:(emptyBlock)callback {
++(void) showWithMessage:(NSString*)message bgColorOverride:(UIColor*)color callback:(emptyBlock)callback {
     NSCAssert(UIApplication.sharedApplication.keyWindow != nil, @"No key window");
 
     NINToast* toast = [NINToast loadViewFromNib];
     toast.translatesAutoresizingMaskIntoConstraints = NO;
     toast.messageLabel.text = message;
+
+    if (color != nil) {
+        toast.containerView.backgroundColor = color;
+    }
 
     UIView* window = UIApplication.sharedApplication.keyWindow;
     [window addSubview:toast];
@@ -73,6 +78,14 @@ static const CGFloat kHiddenAlpha = 0.6;
             }
         }];
     }];
+}
+
++(void) showWithErrorMessage:(NSString*)message callback:(emptyBlock)callback {
+    [NINToast showWithMessage:message bgColorOverride:nil callback:callback];
+}
+
++(void) showWithInfoMessage:(NSString*)message callback:(emptyBlock)callback {
+    [NINToast showWithMessage:message bgColorOverride:[UIColor colorWithRed:0 green:138/255.0 blue:1 alpha:1] callback:callback];
 }
 
 @end

@@ -12,7 +12,10 @@
 
 @interface NINToast : UIView
 
-/** Shows the toast for a while. Callback (if defined) is called when the toast has disappeared. */
+/** Shows an error message for a while. Callback (if defined) is called when the toast has disappeared. */
 +(void) showWithErrorMessage:(NSString*)message callback:(emptyBlock)callback;
+
+/** Shows an info message for a while. Callback (if defined) is called when the toast has disappeared. */
++(void) showWithInfoMessage:(NSString*)message callback:(emptyBlock)callback;
 
 @end

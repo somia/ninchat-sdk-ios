@@ -8,17 +8,16 @@
 
 #import "NINFullScreenImageViewController.h"
 #import "NINFileInfo.h"
+#import "NINToast.h"
+#import "NINSessionManager.h"
 
 @interface NINFullScreenImageViewController () <UIScrollViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UIView* topBarView;
-//@property (nonatomic, strong) IBOutlet UIView* topBarBackgroundView;
 @property (nonatomic, strong) IBOutlet UILabel* fileNameLabel;
 
 @property (nonatomic, strong) IBOutlet UIScrollView* scrollView;
 @property (nonatomic, strong) IBOutlet UIImageView* fullScreenImageView;
-//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* contentWidthConstraint;
-//@property (nonatomic, strong) IBOutlet NSLayoutConstraint* contentHeightConstraint;
 
 @property (nonatomic, strong) UITapGestureRecognizer* tapRecognizer;
 
@@ -48,10 +47,24 @@ static const NSTimeInterval kTopBarAnimationDuration = 0.3;
     }];
 }
 
+-(void)image:(UIImage*)image didFinishSavingWithError:(NSError*)error contextInfo:(void *)contextInfo {
+    if (error != nil) {
+        [self.sessionManager.ninchatSession sdklog:@"Error: failed to save image to Photos album: %@", error];
+        //TODO localize
+        [NINToast showWithErrorMessage:@"Failed to save image" callback:nil];
+    } else {
+        [NINToast showWithInfoMessage:@"Image saved to Photos" callback:nil];
+    }
+}
+
 #pragma mark - IBAction handlers
 
 -(IBAction) closeButtonPressed {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+-(IBAction) downloadButtonPressed {
+    UIImageWriteToSavedPhotosAlbum(self.fullScreenImageView.image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
 #pragma mark - From UIScrollViewDelegate

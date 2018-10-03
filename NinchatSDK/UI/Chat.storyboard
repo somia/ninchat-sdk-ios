@@ -383,6 +383,17 @@ you are next.</string>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yp6-u1-JT0">
+                                        <rect key="frame" x="308" y="19.5" width="21" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="21" id="fQ1-Rd-hPK"/>
+                                            <constraint firstAttribute="height" constant="21" id="kOK-LX-wUy"/>
+                                        </constraints>
+                                        <state key="normal" image="icon_download"/>
+                                        <connections>
+                                            <action selector="downloadButtonPressed" destination="kp2-RL-Kqz" eventType="touchUpInside" id="x8u-wg-9CB"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RUE-nC-9kB">
                                         <rect key="frame" x="344" y="19.5" width="21" height="21"/>
                                         <constraints>
@@ -402,8 +413,10 @@ you are next.</string>
                                     <constraint firstAttribute="height" constant="60" id="IoL-GC-Ni8"/>
                                     <constraint firstAttribute="trailing" secondItem="gjX-BK-gzs" secondAttribute="trailing" id="JAI-RP-hS9"/>
                                     <constraint firstItem="gjX-BK-gzs" firstAttribute="leading" secondItem="PMo-Y7-zHd" secondAttribute="leading" id="LqR-9G-LDJ"/>
+                                    <constraint firstItem="yp6-u1-JT0" firstAttribute="centerY" secondItem="PMo-Y7-zHd" secondAttribute="centerY" id="RBY-Xb-nR2"/>
                                     <constraint firstItem="RUE-nC-9kB" firstAttribute="centerY" secondItem="PMo-Y7-zHd" secondAttribute="centerY" id="RN3-vQ-k6f"/>
                                     <constraint firstItem="QX0-zo-sPu" firstAttribute="leading" secondItem="PMo-Y7-zHd" secondAttribute="leading" constant="15" id="d3P-oj-vyv"/>
+                                    <constraint firstItem="RUE-nC-9kB" firstAttribute="leading" secondItem="yp6-u1-JT0" secondAttribute="trailing" constant="15" id="xCq-Pv-rdk"/>
                                     <constraint firstAttribute="bottom" secondItem="gjX-BK-gzs" secondAttribute="bottom" id="xKN-Bh-9ZG"/>
                                 </constraints>
                             </view>
@@ -768,6 +781,7 @@ you are next.</string>
     <resources>
         <image name="icon_attachment" width="674" height="770"/>
         <image name="icon_close_x" width="375" height="375"/>
+        <image name="icon_download" width="13" height="14"/>
         <image name="icon_face_happy" width="898" height="898"/>
         <image name="icon_face_neutral" width="898" height="898"/>
         <image name="icon_face_sad" width="898" height="898"/>
