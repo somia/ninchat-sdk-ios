@@ -14,6 +14,7 @@
 #import "NINQueue.h"
 #import "NINCloseChatButton.h"
 #import "UITextView+Ninchat.h"
+#import "UIButton+Ninchat.h"
 
 // UI strings
 static NSString* const kQueuePositionN = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.";
@@ -103,6 +104,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {}];
         [weakSelf.sessionManager closeChat];
     };
+
+    // Asset overrides
+    [self.closeChatButton overrideImageWithSession:self.sessionManager.ninchatSession];
 }
 
 @end

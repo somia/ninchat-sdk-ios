@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -54,7 +54,7 @@
                         <constraint firstItem="t2B-lU-CM7" firstAttribute="centerY" secondItem="0Gu-aM-iur" secondAttribute="centerY" id="QXs-BW-DNQ"/>
                         <constraint firstAttribute="bottom" secondItem="d2n-jc-E4j" secondAttribute="bottom" id="Wy0-kV-VSL"/>
                         <constraint firstAttribute="trailing" secondItem="d2n-jc-E4j" secondAttribute="trailing" id="ZuG-Fm-Gfq"/>
-                        <constraint firstAttribute="height" priority="999" constant="45" id="e87-4k-Scp"/>
+                        <constraint firstAttribute="height" constant="45" id="e87-4k-Scp"/>
                         <constraint firstItem="d2n-jc-E4j" firstAttribute="leading" secondItem="0Gu-aM-iur" secondAttribute="leading" id="yRt-Ha-dv8"/>
                     </constraints>
                     <viewLayoutGuide key="safeArea" id="hS2-DI-uvB"/>
@@ -72,6 +72,7 @@
             <connections>
                 <outlet property="buttonTitleLabel" destination="t2B-lU-CM7" id="RR9-c6-dox"/>
                 <outlet property="closeButtonImageView" destination="eGq-au-bq4" id="HKN-lf-o4J"/>
+                <outlet property="theButton" destination="d2n-jc-E4j" id="2Ur-Px-CNj"/>
             </connections>
             <point key="canvasLocation" x="232" y="-157"/>
         </view>

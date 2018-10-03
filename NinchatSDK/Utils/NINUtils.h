@@ -48,7 +48,7 @@ NSError* _Nonnull newError(NSString* _Nonnull msg);
 NSLayoutConstraint* _Nonnull constrain(UIView* _Nonnull view1, UIView* _Nonnull view2, NSLayoutAttribute attr);
 
 /** Util method for creating constraints for making all the edges of two views to match. */
-NSArray<NSLayoutConstraint*>* constrainToMatch(UIView* view1, UIView* view2);
+NSArray<NSLayoutConstraint*>* _Nonnull constrainToMatch(UIView* _Nonnull view1, UIView* _Nonnull view2);
 
 /** Returns the resource bundle containing the requested resource. */
 NSBundle* _Nonnull findResourceBundle(void);

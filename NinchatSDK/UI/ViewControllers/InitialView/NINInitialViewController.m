@@ -14,6 +14,7 @@
 #import "NINQueueViewController.h"
 #import "UITextView+Ninchat.h"
 #import "NINUtils.h"
+#import "UIButton+Ninchat.h"
 
 // UI strings
 static NSString* const kJoinQueueText = @"Join audience queue {{audienceQueue.queue_attrs.name}}";
@@ -102,6 +103,10 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
     self.closeWindowButton.layer.borderColor = [UIColor colorWithRed:73/255.0 green:172/255.0 blue:253/255.0 alpha:1].CGColor;
     self.closeWindowButton.layer.borderWidth = 1;
+
+    // Handle image asset overrides
+    [self.startChatButton overrideImageWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton];
+    [self.closeWindowButton overrideImageWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewCloseWindowButton];
 }
 
 @end

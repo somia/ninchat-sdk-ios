@@ -10,11 +10,14 @@
 
 #import "NINPrivateTypes.h"
 
+@class NINChatSession;
+
 @interface NINCloseChatButton : UIView
 
 @property (nonatomic, copy) emptyBlock pressedCallback;
 
 -(void) setButtonTitle:(NSString*)title;
+-(void) overrideImageWithSession:(NINChatSession*)session;
 
 @end
 

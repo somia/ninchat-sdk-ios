@@ -69,13 +69,13 @@
 @property (nonatomic, weak, nullable) id<NINChatSessionDelegate> delegate;
 
 /** Set this prior to calling startWithCallback: if you need to supply a site secret. */
-@property (nonatomic, strong) NSString* serverAddress;
+@property (nonatomic, strong) NSString* _Nullable serverAddress;
 
 /** Set this prior to calling startWithCallback: if you need to override server address. */
-@property (nonatomic, strong) NSString* siteSecret;
+@property (nonatomic, strong) NSString* _Nullable siteSecret;
 
 /** Value to be passed as audience_metadata parameter for request_audience calls. */
-@property (nonatomic, strong) NINLowLevelClientProps* audienceMetadata;
+@property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
 
 /**
  * Initializes the API.

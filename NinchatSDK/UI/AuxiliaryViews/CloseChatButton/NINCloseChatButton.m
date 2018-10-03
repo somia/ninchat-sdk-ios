@@ -8,9 +8,11 @@
 
 #import "NINCloseChatButton.h"
 #import "NINUtils.h"
+#import "NINChatSession.h"
 
 @interface NINCloseChatButton ()
 
+@property (nonatomic, strong) IBOutlet UIButton* theButton;
 @property (nonatomic, strong) IBOutlet UILabel* buttonTitleLabel;
 @property (nonatomic, strong) IBOutlet UIImageView* closeButtonImageView;
 
@@ -22,6 +24,17 @@
 
 -(void) setButtonTitle:(NSString*)title {
     self.buttonTitleLabel.text = title;
+}
+
+-(void) overrideImageWithSession:(NINChatSession*)session {
+    UIImage* overrideImage = [session.delegate ninchat:session overrideImageAssetForKey:NINImageAssetKeyCloseChatButton];
+
+    if (overrideImage != nil) {
+        [self.theButton setBackgroundImage:overrideImage forState:UIControlStateNormal];
+        self.theButton.backgroundColor = [UIColor clearColor];
+        self.layer.cornerRadius = 0;
+        self.layer.borderWidth = 0;
+    }
 }
 
 #pragma mark - IBAction handlers

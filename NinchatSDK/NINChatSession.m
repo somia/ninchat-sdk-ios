@@ -17,6 +17,10 @@
 // Image asset keys
 NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKeyQueueViewProgressIndicator";
 NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyChatUserTypingIndicator";
+NINImageAssetKey NINImageAssetKeyInitialViewJoinQueueButton = @"NINImageAssetKeyJoinQueueButton";
+NINImageAssetKey NINImageAssetKeyInitialViewCloseWindowButton = @"NINImageAssetKeyCloseWindowButton";
+NINImageAssetKey NINImageAssetKeyChatViewBackgroundTexture = @"NINImageAssetKeyChatBackground";
+NINImageAssetKey NINImageAssetKeyCloseChatButton = @"NINImageAssetKeyCloseChatButton";
 
 @interface NINChatSession ()
 

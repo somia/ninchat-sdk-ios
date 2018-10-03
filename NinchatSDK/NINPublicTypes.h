@@ -16,5 +16,9 @@ typedef void (^startCallbackBlock)(NSError* _Nullable error);
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatUserTypingIndicator;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyInitialViewJoinQueueButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyInitialViewCloseWindowButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatViewBackgroundTexture;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyCloseChatButton;
 
 #endif /* PublicTypes_h */
