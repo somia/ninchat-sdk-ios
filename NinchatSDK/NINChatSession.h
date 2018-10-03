@@ -74,6 +74,9 @@
 /** Set this prior to calling startWithCallback: if you need to override server address. */
 @property (nonatomic, strong) NSString* siteSecret;
 
+/** Value to be passed as audience_metadata parameter for request_audience calls. */
+@property (nonatomic, strong) NINLowLevelClientProps* audienceMetadata;
+
 /**
  * Initializes the API.
  *

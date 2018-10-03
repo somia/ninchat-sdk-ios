@@ -621,7 +621,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
                 [fileInfo updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
                     if (error != nil) {
-                        [NINToast showWithMessage:@"Failed to update file info" callback:nil];
+                        [NINToast showWithErrorMessage:@"Failed to update file info" callback:nil];
                     } else {
                         NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
                         [weakSelf addNewChatMessage:msg];
@@ -845,6 +845,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         NINLowLevelClientProps* params = [NINLowLevelClientProps new];
         [params setString:@"action" val:@"request_audience"];
         [params setString:@"queue_id" val:queueID];
+        if (self.audienceMetadata != nil) {
+            [params setObject:@"audience_metadata" ref:self.audienceMetadata];
+        }
 
         int64_t actionId;
         NSError* error = nil;

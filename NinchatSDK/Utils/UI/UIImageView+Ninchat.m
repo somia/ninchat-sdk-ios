@@ -33,7 +33,7 @@
             }];
         }
     } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
-        [NINToast showWithMessage:@"Failed to fetch image" callback:nil];
+        [NINToast showWithErrorMessage:@"Failed to fetch image" callback:nil];
     }];
 }
 

@@ -36,7 +36,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 // UI (Localizable) strings
 static NSString* const kCloseChatText = @"Close chat";
 
-@interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
@@ -172,7 +172,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCPickup payloadDict:@{@"answer": @(answer)} completion:^(NSError* error) {
         if (error != nil) {
             NSLog(@"Failed to send pick-up message: %@", error);
-            [NINToast showWithMessage:@"Failed to send WebRTC pickup message" callback:nil];
+            [NINToast showWithErrorMessage:@"Failed to send WebRTC pickup message" callback:nil];
         }
     }];
 }
@@ -270,9 +270,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [self disconnectWebRTC];
 }
 
-#pragma mark - IBAction handlers
-
--(IBAction) sendButtonPressed:(id)sender {
+-(void) sendTextMessage {
     NSString* text = [self.textInputField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     self.textInputField.text = nil;
     [self.textInputField resignFirstResponder];
@@ -281,10 +279,16 @@ static NSString* const kCloseChatText = @"Close chat";
         [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
             if (error != nil) {
                 NSLog(@"TODO: message failed to send - show error message");
-                [NINToast showWithMessage:@"Failed to send message" callback:nil];
+                [NINToast showWithErrorMessage:@"Failed to send message" callback:nil];
             }
         }];
     }
+}
+
+#pragma mark - IBAction handlers
+
+-(IBAction) sendButtonPressed:(id)sender {
+    [self sendTextMessage];
 }
 
 -(IBAction) attachmentButtonPressed:(id)sender {
@@ -314,6 +318,13 @@ static NSString* const kCloseChatText = @"Close chat";
     }];
 }
 
+#pragma mark - From UITextViewDelegate
+
+-(BOOL) textFieldShouldReturn:(UITextField*)textField {
+    [self sendTextMessage];
+
+    return YES;
+}
 
 #pragma mark - From UIImagePickerControllerDelegate
 
@@ -334,7 +345,7 @@ static NSString* const kCloseChatText = @"Close chat";
                 NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
                 if (error != nil) {
-                    [NINToast showWithMessage:@"Failed to send image file" callback:nil];
+                    [NINToast showWithErrorMessage:@"Failed to send image file" callback:nil];
                 }
             }];
         } else if ([mediaType isEqualToString:(NSString*)kUTTypeMovie]) {
@@ -351,7 +362,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
                 if (error != nil) {
                     //TODO localize
-                    [NINToast showWithMessage:@"Failed to send video file." callback:nil];
+                    [NINToast showWithErrorMessage:@"Failed to send video file." callback:nil];
                 }
             }];
         } else {
@@ -504,14 +515,13 @@ static NSString* const kCloseChatText = @"Close chat";
     if (self.tapRecognizerView == nil) {
         __weak typeof(self) weakSelf = self;
         self.tapRecognizerView = [[NINTouchView alloc] initWithFrame:self.chatView.bounds];
-        self.tapRecognizerView.tag = 666;
+        [self.chatView addSubview:self.tapRecognizerView];
+        [NSLayoutConstraint activateConstraints:constrainToMatch(self.tapRecognizerView, self.chatView)];
 
         self.tapRecognizerView.touchCallback = ^{
             // Get rid of the keyboard
             [weakSelf.textInputField resignFirstResponder];
         };
-
-        [self.chatView addSubview:self.tapRecognizerView];
     }
 
     [self.sessionManager setIsWriting:YES completion:^(NSError* error) {}];

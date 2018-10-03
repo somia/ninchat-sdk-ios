@@ -98,6 +98,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
  */
 @property (nonatomic, strong, readonly) NSArray<id<NINChatMessage>>* _Nonnull chatMessages;
 
+/** Value to be passed as audience_metadata parameter for request_audience calls. */
+@property (nonatomic, strong) NINLowLevelClientProps* audienceMetadata;
+
 /** Opens the session with an asynchronous completion callback. */
 -(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
 

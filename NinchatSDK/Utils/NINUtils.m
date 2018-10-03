@@ -52,8 +52,15 @@ id fetchNotification(NSString* notificationName, notificationBlock _Nonnull bloc
     return observer;
 }
 
-NSLayoutConstraint* constraint(UIView* view1, UIView* view2, NSLayoutAttribute attr) {
+NSLayoutConstraint* constrain(UIView* view1, UIView* view2, NSLayoutAttribute attr) {
     return [NSLayoutConstraint constraintWithItem:view1 attribute:attr relatedBy:NSLayoutRelationEqual toItem:view2 attribute:attr multiplier:1 constant:0];
+}
+
+NSArray<NSLayoutConstraint*>* constrainToMatch(UIView* view1, UIView* view2) {
+    return @[constrain(view1, view2, NSLayoutAttributeTop),
+             constrain(view1, view2, NSLayoutAttributeRight),
+             constrain(view1, view2, NSLayoutAttributeBottom),
+             constrain(view1, view2, NSLayoutAttributeLeft)];
 }
 
 NSBundle* findResourceBundle() {

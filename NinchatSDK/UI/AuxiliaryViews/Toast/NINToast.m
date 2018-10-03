@@ -31,7 +31,7 @@ static const CGFloat kHiddenAlpha = 0.6;
     return (NINToast*)objects.firstObject;
 }
 
-+(void) showWithMessage:(NSString*)message callback:(emptyBlock)callback {
++(void) showWithErrorMessage:(NSString*)message callback:(emptyBlock)callback {
     NSCAssert(UIApplication.sharedApplication.keyWindow != nil, @"No key window");
 
     NINToast* toast = [NINToast loadViewFromNib];
@@ -46,9 +46,9 @@ static const CGFloat kHiddenAlpha = 0.6;
         toast.topInsetHeightConstraint.constant = window.safeAreaInsets.top;
     }
 
-    NSArray* constraints = @[ constraint(toast, window, NSLayoutAttributeLeft),
-                              constraint(toast, window, NSLayoutAttributeTop),
-                              constraint(toast, window, NSLayoutAttributeRight) ];
+    NSArray* constraints = @[ constrain(toast, window, NSLayoutAttributeLeft),
+                              constrain(toast, window, NSLayoutAttributeTop),
+                              constrain(toast, window, NSLayoutAttributeRight) ];
     [NSLayoutConstraint activateConstraints:constraints];
 
     CGFloat toastBottom = toast.frame.origin.y + toast.bounds.size.height;

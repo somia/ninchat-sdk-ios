@@ -56,19 +56,19 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     d.faderView.backgroundColor = [UIColor colorWithWhite:0 alpha:1];
     d.faderView.alpha = 0.0;
     NSArray* faderConstraints = @[
-                                  constraint(d.faderView, view, NSLayoutAttributeTop),
-                                  constraint(d.faderView, view, NSLayoutAttributeRight),
-                                  constraint(d.faderView, view, NSLayoutAttributeBottom),
-                                  constraint(d.faderView, view, NSLayoutAttributeLeft)
+                                  constrain(d.faderView, view, NSLayoutAttributeTop),
+                                  constrain(d.faderView, view, NSLayoutAttributeRight),
+                                  constrain(d.faderView, view, NSLayoutAttributeBottom),
+                                  constrain(d.faderView, view, NSLayoutAttributeLeft)
                                   ];
     [view addSubview:d.faderView];
     [NSLayoutConstraint activateConstraints:faderConstraints];
 
     // Constrain the view to the given view's top edge
     NSArray* constraints = @[
-                             constraint(d, view, NSLayoutAttributeTop),
-                             constraint(d, view, NSLayoutAttributeRight),
-                             constraint(d, view, NSLayoutAttributeLeft)
+                             constrain(d, view, NSLayoutAttributeTop),
+                             constrain(d, view, NSLayoutAttributeRight),
+                             constrain(d, view, NSLayoutAttributeLeft)
                              ];
     [view addSubview:d];
     [NSLayoutConstraint activateConstraints:constraints];

@@ -22,8 +22,16 @@
     CGSize keyboardSize = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     CGFloat animationDuration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
 
+    CGFloat amountToRaiseView = keyboardSize.height;
+
+    if (@available(iOS 11.0, *)) {
+        // Remove any safe area from the amount to raise the view - this will make the
+        // keyboard top edge match the previous safe area bottom.
+        amountToRaiseView -= self.view.safeAreaInsets.bottom;
+    }
+
     [UIView animateWithDuration:animationDuration animations:^{
-        self.view.transform = CGAffineTransformMakeTranslation(0, -keyboardSize.height);
+        self.view.transform = CGAffineTransformMakeTranslation(0, -amountToRaiseView);
     } completion:^(BOOL finished) {
 
     }];

@@ -45,7 +45,10 @@ id _Nonnull fetchNotification(NSString* _Nonnull notificationName, notificationB
 NSError* _Nonnull newError(NSString* _Nonnull msg);
 
 /** Util method for creating a constraint that matches given attribute exactly between two views. */
-NSLayoutConstraint* _Nonnull constraint(UIView* _Nonnull view1, UIView* _Nonnull view2, NSLayoutAttribute attr);
+NSLayoutConstraint* _Nonnull constrain(UIView* _Nonnull view1, UIView* _Nonnull view2, NSLayoutAttribute attr);
+
+/** Util method for creating constraints for making all the edges of two views to match. */
+NSArray<NSLayoutConstraint*>* constrainToMatch(UIView* view1, UIView* view2);
 
 /** Returns the resource bundle containing the requested resource. */
 NSBundle* _Nonnull findResourceBundle(void);

@@ -13,6 +13,6 @@
 @interface NINToast : UIView
 
 /** Shows the toast for a while. Callback (if defined) is called when the toast has disappeared. */
-+(void) showWithMessage:(NSString*)message callback:(emptyBlock)callback;
++(void) showWithErrorMessage:(NSString*)message callback:(emptyBlock)callback;
 
 @end

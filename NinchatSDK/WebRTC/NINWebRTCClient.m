@@ -239,7 +239,7 @@
         [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
             if (error != nil) {
                 NSLog(@"WebRTC: Message send error: %@", error);
-                [NINToast showWithMessage:@"Failed to send RTC signaling message" callback:nil];
+                [NINToast showWithErrorMessage:@"Failed to send RTC signaling message" callback:nil];
             }
         }];
     });

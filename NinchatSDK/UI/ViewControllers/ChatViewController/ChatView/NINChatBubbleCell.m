@@ -265,7 +265,7 @@
 
             if (error != nil) {
                 //TODO localize error msg
-                [NINToast showWithMessage:@"Failed to get video thumbnail" callback:nil];
+                [NINToast showWithErrorMessage:@"Failed to get video thumbnail" callback:nil];
             } else {
                 [weakSelf updateVideoThumbnail:thumbnail fromCache:fromCache];
             }

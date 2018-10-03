@@ -42,8 +42,24 @@ NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyCha
     self.sessionManager.serverAddress = serverAddress;
 }
 
+-(NSString*) serverAddress {
+    return self.sessionManager.serverAddress;
+}
+
 -(void) setSiteSecret:(NSString*)siteSecret {
     self.sessionManager.siteSecret = siteSecret;
+}
+
+-(NSString*) siteSecret {
+    return self.sessionManager.siteSecret;
+}
+
+-(void) setAudienceMetadata:(NINLowLevelClientProps*)audienceMetadata {
+    self.sessionManager.audienceMetadata = audienceMetadata;
+}
+
+-(NINLowLevelClientProps*) audienceMetadata {
+    return self.sessionManager.audienceMetadata;
 }
 
 -(NINLowLevelClientSession*) session {
