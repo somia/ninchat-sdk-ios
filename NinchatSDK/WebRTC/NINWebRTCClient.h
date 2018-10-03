@@ -45,8 +45,10 @@
 /** Starts the client, with optional SDP (Service Description Protocol) data. */
 -(void) startWithSDP:(NSDictionary*)sdp;
 
--(void) muteAudio;
--(void) unmuteAudio;
+-(void) muteLocalAudio;
+-(void) unmuteLocalAudio;
+-(void) disableLocalVideo;
+-(void) enableLocalVideo;
 
 /** Creates a new client. */
 +(instancetype) clientWithSessionManager:(NINSessionManager*)sessionManager operatingMode:(NINWebRTCClientOperatingMode)operatingMode stunServers:(NSArray<NINWebRTCServerInfo*>*)stunServers turnServers:(NSArray<NINWebRTCServerInfo*>*)turnServers;

@@ -71,6 +71,9 @@ static NSString* const kCloseChatText = @"Close chat";
 // Audio mute / unmute button
 @property (nonatomic, strong) IBOutlet UIButton* muteAudioButton;
 
+// Local video enable / disable
+@property (nonatomic, strong) IBOutlet UIButton* cameraEnabledButton;
+
 // Remote video track
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
@@ -323,14 +326,24 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(IBAction) audioMuteButtonPressed:(UIButton*)button {
     if (button.selected) {
-        [self.webrtcClient unmuteAudio];
+        [self.webrtcClient unmuteLocalAudio];
         [self.sessionManager.ninchatSession sdklog:@"Audio unmuted."];
     } else {
-        [self.webrtcClient muteAudio];
+        [self.webrtcClient muteLocalAudio];
         [self.sessionManager.ninchatSession sdklog:@"Audio muted."];
     }
 
     button.selected = !button.selected;
+}
+
+-(IBAction) cameraEnabledButtonPressed:(UIButton*)button {
+    if (button.selected) {
+        [self.webrtcClient enableLocalVideo];
+        [self.sessionManager.ninchatSession sdklog:@"Video enabled."];
+    } else {
+        [self.webrtcClient disableLocalVideo];
+        [self.sessionManager.ninchatSession sdklog:@"Video disabled."];
+    }
 }
 
 #pragma mark - From UITextViewDelegate

@@ -168,7 +168,7 @@ you are next.</string>
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="6vK-iU-LpC">
-                                        <rect key="frame" x="5" y="202" width="110" height="50"/>
+                                        <rect key="frame" x="5" y="202" width="170" height="50"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nxH-tm-Ax2">
                                                 <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -193,6 +193,20 @@ you are next.</string>
                                                 <state key="selected" image="icon_audio_muted"/>
                                                 <connections>
                                                     <action selector="audioMuteButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="T3C-RQ-Pxf"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1HC-sb-HPX">
+                                                <rect key="frame" x="120" y="0.0" width="50" height="50"/>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="50" id="lj0-Od-yg1"/>
+                                                    <constraint firstAttribute="width" constant="50" id="pAJ-S8-Blg"/>
+                                                </constraints>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="icon_camera_on"/>
+                                                <state key="selected" image="icon_camera_off"/>
+                                                <connections>
+                                                    <action selector="cameraEnabledButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="jTl-7I-CHE"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -339,6 +353,7 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
                     </view>
                     <connections>
+                        <outlet property="cameraEnabledButton" destination="1HC-sb-HPX" id="Fg9-jE-mg1"/>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
                         <outlet property="chatViewHeightConstraint" destination="FdO-24-78A" id="IzG-o9-EzZ"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
@@ -798,6 +813,8 @@ you are next.</string>
         <image name="icon_attachment" width="674" height="770"/>
         <image name="icon_audio_muted" width="35" height="35"/>
         <image name="icon_audio_unmuted" width="35" height="35"/>
+        <image name="icon_camera_off" width="35" height="35"/>
+        <image name="icon_camera_on" width="35" height="35"/>
         <image name="icon_close_x" width="375" height="375"/>
         <image name="icon_download" width="13" height="14"/>
         <image name="icon_face_happy" width="898" height="898"/>

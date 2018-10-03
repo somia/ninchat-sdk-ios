@@ -45,6 +45,12 @@
 // Default local audio track
 @property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
 
+// Default local video track
+@property(nonatomic, strong) RTCVideoTrack* defaultLocalVideoTrack;
+
+// Whether to enable the speaker
+//@property (nonatomic, assign) BOOL isSpeakerEnabled;
+
 @end
 
 @implementation NINWebRTCClient
@@ -162,7 +168,7 @@
     }
 }
 
--(void) muteAudio {
+-(void) muteLocalAudio {
     RTCMediaStream* localStream = self.peerConnection.localStreams[0];
     self.defaultLocalAudioTrack = localStream.audioTracks[0];
     [localStream removeAudioTrack:localStream.audioTracks[0]];
@@ -170,12 +176,45 @@
     [self.peerConnection addStream:localStream];
 }
 
--(void) unmuteAudio {
+-(void) unmuteLocalAudio {
     RTCMediaStream* localStream = self.peerConnection.localStreams[0];
     [localStream addAudioTrack:self.defaultLocalAudioTrack];
     [self.peerConnection removeStream:localStream];
     [self.peerConnection addStream:localStream];
+//    if (self.isSpeakerEnabled) {
+//        [self enableSpeaker];
+//    }
 }
+
+-(void) disableLocalVideo {
+#if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
+    // Camera capture only works on the device, not the simulator
+    RTCMediaStream *localStream = self.peerConnection.localStreams[0];
+    self.defaultLocalVideoTrack = localStream.videoTracks[0];
+    [localStream removeVideoTrack:localStream.videoTracks[0]];
+    [self.peerConnection removeStream:localStream];
+    [self.peerConnection addStream:localStream];
+#endif
+}
+-(void) enableLocalVideo {
+#if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
+    // Camera capture only works on the device, not the simulator
+    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
+    [localStream addVideoTrack:self.defaultLocalVideoTrack];
+    [self.peerConnection removeStream:localStream];
+    [self.peerConnection addStream:localStream];
+#endif
+}
+
+//-(void) enableSpeaker {
+//    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+//    self.isSpeakerEnabled = YES;
+//}
+//
+//-(void) disableSpeaker {
+//    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
+//    self.isSpeakerEnabled = NO;
+//}
 
 #pragma mark - From RTCPeerConnectionDelegate
 
