@@ -1116,7 +1116,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(self.session == nil, @"Existing chat session found");
     NSCAssert(self.serverAddress != nil, @"Must have server address");
 
-    [self.ninchatSession sdklog:@"Opening new chat session."];
+    [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
 
     // Make sure our site configuration contains a realm_id
     NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];

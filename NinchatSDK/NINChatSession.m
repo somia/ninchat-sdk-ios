@@ -14,6 +14,10 @@
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
 
+// Server addresses
+static NSString* const kTestServerAddress = @"api.luupi.net";
+static NSString* const kProductionServerAddress = @"api.ninchat.com";
+
 // Image asset keys
 NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKeyQueueViewProgressIndicator";
 NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyChatUserTypingIndicator";
@@ -129,6 +133,15 @@ NINImageAssetKey NINImageAssetKeyCloseChatButton = @"NINImageAssetKeyCloseChatBu
 // 3. Retrieves the queues available for this realm (realm id from site configuration)
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
+
+    if (self.sessionManager.serverAddress == nil) {
+        // Use a default value for server address
+#ifdef NIN_USE_TEST_SERVER
+        self.sessionManager.serverAddress = kTestServerAddress;
+#else
+        self.sessionManager.serverAddress = kProductionServerAddress;
+#endif
+    }
 
     [self sdklog:@"Starting a chat session"];
 
