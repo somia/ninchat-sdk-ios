@@ -167,8 +167,8 @@ you are next.</string>
                                             <constraint firstAttribute="height" constant="100" id="OIh-QV-c1x"/>
                                         </constraints>
                                     </view>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6vK-iU-LpC">
-                                        <rect key="frame" x="5" y="202" width="50" height="50"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="6vK-iU-LpC">
+                                        <rect key="frame" x="5" y="202" width="110" height="50"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nxH-tm-Ax2">
                                                 <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -179,6 +179,20 @@ you are next.</string>
                                                 <state key="normal" title="Button" image="icon_hangup"/>
                                                 <connections>
                                                     <action selector="hangupButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="AeD-qs-Kg8"/>
+                                                </connections>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="27s-2i-BBl">
+                                                <rect key="frame" x="60" y="0.0" width="50" height="50"/>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="50" id="Po3-Ey-oP9"/>
+                                                    <constraint firstAttribute="height" constant="50" id="SEg-HJ-UXi"/>
+                                                </constraints>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <state key="normal" image="icon_audio_unmuted"/>
+                                                <state key="selected" image="icon_audio_muted"/>
+                                                <connections>
+                                                    <action selector="audioMuteButtonPressed:" destination="bZ9-oP-wEd" eventType="touchUpInside" id="T3C-RQ-Pxf"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -201,6 +215,7 @@ you are next.</string>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINEmbeddableChatView">
                                 <rect key="frame" x="0.0" y="257" width="375" height="336"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="290" id="FdO-24-78A"/>
                                 </constraints>
@@ -330,6 +345,7 @@ you are next.</string>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>
+                        <outlet property="muteAudioButton" destination="27s-2i-BBl" id="ItM-KE-Q2u"/>
                         <outlet property="remoteVideoView" destination="XJz-Z9-GdN" id="A49-YF-jyz"/>
                         <outlet property="remoteViewHeightConstraint" destination="Tgw-Sv-lFF" id="W46-E4-3NX"/>
                         <outlet property="remoteViewWidthConstraint" destination="DhL-uc-K7h" id="xsw-pW-ctZ"/>
@@ -780,6 +796,8 @@ you are next.</string>
     </scenes>
     <resources>
         <image name="icon_attachment" width="674" height="770"/>
+        <image name="icon_audio_muted" width="35" height="35"/>
+        <image name="icon_audio_unmuted" width="35" height="35"/>
         <image name="icon_close_x" width="375" height="375"/>
         <image name="icon_download" width="13" height="14"/>
         <image name="icon_face_happy" width="898" height="898"/>

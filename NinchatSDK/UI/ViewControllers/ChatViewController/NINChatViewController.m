@@ -68,6 +68,9 @@ static NSString* const kCloseChatText = @"Close chat";
 // The close chat button
 @property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
+// Audio mute / unmute button
+@property (nonatomic, strong) IBOutlet UIButton* muteAudioButton;
+
 // Remote video track
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
@@ -318,6 +321,18 @@ static NSString* const kCloseChatText = @"Close chat";
     }];
 }
 
+-(IBAction) audioMuteButtonPressed:(UIButton*)button {
+    if (button.selected) {
+        [self.webrtcClient unmuteAudio];
+        [self.sessionManager.ninchatSession sdklog:@"Audio unmuted."];
+    } else {
+        [self.webrtcClient muteAudio];
+        [self.sessionManager.ninchatSession sdklog:@"Audio muted."];
+    }
+
+    button.selected = !button.selected;
+}
+
 #pragma mark - From UITextViewDelegate
 
 -(BOOL) textFieldShouldReturn:(UITextField*)textField {
@@ -473,6 +488,8 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
+    [self.textInputField resignFirstResponder];
+
     [self adjustConstraintsForSize:size animate:YES];
 }
 
@@ -515,6 +532,8 @@ static NSString* const kCloseChatText = @"Close chat";
     if (self.tapRecognizerView == nil) {
         __weak typeof(self) weakSelf = self;
         self.tapRecognizerView = [[NINTouchView alloc] initWithFrame:self.chatView.bounds];
+        self.tapRecognizerView.translatesAutoresizingMaskIntoConstraints = NO;
+
         [self.chatView addSubview:self.tapRecognizerView];
         [NSLayoutConstraint activateConstraints:constrainToMatch(self.tapRecognizerView, self.chatView)];
 
@@ -574,10 +593,6 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-//    if (self.sessionManager.connected) {
-//        [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
-//    }
-
     [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
     self.messagesObserver = nil;
 
@@ -601,8 +616,10 @@ static NSString* const kCloseChatText = @"Close chat";
     [super viewDidLoad];
 
     // Add tileable pattern image as the view background
-    //TODO get from asset loader callback
-    UIImage* bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    UIImage* bgImage = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatViewBackgroundTexture];
+    if (bgImage == nil) {
+        bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 
     [self.closeChatButton setButtonTitle:[self.sessionManager translation:kCloseChatText formatParams:nil]];
@@ -615,6 +632,8 @@ static NSString* const kCloseChatText = @"Close chat";
         [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
     };
 
+    [self.closeChatButton overrideImageWithSession:self.sessionManager.ninchatSession];
+
     self.chatView.dataSource = self;
     self.chatView.delegate = self;
 
@@ -626,6 +645,8 @@ static NSString* const kCloseChatText = @"Close chat";
     self.localVideoView.layer.borderWidth = 1.0;
 
     UIImage* userTypingIcon = [self createUserTypingIcon];
+
+    self.muteAudioButton.layer.cornerRadius = self.muteAudioButton.bounds.size.height / 2;
 
     //TODO add all the required assets (overloads) here
     NSMutableDictionary* chatImageAssetOverrides = [NSMutableDictionary dictionaryWithDictionary:@{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon}];

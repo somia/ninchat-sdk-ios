@@ -42,6 +42,9 @@
 // NSNotificationCenter observer for WebRTC signaling events from session manager
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
+// Default local audio track
+@property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
+
 @end
 
 @implementation NINWebRTCClient
@@ -157,6 +160,21 @@
         NSLog(@"WebRTC: answering call with SDP: %@", sdp);
         [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
     }
+}
+
+-(void) muteAudio {
+    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
+    self.defaultLocalAudioTrack = localStream.audioTracks[0];
+    [localStream removeAudioTrack:localStream.audioTracks[0]];
+    [self.peerConnection removeStream:localStream];
+    [self.peerConnection addStream:localStream];
+}
+
+-(void) unmuteAudio {
+    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
+    [localStream addAudioTrack:self.defaultLocalAudioTrack];
+    [self.peerConnection removeStream:localStream];
+    [self.peerConnection addStream:localStream];
 }
 
 #pragma mark - From RTCPeerConnectionDelegate
