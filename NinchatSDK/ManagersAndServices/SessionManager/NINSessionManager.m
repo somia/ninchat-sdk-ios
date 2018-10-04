@@ -853,7 +853,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 // https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
--(void) joinQueueWithId:(NSString*)queueID progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
+-(void) joinQueueWithId:(NSString*)joinQueueID progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
 
     NSCAssert(self.session != nil, @"No chat session");
     NSCAssert(self.currentQueueID == nil, @"Already in queue!");
@@ -863,7 +863,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     // This block does the actual operation
     void(^performJoin)(void) = ^() {
-        [weakSelf.ninchatSession sdklog:@"Joining queue %@..", queueID];
+        [weakSelf.ninchatSession sdklog:@"Joining queue %@..", joinQueueID];
 
         weakSelf.channelJoinObserver = fetchNotification(kChannelJoinedNotification, ^BOOL(NSNotification* note) {
             [NSNotificationCenter.defaultCenter removeObserver:weakSelf.queueProgressObserver];
@@ -875,9 +875,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         NINLowLevelClientProps* params = [NINLowLevelClientProps new];
         [params setString:@"action" val:@"request_audience"];
-        [params setString:@"queue_id" val:queueID];
-        if (self.audienceMetadata != nil) {
-            [params setObject:@"audience_metadata" ref:self.audienceMetadata];
+        [params setString:@"queue_id" val:joinQueueID];
+        if (weakSelf.audienceMetadata != nil) {
+            [params setObject:@"audience_metadata" ref:weakSelf.audienceMetadata];
         }
 
         int64_t actionId;
@@ -892,11 +892,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         weakSelf.queueProgressObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
             NSNumber* eventActionId = note.userInfo[@"action_id"];
             NSString* eventType = note.userInfo[@"event"];
-            NSString* queueId = note.userInfo[@"queue_id"];
+            NSString* queueID = note.userInfo[@"queue_id"];
 
-            if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [queueId isEqualToString:queueId])) {
-                NSCAssert(weakSelf.currentQueueID != nil, @"Current queue ID must be set by now");
-
+            if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [weakSelf.currentQueueID isEqualToString:queueID])) {
                 NSError* error = note.userInfo[@"error"];
                 NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
                 progress(error, queuePosition);
