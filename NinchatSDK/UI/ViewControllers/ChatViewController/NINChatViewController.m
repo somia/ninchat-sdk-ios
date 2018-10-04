@@ -26,6 +26,7 @@
 #import "NINFullScreenImageViewController.h"
 #import "NINToast.h"
 #import "NINFileInfo.h"
+#import "NINExpandingTextView.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -74,6 +75,9 @@ static NSString* const kCloseChatText = @"Close chat";
 // Local video enable / disable
 @property (nonatomic, strong) IBOutlet UIButton* cameraEnabledButton;
 
+// The text input box
+@property (nonatomic, strong) IBOutlet NINExpandingTextView* textInput;
+
 // Remote video track
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
@@ -89,9 +93,6 @@ static NSString* const kCloseChatText = @"Close chat";
 
 // This view is used to detect a tap outside the keyboard to close it
 @property (nonatomic, strong) NINTouchView* tapRecognizerView;
-
-// The text input box
-@property (nonatomic, strong) IBOutlet UITextField* textInputField;
 
 // Reference to the notifications observer that listens to new message -notifications.
 @property (nonatomic, strong) id<NSObject> messagesObserver;
@@ -193,7 +194,7 @@ static NSString* const kCloseChatText = @"Close chat";
             NSLog(@"Got WebRTC call");
 
             // Get rid of keyboard if any
-            [weakSelf.textInputField resignFirstResponder];
+            [weakSelf.textInput resignFirstResponder];
 
             // Show answer / reject dialog for the incoming call
             [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
@@ -277,9 +278,9 @@ static NSString* const kCloseChatText = @"Close chat";
 }
 
 -(void) sendTextMessage {
-    NSString* text = [self.textInputField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    self.textInputField.text = nil;
-    [self.textInputField resignFirstResponder];
+    NSString* text = [self.textInput.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    self.textInput.text = nil;
+    [self.textInput resignFirstResponder];
 
     if ([text length] > 0) {
         [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
@@ -348,10 +349,14 @@ static NSString* const kCloseChatText = @"Close chat";
 
 #pragma mark - From UITextViewDelegate
 
--(BOOL) textFieldShouldReturn:(UITextField*)textField {
-    [self sendTextMessage];
-
-    return YES;
+-(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
+    if ([text isEqualToString:@"\n"]){
+        // Send button was pressed on the keyboard
+        [self sendTextMessage];
+        return NO;
+    } else {
+        return YES;
+    }
 }
 
 #pragma mark - From UIImagePickerControllerDelegate
@@ -501,7 +506,7 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-    [self.textInputField resignFirstResponder];
+    [self.textInput resignFirstResponder];
 
     [self adjustConstraintsForSize:size animate:YES];
 }
@@ -552,7 +557,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
         self.tapRecognizerView.touchCallback = ^{
             // Get rid of the keyboard
-            [weakSelf.textInputField resignFirstResponder];
+            [weakSelf.textInput resignFirstResponder];
         };
     }
 
@@ -641,7 +646,6 @@ static NSString* const kCloseChatText = @"Close chat";
     self.closeChatButton.pressedCallback = ^{
         NSLog(@"Close chat button pressed!");
         [weakSelf disconnectWebRTC];
-//        [weakSelf.sessionManager closeChat];
         [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
     };
 
@@ -653,13 +657,17 @@ static NSString* const kCloseChatText = @"Close chat";
     self.remoteVideoView.delegate = self;
     self.localVideoView.delegate = self;
 
+    // Add a faint border around the text input
+    self.textInput.layer.borderWidth = 0.5;
+    self.textInput.layer.borderColor = [UIColor colorWithWhite:0 alpha:0.3].CGColor;
+
     // Give the local video view a slight border
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
     self.localVideoView.layer.borderWidth = 1.0;
 
-    UIImage* userTypingIcon = [self createUserTypingIcon];
-
     self.muteAudioButton.layer.cornerRadius = self.muteAudioButton.bounds.size.height / 2;
+
+    UIImage* userTypingIcon = [self createUserTypingIcon];
 
     //TODO add all the required assets (overloads) here
     NSMutableDictionary* chatImageAssetOverrides = [NSMutableDictionary dictionaryWithDictionary:@{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon}];

@@ -227,7 +227,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="brw-f0-DOL" userLabel="Chat view" customClass="NINEmbeddableChatView">
-                                <rect key="frame" x="0.0" y="257" width="375" height="336"/>
+                                <rect key="frame" x="0.0" y="257" width="375" height="329.5"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -240,35 +240,43 @@ you are next.</string>
                                 </variation>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m" userLabel="Input controls background view">
-                                <rect key="frame" x="0.0" y="593" width="375" height="74"/>
+                                <rect key="frame" x="0.0" y="586.5" width="375" height="80.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Chat input controls container">
-                                <rect key="frame" x="0.0" y="593" width="375" height="74"/>
+                                <rect key="frame" x="0.0" y="586.5" width="375" height="80.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12n-mg-urX" userLabel="text input container">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="46.5"/>
                                         <subviews>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter your message" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qVo-ml-15d">
-                                                <rect key="frame" x="5" y="5" width="365" height="30"/>
-                                                <nil key="textColor"/>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="QrN-2n-VqQ" customClass="NINExpandingTextView">
+                                                <rect key="frame" x="5" y="5" width="365" height="36.5"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="36.5" id="PSf-Cn-Rdu"/>
+                                                </constraints>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
-                                                <textInputTraits key="textInputTraits" returnKeyType="send" enablesReturnKeyAutomatically="YES"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="send" enablesReturnKeyAutomatically="YES"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="maximumHeight">
+                                                        <real key="value" value="100"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <outlet property="delegate" destination="bZ9-oP-wEd" id="SyV-Lv-eID"/>
+                                                    <outlet property="delegate" destination="bZ9-oP-wEd" id="Ua2-Og-iRB"/>
                                                 </connections>
-                                            </textField>
+                                            </textView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="bottom" secondItem="qVo-ml-15d" secondAttribute="bottom" constant="5" id="HlZ-UX-VtZ"/>
-                                            <constraint firstItem="qVo-ml-15d" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" constant="5" id="Syv-H4-KWr"/>
-                                            <constraint firstItem="qVo-ml-15d" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" priority="999" constant="5" id="aLC-33-tlp"/>
-                                            <constraint firstAttribute="trailing" secondItem="qVo-ml-15d" secondAttribute="trailing" constant="5" id="tcY-B9-wAR"/>
+                                            <constraint firstAttribute="trailing" secondItem="QrN-2n-VqQ" secondAttribute="trailing" constant="5" id="0Qu-l2-oxD"/>
+                                            <constraint firstAttribute="bottom" secondItem="QrN-2n-VqQ" secondAttribute="bottom" constant="5" id="cMc-Hl-4gT"/>
+                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" constant="5" id="otd-6R-YzF"/>
+                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" constant="5" id="tvJ-Ma-sbV"/>
                                         </constraints>
                                     </view>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bNc-b4-D5d" userLabel="input buttons container">
-                                        <rect key="frame" x="0.0" y="40" width="375" height="34"/>
+                                        <rect key="frame" x="0.0" y="46.5" width="375" height="34"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cAh-Q0-iyj">
                                                 <rect key="frame" x="346" y="5" width="24" height="24"/>
@@ -364,7 +372,7 @@ you are next.</string>
                         <outlet property="remoteVideoView" destination="XJz-Z9-GdN" id="A49-YF-jyz"/>
                         <outlet property="remoteViewHeightConstraint" destination="Tgw-Sv-lFF" id="W46-E4-3NX"/>
                         <outlet property="remoteViewWidthConstraint" destination="DhL-uc-K7h" id="xsw-pW-ctZ"/>
-                        <outlet property="textInputField" destination="qVo-ml-15d" id="P1g-kH-mee"/>
+                        <outlet property="textInput" destination="QrN-2n-VqQ" id="LGI-P3-iCc"/>
                         <outlet property="videoContainerView" destination="rVm-KF-mbW" id="4Md-X0-j7W"/>
                         <outlet property="videoContainerViewHeightConstraint" destination="drK-a0-uHv" id="AXS-eX-BYF"/>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>

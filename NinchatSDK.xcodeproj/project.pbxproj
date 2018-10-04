@@ -63,6 +63,8 @@
 		496230192153ED6300570D59 /* NINPublicTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7320F267EE00A00EA8 /* NINPublicTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		496F1EAC2164F3A5006CF321 /* UIButton+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F1EAA2164F3A5006CF321 /* UIButton+Ninchat.h */; };
 		496F1EAD2164F3A5006CF321 /* UIButton+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EAB2164F3A5006CF321 /* UIButton+Ninchat.m */; };
+		496F1EB121660FEF006CF321 /* NINExpandingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F1EAF21660FEF006CF321 /* NINExpandingTextView.h */; };
+		496F1EB221660FEF006CF321 /* NINExpandingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EB021660FEF006CF321 /* NINExpandingTextView.m */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
 		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
@@ -192,6 +194,8 @@
 		496230172153EC4A00570D59 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		496F1EAA2164F3A5006CF321 /* UIButton+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+Ninchat.h"; sourceTree = "<group>"; };
 		496F1EAB2164F3A5006CF321 /* UIButton+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Ninchat.m"; sourceTree = "<group>"; };
+		496F1EAF21660FEF006CF321 /* NINExpandingTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINExpandingTextView.h; sourceTree = "<group>"; };
+		496F1EB021660FEF006CF321 /* NINExpandingTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINExpandingTextView.m; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
 		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
@@ -317,15 +321,16 @@
 			path = QueueView;
 			sourceTree = "<group>";
 		};
-		49140B8A20F4BF3F00A00EA8 /* AuxiliaryViews */ = {
+		49140B8A20F4BF3F00A00EA8 /* CustomControls */ = {
 			isa = PBXGroup;
 			children = (
+				496F1EAE21660FB9006CF321 /* ExpandingTextView */,
 				49D77F3121569BE600900224 /* Toast */,
 				497C4ED6214A8CD60090C5E6 /* CloseChatButton */,
 				494330C4213FB389006E2C9C /* VideoCallConsentDialog */,
 				49721CCD21295A8600695F33 /* NavigationBar */,
 			);
-			path = AuxiliaryViews;
+			path = CustomControls;
 			sourceTree = "<group>";
 		};
 		49140B8B20F4BF5A00A00EA8 /* ViewControllers */ = {
@@ -394,6 +399,15 @@
 				4911895B214B9B14008F1748 /* NINChatSession+Internal.m */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		496F1EAE21660FB9006CF321 /* ExpandingTextView */ = {
+			isa = PBXGroup;
+			children = (
+				496F1EAF21660FEF006CF321 /* NINExpandingTextView.h */,
+				496F1EB021660FEF006CF321 /* NINExpandingTextView.m */,
+			);
+			path = ExpandingTextView;
 			sourceTree = "<group>";
 		};
 		49721CC42122F6DA00695F33 /* WebRTC */ = {
@@ -523,7 +537,7 @@
 			children = (
 				494330CB213FBE9A006E2C9C /* Fonts */,
 				49140B8B20F4BF5A00A00EA8 /* ViewControllers */,
-				49140B8A20F4BF3F00A00EA8 /* AuxiliaryViews */,
+				49140B8A20F4BF3F00A00EA8 /* CustomControls */,
 				499443BE208F475200101DCA /* Chat.storyboard */,
 				49140B9420F4C04A00A00EA8 /* Media.xcassets */,
 			);
@@ -683,6 +697,7 @@
 				49D77F2B215651DE00900224 /* NINFullScreenImageViewController.h in Headers */,
 				49CD077B215CD4AD00046AB9 /* NINUserTypingMessage.h in Headers */,
 				49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */,
+				496F1EB121660FEF006CF321 /* NINExpandingTextView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -868,6 +883,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4930441C2158D90700DECB0C /* NINChatMetaMessage.m in Sources */,
+				496F1EB221660FEF006CF321 /* NINExpandingTextView.m in Sources */,
 				49721CD821295C7F00695F33 /* NINChatBubbleCell.m in Sources */,
 				49D77F3521569C0400900224 /* NINToast.m in Sources */,
 				49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */,
