@@ -9,6 +9,7 @@
 #import "NINCloseChatButton.h"
 #import "NINUtils.h"
 #import "NINChatSession.h"
+#import "NINChatSession+Internal.h"
 
 @interface NINCloseChatButton ()
 
@@ -27,7 +28,7 @@
 }
 
 -(void) overrideImageWithSession:(NINChatSession*)session {
-    UIImage* overrideImage = [session.delegate ninchat:session overrideImageAssetForKey:NINImageAssetKeyCloseChatButton];
+    UIImage* overrideImage = [session overrideImageAssetForKey:NINImageAssetKeyCloseChatButton];
 
     if (overrideImage != nil) {
         [self.theButton setBackgroundImage:overrideImage forState:UIControlStateNormal];

@@ -23,12 +23,16 @@
 
 /**
  * Implemeent this if you want to receive debug/error logging from the SDK.
+ *
+ * Optional method.
  */
 @optional
 -(void) ninchat:(NINChatSession*_Nonnull)session didOutputSDKLog:(NSString* _Nonnull)message;
 
 /**
  * Exposes the low-level events. See the Ninchat API specification for more info.
+ *
+ * Optional method.
  */
 @optional
 -(void) ninchat:(NINChatSession*_Nonnull)session onLowLevelEvent:(NINLowLevelClientProps*_Nonnull)params payload:(NINLowLevelClientPayload*_Nonnull)payload lastReply:(BOOL)lastReply;
@@ -39,7 +43,10 @@
  * be returned.
  *
  * For available asset key strings, see documentation.
+ *
+ * Optional method.
  */
+@optional
 -(UIImage* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
 
 /**

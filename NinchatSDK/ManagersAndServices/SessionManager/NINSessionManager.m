@@ -1116,11 +1116,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Shutting down chat Session..");
 
     // Delete our guest user.
+    __weak typeof(self) weakSelf = self;
     [self deleteCurrentUserWithCompletion:^(NSError* error) {
-        [self disconnect];
+        [weakSelf disconnect];
 
         // Signal the delegate that our session has ended
-        [self.ninchatSession.delegate ninchatDidEndSession:self.ninchatSession];
+        [weakSelf.ninchatSession.delegate ninchatDidEndSession:weakSelf.ninchatSession];
     }];
 }
 

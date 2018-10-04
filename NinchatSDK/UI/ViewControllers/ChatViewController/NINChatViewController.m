@@ -113,7 +113,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(UIImage*) createUserTypingIcon {
     // Use overridden one if it is available
-    UIImage* userTypingIcon = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
+    UIImage* userTypingIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
 
     if (self.userTypingIcon == nil) {
         // No override; use default image set
@@ -629,7 +629,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [super viewDidLoad];
 
     // Add tileable pattern image as the view background
-    UIImage* bgImage = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatViewBackgroundTexture];
+    UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatViewBackgroundTexture];
     if (bgImage == nil) {
         bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }

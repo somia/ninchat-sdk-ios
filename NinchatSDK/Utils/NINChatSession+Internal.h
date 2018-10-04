@@ -13,4 +13,7 @@
 /** Outputs SDK log entry if the delegate is set and defines the log method. */
 -(void) sdklog:(NSString*_Nonnull)format, ...;
 
+/** Wraps the delegate call to overrideImageAssetForKey. */
+-(UIImage* _Nullable) overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
+
 @end

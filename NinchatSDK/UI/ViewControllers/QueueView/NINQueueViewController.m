@@ -68,7 +68,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     }];
 
     // Look for customized images
-    UIImage* progressImage = [self.sessionManager.ninchatSession.delegate ninchat:self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyQueueViewProgressIndicator];
+    UIImage* progressImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyQueueViewProgressIndicator];
     if (progressImage != nil) {
         self.spinnerImageView.image = progressImage;
     }

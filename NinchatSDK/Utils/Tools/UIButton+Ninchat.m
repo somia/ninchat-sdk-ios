@@ -7,11 +7,12 @@
 //
 
 #import "UIButton+Ninchat.h"
+#import "NINChatSession+Internal.h"
 
 @implementation UIButton (Ninchat)
 
 -(void) overrideImageWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey {
-    UIImage* overrideImage = [session.delegate ninchat:session overrideImageAssetForKey:assetKey];
+    UIImage* overrideImage = [session overrideImageAssetForKey:assetKey];
 
     if (overrideImage != nil) {
         [self setBackgroundImage:overrideImage forState:UIControlStateNormal];

@@ -19,4 +19,12 @@
     }
 }
 
+-(UIImage*) overrideImageAssetForKey:(NINImageAssetKey)assetKey {
+    if ([self.delegate respondsToSelector:@selector(ninchat:overrideImageAssetForKey:)]) {
+        return [self.delegate ninchat:self overrideImageAssetForKey:assetKey];
+    } else {
+        return nil;
+    }
+}
+
 @end
