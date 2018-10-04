@@ -262,7 +262,9 @@
 }
 
 -(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection {
-    //TODO how to do this
+    //TODO see:
+    // https://stackoverflow.com/questions/31165316/webrtc-renegotiate-the-peer-connection-to-switch-streams
+    // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
     NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
 }
 

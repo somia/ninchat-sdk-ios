@@ -315,6 +315,21 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"fileInfo": fileInfo});
 }
 
+-(void) userDeleted:(NINLowLevelClientProps*)params {
+    NSError* error;
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* userId = [params getString:@"user_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+    if ([userId isEqualToString:self.myUserID]) {
+        [self.ninchatSession sdklog:@"Current user deleted."];
+    }
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+}
+
 -(void) channelJoined:(NINLowLevelClientProps*)params {
     NSError* error = nil;
 
@@ -516,6 +531,22 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Parsed TURN servers: %@", turnServerArray);
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"stunServers": stunServerArray, @"turnServers": turnServerArray});
+}
+
+// Deletes the current user.
+-(void) deleteCurrentUserWithCompletion:(callbackWithErrorBlock)completion {
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+    [params setString:@"action" val:@"delete_user"];
+
+    NSError* error = nil;
+    int64_t actionId;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error deleting the user: %@", error);
+        return;
+    }
+
+    connectCallbackToActionCompletion(actionId, completion);
 }
 
 // Asynchronously retrieves file info
@@ -903,8 +934,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [NSNotificationCenter.defaultCenter removeObserver:self.queueProgressObserver];
     self.queueProgressObserver = nil;
 
-    //TODO call action delete_user with my current user ID.
-
     completion(nil);
 }
 
@@ -1088,10 +1117,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) closeChat {
     NSLog(@"Shutting down chat Session..");
 
-    [self disconnect];
+    // Delete our guest user.
+    [self deleteCurrentUserWithCompletion:^(NSError* error) {
+        [self disconnect];
 
-    // Signal the delegate that our session has ended
-    [self.ninchatSession.delegate ninchatDidEndSession:self.ninchatSession];
+        // Signal the delegate that our session has ended
+        [self.ninchatSession.delegate ninchatDidEndSession:self.ninchatSession];
+    }];
 }
 
 // High-level chat ending; sends channel metadata and then closes session.
@@ -1274,6 +1306,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [self.ninchatSession sdklog:@"Session created - my user ID is: %@", self.myUserID];
 
         postNotification(kActionNotification, @{@"event_type": event});
+    } else if ([event isEqualToString:@"user_deleted"]) {
+        [self userDeleted:params];
     }
 }
 

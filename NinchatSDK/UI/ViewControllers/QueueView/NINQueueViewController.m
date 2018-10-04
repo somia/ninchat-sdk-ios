@@ -101,8 +101,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
         NSLog(@"Queue view: Close chat button pressed!");
-        [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {}];
-        [weakSelf.sessionManager closeChat];
+        [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {
+            [weakSelf.sessionManager closeChat];
+        }];
     };
 
     // Asset overrides
