@@ -81,6 +81,15 @@ NSBundle* findResourceBundle() {
     }
 }
 
+UIView* loadFromNib(Class class) {
+    NSBundle* bundle = findResourceBundle();
+    NSArray* objects = [bundle loadNibNamed:NSStringFromClass(class) owner:nil options:nil];
+
+    NSCAssert([objects.firstObject isKindOfClass:class], @"Invalid class resource");
+
+    return objects.firstObject;
+}
+
 void fetchSiteConfig(NSString* serverAddress, NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, serverAddress, configurationKey];
 

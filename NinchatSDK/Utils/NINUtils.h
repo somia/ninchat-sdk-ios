@@ -53,6 +53,9 @@ NSArray<NSLayoutConstraint*>* _Nonnull constrainToMatch(UIView* _Nonnull view1, 
 /** Returns the resource bundle containing the requested resource. */
 NSBundle* _Nonnull findResourceBundle(void);
 
+/** Loads a nib by the class name and asserts that the loaded instance is of the given class type. */
+UIView* _Nonnull loadFromNib(Class _Nonnull class);
+
 /** Asynchronously retrieves the site configuration from the server over HTTPS. */
 void fetchSiteConfig(NSString* _Nonnull serverAddress, NSString* _Nonnull configurationKey, fetchSiteConfigCallbackBlock _Nonnull callbackBlock);
 

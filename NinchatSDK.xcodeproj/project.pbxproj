@@ -65,6 +65,12 @@
 		496F1EAD2164F3A5006CF321 /* UIButton+Ninchat.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EAB2164F3A5006CF321 /* UIButton+Ninchat.m */; };
 		496F1EB121660FEF006CF321 /* NINExpandingTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F1EAF21660FEF006CF321 /* NINExpandingTextView.h */; };
 		496F1EB221660FEF006CF321 /* NINExpandingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EB021660FEF006CF321 /* NINExpandingTextView.m */; };
+		496F1EB621663159006CF321 /* NINChoiceDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F1EB421663159006CF321 /* NINChoiceDialog.h */; };
+		496F1EB721663159006CF321 /* NINChoiceDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EB521663159006CF321 /* NINChoiceDialog.m */; };
+		496F1EB92166316C006CF321 /* NINChoiceDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 496F1EB82166316C006CF321 /* NINChoiceDialog.xib */; };
+		496F1EBC21663205006CF321 /* NINChoiceDialogRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F1EBA21663205006CF321 /* NINChoiceDialogRow.h */; };
+		496F1EBD21663205006CF321 /* NINChoiceDialogRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F1EBB21663205006CF321 /* NINChoiceDialogRow.m */; };
+		496F1EBF21663211006CF321 /* NINChoiceDialogRow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 496F1EBE21663211006CF321 /* NINChoiceDialogRow.xib */; };
 		496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F02137DD43001FD1C4 /* NINChannelUser.h */; };
 		496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 496F85F12137DD43001FD1C4 /* NINChannelUser.m */; };
 		496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 496F85F4213838E7001FD1C4 /* NINTouchView.h */; };
@@ -196,6 +202,12 @@
 		496F1EAB2164F3A5006CF321 /* UIButton+Ninchat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Ninchat.m"; sourceTree = "<group>"; };
 		496F1EAF21660FEF006CF321 /* NINExpandingTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINExpandingTextView.h; sourceTree = "<group>"; };
 		496F1EB021660FEF006CF321 /* NINExpandingTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINExpandingTextView.m; sourceTree = "<group>"; };
+		496F1EB421663159006CF321 /* NINChoiceDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChoiceDialog.h; sourceTree = "<group>"; };
+		496F1EB521663159006CF321 /* NINChoiceDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChoiceDialog.m; sourceTree = "<group>"; };
+		496F1EB82166316C006CF321 /* NINChoiceDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINChoiceDialog.xib; sourceTree = "<group>"; };
+		496F1EBA21663205006CF321 /* NINChoiceDialogRow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChoiceDialogRow.h; sourceTree = "<group>"; };
+		496F1EBB21663205006CF321 /* NINChoiceDialogRow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChoiceDialogRow.m; sourceTree = "<group>"; };
+		496F1EBE21663211006CF321 /* NINChoiceDialogRow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINChoiceDialogRow.xib; sourceTree = "<group>"; };
 		496F85F02137DD43001FD1C4 /* NINChannelUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelUser.h; sourceTree = "<group>"; };
 		496F85F12137DD43001FD1C4 /* NINChannelUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelUser.m; sourceTree = "<group>"; };
 		496F85F4213838E7001FD1C4 /* NINTouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTouchView.h; sourceTree = "<group>"; };
@@ -324,6 +336,7 @@
 		49140B8A20F4BF3F00A00EA8 /* CustomControls */ = {
 			isa = PBXGroup;
 			children = (
+				496F1EB321663135006CF321 /* ChoiceDialog */,
 				496F1EAE21660FB9006CF321 /* ExpandingTextView */,
 				49D77F3121569BE600900224 /* Toast */,
 				497C4ED6214A8CD60090C5E6 /* CloseChatButton */,
@@ -408,6 +421,19 @@
 				496F1EB021660FEF006CF321 /* NINExpandingTextView.m */,
 			);
 			path = ExpandingTextView;
+			sourceTree = "<group>";
+		};
+		496F1EB321663135006CF321 /* ChoiceDialog */ = {
+			isa = PBXGroup;
+			children = (
+				496F1EB421663159006CF321 /* NINChoiceDialog.h */,
+				496F1EB521663159006CF321 /* NINChoiceDialog.m */,
+				496F1EB82166316C006CF321 /* NINChoiceDialog.xib */,
+				496F1EBA21663205006CF321 /* NINChoiceDialogRow.h */,
+				496F1EBB21663205006CF321 /* NINChoiceDialogRow.m */,
+				496F1EBE21663211006CF321 /* NINChoiceDialogRow.xib */,
+			);
+			path = ChoiceDialog;
 			sourceTree = "<group>";
 		};
 		49721CC42122F6DA00695F33 /* WebRTC */ = {
@@ -688,9 +714,11 @@
 				496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */,
 				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				49D77F2F21566E5700900224 /* UIImageView+Ninchat.h in Headers */,
+				496F1EBC21663205006CF321 /* NINChoiceDialogRow.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
 				49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */,
 				49721CDE212AF84200695F33 /* RTCSessionDescription+Dictionary.h in Headers */,
+				496F1EB621663159006CF321 /* NINChoiceDialog.h in Headers */,
 				499443C2208F47EA00101DCA /* NINInitialViewController.h in Headers */,
 				49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */,
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
@@ -793,11 +821,13 @@
 				494330D9213FBECD006E2C9C /* SourceSansPro-Light.ttf in Resources */,
 				494330E1213FBECD006E2C9C /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
 				49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */,
+				496F1EB92166316C006CF321 /* NINChoiceDialog.xib in Resources */,
 				494330E0213FBECD006E2C9C /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
 				494330DD213FBECD006E2C9C /* SourceSansPro-Black.ttf in Resources */,
 				494330DA213FBECD006E2C9C /* SourceSansPro-Italic.ttf in Resources */,
 				49140B9220F4BFB800A00EA8 /* NINNavigationBar.xib in Resources */,
 				49D77F3721569CBF00900224 /* NINToast.xib in Resources */,
+				496F1EBF21663211006CF321 /* NINChoiceDialogRow.xib in Resources */,
 				494330DB213FBECD006E2C9C /* SourceSansPro-LightItalic.ttf in Resources */,
 				49140B9520F4C04A00A00EA8 /* Media.xcassets in Resources */,
 				494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */,
@@ -901,6 +931,7 @@
 				495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */,
 				49140B8820F395A700A00EA8 /* NINQueueViewController.m in Sources */,
 				49D77F272156497600900224 /* UITextView+Ninchat.m in Sources */,
+				496F1EBD21663205006CF321 /* NINChoiceDialogRow.m in Sources */,
 				49D77F2C215651DE00900224 /* NINFullScreenImageViewController.m in Sources */,
 				496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */,
 				49CD077C215CD4AD00046AB9 /* NINUserTypingMessage.m in Sources */,
@@ -912,6 +943,7 @@
 				49D77F3021566E5700900224 /* UIImageView+Ninchat.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,
 				49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */,
+				496F1EB721663159006CF321 /* NINChoiceDialog.m in Sources */,
 				497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */,
 				49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */,
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,

@@ -23,19 +23,10 @@ static const CGFloat kHiddenAlpha = 0.6;
 
 @implementation NINToast
 
-+(NINToast*) loadViewFromNib {
-    NSBundle* bundle = findResourceBundle();
-    NSArray* objects = [bundle loadNibNamed:@"NINToast" owner:nil options:nil];
-
-    NSCAssert([objects.firstObject isKindOfClass:[NINToast class]], @"Invalid class resource");
-
-    return (NINToast*)objects.firstObject;
-}
-
 +(void) showWithMessage:(NSString*)message bgColorOverride:(UIColor*)color callback:(emptyBlock)callback {
     NSCAssert(UIApplication.sharedApplication.keyWindow != nil, @"No key window");
 
-    NINToast* toast = [NINToast loadViewFromNib];
+    NINToast* toast = (NINToast*)loadFromNib(NINToast.class);
     toast.translatesAutoresizingMaskIntoConstraints = NO;
     toast.messageLabel.text = message;
 

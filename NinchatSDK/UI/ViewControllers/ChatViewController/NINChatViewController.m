@@ -27,6 +27,7 @@
 #import "NINToast.h"
 #import "NINFileInfo.h"
 #import "NINExpandingTextView.h"
+#import "NINChoiceDialog.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -301,12 +302,19 @@ static NSString* const kCloseChatText = @"Close chat";
 -(IBAction) attachmentButtonPressed:(id)sender {
     NSLog(@"Attachment button pressed");
 
-    UIImagePickerController* pickerController = [UIImagePickerController new];
-    pickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary; //TODO
-    pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
-    pickerController.delegate = self;
+    NSArray* sourceTypes = @[@(UIImagePickerControllerSourceTypeCamera), @(UIImagePickerControllerSourceTypePhotoLibrary)];
+    NSArray* sourceTitles = @[@"Camera", @"Photo Library"];
 
-    [self presentViewController:pickerController animated:YES completion:nil];
+    [NINChoiceDialog showWithOptionTitles:sourceTitles completion:^(BOOL canceled, NSInteger selectedIndex) {
+        if (!canceled) {
+            UIImagePickerController* pickerController = [UIImagePickerController new];
+            pickerController.sourceType = [sourceTypes[selectedIndex] integerValue];
+            pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
+            pickerController.delegate = self;
+
+            [self presentViewController:pickerController animated:YES completion:nil];
+        }
+    }];
 }
 
 -(IBAction) hangupButtonPressed:(UIButton*)button {
