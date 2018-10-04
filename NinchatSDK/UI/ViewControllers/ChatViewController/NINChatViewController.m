@@ -61,8 +61,8 @@ static NSString* const kCloseChatText = @"Close chat";
 // Height constraint of the chst view
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatViewHeightConstraint;
 
-// Height constraint of the chst input controls view
-@property (nonatomic, strong) IBOutlet NSLayoutConstraint* chatInputControlsViewHeightConstraint;
+// Top alignment constraint of the chst input controls view - used to hide the input controls
+@property (nonatomic, strong) NSLayoutConstraint* chatInputControlsTopAlignConstraint;
 
 // The chat messages view
 @property (nonatomic, strong) IBOutlet NINChatView* chatView;
@@ -75,6 +75,9 @@ static NSString* const kCloseChatText = @"Close chat";
 
 // Local video enable / disable
 @property (nonatomic, strong) IBOutlet UIButton* cameraEnabledButton;
+
+// The input controls containere view
+@property (nonatomic, strong) IBOutlet UIView* inputControlsContainerView;
 
 // The text input box
 @property (nonatomic, strong) IBOutlet NINExpandingTextView* textInput;
@@ -132,6 +135,20 @@ static NSString* const kCloseChatText = @"Close chat";
     return userTypingIcon;
 }
 
+// Aligns (or cancels existing alignment) the input control container view's top
+// to the screen bottom to hide the controls.
+-(void) alignInputControlsTopToScreenBottom:(BOOL)align {
+    if (align) {
+        if (self.chatInputControlsTopAlignConstraint == nil) {
+            self.chatInputControlsTopAlignConstraint = [self.inputControlsContainerView.topAnchor constraintEqualToAnchor:self.view.bottomAnchor];
+            self.chatInputControlsTopAlignConstraint.active = YES;
+        }
+    } else {
+        self.chatInputControlsTopAlignConstraint.active = NO;
+        self.chatInputControlsTopAlignConstraint = nil;
+    }
+}
+
 -(void) adjustConstraintsForSize:(CGSize)size animate:(BOOL)animate {
     BOOL portrait = (size.height > size.width);
 
@@ -147,7 +164,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
         // No need for chat view height in portrait; the input container + video will dictate size
         self.chatViewHeightConstraint.active = NO;
-        self.chatInputControlsViewHeightConstraint.constant = 100;
+        [self alignInputControlsTopToScreenBottom:NO];
     } else {
         if (self.webrtcClient != nil) {
             // Video; in landscape we make video fullscreen ie. hide the chat view + input controls
@@ -155,13 +172,14 @@ static NSString* const kCloseChatText = @"Close chat";
             self.videoContainerViewHeightConstraint.constant = size.height;
             self.chatViewHeightConstraint.constant = 0;
             self.chatViewHeightConstraint.active = YES;
-            self.chatInputControlsViewHeightConstraint.constant = 0;
+            [self alignInputControlsTopToScreenBottom:YES];
         } else {
-            // No video; get rid of the video view. the input container + video will dictate size
+            // No video; get rid of the video view. the input container and
+            // video (0-height) will dictate size
             self.videoContainerViewHeightConstraint.constant = 0;
             self.videoContainerViewHeightConstraint.active = YES;
             self.chatViewHeightConstraint.active = NO;
-            self.chatInputControlsViewHeightConstraint.constant = 100;
+            [self alignInputControlsTopToScreenBottom:NO];
         }
     }
 
@@ -222,6 +240,10 @@ static NSString* const kCloseChatText = @"Close chat";
                     weakSelf.closeChatButton.alpha = 0.0;
                 }];
 
+                // Reset the video control buttons
+                weakSelf.muteAudioButton.selected = NO;
+                weakSelf.cameraEnabledButton.selected = NO;
+
                 // Show the video views
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
             }];
@@ -240,6 +262,8 @@ static NSString* const kCloseChatText = @"Close chat";
 }
 
 -(void) disconnectWebRTC {
+    NSCAssert([NSThread isMainThread], @"Must only be called on the main thread");
+
     if (self.webrtcClient != nil) {
         NSLog(@"Disconnecting webrtc resources");
 
@@ -353,6 +377,8 @@ static NSString* const kCloseChatText = @"Close chat";
         [self.webrtcClient disableLocalVideo];
         [self.sessionManager.ninchatSession sdklog:@"Video disabled."];
     }
+
+    button.selected = !button.selected;
 }
 
 #pragma mark - From UITextViewDelegate

@@ -36,7 +36,6 @@
     if (newHeight != self.heightConstraint.constant) {
         self.heightConstraint.constant = newHeight;
         [self.superview setNeedsLayout];
-        NSLog(@"Updated textview height to %f", newHeight);
     }
 }
 
@@ -55,12 +54,10 @@
 
     __weak typeof(self) weakSelf = self;
     self.changeObserver = [NSNotificationCenter.defaultCenter addObserverForName:UITextViewTextDidChangeNotification object:self queue:nil usingBlock:^(NSNotification* note) {
-        NSLog(@"My text changed.");
         [weakSelf updateSize];
     }];
 
     self.endEditingObserver = [NSNotificationCenter.defaultCenter addObserverForName:UITextViewTextDidEndEditingNotification object:self queue:nil usingBlock:^(NSNotification* note) {
-        NSLog(@"Editing ended.");
         [weakSelf updateSize];
     }];
 }

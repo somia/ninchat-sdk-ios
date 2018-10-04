@@ -239,11 +239,11 @@ you are next.</string>
                                     </mask>
                                 </variation>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m" userLabel="Input controls background view">
+                            <view tag="201" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zwn-LD-a0m" userLabel="Input controls background view">
                                 <rect key="frame" x="0.0" y="586.5" width="375" height="80.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Chat input controls container">
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kml-pm-EfW" userLabel="Chat input controls container">
                                 <rect key="frame" x="0.0" y="586.5" width="375" height="80.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="12n-mg-urX" userLabel="text input container">
@@ -253,7 +253,7 @@ you are next.</string>
                                                 <rect key="frame" x="5" y="5" width="365" height="36.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="36.5" id="PSf-Cn-Rdu"/>
+                                                    <constraint firstAttribute="height" priority="999" constant="36.5" id="PSf-Cn-Rdu"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="send" enablesReturnKeyAutomatically="YES"/>
@@ -269,10 +269,10 @@ you are next.</string>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="QrN-2n-VqQ" secondAttribute="trailing" constant="5" id="0Qu-l2-oxD"/>
-                                            <constraint firstAttribute="bottom" secondItem="QrN-2n-VqQ" secondAttribute="bottom" constant="5" id="cMc-Hl-4gT"/>
-                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" constant="5" id="otd-6R-YzF"/>
-                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" constant="5" id="tvJ-Ma-sbV"/>
+                                            <constraint firstAttribute="trailing" secondItem="QrN-2n-VqQ" secondAttribute="trailing" priority="999" constant="5" id="0Qu-l2-oxD"/>
+                                            <constraint firstAttribute="bottom" secondItem="QrN-2n-VqQ" secondAttribute="bottom" priority="999" constant="5" id="cMc-Hl-4gT"/>
+                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" priority="999" constant="5" id="otd-6R-YzF"/>
+                                            <constraint firstItem="QrN-2n-VqQ" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" priority="999" constant="5" id="tvJ-Ma-sbV"/>
                                         </constraints>
                                     </view>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bNc-b4-D5d" userLabel="input buttons container">
@@ -312,7 +312,7 @@ you are next.</string>
                                             <constraint firstAttribute="bottom" secondItem="cAh-Q0-iyj" secondAttribute="bottom" priority="999" constant="5" id="Ip7-A0-a0b"/>
                                             <constraint firstItem="cAh-Q0-iyj" firstAttribute="leading" secondItem="XXu-e3-RTV" secondAttribute="trailing" constant="10" id="UjH-ZG-KOU"/>
                                             <constraint firstItem="cAh-Q0-iyj" firstAttribute="top" secondItem="bNc-b4-D5d" secondAttribute="top" constant="5" id="cxJ-cN-K7Z"/>
-                                            <constraint firstAttribute="height" constant="34" id="vje-tH-fFC"/>
+                                            <constraint firstAttribute="height" priority="999" constant="34" id="vje-tH-fFC"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -344,7 +344,7 @@ you are next.</string>
                             <constraint firstItem="Kml-pm-EfW" firstAttribute="trailing" secondItem="pew-Xu-b1Q" secondAttribute="trailing" id="Utg-Kn-AfO"/>
                             <constraint firstItem="vRt-6h-EED" firstAttribute="bottom" secondItem="rVm-KF-mbW" secondAttribute="bottom" id="XSS-SI-raj"/>
                             <constraint firstAttribute="trailing" secondItem="vRt-6h-EED" secondAttribute="trailing" id="YLf-n0-bXa"/>
-                            <constraint firstItem="Kml-pm-EfW" firstAttribute="bottom" secondItem="pew-Xu-b1Q" secondAttribute="bottom" id="a2L-EI-w5F"/>
+                            <constraint firstItem="Kml-pm-EfW" firstAttribute="bottom" secondItem="pew-Xu-b1Q" secondAttribute="bottom" priority="999" id="a2L-EI-w5F"/>
                             <constraint firstItem="pew-Xu-b1Q" firstAttribute="trailing" secondItem="brw-f0-DOL" secondAttribute="trailing" id="fc7-oh-dei"/>
                             <constraint firstItem="tZn-zd-Dxr" firstAttribute="top" secondItem="wrn-IT-ZNh" secondAttribute="top" id="fuB-Kv-MIW"/>
                             <constraint firstItem="Kml-pm-EfW" firstAttribute="top" secondItem="brw-f0-DOL" secondAttribute="bottom" priority="999" id="iXd-JE-7hS"/>
@@ -365,6 +365,7 @@ you are next.</string>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
                         <outlet property="chatViewHeightConstraint" destination="FdO-24-78A" id="IzG-o9-EzZ"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
+                        <outlet property="inputControlsContainerView" destination="Kml-pm-EfW" id="lRY-QX-qJe"/>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>

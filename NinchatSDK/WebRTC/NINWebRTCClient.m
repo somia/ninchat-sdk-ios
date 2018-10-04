@@ -106,19 +106,23 @@
 #pragma mark - Public Methods
 
 -(void) disconnect {
-    [self.sessionManager.ninchatSession sdklog:@"NINWebRTCClient disconnecting."];
+    [self.sessionManager.ninchatSession sdklog:@"WebRTC Client disconnecting."];
 
     if (self.peerConnection != nil) {
         [self.peerConnection close];
         self.peerConnection = nil;
     }
 
+    self.defaultLocalAudioTrack = nil;
+    self.defaultLocalVideoTrack = nil;
     self.peerConnectionFactory = nil;
     self.sessionManager = nil;
     self.iceServers = nil;
     
     [NSNotificationCenter.defaultCenter removeObserver:self.signalingObserver];
     self.signalingObserver = nil;
+
+    [self.sessionManager.ninchatSession sdklog:@"WebRTC Client disconnected."];
 }
 
 -(void) startWithSDP:(NSDictionary*)sdp {
