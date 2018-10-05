@@ -82,6 +82,12 @@ static NSString* const kCloseChatText = @"Close chat";
 // The text input box
 @property (nonatomic, strong) IBOutlet NINExpandingTextView* textInput;
 
+// Send message button
+@property (nonatomic, strong) IBOutlet UIButton* sendMessageButton;
+
+// Width constraint for the send message button
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* sendMessageButtonWidthConstraint;
+
 // Remote video track
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
@@ -314,6 +320,21 @@ static NSString* const kCloseChatText = @"Close chat";
                 [NINToast showWithErrorMessage:@"Failed to send message" callback:nil];
             }
         }];
+    }
+}
+
+-(void) updateSendMessageButtonWithText:(NSString*)sendMessageButtonTitle {
+    if (sendMessageButtonTitle == nil) {
+        // No button title; use simply the image
+        //TODO override the image!
+    } else {
+        // Button has title; use border background image
+        //TODO override this image!
+        self.sendMessageButtonWidthConstraint.active = NO;
+        [self.sendMessageButton setImage:nil forState:UIControlStateNormal];
+        [self.sendMessageButton setBackgroundImage:[UIImage imageNamed:@"icon_send_message_border" inBundle:findResourceBundle() compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
+        [self.sendMessageButton setTitle:sendMessageButtonTitle forState:UIControlStateNormal];
+        self.sendMessageButton.contentEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 15);
     }
 }
 
@@ -666,6 +687,9 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(void) viewDidLoad {
     [super viewDidLoad];
+
+    NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
+    [self updateSendMessageButtonWithText:sendButtonTitle];
 
     // Add tileable pattern image as the view background
     UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatViewBackgroundTexture];
