@@ -148,6 +148,41 @@ The SDK exposes the low-level communications interface as `NINChatSession.sessio
 
 See [Ninchat API Reference](https://github.com/ninchat/ninchat-api/blob/v2/api.md) for information about the API's outbound Actions and inbound Events.
 
+## Limitations imposed by the SDK
+
+There are some limitations that the SDK imposes on the host app linking to it:
+
+- Missing Bitcode support. The host application must be configured to not use bitcode. The SDK's Cocoapods installer will do this automatically.
+- Parts of the SDK are missing the DWARF symbols used for crash symbolication; you must untick the  "Include app symbols" checkbox when submitting an app archive to the App Store / TestFlight.
+
+In addition, you will see the following linker error - which you may simply ignore - for the i386 architecture:
+
+```sh
+ld: warning: PIE disabled. Absolute addressing (perhaps -mdynamic-no-pic) not allowed in code signed PIE, but used in sync/atomic.(*Value).Store from /Users/matti/src/ninchat-sdk-ios-testclient/Pods/NinchatLowLevelClient/Frameworks/NinchatLowLevelClient.framework/NinchatLowLevelClient(go.o). To fix this warning, don't compile with -mdynamic-no-pic or link with -Wl,-no_pie
+```
+
+These issues are caused by limitations of the [gomobile bind tool](https://godoc.org/golang.org/x/mobile/cmd/gobind) used to generate the low-level communications library.
+
+## Overriding the Image Assets
+
+Using the API delegate method `session:overrideImageAssetForKey:` you may supply your own Image assets as `UIImage` objects. See the table below for explanations on the supported asset keys.
+
+These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objective-C, use the constants found in this header; for Swift, use the NINImageAssetKey.* constants. The table below assumes Swift.
+
+| Asset key       | Related UI control           | Notes  |
+| ------------- |-------------| -----|
+| .queueViewProgressIndicator   | Progress indicator icon in queue view. |  |
+| .chatUserTypingIndicator      | User is typing.. Indicator icon in chat bubble | Should be [animated](https://developer.apple.com/documentation/uikit/uiimage/1624149-animatedimagewithimages). |
+| .initialViewJoinQueueButton   | Background for 'start chat' button in initial view. |  |
+| .nitialViewCloseWindowButton | Background for 'close windoiw' button in initial view. |  |
+| .chatViewBackgroundTexture    | Chat view's repeating texture. | Should be repeatable (tiling). |
+| .closeChatButton              | Background for 'close chat' button. |  |
+| .chatBubbleLeft              | Background for left side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleLeftSeries              | Background for left side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleRight              | Background for reveright side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleRightSeries              | Background for right side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+
+
 ## Contact
 
 If you have any questions, contact:

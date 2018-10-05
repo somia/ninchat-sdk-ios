@@ -47,7 +47,7 @@
     if ([message isKindOfClass:NINChannelMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = _videoThumbnailManager;
-        [cell populateWithChannelMessage:message];
+        [cell populateWithChannelMessage:message imageAssets:self.imageAssets];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
@@ -61,7 +61,7 @@
     } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = nil;
-        [cell populateWithUserTypingMessage:message typingIcon:self.imageAssetOverrides[NINImageAssetKeyChatUserTypingIndicator]];
+        [cell populateWithUserTypingMessage:message imageAssets:self.imageAssets];
         return cell;
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];

@@ -113,21 +113,17 @@ static NSString* const kCloseChatText = @"Close chat";
 // NSNotificationCenter observer for user is ryping into the chat
 @property (nonatomic, strong) id<NSObject> typingObserver;
 
-// Image to use for "user is typing" indication. This should be an animation.
-@property (nonatomic, strong) UIImage* userTypingIcon;
-
 @end
 
 @implementation NINChatViewController
 
 #pragma mark - Private methods
 
--(UIImage*) createUserTypingIcon {
-    // Use overridden one if it is available
+-(NSDictionary<NINImageAssetKey, UIImage*>*) createImageAssetDictionary {
+    // User typing indicator
     UIImage* userTypingIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
 
-    if (self.userTypingIcon == nil) {
-        // No override; use default image set
+    if (userTypingIcon == nil) {
         NSMutableArray* frames = [NSMutableArray arrayWithCapacity:25];
         for (NSInteger i = 1; i <= 23; i++) {
             NSString* imageName = [NSString stringWithFormat:@"icon_writing_%02ld", (long)i];
@@ -136,9 +132,35 @@ static NSString* const kCloseChatText = @"Close chat";
         userTypingIcon = [UIImage animatedImageWithImages:frames duration:1.0];
     }
 
-    NSCAssert(userTypingIcon != nil, @"Must have typing icon");
+    // Left side bubble
+    UIImage* leftSideBubble = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeft];
+    if (leftSideBubble == nil) {
+        leftSideBubble = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
 
-    return userTypingIcon;
+    // Left side bubble (series)
+    UIImage* leftSideBubbleSeries = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftSeries];
+    if (leftSideBubbleSeries == nil) {
+        leftSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_left_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    // Right side bubble
+    UIImage* rightSideBubble = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleRight];
+    if (rightSideBubble == nil) {
+        rightSideBubble = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    // Right side bubble (series)
+    UIImage* rightSideBubbleSeries = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightSeries];
+    if (rightSideBubbleSeries == nil) {
+        rightSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_right_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    return @{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon,
+             NINImageAssetKeyChatBubbleLeft: leftSideBubble,
+             NINImageAssetKeyChatBubbleLeftSeries: leftSideBubbleSeries,
+             NINImageAssetKeyChatBubbleRight: rightSideBubble,
+             NINImageAssetKeyChatBubbleRightSeries: rightSideBubbleSeries};
 }
 
 // Aligns (or cancels existing alignment) the input control container view's top
@@ -725,11 +747,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
     self.muteAudioButton.layer.cornerRadius = self.muteAudioButton.bounds.size.height / 2;
 
-    UIImage* userTypingIcon = [self createUserTypingIcon];
-
-    //TODO add all the required assets (overloads) here
-    NSMutableDictionary* chatImageAssetOverrides = [NSMutableDictionary dictionaryWithDictionary:@{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon}];
-    self.chatView.imageAssetOverrides = chatImageAssetOverrides;
+    self.chatView.imageAssets = [self createImageAssetDictionary];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 }

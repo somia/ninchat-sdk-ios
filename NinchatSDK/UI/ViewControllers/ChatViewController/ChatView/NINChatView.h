@@ -45,7 +45,7 @@
 @property (nonatomic, weak) id<NINChatViewDelegate> delegate;
 
 /** The image asset overrides as map. Only contains items used by chat view. */
-@property (nonatomic, strong) NSDictionary<NINImageAssetKey,UIImage*>* imageAssetOverrides;
+@property (nonatomic, strong) NSDictionary<NINImageAssetKey,UIImage*>* imageAssets;
 
 /** A new message was added at the bottom of the list (index = 0). Updates the view. */
 -(void) newMessageWasAdded;

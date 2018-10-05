@@ -122,9 +122,8 @@
     }
 }
 
--(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL {
-    NSString* imageName = series ? @"chat_bubble_right_series" : @"chat_bubble_right";
-    self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+-(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleRightSeries] : imageAssets[NINImageAssetKeyChatBubbleRight];
 
     // White text on black bubble
     self.bubbleImageView.tintColor = [UIColor blackColor];
@@ -152,9 +151,8 @@
     [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
 }
 
--(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL {
-    NSString* imageName = series ? @"chat_bubble_left_series" : @"chat_bubble_left";
-    self.bubbleImageView.image = [UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+-(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleLeftSeries] : imageAssets[NINImageAssetKeyChatBubbleLeft];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
     // Black text on white bubble
@@ -277,7 +275,7 @@
 
 #pragma mark - Public methods
 
--(void) populateWithChannelMessage:(NINChannelMessage*)message {
+-(void) populateWithChannelMessage:(NINChannelMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
@@ -305,10 +303,10 @@
 
     if (message.mine) {
         // Visitor's (= phone user) message - on the right
-        [self configureForMyMessageWithSeries:message.series avatarURL:message.sender.iconURL];
+        [self configureForMyMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets];
     } else {
         // Other's message - on the left
-        [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL];
+        [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets];
     }
 
     // Make Image view background match the bubble color
@@ -338,8 +336,7 @@
     NSLog(@"populateWithChannelMessage: returning.");
 }
 
--(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message typingIcon:(UIImage*)typingIcon {
-    NSCAssert(typingIcon != nil, @"Typing icon cannot be nil!");
+-(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
@@ -353,12 +350,12 @@
 
     self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;
 
-    [self configureForOthersMessageWithSeries:NO avatarURL:message.user.iconURL];
+    [self configureForOthersMessageWithSeries:NO avatarURL:message.user.iconURL imageAssets:imageAssets];
 
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
     self.messageImageView.image = nil;
-    self.messageImageView.image = typingIcon;
+    self.messageImageView.image = imageAssets[NINImageAssetKeyChatUserTypingIndicator];
     self.messageImageView.tintColor = [UIColor blackColor];
 
     // Allow the image to have absolute width

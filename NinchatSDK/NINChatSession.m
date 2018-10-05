@@ -25,6 +25,10 @@ NINImageAssetKey NINImageAssetKeyInitialViewJoinQueueButton = @"NINImageAssetKey
 NINImageAssetKey NINImageAssetKeyInitialViewCloseWindowButton = @"NINImageAssetKeyCloseWindowButton";
 NINImageAssetKey NINImageAssetKeyChatViewBackgroundTexture = @"NINImageAssetKeyChatBackground";
 NINImageAssetKey NINImageAssetKeyCloseChatButton = @"NINImageAssetKeyCloseChatButton";
+NINImageAssetKey NINImageAssetKeyChatBubbleLeft = @"NINImageAssetKeyChatBubbleLeft";
+NINImageAssetKey NINImageAssetKeyChatBubbleLeftSeries = @"NINImageAssetKeyChatBubbleLeftSeries";
+NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleRight";
+NINImageAssetKey NINImageAssetKeyChatBubbleRightSeries = @"NINImageAssetKeyChatBubbleRightSeries";
 
 @interface NINChatSession ()
 
