@@ -13,6 +13,7 @@
 
 @class NINChatView;
 @class NINFileInfo;
+@class NINChatSession;
 
 /** Data source for the chat view. */
 @protocol NINChatViewDataSource
@@ -44,11 +45,8 @@
 /** My delegate. */
 @property (nonatomic, weak) id<NINChatViewDelegate> delegate;
 
-/** The image asset overrides as map. Only contains items used by chat view. */
-@property (nonatomic, strong) NSDictionary<NINImageAssetKey,UIImage*>* imageAssets;
-
-/** The color asset overrides as map. Only contains items used by chat view. */
-@property (nonatomic, strong) NSDictionary<NINColorAssetKey,UIColor*>* colorAssets;
+/** Chat session. */
+@property (nonatomic, strong) NINChatSession* session;
 
 /** A new message was added at the bottom of the list (index = 0). Updates the view. */
 -(void) newMessageWasAdded;

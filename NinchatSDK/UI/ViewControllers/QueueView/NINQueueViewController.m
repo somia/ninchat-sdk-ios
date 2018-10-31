@@ -107,7 +107,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     };
 
     // Asset overrides
-    [self.closeChatButton overrideImageWithSession:self.sessionManager.ninchatSession];
+    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 }
 
 @end

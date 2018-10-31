@@ -12,11 +12,12 @@
 #import "NINPublicTypes.h"
 
 @class NINChatMetaMessage;
+@class NINChatSession;
 
 @interface NINChatMetaCell : UITableViewCell
 
 @property (nonatomic, copy) emptyBlock closeChatCallback;
 
--(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets;
+-(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets session:(NINChatSession*)session;
 
 @end

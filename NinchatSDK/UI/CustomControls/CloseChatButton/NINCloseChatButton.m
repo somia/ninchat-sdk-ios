@@ -27,7 +27,7 @@
     self.buttonTitleLabel.text = title;
 }
 
--(void) overrideImageWithSession:(NINChatSession*)session {
+-(void) overrideAssetsWithSession:(NINChatSession*)session {
     UIImage* overrideImage = [session overrideImageAssetForKey:NINImageAssetKeyCloseChatButton];
 
     if (overrideImage != nil) {
@@ -35,6 +35,11 @@
         self.theButton.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
+    } else {
+        UIColor* textColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
+        if (textColor != nil) {
+            self.buttonTitleLabel.textColor = textColor;
+        }
     }
 }
 

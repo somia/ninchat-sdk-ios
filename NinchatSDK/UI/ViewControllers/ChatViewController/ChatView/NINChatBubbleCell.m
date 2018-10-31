@@ -122,7 +122,20 @@
     }
 }
 
--(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+// Performs asset customizations indenpendent of message sender
+-(void) applyCommonAssetOverrides:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+    UIColor* nameColor = colorAssets[NINColorAssetKeyChatName];
+    if (nameColor != nil) {
+        self.senderNameLabel.textColor = nameColor;
+    }
+    UIColor* timestampColor = colorAssets[NINColorAssetKeyChatTimestamp];
+    if (timestampColor != nil) {
+        self.timeLabel.textColor = timestampColor;
+    }
+}
+
+// Configures the cell to be "on the right"
+-(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleRightSeries] : imageAssets[NINImageAssetKeyChatBubbleRight];
 
     // White text on black bubble
@@ -149,9 +162,17 @@
 
     self.leftAvatarImageView.image = nil;
     [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
+
+    // Color customizations
+    [self applyCommonAssetOverrides:colorAssets];
+    UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleRightText];
+    if (bubbleTextColor != nil) {
+        self.messageTextView.textColor = bubbleTextColor;
+    }
 }
 
--(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+// Configures the cell to be "on the left"
+-(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleLeftSeries] : imageAssets[NINImageAssetKeyChatBubbleLeft];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
@@ -179,6 +200,13 @@
 
     [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
     self.rightAvatarImageView.image = nil;
+
+    // Color customizations
+    [self applyCommonAssetOverrides:colorAssets];
+    UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleLeftText];
+    if (bubbleTextColor != nil) {
+        self.messageTextView.textColor = bubbleTextColor;
+    }
 }
 
 -(void) imagePressed {
@@ -275,7 +303,7 @@
 
 #pragma mark - Public methods
 
--(void) populateWithChannelMessage:(NINChannelMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+-(void) populateWithChannelMessage:(NINChannelMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
@@ -303,10 +331,10 @@
 
     if (message.mine) {
         // Visitor's (= phone user) message - on the right
-        [self configureForMyMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets];
+        [self configureForMyMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets colorAssets:colorAssets];
     } else {
         // Other's message - on the left
-        [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets];
+        [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets colorAssets:colorAssets];
     }
 
     // Make Image view background match the bubble color
@@ -336,7 +364,7 @@
     NSLog(@"populateWithChannelMessage: returning.");
 }
 
--(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets {
+-(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
@@ -350,7 +378,7 @@
 
     self.topLabelsContainerHeightConstraint.constant = self.topLabelsContainerHeight;
 
-    [self configureForOthersMessageWithSeries:NO avatarURL:message.user.iconURL imageAssets:imageAssets];
+    [self configureForOthersMessageWithSeries:NO avatarURL:message.user.iconURL imageAssets:imageAssets colorAssets:colorAssets];
 
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;

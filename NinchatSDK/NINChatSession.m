@@ -31,7 +31,14 @@ NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleR
 NINImageAssetKey NINImageAssetKeyChatBubbleRightSeries = @"NINImageAssetKeyChatBubbleRightSeries";
 
 // Color asset keys
-NINColorAssetKey NINColorAssetKeyChatInfoText = @"NINColorAssetKeyChatInfoText";
+NINColorAssetKey NINColorAssetKeyButtonSecondaryText = @"NINColorAssetKeyButtonSecondaryText";
+NINColorAssetKey NINColorAssetKeyInfoText = @"NINColorAssetKeyInfoText";
+NINColorAssetKey NINColorAssetKeyChatName = @"NINColorAssetKeyChatName";
+NINColorAssetKey NINColorAssetKeyChatTimestamp = @"NINColorAssetKeyChatTimestamp";
+NINColorAssetKey NINColorAssetKeyChatBubbleLeftText = @"NINColorAssetKeyChatBubbleLeftText";
+NINColorAssetKey NINColorAssetKeyChatBubbleRightText = @"NINColorAssetKeyChatBubbleRightText";
+NINColorAssetKey NINColorAssetKeyTextareaText = @"NINColorAssetKeyTextareaText";
+NINColorAssetKey NINColorAssetKeyTextareaSubmitText = @"NINColorAssetKeyTextareaSubmitText";
 
 @interface NINChatSession ()
 

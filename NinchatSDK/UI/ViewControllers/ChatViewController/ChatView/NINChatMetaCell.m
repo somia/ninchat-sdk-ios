@@ -20,12 +20,12 @@
 
 @implementation NINChatMetaCell
 
--(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets {
+-(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets session:(NINChatSession*)session {
 
     __weak typeof(self) weakSelf = self;
 
     // Customize assets
-    UIColor* labelColor = colorAssets[NINColorAssetKeyChatInfoText];
+    UIColor* labelColor = colorAssets[NINColorAssetKeyInfoText];
     if (labelColor != nil) {
         self.metaTextLabel.textColor = labelColor;
     }
@@ -39,6 +39,7 @@
     } else {
         self.buttonContainerHeightConstraint.active = NO;
         [self.closeChatButton setButtonTitle:message.closeChatButtonTitle];
+        [self.closeChatButton overrideAssetsWithSession:session];
         self.closeChatButton.pressedCallback = ^{
             weakSelf.closeChatCallback();
         };

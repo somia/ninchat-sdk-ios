@@ -119,50 +119,6 @@ static NSString* const kCloseChatText = @"Close chat";
 
 #pragma mark - Private methods
 
--(NSDictionary<NINImageAssetKey, UIImage*>*) createImageAssetDictionary {
-    // User typing indicator
-    UIImage* userTypingIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
-
-    if (userTypingIcon == nil) {
-        NSMutableArray* frames = [NSMutableArray arrayWithCapacity:25];
-        for (NSInteger i = 1; i <= 23; i++) {
-            NSString* imageName = [NSString stringWithFormat:@"icon_writing_%02ld", (long)i];
-            [frames addObject:[UIImage imageNamed:imageName inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
-        }
-        userTypingIcon = [UIImage animatedImageWithImages:frames duration:1.0];
-    }
-
-    // Left side bubble
-    UIImage* leftSideBubble = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeft];
-    if (leftSideBubble == nil) {
-        leftSideBubble = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
-    }
-
-    // Left side bubble (series)
-    UIImage* leftSideBubbleSeries = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftSeries];
-    if (leftSideBubbleSeries == nil) {
-        leftSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_left_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
-    }
-
-    // Right side bubble
-    UIImage* rightSideBubble = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleRight];
-    if (rightSideBubble == nil) {
-        rightSideBubble = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
-    }
-
-    // Right side bubble (series)
-    UIImage* rightSideBubbleSeries = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightSeries];
-    if (rightSideBubbleSeries == nil) {
-        rightSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_right_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
-    }
-
-    return @{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon,
-             NINImageAssetKeyChatBubbleLeft: leftSideBubble,
-             NINImageAssetKeyChatBubbleLeftSeries: leftSideBubbleSeries,
-             NINImageAssetKeyChatBubbleRight: rightSideBubble,
-             NINImageAssetKeyChatBubbleRightSeries: rightSideBubbleSeries};
-}
-
 // Aligns (or cancels existing alignment) the input control container view's top
 // to the screen bottom to hide the controls.
 -(void) alignInputControlsTopToScreenBottom:(BOOL)align {
@@ -357,6 +313,11 @@ static NSString* const kCloseChatText = @"Close chat";
         [self.sendMessageButton setBackgroundImage:[UIImage imageNamed:@"icon_send_message_border" inBundle:findResourceBundle() compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         [self.sendMessageButton setTitle:sendMessageButtonTitle forState:UIControlStateNormal];
         self.sendMessageButton.contentEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 15);
+
+        UIColor* titleColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaSubmitText];
+        if (titleColor != nil) {
+            [self.sendMessageButton setTitleColor:titleColor forState:UIControlStateNormal];
+        }
     }
 }
 
@@ -710,6 +671,9 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) viewDidLoad {
     [super viewDidLoad];
 
+    // Pass the session reference to chat view for handling the asset overrides
+    self.chatView.session = self.sessionManager.ninchatSession;
+
     NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
     [self updateSendMessageButtonWithText:sendButtonTitle];
 
@@ -729,7 +693,7 @@ static NSString* const kCloseChatText = @"Close chat";
         [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
     };
 
-    [self.closeChatButton overrideImageWithSession:self.sessionManager.ninchatSession];
+    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 
     self.chatView.dataSource = self;
     self.chatView.delegate = self;
@@ -747,9 +711,13 @@ static NSString* const kCloseChatText = @"Close chat";
 
     self.muteAudioButton.layer.cornerRadius = self.muteAudioButton.bounds.size.height / 2;
 
-    self.chatView.imageAssets = [self createImageAssetDictionary];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+
+    // Asset overrides
+    UIColor* inputTextColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaText];
+    if (inputTextColor != nil) {
+        self.textInput.textColor = inputTextColor;
+    }
 }
 
 -(void) dealloc {

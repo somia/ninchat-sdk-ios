@@ -17,7 +17,7 @@
 @property (nonatomic, copy) emptyBlock pressedCallback;
 
 -(void) setButtonTitle:(NSString*)title;
--(void) overrideImageWithSession:(NINChatSession*)session;
+-(void) overrideAssetsWithSession:(NINChatSession*)session;
 
 @end
 
