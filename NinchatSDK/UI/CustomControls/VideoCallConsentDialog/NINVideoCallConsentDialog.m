@@ -11,11 +11,16 @@
 #import "NINVideoCallConsentDialog.h"
 #import "NINUtils.h"
 #import "NINChannelUser.h"
+#import "NINChatSession+Internal.h"
 
 @interface NINVideoCallConsentDialog ()
 
+@property (nonatomic, strong) IBOutlet UIView* headerContainerView;
+@property (nonatomic, strong) IBOutlet UIView* bottomContainerView;
+@property (nonatomic, strong) IBOutlet UILabel* titleLabel;
 @property (nonatomic, strong) IBOutlet UIImageView* avatarImageView;
 @property (nonatomic, strong) IBOutlet UILabel* usernameLabel;
+@property (nonatomic, strong) IBOutlet UILabel* infoLabel;
 @property (nonatomic, strong) IBOutlet UIButton* acceptButton;
 @property (nonatomic, strong) IBOutlet UIButton* rejectButton;
 
@@ -30,6 +35,31 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 #pragma mark - Private methods
 
+-(void) applyAssetOverrides:(NINChatSession*)session {
+    UIColor* backgroundColor = [session overrideColorAssetForKey:NINColorAssetKeyModalBackground];
+    if (backgroundColor != nil) {
+        self.headerContainerView.backgroundColor = backgroundColor;
+        self.bottomContainerView.backgroundColor = backgroundColor;
+    }
+
+    UIColor* textColor = [session overrideColorAssetForKey:NINColorAssetKeyModalText];
+    if (textColor != nil) {
+        self.titleLabel.textColor = textColor;
+        self.usernameLabel.textColor = textColor;
+        self.infoLabel.textColor = textColor;
+    }
+
+    UIColor* primaryButtonColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonPrimaryText];
+    if (primaryButtonColor != nil) {
+        [self.acceptButton setTitleColor:primaryButtonColor forState:UIControlStateNormal];
+    }
+
+    UIColor* secondaryButtonColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
+    if (secondaryButtonColor != nil) {
+        [self.rejectButton setTitleColor:secondaryButtonColor forState:UIControlStateNormal];
+    }
+}
+
 // Loads the NINNavigationBar view from its xib
 +(NINVideoCallConsentDialog*) loadViewFromNib {
     NSBundle* bundle = findResourceBundle();
@@ -42,13 +72,15 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 #pragma mark - Public methods
 
-+(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user closedBlock:(consentDialogClosedBlock)closedBlock {
++(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user session:(NINChatSession*)session closedBlock:(consentDialogClosedBlock)closedBlock {
     NINVideoCallConsentDialog* d = [NINVideoCallConsentDialog loadViewFromNib];
     d.translatesAutoresizingMaskIntoConstraints = NO;
     d.closedBlock = closedBlock;
 
     [d.avatarImageView setImageWithURL:[NSURL URLWithString:user.iconURL]];
     d.usernameLabel.text = user.displayName;
+
+    [d applyAssetOverrides:session];
 
     // Create a "fader" view to fade out the background a bit and constrain it to match the view
     d.faderView = [[UIView alloc] initWithFrame:view.bounds];

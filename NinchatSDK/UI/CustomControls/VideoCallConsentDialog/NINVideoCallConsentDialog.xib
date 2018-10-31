@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -32,7 +32,7 @@
                             </constraints>
                         </view>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video call request" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y4E-0j-BTb">
-                            <rect key="frame" x="143.5" y="25.5" width="127.5" height="19"/>
+                            <rect key="frame" x="144" y="25.5" width="127.5" height="19"/>
                             <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -54,7 +54,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tig-nD-3bY" userLabel="Identity container view">
                             <rect key="frame" x="0.0" y="0.0" width="415" height="149"/>
                             <subviews>
-                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_portrait_placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="dFm-7f-ELq">
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_avatar_mine" translatesAutoresizingMaskIntoConstraints="NO" id="dFm-7f-ELq">
                                     <rect key="frame" x="157.5" y="10" width="100" height="100"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="100" id="EwV-UB-Sh6">
@@ -71,7 +71,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstItem="VI7-1J-C7d" firstAttribute="centerX" secondItem="Tig-nD-3bY" secondAttribute="centerX" id="Lke-xS-BNo"/>
                                 <constraint firstItem="dFm-7f-ELq" firstAttribute="centerX" secondItem="Tig-nD-3bY" secondAttribute="centerX" id="Oq0-nh-Jf8"/>
@@ -81,7 +81,7 @@
                             </constraints>
                         </view>
                         <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2XW-QL-Rsr">
-                            <rect key="frame" x="117" y="207" width="180" height="45"/>
+                            <rect key="frame" x="117.5" y="207" width="180" height="45"/>
                             <color key="backgroundColor" red="0.0" green="0.54117647058823526" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="180" id="gxl-oT-Kao"/>
@@ -96,7 +96,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6zq-oW-YZ8">
-                            <rect key="frame" x="117" y="272" width="180" height="45"/>
+                            <rect key="frame" x="117.5" y="272" width="180" height="45"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="180" id="J36-Rd-V5V"/>
@@ -150,13 +150,17 @@
             <connections>
                 <outlet property="acceptButton" destination="2XW-QL-Rsr" id="giT-m7-nYC"/>
                 <outlet property="avatarImageView" destination="dFm-7f-ELq" id="fwg-Vs-zqD"/>
+                <outlet property="bottomContainerView" destination="VxL-H8-qfT" id="2rf-uy-Dh4"/>
+                <outlet property="headerContainerView" destination="v7T-F9-h1R" id="MJl-ky-d8E"/>
+                <outlet property="infoLabel" destination="Nlt-8X-TwU" id="otZ-Zw-aME"/>
                 <outlet property="rejectButton" destination="6zq-oW-YZ8" id="nW1-Bl-PT7"/>
+                <outlet property="titleLabel" destination="y4E-0j-BTb" id="dEo-ct-Dud"/>
                 <outlet property="usernameLabel" destination="VI7-1J-C7d" id="0fc-X7-qwH"/>
             </connections>
             <point key="canvasLocation" x="53.5" y="-71"/>
         </view>
     </objects>
     <resources>
-        <image name="icon_portrait_placeholder" width="288" height="288"/>
+        <image name="icon_avatar_mine" width="726" height="725"/>
     </resources>
 </document>

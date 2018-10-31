@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class NINChannelUser;
+@class NINChatSession;
 
 typedef NS_ENUM(NSInteger, NINConsentDialogResult) {
     NINConsentDialogResultAccepted,
@@ -24,6 +25,6 @@ typedef void (^consentDialogClosedBlock)(NINConsentDialogResult result);
 @interface NINVideoCallConsentDialog : UIView
 
 /** Displays the dialog on top of another view. */
-+(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user closedBlock:(consentDialogClosedBlock)closedBlock;
++(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user session:(NINChatSession*)session closedBlock:(consentDialogClosedBlock)closedBlock;
 
 @end

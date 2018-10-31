@@ -31,6 +31,7 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRightSerie
 typedef NSString* const NINColorAssetKey NS_STRING_ENUM;
 
 // Color asset keys
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyButtonPrimaryText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyButtonSecondaryText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyInfoText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatName;
@@ -41,5 +42,7 @@ FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaSubmitText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftLink;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalBackground;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalText;
 
 #endif /* PublicTypes_h */

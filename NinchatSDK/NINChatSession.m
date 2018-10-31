@@ -31,6 +31,7 @@ NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleR
 NINImageAssetKey NINImageAssetKeyChatBubbleRightSeries = @"NINImageAssetKeyChatBubbleRightSeries";
 
 // Color asset keys
+NINColorAssetKey NINColorAssetKeyButtonPrimaryText = @"NINColorAssetKeyButtonPrimaryText";
 NINColorAssetKey NINColorAssetKeyButtonSecondaryText = @"NINColorAssetKeyButtonSecondaryText";
 NINColorAssetKey NINColorAssetKeyInfoText = @"NINColorAssetKeyInfoText";
 NINColorAssetKey NINColorAssetKeyChatName = @"NINColorAssetKeyChatName";
@@ -41,6 +42,8 @@ NINColorAssetKey NINColorAssetKeyTextareaText = @"NINColorAssetKeyTextareaText";
 NINColorAssetKey NINColorAssetKeyTextareaSubmitText = @"NINColorAssetKeyTextareaSubmitText";
 NINColorAssetKey NINColorAssetKeyChatBubbleLeftLink = @"NINColorAssetKeyChatBubbleLeftLink";
 NINColorAssetKey NINColorAssetKeyChatBubbleRightLink = @"NINColorAssetKeyChatBubbleRightLink";
+NINColorAssetKey NINColorAssetKeyModalText = @"NINColorAssetKeyModalText";
+NINColorAssetKey NINColorAssetKeyModalBackground = @"NINColorAssetKeyModalBackground";
 
 @interface NINChatSession ()
 

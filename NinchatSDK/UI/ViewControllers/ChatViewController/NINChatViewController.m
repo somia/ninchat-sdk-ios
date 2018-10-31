@@ -200,7 +200,7 @@ static NSString* const kCloseChatText = @"Close chat";
             [weakSelf.textInput resignFirstResponder];
 
             // Show answer / reject dialog for the incoming call
-            [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] closedBlock:^(NINConsentDialogResult result) {
+            [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] session:self.sessionManager.ninchatSession closedBlock:^(NINConsentDialogResult result) {
                 [weakSelf pickupWithAnswer:(result == NINConsentDialogResultAccepted)];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
