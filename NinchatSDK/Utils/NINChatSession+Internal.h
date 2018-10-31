@@ -16,4 +16,7 @@
 /** Wraps the delegate call to overrideImageAssetForKey. */
 -(UIImage* _Nullable) overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
 
+/** Wraps the delegate call to overrideColorAssetForKey. */
+-(UIColor* _Nullable) overrideColorAssetForKey:(NINColorAssetKey _Nonnull)assetKey;
+
 @end

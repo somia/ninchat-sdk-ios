@@ -12,8 +12,10 @@
 /** Asynchronous completion callback for the -start operation. */
 typedef void (^startCallbackBlock)(NSError* _Nullable error);
 
-// Image asset keys
+/** Defines the type for a overrideable color asset. */
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
+
+// Image asset keys
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyQueueViewProgressIndicator;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatUserTypingIndicator;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyInitialViewJoinQueueButton;
@@ -24,5 +26,11 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeft;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeftSeries;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRight;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRightSeries;
+
+/** Defines the type for a overrideable color asset. */
+typedef NSString* const NINColorAssetKey NS_STRING_ENUM;
+
+// Color asset keys
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatInfoText;
 
 #endif /* PublicTypes_h */

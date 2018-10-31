@@ -66,7 +66,7 @@
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];
 
-        [cell populateWithMessage:message];
+        [cell populateWithMessage:message colorAssets:self.colorAssets];
         cell.closeChatCallback = ^{
             [weakSelf.delegate closeChatRequestedByChatView:weakSelf];
         };

@@ -20,8 +20,15 @@
 
 @implementation NINChatMetaCell
 
--(void) populateWithMessage:(NINChatMetaMessage*)message {
+-(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets {
+
     __weak typeof(self) weakSelf = self;
+
+    // Customize assets
+    UIColor* labelColor = colorAssets[NINColorAssetKeyChatInfoText];
+    if (labelColor != nil) {
+        self.metaTextLabel.textColor = labelColor;
+    }
 
     self.metaTextLabel.text = message.text;
 

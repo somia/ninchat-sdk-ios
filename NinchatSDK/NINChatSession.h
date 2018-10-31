@@ -38,16 +38,28 @@
 -(void) ninchat:(NINChatSession*_Nonnull)session onLowLevelEvent:(NINLowLevelClientProps*_Nonnull)params payload:(NINLowLevelClientPayload*_Nonnull)payload lastReply:(BOOL)lastReply;
 
 /**
- * This method allows the SDK delegate to override image assets used in the
- * SDK UI. If the implementation does not wish to override an asset, nil should
- * be returned.
+ * This method allows the SDK user to override image assets used in the
+ * SDK UI. If the implementation does not wish to override a specific asset, nil should
+ * be returned for that key.
  *
- * For available asset key strings, see documentation.
+ * For available asset key constants, see documentation.
  *
  * Optional method.
  */
 @optional
 -(UIImage* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideImageAssetForKey:(NINImageAssetKey _Nonnull)assetKey;
+
+/**
+ * This method allows the SDK user to override color assets used in the SDK UI.
+ * If the implementation does not wish to override a specific asset, nil should
+ * be returned for that key.
+ *
+ * For available asset key constants, see documentation.
+ *
+ * Optional method.
+ */
+@optional
+-(UIColor* _Nullable) ninchat:(NINChatSession*_Nonnull)session overrideColorAssetForKey:(NINColorAssetKey _Nonnull)assetKey;
 
 /**
  * Indicates that the Ninchat SDK UI has completed its chat. and would like

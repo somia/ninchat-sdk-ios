@@ -47,6 +47,9 @@
 /** The image asset overrides as map. Only contains items used by chat view. */
 @property (nonatomic, strong) NSDictionary<NINImageAssetKey,UIImage*>* imageAssets;
 
+/** The color asset overrides as map. Only contains items used by chat view. */
+@property (nonatomic, strong) NSDictionary<NINColorAssetKey,UIColor*>* colorAssets;
+
 /** A new message was added at the bottom of the list (index = 0). Updates the view. */
 -(void) newMessageWasAdded;
 

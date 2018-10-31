@@ -30,6 +30,9 @@ NINImageAssetKey NINImageAssetKeyChatBubbleLeftSeries = @"NINImageAssetKeyChatBu
 NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleRight";
 NINImageAssetKey NINImageAssetKeyChatBubbleRightSeries = @"NINImageAssetKeyChatBubbleRightSeries";
 
+// Color asset keys
+NINColorAssetKey NINColorAssetKeyChatInfoText = @"NINColorAssetKeyChatInfoText";
+
 @interface NINChatSession ()
 
 /** Session manager instance. */

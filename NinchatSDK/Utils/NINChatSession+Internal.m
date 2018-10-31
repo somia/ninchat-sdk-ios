@@ -27,4 +27,12 @@
     }
 }
 
+-(UIColor* _Nullable) overrideColorAssetForKey:(NINColorAssetKey _Nonnull)assetKey {
+    if ([self.delegate respondsToSelector:@selector(ninchat:overrideColorAssetForKey:)]) {
+        return [self.delegate ninchat:self overrideColorAssetForKey:assetKey];
+    } else {
+        return nil;
+    }
+}
+
 @end

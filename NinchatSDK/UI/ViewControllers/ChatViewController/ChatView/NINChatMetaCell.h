@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "NINPrivateTypes.h"
+#import "NINPublicTypes.h"
 
 @class NINChatMetaMessage;
 
@@ -16,6 +17,6 @@
 
 @property (nonatomic, copy) emptyBlock closeChatCallback;
 
--(void) populateWithMessage:(NINChatMetaMessage*)message;
+-(void) populateWithMessage:(NINChatMetaMessage*)message colorAssets:(NSDictionary<NINColorAssetKey,UIColor*>*)colorAssets;
 
 @end
