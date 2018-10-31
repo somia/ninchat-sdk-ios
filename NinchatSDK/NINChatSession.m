@@ -39,6 +39,8 @@ NINColorAssetKey NINColorAssetKeyChatBubbleLeftText = @"NINColorAssetKeyChatBubb
 NINColorAssetKey NINColorAssetKeyChatBubbleRightText = @"NINColorAssetKeyChatBubbleRightText";
 NINColorAssetKey NINColorAssetKeyTextareaText = @"NINColorAssetKeyTextareaText";
 NINColorAssetKey NINColorAssetKeyTextareaSubmitText = @"NINColorAssetKeyTextareaSubmitText";
+NINColorAssetKey NINColorAssetKeyChatBubbleLeftLink = @"NINColorAssetKeyChatBubbleLeftLink";
+NINColorAssetKey NINColorAssetKeyChatBubbleRightLink = @"NINColorAssetKeyChatBubbleRightLink";
 
 @interface NINChatSession ()
 

@@ -169,6 +169,10 @@
     if (bubbleTextColor != nil) {
         self.messageTextView.textColor = bubbleTextColor;
     }
+    UIColor* linkColor = colorAssets[NINColorAssetKeyChatBubbleRightLink];
+    if (linkColor != nil) {
+        self.messageTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+    }
 }
 
 // Configures the cell to be "on the left"
@@ -206,6 +210,10 @@
     UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleLeftText];
     if (bubbleTextColor != nil) {
         self.messageTextView.textColor = bubbleTextColor;
+    }
+    UIColor* linkColor = colorAssets[NINColorAssetKeyChatBubbleLeftLink];
+    if (linkColor != nil) {
+        self.messageTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
     }
 }
 

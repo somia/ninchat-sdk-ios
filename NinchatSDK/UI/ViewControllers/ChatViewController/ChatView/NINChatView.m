@@ -92,7 +92,7 @@
 -(NSDictionary<NINColorAssetKey, UIColor*>*) createColorAssetDictionary {
     NSCAssert(self.session != nil, @"Session cannot be nil");
 
-    NSArray* relatedKeys = @[NINColorAssetKeyInfoText, NINColorAssetKeyChatName, NINColorAssetKeyChatTimestamp, NINColorAssetKeyChatBubbleLeftText, NINColorAssetKeyChatBubbleRightText];
+    NSArray* relatedKeys = @[NINColorAssetKeyInfoText, NINColorAssetKeyChatName, NINColorAssetKeyChatTimestamp, NINColorAssetKeyChatBubbleLeftText, NINColorAssetKeyChatBubbleRightText, NINColorAssetKeyChatBubbleLeftLink, NINColorAssetKeyChatBubbleRightLink];
 
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
 

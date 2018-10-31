@@ -39,5 +39,7 @@ FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaText;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyTextareaSubmitText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightLink;
 
 #endif /* PublicTypes_h */
