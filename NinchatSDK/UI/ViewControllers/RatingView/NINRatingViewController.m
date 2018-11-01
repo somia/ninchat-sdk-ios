@@ -18,12 +18,56 @@ static NSString* const kSkipText = @"Skip";
 
 @interface NINRatingViewController ()
 
+@property (nonatomic, strong) IBOutlet UIView* topContainerView;
 @property (nonatomic, strong) IBOutlet UITextView* titleTextView;
+@property (nonatomic, strong) IBOutlet UILabel* positiveLabel;
+@property (nonatomic, strong) IBOutlet UILabel* neutralLabel;
+@property (nonatomic, strong) IBOutlet UILabel* negativeLabel;
 @property (nonatomic, strong) IBOutlet UIButton* skipButton;
 
 @end
 
 @implementation NINRatingViewController
+
+#pragma amrk - Private methods
+
+-(void) applyAssetOverrides {
+    UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
+    if (topBackgroundColor != nil) {
+        self.topContainerView.backgroundColor = topBackgroundColor;
+    }
+
+    UIColor* bottomBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundBottom];
+    if (bottomBackgroundColor != nil) {
+        self.view.backgroundColor = bottomBackgroundColor;
+    }
+
+    UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+    if (textTopColor != nil) {
+        self.titleTextView.textColor = textTopColor;
+    }
+
+    UIColor* positiveColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetRatingPositiveText];
+    if (positiveColor != nil) {
+        self.positiveLabel.textColor = positiveColor;
+    }
+
+    UIColor* neutralColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetRatingNeutralText];
+    if (neutralColor != nil) {
+        self.neutralLabel.textColor = neutralColor;
+    }
+
+    UIColor* negativeColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetRatingNegativeText];
+    if (negativeColor != nil) {
+        self.negativeLabel.textColor = negativeColor;
+    }
+
+    UIColor* linkColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetLink];
+    if (linkColor != nil) {
+        self.titleTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+        [self.skipButton setTitleColor:linkColor forState:UIControlStateNormal];
+    }
+}
 
 #pragma mark - IBAction handlers
 
@@ -82,6 +126,9 @@ static NSString* const kSkipText = @"Skip";
     // Translations
     [self.titleTextView setFormattedText:[self.sessionManager translation:kTitleText formatParams:nil]];
     [self.skipButton setTitle:[self.sessionManager translation:kSkipText formatParams:nil] forState:UIControlStateNormal];
+
+    // Apply asset overrides
+    [self applyAssetOverrides];
 }
 
 @end

@@ -49,5 +49,8 @@ FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextTop;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetLink;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetBackgroundBottom;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextBottom;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingPositiveText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingNeutralText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetRatingNegativeText;
 
 #endif /* PublicTypes_h */

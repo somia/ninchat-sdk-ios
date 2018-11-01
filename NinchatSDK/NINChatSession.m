@@ -49,6 +49,9 @@ NINColorAssetKey NINColorAssetTextTop = @"NINColorAssetTextTop";
 NINColorAssetKey NINColorAssetLink = @"NINColorAssetLink";
 NINColorAssetKey NINColorAssetBackgroundBottom = @"NINColorAssetBackgroundBottom";
 NINColorAssetKey NINColorAssetTextBottom = @"NINColorAssetTextBottom";
+NINColorAssetKey NINColorAssetRatingPositiveText = @"NINColorAssetRatingPositiveText";
+NINColorAssetKey NINColorAssetRatingNeutralText = @"NINColorAssetRatingNeutralText";
+NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegativeText";
 
 @interface NINChatSession ()
 
