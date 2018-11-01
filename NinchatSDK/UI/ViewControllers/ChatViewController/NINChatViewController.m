@@ -627,8 +627,6 @@ static NSString* const kCloseChatText = @"Close chat";
 
     // Start listening to new messages
     self.messagesObserver = fetchNotification(kChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
-        NSLog(@"There is a new message");
-
         NSNumber* removedAtIndex = note.userInfo[@"removedMessageAtIndex"];
         if (removedAtIndex == nil) {
             [weakSelf.chatView newMessageWasAdded];

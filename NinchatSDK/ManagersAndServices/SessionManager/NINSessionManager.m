@@ -586,7 +586,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         // Find the previous channel message
         NINChannelMessage* prevMsg = nil;
-        for (NSInteger i = _chatMessages.count - 1; i >= 0; i--) {
+        for (NSInteger i = 0; i < _chatMessages.count; i++) {
             id<NINChatMessage> msg = _chatMessages[i];
             if ([msg isKindOfClass:NINChannelMessage.class]) {
                 prevMsg = msg;
@@ -1074,8 +1074,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion {
     NSCAssert(self.currentChannelID != nil, @"Must have current channel");
-
-    NSLog(@"SETTING 'Is Writing' to %@", isWriting ? @"YES" : @"NO");
 
     NINLowLevelClientProps* memberAttrs = [NINLowLevelClientProps new];
     [memberAttrs setBool:@"writing" val:isWriting];
