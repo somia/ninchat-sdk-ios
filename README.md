@@ -201,8 +201,8 @@ These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objec
 | .infoText | Chat view's meta information (eg. 'Chat started')
 | .chatName | User name above chat bubbles
 | .chatTimestamp | Timestamp above chat bubbles
-| .chtaBubbleLeftText | Text in others' chat messages
-| .chtaBubbleRightText | Text in my chat messages
+| .chatBubbleLeftText | Text in others' chat messages
+| .chatBubbleRightText | Text in my chat messages
 | .textareaText | Chat input text
 | .textareaSubmitText | Message submit button title
 | .chatBubbleLeftLink | Link color in others' messages
