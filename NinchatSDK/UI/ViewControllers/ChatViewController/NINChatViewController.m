@@ -678,7 +678,7 @@ static NSString* const kCloseChatText = @"Close chat";
     [self updateSendMessageButtonWithText:sendButtonTitle];
 
     // Add tileable pattern image as the view background
-    UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatViewBackgroundTexture];
+    UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBackground];
     if (bgImage == nil) {
         bgImage = [UIImage imageNamed:@"chat_background_pattern" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }

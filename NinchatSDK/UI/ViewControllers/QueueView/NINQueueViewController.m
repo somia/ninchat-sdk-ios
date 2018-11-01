@@ -88,7 +88,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     // Connect to the queue
     __weak typeof(self) weakSelf = self;
     [self.sessionManager joinQueueWithId:self.queueToJoin.queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
-        NSLog(@"Queue progress: position: %ld", (long)queuePosition);
 
         if (queuePosition == 1) {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
@@ -97,18 +96,16 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         }
 
         // Apply color override 
-        UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+        UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
         if (textTopColor != nil) {
-            self.queueInfoTextView.textColor = textTopColor;
+            weakSelf.queueInfoTextView.textColor = textTopColor;
         }
     } channelJoined:^{
-        NSLog(@"Channel joined - showing the chat UI");
-
         [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
 
     // Look for customized images
-    UIImage* progressImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyQueueViewProgressIndicator];
+    UIImage* progressImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconLoader];
     if (progressImage != nil) {
         self.spinnerImageView.image = progressImage;
     }
@@ -143,7 +140,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
-        NSLog(@"Queue view: Close chat button pressed!");
         [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {
             [weakSelf.sessionManager closeChat];
         }];

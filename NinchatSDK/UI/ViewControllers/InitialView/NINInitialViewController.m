@@ -39,8 +39,8 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 #pragma amrk - Private methods
 
 -(void) applyAssetOverrides {
-    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton isPrimaryButton:YES];
-    [self.closeWindowButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewCloseWindowButton isPrimaryButton:NO];
+//    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton isPrimaryButton:YES];
+//    [self.closeWindowButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewCloseWindowButton isPrimaryButton:NO];
 
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
     if (topBackgroundColor != nil) {

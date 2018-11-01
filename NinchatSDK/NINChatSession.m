@@ -19,16 +19,22 @@ static NSString* const kTestServerAddress = @"api.luupi.net";
 static NSString* const kProductionServerAddress = @"api.ninchat.com";
 
 // Image asset keys
-NINImageAssetKey NINImageAssetKeyQueueViewProgressIndicator = @"NINImageAssetKeyQueueViewProgressIndicator";
-NINImageAssetKey NINImageAssetKeyChatUserTypingIndicator = @"NINImageAssetKeyChatUserTypingIndicator";
-NINImageAssetKey NINImageAssetKeyInitialViewJoinQueueButton = @"NINImageAssetKeyJoinQueueButton";
-NINImageAssetKey NINImageAssetKeyInitialViewCloseWindowButton = @"NINImageAssetKeyCloseWindowButton";
-NINImageAssetKey NINImageAssetKeyChatViewBackgroundTexture = @"NINImageAssetKeyChatBackground";
-NINImageAssetKey NINImageAssetKeyCloseChatButton = @"NINImageAssetKeyCloseChatButton";
+NINImageAssetKey NINImageAssetKeyIconLoader = @"NINImageAssetKeyQueueViewProgressIndicator";
+NINImageAssetKey NINImageAssetKeyChatWritingIndicator = @"NINImageAssetKeyChatWritingIndicator";
+//NINImageAssetKey NINImageAssetKeyInitialViewJoinQueueButton = @"NINImageAssetKeyJoinQueueButton";
+//NINImageAssetKey NINImageAssetKeyInitialViewCloseWindowButton = @"NINImageAssetKeyCloseWindowButton";
+NINImageAssetKey NINImageAssetKeyChatBackground = @"NINImageAssetKeyChatBackground";
+NINImageAssetKey NINImageAssetKeyChatCloseButton = @"NINImageAssetKeyChatCloseButton";
 NINImageAssetKey NINImageAssetKeyChatBubbleLeft = @"NINImageAssetKeyChatBubbleLeft";
-NINImageAssetKey NINImageAssetKeyChatBubbleLeftSeries = @"NINImageAssetKeyChatBubbleLeftSeries";
+NINImageAssetKey NINImageAssetKeyChatBubbleLeftRepeated = @"NINImageAssetKeyChatBubbleLeftRepeated";
 NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleRight";
-NINImageAssetKey NINImageAssetKeyChatBubbleRightSeries = @"NINImageAssetKeyChatBubbleRightSeries";
+NINImageAssetKey NINImageAssetKeyChatBubbleRightRepeated = @"NINImageAssetKeyChatBubbleRightRepeated";
+NINImageAssetKey NINImageAssetKeyIconRatingPositive = @"NINImageAssetKeyIconRatingPositive";
+NINImageAssetKey NINImageAssetKeyIconRatingNeutral = @"NINImageAssetKeyIconRatingNeutral";
+NINImageAssetKey NINImageAssetKeyIconRatingNegative = @"NINImageAssetKeyIconRatingNegative";
+NINImageAssetKey NINImageAssetKeyChatAvatarRight = @"NINImageAssetKeyChatAvatarRight";
+NINImageAssetKey NINImageAssetKeyChatAvatarLeft = @"NINImageAssetKeyChatAvatarLeft";
+NINImageAssetKey NINImageAssetKeyChatPlayVideo = @"NINImageAssetKeyChatPlayVideo";
 
 // Color asset keys
 NINColorAssetKey NINColorAssetKeyButtonPrimaryText = @"NINColorAssetKeyButtonPrimaryText";

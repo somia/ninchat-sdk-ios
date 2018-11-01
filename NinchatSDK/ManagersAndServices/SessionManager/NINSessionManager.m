@@ -191,7 +191,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     if ([eventType isEqualToString:@"audience_enqueued"]) {
         NSCAssert(self.currentQueueID == nil, @"Already have current queue");
-        NSLog(@"Queue %@ joined.", queueId);
         self.currentQueueID = queueId;
     }
 
@@ -201,8 +200,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
         return;
     }
-
-    NSLog(@"Queue position: %ld", position);
 
     if ((actionId != 0) || [eventType isEqualToString:@"queue_updated"]) {
         postNotification(kActionNotification, @{@"event": eventType, @"action_id": @(actionId), @"queue_position": @(position), @"queue_id": queueId});

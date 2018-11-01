@@ -123,7 +123,7 @@
 }
 
 // Performs asset customizations indenpendent of message sender
--(void) applyCommonAssetOverrides:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) applyCommonAssetOverrides:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     UIColor* nameColor = colorAssets[NINColorAssetKeyChatName];
     if (nameColor != nil) {
         self.senderNameLabel.textColor = nameColor;
@@ -132,11 +132,13 @@
     if (timestampColor != nil) {
         self.timeLabel.textColor = timestampColor;
     }
+
+    self.videoPlayImageView.image = imageAssets[NINImageAssetKeyChatPlayVideo];
 }
 
 // Configures the cell to be "on the right"
 -(void) configureForMyMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
-    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleRightSeries] : imageAssets[NINImageAssetKeyChatBubbleRight];
+    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleRightRepeated] : imageAssets[NINImageAssetKeyChatBubbleRight];
 
     // White text on black bubble
     self.bubbleImageView.tintColor = [UIColor blackColor];
@@ -161,10 +163,10 @@
     self.rightAvatarContainerView.hidden = series;
 
     self.leftAvatarImageView.image = nil;
-    [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
 
-    // Color customizations
-    [self applyCommonAssetOverrides:colorAssets];
+    // Apply asset overrides
+    [self applyCommonAssetOverrides:imageAssets colorAssets:colorAssets];
+    [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:imageAssets[NINImageAssetKeyChatAvatarLeft]];
     UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleRightText];
     if (bubbleTextColor != nil) {
         self.messageTextView.textColor = bubbleTextColor;
@@ -177,7 +179,7 @@
 
 // Configures the cell to be "on the left"
 -(void) configureForOthersMessageWithSeries:(BOOL)series avatarURL:(NSString*)avatarURL imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
-    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleLeftSeries] : imageAssets[NINImageAssetKeyChatBubbleLeft];
+    self.bubbleImageView.image = series ? imageAssets[NINImageAssetKeyChatBubbleLeftRepeated] : imageAssets[NINImageAssetKeyChatBubbleLeft];
     self.leftAvatarWidthConstraint.constant = self.avatarContainerWidth;
 
     // Black text on white bubble
@@ -202,11 +204,11 @@
     self.leftAvatarContainerView.hidden = series;
     self.rightAvatarContainerView.hidden = YES;
 
-    [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:[UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil]];
     self.rightAvatarImageView.image = nil;
 
-    // Color customizations
-    [self applyCommonAssetOverrides:colorAssets];
+    // Apply asset overrides
+    [self applyCommonAssetOverrides:imageAssets colorAssets:colorAssets];
+    [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:imageAssets[NINImageAssetKeyChatAvatarRight]];
     UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleLeftText];
     if (bubbleTextColor != nil) {
         self.messageTextView.textColor = bubbleTextColor;
@@ -220,16 +222,16 @@
 -(void) imagePressed {
     if (self.imagePressedCallback != nil) {
         if (self.message.attachment.isVideo) {
+            // Will open video player
             self.imagePressedCallback(self.message.attachment, nil);
         } else if (self.message.attachment.isImage && (self.messageImageView.image != nil)) {
+            // Will show full-screen image viewer
             self.imagePressedCallback(self.message.attachment, self.messageImageView.image);
         }
     }
 }
 
 -(void) setImageAspectRatio:(CGFloat)aspectRatio {
-    NSLog(@"Setting image view aspect ratio to %f", aspectRatio);
-
     self.imageAspectRatioConstraint.active = NO;
     self.imageAspectRatioConstraint = [self.messageImageView.heightAnchor constraintEqualToAnchor:self.messageImageView.widthAnchor multiplier:aspectRatio];
     self.imageAspectRatioConstraint.active = YES;
@@ -305,8 +307,6 @@
             }
         }];
     }
-
-    NSLog(@"updateImage returning.");
 }
 
 #pragma mark - Public methods
@@ -368,8 +368,6 @@
             [weakSelf updateImage:didNetworkRefresh];
         }];
     }
-
-    NSLog(@"populateWithChannelMessage: returning.");
 }
 
 -(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
@@ -391,7 +389,7 @@
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
     self.messageImageView.image = nil;
-    self.messageImageView.image = imageAssets[NINImageAssetKeyChatUserTypingIndicator];
+    self.messageImageView.image = imageAssets[NINImageAssetKeyChatWritingIndicator];
     self.messageImageView.tintColor = [UIColor blackColor];
 
     // Allow the image to have absolute width

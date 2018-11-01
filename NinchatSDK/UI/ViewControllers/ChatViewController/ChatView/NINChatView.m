@@ -47,7 +47,7 @@
     NSCAssert(self.session != nil, @"Session cannot be nil");
 
     // User typing indicator
-    UIImage* userTypingIcon = [self.session overrideImageAssetForKey:NINImageAssetKeyChatUserTypingIndicator];
+    UIImage* userTypingIcon = [self.session overrideImageAssetForKey:NINImageAssetKeyChatWritingIndicator];
 
     if (userTypingIcon == nil) {
         NSMutableArray* frames = [NSMutableArray arrayWithCapacity:25];
@@ -65,7 +65,7 @@
     }
 
     // Left side bubble (series)
-    UIImage* leftSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftSeries];
+    UIImage* leftSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftRepeated];
     if (leftSideBubbleSeries == nil) {
         leftSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_left_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
@@ -77,16 +77,37 @@
     }
 
     // Right side bubble (series)
-    UIImage* rightSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightSeries];
+    UIImage* rightSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightRepeated];
     if (rightSideBubbleSeries == nil) {
         rightSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_right_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
-    return @{NINImageAssetKeyChatUserTypingIndicator: userTypingIcon,
+    // Left side avatar
+    UIImage* leftSideAvatar = [self.session overrideImageAssetForKey:NINImageAssetKeyChatAvatarLeft];
+    if (leftSideAvatar == nil) {
+        leftSideAvatar = [UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    // Right side avatar
+    UIImage* rightSideAvatar = [self.session overrideImageAssetForKey:NINImageAssetKeyChatAvatarRight];
+    if (rightSideAvatar == nil) {
+        rightSideAvatar = [UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    // Play video icon
+    UIImage* playVideoIcon = [self.session overrideImageAssetForKey:NINImageAssetKeyChatPlayVideo];
+    if (playVideoIcon == nil) {
+        playVideoIcon = [UIImage imageNamed:@"icon_play" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+    }
+
+    return @{NINImageAssetKeyChatWritingIndicator: userTypingIcon,
              NINImageAssetKeyChatBubbleLeft: leftSideBubble,
-             NINImageAssetKeyChatBubbleLeftSeries: leftSideBubbleSeries,
+             NINImageAssetKeyChatBubbleLeftRepeated: leftSideBubbleSeries,
              NINImageAssetKeyChatBubbleRight: rightSideBubble,
-             NINImageAssetKeyChatBubbleRightSeries: rightSideBubbleSeries};
+             NINImageAssetKeyChatBubbleRightRepeated: rightSideBubbleSeries,
+             NINImageAssetKeyChatAvatarLeft: leftSideAvatar,
+             NINImageAssetKeyChatAvatarRight: rightSideAvatar,
+             NINImageAssetKeyChatPlayVideo: playVideoIcon};
 }
 
 -(NSDictionary<NINColorAssetKey, UIColor*>*) createColorAssetDictionary {

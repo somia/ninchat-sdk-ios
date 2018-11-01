@@ -676,8 +676,11 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="oWm-rW-0NV"/>
                     </view>
                     <connections>
+                        <outlet property="negativeButton" destination="3ee-dX-mk2" id="XsF-1l-SrW"/>
                         <outlet property="negativeLabel" destination="8Fv-hU-KKo" id="Fk7-Yc-aLm"/>
+                        <outlet property="neutralButton" destination="S9o-1O-Buj" id="h0r-RA-hae"/>
                         <outlet property="neutralLabel" destination="zK0-ex-Yux" id="5vV-xD-Npl"/>
+                        <outlet property="positiveButton" destination="hxm-sK-JDR" id="7mj-DV-f2n"/>
                         <outlet property="positiveLabel" destination="EBU-3N-8Ek" id="mM1-lu-IhT"/>
                         <outlet property="skipButton" destination="PLV-Oi-4sR" id="TEx-o3-TeB"/>
                         <outlet property="titleTextView" destination="Ikj-NF-Jwm" id="7aW-Uf-vOJ"/>

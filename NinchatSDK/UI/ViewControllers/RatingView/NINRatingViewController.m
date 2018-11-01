@@ -20,6 +20,9 @@ static NSString* const kSkipText = @"Skip";
 
 @property (nonatomic, strong) IBOutlet UIView* topContainerView;
 @property (nonatomic, strong) IBOutlet UITextView* titleTextView;
+@property (nonatomic, strong) IBOutlet UIButton* positiveButton;
+@property (nonatomic, strong) IBOutlet UIButton* neutralButton;
+@property (nonatomic, strong) IBOutlet UIButton* negativeButton;
 @property (nonatomic, strong) IBOutlet UILabel* positiveLabel;
 @property (nonatomic, strong) IBOutlet UILabel* neutralLabel;
 @property (nonatomic, strong) IBOutlet UILabel* negativeLabel;
@@ -45,6 +48,21 @@ static NSString* const kSkipText = @"Skip";
     UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
     if (textTopColor != nil) {
         self.titleTextView.textColor = textTopColor;
+    }
+
+    UIImage* positiveIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconRatingPositive];
+    if (positiveIcon != nil) {
+        [self.positiveButton setImage:positiveIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* neutralIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconRatingNeutral];
+    if (neutralIcon != nil) {
+        [self.neutralButton setImage:neutralIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* negativeIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconRatingNegative];
+    if (negativeIcon != nil) {
+        [self.negativeButton setImage:negativeIcon forState:UIControlStateNormal];
     }
 
     UIColor* positiveColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetRatingPositiveText];

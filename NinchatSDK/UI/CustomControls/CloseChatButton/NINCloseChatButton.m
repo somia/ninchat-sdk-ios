@@ -28,7 +28,7 @@
 }
 
 -(void) overrideAssetsWithSession:(NINChatSession*)session {
-    UIImage* overrideImage = [session overrideImageAssetForKey:NINImageAssetKeyCloseChatButton];
+    UIImage* overrideImage = [session overrideImageAssetForKey:NINImageAssetKeyChatCloseButton];
 
     if (overrideImage != nil) {
         [self.theButton setBackgroundImage:overrideImage forState:UIControlStateNormal];
