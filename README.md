@@ -169,19 +169,54 @@ Using the API delegate method `session:overrideImageAssetForKey:` you may supply
 
 These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objective-C, use the constants found in this header; for Swift, use the NINImageAssetKey.* constants. The table below assumes Swift.
 
-| Asset key       | Related UI control           | Notes  |
-| ------------- |-------------| -----|
-| .queueViewProgressIndicator   | Progress indicator icon in queue view. |  |
-| .chatUserTypingIndicator      | User is typing.. Indicator icon in chat bubble | Should be [animated](https://developer.apple.com/documentation/uikit/uiimage/1624149-animatedimagewithimages). |
-| .initialViewJoinQueueButton   | Background for 'start chat' button in initial view. |  |
-| .nitialViewCloseWindowButton | Background for 'close windoiw' button in initial view. |  |
-| .chatViewBackgroundTexture    | Chat view's repeating texture. | Should be repeatable (tiling). |
-| .closeChatButton              | Background for 'close chat' button. |  |
-| .chatBubbleLeft              | Background for left side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
-| .chatBubbleLeftSeries              | Background for left side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
-| .chatBubbleRight              | Background for reveright side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
-| .chatBubbleRightSeries              | Background for right side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+All the assets should be transparent where there is no color.
 
+| Asset key       | Related UI control(s)           | Notes  |
+|:------------- |:-------------|:-----|
+| .iconLoader   | Progress indicator icon in queue view. |  |
+| .chatWritingIndicator      | User is typing.. Indicator icon in chat bubble | Should be [animated](https://developer.apple.com/documentation/uikit/uiimage/1624149-animatedimagewithimages). |
+| .chatBackground    | Chat view's repeating texture. | Should be repeatable (tiling). |
+| .chatCloseButton              | Background for 'close chat' button. |  |
+| .chatBubbleLeft              | Background for left side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleLeftRepeated              | Background for left side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleRight              | Background for reveright side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .chatBubbleRightRepeated              | Background for right side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
+| .iconRatingPositive   | Ratings view positive icon |  |
+| .iconRatingNeutral   | Ratings view neutral icon |  |
+| .iconRatingNegative   | Ratings view negative icon |  |
+| .chatAvatarRight   | Placeholder avatar icon for my messages. |  |
+| .chatAvatarLeft   | Placeholder avatar icon for others' messages. |  |
+| .chatPlayVideo   | Play icon for videos |  |
+
+## Overriding the Color Assets
+
+Using the API delegate method `session:overrideColorAssetForKey:` you may supply your own color assets as `UIColor` objects. See the table below for explanations on the supported asset keys.
+
+These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objective-C, use the constants found in this header; for Swift, use the NINImageAssetKey.* constants. The table below assumes Swift.
+
+| Asset key       | Related UI control(s)
+|:------------- |:-------------|
+| .buttonPrimaryText | Text on 'primary' buttons
+| .buttonSecondaryText | Text on 'secondary' buttons
+| .infoText | Chat view's meta information (eg. 'Chat started')
+| .chatName | User name above chat bubbles
+| .chatTimestamp | Timestamp above chat bubbles
+| .chtaBubbleLeftText | Text in others' chat messages
+| .chtaBubbleRightText | Text in my chat messages
+| .textareaText | Chat input text
+| .textareaSubmitText | Message submit button title
+| .chatBubbleLeftLink | Link color in others' messages
+| .chatBubbleRightLink | Link color in my messages
+| .modalBackground | Background in 'modal dialogs'
+| .modalText | Text in 'modal dialogs'
+| .backgroundTop | Background of the top part in some views
+| .textTop | Text in top parts of some views
+| .link | Link color (except in chat bubbles)
+| .backgroundBottom | Background of the bottom part in some views
+| .textBottom | Text in bottom parts of some views
+| .ratingPositiveText | Text of the positive rating button
+| .ratingNeutralText | Text of the neutral rating button
+| .ratingNegativeText | Text of the negative rating button
 
 ## Contact
 
