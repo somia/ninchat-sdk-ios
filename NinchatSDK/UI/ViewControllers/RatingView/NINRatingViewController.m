@@ -32,7 +32,7 @@ static NSString* const kSkipText = @"Skip";
 
 @implementation NINRatingViewController
 
-#pragma amrk - Private methods
+#pragma mark - Private methods
 
 -(void) applyAssetOverrides {
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];

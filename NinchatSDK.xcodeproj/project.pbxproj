@@ -778,7 +778,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = NIN;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1010;
 				ORGANIZATIONNAME = "Somia Reality Oy";
 				TargetAttributes = {
 					49944354208DF33400101DCA = {
@@ -1116,7 +1116,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1148,7 +1148,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D14280DE86D0B4B6F519155F /* Pods-NinchatSDK.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";

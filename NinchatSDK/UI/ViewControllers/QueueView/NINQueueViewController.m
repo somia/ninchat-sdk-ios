@@ -35,7 +35,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 @implementation NINQueueViewController
 
-#pragma amrk - Private methods
+#pragma mark - Private methods
 
 -(void) applyAssetOverrides {
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];

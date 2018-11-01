@@ -36,7 +36,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 @implementation NINInitialViewController
 
-#pragma amrk - Private methods
+#pragma mark - Private methods
 
 -(void) applyAssetOverrides {
 //    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton isPrimaryButton:YES];
