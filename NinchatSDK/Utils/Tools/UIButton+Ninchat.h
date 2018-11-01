@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface UIButton (Ninchat)
 
--(void) overrideImageWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey;
+-(void) overrideAssetsWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey isPrimaryButton:(BOOL)primary;
 
 @end
 

@@ -25,6 +25,8 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
 @interface NINInitialViewController () 
 
+@property (nonatomic, strong) IBOutlet UIView* topContainerView;
+@property (nonatomic, strong) IBOutlet UIView* bottomContainerView;
 @property (nonatomic, strong) IBOutlet UITextView* welcomeTextView;
 @property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
@@ -33,6 +35,39 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 @end
 
 @implementation NINInitialViewController
+
+#pragma amrk - Private methods
+
+-(void) applyAssetOverrides {
+    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton isPrimaryButton:YES];
+    [self.closeWindowButton overrideAssetsWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewCloseWindowButton isPrimaryButton:NO];
+
+    UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
+    if (topBackgroundColor != nil) {
+        self.topContainerView.backgroundColor = topBackgroundColor;
+    }
+
+    UIColor* bottomBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundBottom];
+    if (bottomBackgroundColor != nil) {
+        self.bottomContainerView.backgroundColor = bottomBackgroundColor;
+    }
+
+    UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+    if (textTopColor != nil) {
+        self.welcomeTextView.textColor = textTopColor;
+    }
+
+    UIColor* textBottomColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextBottom];
+    if (textBottomColor != nil) {
+        self.motdTextView.textColor = textBottomColor;
+    }
+
+    UIColor* linkColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetLink];
+    if (linkColor != nil) {
+        self.welcomeTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+        self.motdTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+    }
+}
 
 #pragma mark - IBAction handlers
 
@@ -104,9 +139,8 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     self.closeWindowButton.layer.borderColor = [UIColor colorWithRed:73/255.0 green:172/255.0 blue:253/255.0 alpha:1].CGColor;
     self.closeWindowButton.layer.borderWidth = 1;
 
-    // Handle image asset overrides
-    [self.startChatButton overrideImageWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewJoinQueueButton];
-    [self.closeWindowButton overrideImageWithSession:self.sessionManager.ninchatSession assetKey:NINImageAssetKeyInitialViewCloseWindowButton];
+    // Apply asset overrides
+    [self applyAssetOverrides];
 }
 
 @end

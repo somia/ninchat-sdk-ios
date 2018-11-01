@@ -11,7 +11,7 @@
 
 @implementation UIButton (Ninchat)
 
--(void) overrideImageWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey {
+-(void) overrideAssetsWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey isPrimaryButton:(BOOL)primary {
     UIImage* overrideImage = [session overrideImageAssetForKey:assetKey];
 
     if (overrideImage != nil) {
@@ -19,6 +19,12 @@
         self.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
+    } else {
+        NINColorAssetKey key = primary ? NINColorAssetKeyButtonPrimaryText : NINColorAssetKeyButtonSecondaryText;
+        UIColor* titleColor = [session overrideColorAssetForKey:key];
+        if (titleColor != nil) {
+            [self setTitleColor:titleColor forState:UIControlStateNormal];
+        }
     }
 }
 

@@ -44,6 +44,11 @@ NINColorAssetKey NINColorAssetKeyChatBubbleLeftLink = @"NINColorAssetKeyChatBubb
 NINColorAssetKey NINColorAssetKeyChatBubbleRightLink = @"NINColorAssetKeyChatBubbleRightLink";
 NINColorAssetKey NINColorAssetKeyModalText = @"NINColorAssetKeyModalText";
 NINColorAssetKey NINColorAssetKeyModalBackground = @"NINColorAssetKeyModalBackground";
+NINColorAssetKey NINColorAssetBackgroundTop = @"NINColorAssetBackgroundTop";
+NINColorAssetKey NINColorAssetTextTop = @"NINColorAssetTextTop";
+NINColorAssetKey NINColorAssetLink = @"NINColorAssetLink";
+NINColorAssetKey NINColorAssetBackgroundBottom = @"NINColorAssetBackgroundBottom";
+NINColorAssetKey NINColorAssetTextBottom = @"NINColorAssetTextBottom";
 
 @interface NINChatSession ()
 

@@ -44,5 +44,10 @@ FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleLeftLink;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyChatBubbleRightLink;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalBackground;
 FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetKeyModalText;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetBackgroundTop;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextTop;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetLink;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetBackgroundBottom;
+FOUNDATION_EXPORT NINColorAssetKey _Nonnull NINColorAssetTextBottom;
 
 #endif /* PublicTypes_h */
