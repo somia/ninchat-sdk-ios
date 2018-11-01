@@ -118,10 +118,12 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="yzb-y7-ihz"/>
                     </view>
                     <connections>
+                        <outlet property="bottomContainerView" destination="dkT-tD-Ztq" id="UTq-PA-I72"/>
                         <outlet property="closeChatButton" destination="8zZ-5c-Lgm" id="64T-9E-3DA"/>
                         <outlet property="motdTextView" destination="RGm-bx-l81" id="qjr-P6-85G"/>
                         <outlet property="queueInfoTextView" destination="LqB-7o-Qb9" id="7qT-70-C2m"/>
                         <outlet property="spinnerImageView" destination="9Zh-Yi-kTD" id="8EU-4Y-vjc"/>
+                        <outlet property="topContainerView" destination="cVi-ux-Foo" id="s3c-Oi-dM8"/>
                         <segue destination="bZ9-oP-wEd" kind="show" identifier="ninchatsdk.segue.QueueToChat" id="LLf-7w-9Uz"/>
                     </connections>
                 </viewController>

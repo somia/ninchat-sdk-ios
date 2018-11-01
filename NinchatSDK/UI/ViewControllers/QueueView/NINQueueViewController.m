@@ -24,6 +24,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 @interface NINQueueViewController ()
 
+@property (nonatomic, strong) IBOutlet UIView* topContainerView;
+@property (nonatomic, strong) IBOutlet UIView* bottomContainerView;
 @property (nonatomic, strong) IBOutlet UIImageView* spinnerImageView;
 @property (nonatomic, strong) IBOutlet UITextView* queueInfoTextView;
 @property (nonatomic, strong) IBOutlet UITextView* motdTextView;
@@ -32,6 +34,38 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 @end
 
 @implementation NINQueueViewController
+
+#pragma amrk - Private methods
+
+-(void) applyAssetOverrides {
+    UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
+    if (topBackgroundColor != nil) {
+        self.topContainerView.backgroundColor = topBackgroundColor;
+    }
+
+    UIColor* bottomBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundBottom];
+    if (bottomBackgroundColor != nil) {
+        self.bottomContainerView.backgroundColor = bottomBackgroundColor;
+    }
+
+    UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+    if (textTopColor != nil) {
+        self.queueInfoTextView.textColor = textTopColor;
+    }
+
+    UIColor* textBottomColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextBottom];
+    if (textBottomColor != nil) {
+        self.motdTextView.textColor = textBottomColor;
+    }
+
+    UIColor* linkColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetLink];
+    if (linkColor != nil) {
+        self.queueInfoTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+        self.motdTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
+    }
+
+    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
+}
 
 #pragma mark - From UIViewController
 
@@ -61,6 +95,12 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         } else {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         }
+
+        // Apply color override 
+        UIColor* textTopColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+        if (textTopColor != nil) {
+            self.queueInfoTextView.textColor = textTopColor;
+        }
     } channelJoined:^{
         NSLog(@"Channel joined - showing the chat UI");
 
@@ -89,6 +129,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
     NSCAssert(self.sessionManager != nil, @"Must have session manager set");
 
+    self.queueInfoTextView.delegate = self;
+    self.motdTextView.delegate = self;
+    
     // Translations
     NSString* inQueueText = self.sessionManager.siteConfiguration[@"default"][@"inQueueText"];
     if (inQueueText != nil) {
@@ -106,8 +149,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         }];
     };
 
-    // Asset overrides
-    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
+    // Apply asset overrides
+    [self applyAssetOverrides];
 }
 
 @end
