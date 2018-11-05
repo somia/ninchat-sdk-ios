@@ -70,8 +70,11 @@ static NSString* const kCloseChatText = @"Close chat";
 // The close chat button
 @property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
 
+// Hang up video call button
+@property (nonatomic, strong) IBOutlet UIButton* hangupButton;
+
 // Audio mute / unmute button
-@property (nonatomic, strong) IBOutlet UIButton* muteAudioButton;
+@property (nonatomic, strong) IBOutlet UIButton* microphoneEnabledButton;
 
 // Local video enable / disable
 @property (nonatomic, strong) IBOutlet UIButton* cameraEnabledButton;
@@ -81,6 +84,9 @@ static NSString* const kCloseChatText = @"Close chat";
 
 // The text input box
 @property (nonatomic, strong) IBOutlet NINExpandingTextView* textInput;
+
+// Add attachment -button
+@property (nonatomic, strong) IBOutlet UIButton* attachmentButton;
 
 // Send message button
 @property (nonatomic, strong) IBOutlet UIButton* sendMessageButton;
@@ -118,6 +124,46 @@ static NSString* const kCloseChatText = @"Close chat";
 @implementation NINChatViewController
 
 #pragma mark - Private methods
+
+-(void) applyAssetOverrides {
+    NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
+    [self updateSendMessageButtonWithText:sendButtonTitle];
+
+    UIImage* attachmentIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconTextareaAttachment];
+    if (attachmentIcon != nil) {
+        [self.attachmentButton setImage:attachmentIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* hangupIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconVideoHangup];
+    if (hangupIcon != nil) {
+        [self.hangupButton setImage:hangupIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* micOnIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconVideoMicrophoneOn];
+    if (micOnIcon != nil) {
+        [self.microphoneEnabledButton setImage:micOnIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* micOffIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconVideoMicrophoneOff];
+    if (micOffIcon != nil) {
+        [self.microphoneEnabledButton setImage:micOffIcon forState:UIControlStateSelected];
+    }
+
+    UIImage* cameraOnIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconVideoCameraOn];
+    if (cameraOnIcon != nil) {
+        [self.cameraEnabledButton setImage:cameraOnIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* cameraOffIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconVideoCameraOff];
+    if (cameraOffIcon != nil) {
+        [self.cameraEnabledButton setImage:cameraOffIcon forState:UIControlStateSelected];
+    }
+
+    UIColor* inputTextColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaText];
+    if (inputTextColor != nil) {
+        self.textInput.textColor = inputTextColor;
+    }
+}
 
 // Aligns (or cancels existing alignment) the input control container view's top
 // to the screen bottom to hide the controls.
@@ -225,7 +271,7 @@ static NSString* const kCloseChatText = @"Close chat";
                 }];
 
                 // Reset the video control buttons
-                weakSelf.muteAudioButton.selected = NO;
+                weakSelf.microphoneEnabledButton.selected = NO;
                 weakSelf.cameraEnabledButton.selected = NO;
 
                 // Show the video views
@@ -303,16 +349,24 @@ static NSString* const kCloseChatText = @"Close chat";
 
 -(void) updateSendMessageButtonWithText:(NSString*)sendMessageButtonTitle {
     if (sendMessageButtonTitle == nil) {
-        // No button title; use simply the image
-        //TODO override the image!
+        // No button title; use simply the image icon
+        UIImage* buttonImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconTextareaSubmitButtonIcon];
+        if (buttonImage != nil) {
+            [self.sendMessageButton setImage:buttonImage forState:UIControlStateNormal];
+        }
     } else {
         // Button has title; use border background image
-        //TODO override this image!
         self.sendMessageButtonWidthConstraint.active = NO;
         [self.sendMessageButton setImage:nil forState:UIControlStateNormal];
-        [self.sendMessageButton setBackgroundImage:[UIImage imageNamed:@"icon_send_message_border" inBundle:findResourceBundle() compatibleWithTraitCollection:nil] forState:UIControlStateNormal];
         [self.sendMessageButton setTitle:sendMessageButtonTitle forState:UIControlStateNormal];
         self.sendMessageButton.contentEdgeInsets = UIEdgeInsetsMake(0, 15, 0, 15);
+
+        // Asset overrides
+        UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyTextareaSubmitButton];
+        if (bgImage == nil) {
+            bgImage = [UIImage imageNamed:@"icon_send_message_border" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
+        }
+        [self.sendMessageButton setBackgroundImage:bgImage forState:UIControlStateNormal];
 
         UIColor* titleColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaSubmitText];
         if (titleColor != nil) {
@@ -672,9 +726,6 @@ static NSString* const kCloseChatText = @"Close chat";
     // Pass the session reference to chat view for handling the asset overrides
     self.chatView.session = self.sessionManager.ninchatSession;
 
-    NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
-    [self updateSendMessageButtonWithText:sendButtonTitle];
-
     // Add tileable pattern image as the view background
     UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBackground];
     if (bgImage == nil) {
@@ -683,6 +734,7 @@ static NSString* const kCloseChatText = @"Close chat";
     self.view.backgroundColor = [UIColor colorWithPatternImage:bgImage];
 
     [self.closeChatButton setButtonTitle:[self.sessionManager translation:kCloseChatText formatParams:nil]];
+    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
@@ -690,8 +742,6 @@ static NSString* const kCloseChatText = @"Close chat";
         [weakSelf disconnectWebRTC];
         [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
     };
-
-    [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 
     self.chatView.dataSource = self;
     self.chatView.delegate = self;
@@ -707,15 +757,12 @@ static NSString* const kCloseChatText = @"Close chat";
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
     self.localVideoView.layer.borderWidth = 1.0;
 
-    self.muteAudioButton.layer.cornerRadius = self.muteAudioButton.bounds.size.height / 2;
+    self.microphoneEnabledButton.layer.cornerRadius = self.microphoneEnabledButton.bounds.size.height / 2;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 
-    // Asset overrides
-    UIColor* inputTextColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaText];
-    if (inputTextColor != nil) {
-        self.textInput.textColor = inputTextColor;
-    }
+    // Apply asset overrides
+    [self applyAssetOverrides];
 }
 
 -(void) dealloc {

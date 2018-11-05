@@ -254,7 +254,7 @@
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection iceGatheringChanged:(RTCICEGatheringState)newState {
-    NSLog(@"WebRTC: ICE gathering state changed: %d", newState);
+//    NSLog(@"WebRTC: ICE gathering state changed: %d", newState);
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection removedStream:(RTCMediaStream *)stream {
@@ -262,20 +262,20 @@
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection signalingStateChanged:(RTCSignalingState)stateChanged {
-    NSLog(@"WebRTC: Signaling state changed: %d", stateChanged);
+//    NSLog(@"WebRTC: Signaling state changed: %d", stateChanged);
 }
 
 -(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection {
     //TODO see:
     // https://stackoverflow.com/questions/31165316/webrtc-renegotiate-the-peer-connection-to-switch-streams
     // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
-    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
+//    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
 }
 
 #pragma mark - From RTCSessionDescriptionDelegate
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didCreateSessionDescription:(RTCSessionDescription *)sdp error:(NSError *)error {
-    NSLog(@"WebRTC: didCreateSessionDescription: %@", sdp);
+//    NSLog(@"WebRTC: didCreateSessionDescription: %@", sdp);
 
     runOnMainThread(^{
         if (error != nil) {
@@ -285,7 +285,7 @@
             return;
         }
 
-        NSLog(@"Setting local session description with SDP: %@", sdp);
+//        NSLog(@"Setting local session description with SDP: %@", sdp);
         [self.peerConnection setLocalDescriptionWithDelegate:self sessionDescription:sdp];
 
         // Decide what type of signaling message to send based on the SDP type
@@ -296,7 +296,7 @@
             return;
         }
 
-        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
+//        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
 
         // Send signaling message about the offer/answer
         [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {

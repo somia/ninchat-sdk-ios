@@ -169,6 +169,8 @@ Using the API delegate method `session:overrideImageAssetForKey:` you may supply
 
 These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objective-C, use the constants found in this header; for Swift, use the NINImageAssetKey.* constants. The table below assumes Swift.
 
+Note that all the buttons may not be available in the UI.
+
 All the assets should be transparent where there is no color.
 
 | Asset key       | Related UI control(s)           | Notes  |
@@ -187,6 +189,19 @@ All the assets should be transparent where there is no color.
 | .chatAvatarRight   | Placeholder avatar icon for my messages. |  |
 | .chatAvatarLeft   | Placeholder avatar icon for others' messages. |  |
 | .chatPlayVideo   | Play icon for videos |  |
+| .iconTextareaCamera | Start video call button | |
+| .iconTextareaAttachment | Add attachment button | |
+| .textareaSubmitButton | Background for send message button | When button title is set |
+| .iconTextareaSubmitButtonIcon | Icon for send message button | When no button title is set |
+| .iconVideoToggleFull | Expand video to fullscreen | |
+| .iconVideoToggleNormal | Shrink video to fit a window | |
+| .iconVideoSoundOn | Sound is enabled | |
+| .iconVideoSoundOff | Sound is muted | |
+| .iconVideoMicrohoneOn | Microphone is enabled | |
+| .iconVideoMicrophoneOff | Microphone is muted | |
+| .iconVideoCameraOn | Camera is on | |
+| .iconVideoCameraOff | Camera is off | |
+| .iconVideoHangup | End the video call | |
 
 ## Overriding the Color Assets
 

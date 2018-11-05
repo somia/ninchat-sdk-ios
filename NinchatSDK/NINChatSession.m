@@ -21,8 +21,6 @@ static NSString* const kProductionServerAddress = @"api.ninchat.com";
 // Image asset keys
 NINImageAssetKey NINImageAssetKeyIconLoader = @"NINImageAssetKeyQueueViewProgressIndicator";
 NINImageAssetKey NINImageAssetKeyChatWritingIndicator = @"NINImageAssetKeyChatWritingIndicator";
-//NINImageAssetKey NINImageAssetKeyInitialViewJoinQueueButton = @"NINImageAssetKeyJoinQueueButton";
-//NINImageAssetKey NINImageAssetKeyInitialViewCloseWindowButton = @"NINImageAssetKeyCloseWindowButton";
 NINImageAssetKey NINImageAssetKeyChatBackground = @"NINImageAssetKeyChatBackground";
 NINImageAssetKey NINImageAssetKeyChatCloseButton = @"NINImageAssetKeyChatCloseButton";
 NINImageAssetKey NINImageAssetKeyChatBubbleLeft = @"NINImageAssetKeyChatBubbleLeft";
@@ -35,6 +33,19 @@ NINImageAssetKey NINImageAssetKeyIconRatingNegative = @"NINImageAssetKeyIconRati
 NINImageAssetKey NINImageAssetKeyChatAvatarRight = @"NINImageAssetKeyChatAvatarRight";
 NINImageAssetKey NINImageAssetKeyChatAvatarLeft = @"NINImageAssetKeyChatAvatarLeft";
 NINImageAssetKey NINImageAssetKeyChatPlayVideo = @"NINImageAssetKeyChatPlayVideo";
+NINImageAssetKey NINImageAssetKeyIconTextareaCamera = @"NINImageAssetKeyIconTextareaCamera";
+NINImageAssetKey NINImageAssetKeyIconTextareaAttachment = @"NINImageAssetKeyIconTextareaAttachment";
+NINImageAssetKey NINImageAssetKeyTextareaSubmitButton = @"NINImageAssetKeyTextareaSubmitButton";
+NINImageAssetKey NINImageAssetKeyIconTextareaSubmitButtonIcon = @"NINImageAssetKeyIconTextareaSubmitButtonIcon";
+NINImageAssetKey NINImageAssetKeyIconVideoToggleFull = @"NINImageAssetKeyIconVideoToggleFull";
+NINImageAssetKey NINImageAssetKeyIconVideoToggleNormal = @"NINImageAssetKeyIconVideoToggleNormal";
+NINImageAssetKey NINImageAssetKeyIconVideoSoundOn = @"NINImageAssetKeyIconVideoSoundOn";
+NINImageAssetKey NINImageAssetKeyIconVideoSoundOff = @"NINImageAssetKeyIconVideoSoundOff";
+NINImageAssetKey NINImageAssetKeyIconVideoMicrophoneOn = @"NINImageAssetKeyIconVideoMicrophoneOn";
+NINImageAssetKey NINImageAssetKeyIconVideoMicrophoneOff = @"NINImageAssetKeyIconVideoMicrophoneOff";
+NINImageAssetKey NINImageAssetKeyIconVideoCameraOn = @"NINImageAssetKeyIconVideoCameraOn";
+NINImageAssetKey NINImageAssetKeyIconVideoCameraOff = @"NINImageAssetKeyIconVideoCameraOff";
+NINImageAssetKey NINImageAssetKeyIconVideoHangup = @"NINImageAssetKeyIconVideoHangup";
 
 // Color asset keys
 NINColorAssetKey NINColorAssetKeyButtonPrimaryText = @"NINColorAssetKeyButtonPrimaryText";

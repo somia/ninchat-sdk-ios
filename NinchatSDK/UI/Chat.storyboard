@@ -366,15 +366,17 @@ you are next.</string>
                         <viewLayoutGuide key="safeArea" id="pew-Xu-b1Q"/>
                     </view>
                     <connections>
+                        <outlet property="attachmentButton" destination="XXu-e3-RTV" id="akN-ys-k4w"/>
                         <outlet property="cameraEnabledButton" destination="1HC-sb-HPX" id="Fg9-jE-mg1"/>
                         <outlet property="chatView" destination="brw-f0-DOL" id="aCP-kC-9Fo"/>
                         <outlet property="chatViewHeightConstraint" destination="FdO-24-78A" id="IzG-o9-EzZ"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
+                        <outlet property="hangupButton" destination="nxH-tm-Ax2" id="B98-HT-oZq"/>
                         <outlet property="inputControlsContainerView" destination="Kml-pm-EfW" id="lRY-QX-qJe"/>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>
-                        <outlet property="muteAudioButton" destination="27s-2i-BBl" id="ItM-KE-Q2u"/>
+                        <outlet property="microphoneEnabledButton" destination="27s-2i-BBl" id="ItM-KE-Q2u"/>
                         <outlet property="remoteVideoView" destination="XJz-Z9-GdN" id="A49-YF-jyz"/>
                         <outlet property="remoteViewHeightConstraint" destination="Tgw-Sv-lFF" id="W46-E4-3NX"/>
                         <outlet property="remoteViewWidthConstraint" destination="DhL-uc-K7h" id="xsw-pW-ctZ"/>

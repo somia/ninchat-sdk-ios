@@ -626,7 +626,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             // Use the first object in the list
             NSDictionary* fileObject = fileObjectsList.firstObject;
 
-            NSLog(@"File object: %@", fileObject);
+//            NSLog(@"File object: %@", fileObject);
 
             NSString* filename = fileObject[@"file_attrs"][@"name"];
             NSString* fileMediaType = fileObject[@"file_attrs"][@"type"];
@@ -667,7 +667,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         }
     }
 
-    NSLog(@"handleInboundChatMessageWithPayload: returning");
+//    NSLog(@"handleInboundChatMessageWithPayload: returning");
 }
 
 -(void) handleInboundMessage:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload actionId:(long)actionId {
@@ -679,7 +679,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSString* messageType = [params getString:@"message_type" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    NSLog(@"Got message_type: %@, message_id: %@, actionId: %ld", messageType, messageID, actionId);
+//    NSLog(@"Got message_type: %@, message_id: %@, actionId: %ld", messageType, messageID, actionId);
 
     NSString* messageUserID = [params getString:@"message_user_id" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
