@@ -11,8 +11,8 @@
 
 @implementation UIButton (Ninchat)
 
--(void) overrideAssetsWithSession:(NINChatSession*)session assetKey:(NINImageAssetKey)assetKey isPrimaryButton:(BOOL)primary {
-    UIImage* overrideImage = [session overrideImageAssetForKey:assetKey];
+-(void) overrideAssetsWithSession:(NINChatSession*)session isPrimaryButton:(BOOL)primary {
+    UIImage* overrideImage = [session overrideImageAssetForKey:(primary ? NINImageAssetKeyPrimaryButton : NINImageAssetKeySecondaryButton)];
 
     if (overrideImage != nil) {
         [self setBackgroundImage:overrideImage forState:UIControlStateNormal];

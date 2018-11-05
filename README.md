@@ -175,10 +175,14 @@ All the assets should be transparent where there is no color.
 
 | Asset key       | Related UI control(s)           | Notes  |
 |:------------- |:-------------|:-----|
+| .primaryButton | Background for the 'primary' button | |
+| .secondaryButton | Background for the 'secondary' button | |
+| .iconDownload | Download button icon | |
 | .iconLoader   | Progress indicator icon in queue view. |  |
 | .chatWritingIndicator      | User is typing.. Indicator icon in chat bubble | Should be [animated](https://developer.apple.com/documentation/uikit/uiimage/1624149-animatedimagewithimages). |
 | .chatBackground    | Chat view's repeating texture. | Should be repeatable (tiling). |
 | .chatCloseButton              | Background for 'close chat' button. |  |
+| .iconChatCloseButton              | Close icon for 'close chat' button. |  |
 | .chatBubbleLeft              | Background for left side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
 | .chatBubbleLeftRepeated              | Background for left side chat bubble (serial message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |
 | .chatBubbleRight              | Background for reveright side chat bubble (first message) | Must be [sliced](https://developer.apple.com/documentation/uikit/uiimage/1624102-resizableimagewithcapinsets?language=objc) as it needs to stretch. |

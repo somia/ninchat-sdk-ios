@@ -12,6 +12,7 @@
 #import "NINUtils.h"
 #import "NINChannelUser.h"
 #import "NINChatSession+Internal.h"
+#import "UIButton+Ninchat.h"
 
 @interface NINVideoCallConsentDialog ()
 
@@ -36,6 +37,9 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 #pragma mark - Private methods
 
 -(void) applyAssetOverrides:(NINChatSession*)session {
+    [self.acceptButton overrideAssetsWithSession:session isPrimaryButton:YES];
+    [self.rejectButton overrideAssetsWithSession:session isPrimaryButton:NO];
+
     UIColor* backgroundColor = [session overrideColorAssetForKey:NINColorAssetKeyModalBackground];
     if (backgroundColor != nil) {
         self.headerContainerView.backgroundColor = backgroundColor;
@@ -47,16 +51,6 @@ static const NSTimeInterval kAnimationDuration = 0.3;
         self.titleLabel.textColor = textColor;
         self.usernameLabel.textColor = textColor;
         self.infoLabel.textColor = textColor;
-    }
-
-    UIColor* primaryButtonColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonPrimaryText];
-    if (primaryButtonColor != nil) {
-        [self.acceptButton setTitleColor:primaryButtonColor forState:UIControlStateNormal];
-    }
-
-    UIColor* secondaryButtonColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
-    if (secondaryButtonColor != nil) {
-        [self.rejectButton setTitleColor:secondaryButtonColor forState:UIControlStateNormal];
     }
 }
 

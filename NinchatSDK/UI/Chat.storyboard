@@ -487,6 +487,8 @@ you are next.</string>
                     </view>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="closeButton" destination="RUE-nC-9kB" id="0tt-bK-BGn"/>
+                        <outlet property="downloadButton" destination="yp6-u1-JT0" id="wNx-JW-6rG"/>
                         <outlet property="fileNameLabel" destination="QX0-zo-sPu" id="v6f-W0-gOt"/>
                         <outlet property="fullScreenImageView" destination="WiY-xq-PIw" id="Ah2-a7-MMN"/>
                         <outlet property="scrollView" destination="2wb-ko-jfV" id="UE9-aa-snm"/>

@@ -20,6 +20,7 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconLoader;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatWritingIndicator;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBackground;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatCloseButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconChatCloseButton;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeft;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleLeftRepeated;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyChatBubbleRight;
@@ -43,6 +44,10 @@ FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoMicrophoneO
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoCameraOn;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoCameraOff;
 FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconVideoHangup;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyPrimaryButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeySecondaryButton;
+FOUNDATION_EXPORT NINImageAssetKey _Nonnull NINImageAssetKeyIconDownload;
+
 
 /** Defines the type for a overrideable color asset. */
 typedef NSString* const NINColorAssetKey NS_STRING_ENUM;

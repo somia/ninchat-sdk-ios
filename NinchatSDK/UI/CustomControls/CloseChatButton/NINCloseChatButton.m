@@ -35,7 +35,14 @@
         self.theButton.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
+        self.closeButtonImageView.hidden = YES;
     } else {
+        self.closeButtonImageView.hidden = NO;
+        UIImage* icon = [session overrideImageAssetForKey:NINImageAssetKeyIconChatCloseButton];
+        if (icon != nil) {
+            self.closeButtonImageView.image = icon;
+        }
+
         UIColor* textColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
         if (textColor != nil) {
             self.buttonTitleLabel.textColor = textColor;

@@ -15,6 +15,8 @@
 
 @property (nonatomic, strong) IBOutlet UIView* topBarView;
 @property (nonatomic, strong) IBOutlet UILabel* fileNameLabel;
+@property (nonatomic, strong) IBOutlet UIButton* downloadButton;
+@property (nonatomic, strong) IBOutlet UIButton* closeButton;
 
 @property (nonatomic, strong) IBOutlet UIScrollView* scrollView;
 @property (nonatomic, strong) IBOutlet UIImageView* fullScreenImageView;
@@ -28,6 +30,18 @@ static const NSTimeInterval kTopBarAnimationDuration = 0.3;
 @implementation NINFullScreenImageViewController
 
 #pragma mark - Private methods
+
+-(void) applyAssetOverrides {
+    UIImage* downloadIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconDownload];
+    if (downloadIcon != nil) {
+        [self.downloadButton setImage:downloadIcon forState:UIControlStateNormal];
+    }
+
+    UIImage* closeIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconChatCloseButton];
+    if (closeIcon != nil) {
+        [self.closeButton setImage:closeIcon forState:UIControlStateNormal];
+    }
+}
 
 -(void) tapped {
     CGAffineTransform newTransform = CGAffineTransformIdentity;

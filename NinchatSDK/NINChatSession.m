@@ -23,6 +23,7 @@ NINImageAssetKey NINImageAssetKeyIconLoader = @"NINImageAssetKeyQueueViewProgres
 NINImageAssetKey NINImageAssetKeyChatWritingIndicator = @"NINImageAssetKeyChatWritingIndicator";
 NINImageAssetKey NINImageAssetKeyChatBackground = @"NINImageAssetKeyChatBackground";
 NINImageAssetKey NINImageAssetKeyChatCloseButton = @"NINImageAssetKeyChatCloseButton";
+NINImageAssetKey NINImageAssetKeyIconChatCloseButton = @"NINImageAssetKeyIconChatCloseButton";
 NINImageAssetKey NINImageAssetKeyChatBubbleLeft = @"NINImageAssetKeyChatBubbleLeft";
 NINImageAssetKey NINImageAssetKeyChatBubbleLeftRepeated = @"NINImageAssetKeyChatBubbleLeftRepeated";
 NINImageAssetKey NINImageAssetKeyChatBubbleRight = @"NINImageAssetKeyChatBubbleRight";
@@ -46,6 +47,9 @@ NINImageAssetKey NINImageAssetKeyIconVideoMicrophoneOff = @"NINImageAssetKeyIcon
 NINImageAssetKey NINImageAssetKeyIconVideoCameraOn = @"NINImageAssetKeyIconVideoCameraOn";
 NINImageAssetKey NINImageAssetKeyIconVideoCameraOff = @"NINImageAssetKeyIconVideoCameraOff";
 NINImageAssetKey NINImageAssetKeyIconVideoHangup = @"NINImageAssetKeyIconVideoHangup";
+NINImageAssetKey NINImageAssetKeyPrimaryButton = @"NINImageAssetKeyPrimaryButton";
+NINImageAssetKey NINImageAssetKeySecondaryButton = @"NINImageAssetKeySecondaryButton";
+NINImageAssetKey NINImageAssetKeyIconDownload = @"NINImageAssetKeyIconDownload";
 
 // Color asset keys
 NINColorAssetKey NINColorAssetKeyButtonPrimaryText = @"NINColorAssetKeyButtonPrimaryText";
