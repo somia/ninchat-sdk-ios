@@ -38,7 +38,6 @@ static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNo
 NSString* const kChannelMessageNotification = @"ninchatsdk.ChannelMessageNotification";
 NSString* const kNINWebRTCSignalNotification = @"ninchatsdk.NWebRTCSignalNotification";
 NSString* const kNINChannelClosedNotification = @"ninchatsdk.ChannelClosedNotification";
-//NSString* const kNINUserIsTypingNotification = @"ninchatsdk.UserIsTypingNotification";
 
 // WebRTC related message types
 NSString* _Nonnull const kNINMessageTypeWebRTCIceCandidate = @"ninchat.com/rtc/ice-candidate";
@@ -117,6 +116,17 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 @implementation NINSessionManager
 
 #pragma mark - Private methods
+
+// Returns a queue by its id
+-(NINQueue* _Nullable) queueForId:(NSString*)queueID {
+    for (NINQueue* q in _queues) {
+        if ([q.queueID isEqualToString:queueID]) {
+            return q;
+        }
+    }
+
+    return nil;
+}
 
 -(void) realmQueuesFound:(NINLowLevelClientProps*)params {
     NSError* error;
@@ -339,10 +349,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    NSLog(@"Joined channel '%@'", channelId);
+    NSLog(@"Joined channel ID: %@", channelId);
 
     // Set the currently active channel
     self.currentChannelID = channelId;
+
+    // Get the queue we are joining
+    NINQueue* queue = [self queueForId:self.currentQueueID];
 
     // We are no longer in the queue; clear the queue reference
     self.currentQueueID = nil;
@@ -352,7 +365,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [_channelUsers removeAllObjects];
 
     // Insert a meta message about the conversation start
-    [self addNewChatMessage:[NINChatMetaMessage messageWithText:[self translation:kConversationStartedText formatParams:nil] timestamp:[NSDate date] closeChatButtonTitle:nil]];
+    [self addNewChatMessage:[NINChatMetaMessage messageWithText:[self translation:kConversationStartedText formatParams:@{@"queue": queue.name}] timestamp:[NSDate date] closeChatButtonTitle:nil]];
 
     // Extract the channel members' data
     NINLowLevelClientProps* members = [params getObject:@"channel_members" error:&error];
@@ -849,7 +862,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     connectCallbackToActionCompletion(actionId, completion);
 }
 
-// https://github.com/ninchat/ninchat-api/blob/v2/api.md#request_audience
 -(void) joinQueueWithId:(NSString*)joinQueueID progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
 
     NSCAssert(self.session != nil, @"No chat session");
@@ -1088,9 +1100,11 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     int64_t actionId = -1;
     [self.session send:params payload:nil actionId:&actionId error:&error];
     if (error != nil) {
-        NSLog(@"Error parting channel: %@", error);
+        NSLog(@"Error sending update_member message for writing: setting: %@", error);
         completion(error);
     }
+
+    NSLog(@"Set writing: %d", isWriting);
 
     // When this action completes, trigger the completion block callback
     connectCallbackToActionCompletion(actionId, completion);

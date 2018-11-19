@@ -268,13 +268,22 @@ you are next.</string>
                                                     <outlet property="delegate" destination="bZ9-oP-wEd" id="Ua2-Og-iRB"/>
                                                 </connections>
                                             </textView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kirjoita viestisi" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V5m-W6-fBK">
+                                                <rect key="frame" x="20" y="14" width="350" height="19"/>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <color key="textColor" red="0.63529411764705879" green="0.63529411764705879" blue="0.63529411764705879" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="QrN-2n-VqQ" secondAttribute="trailing" priority="999" constant="5" id="0Qu-l2-oxD"/>
+                                            <constraint firstItem="V5m-W6-fBK" firstAttribute="leading" secondItem="QrN-2n-VqQ" secondAttribute="leading" constant="15" id="ORv-pc-WOa"/>
                                             <constraint firstAttribute="bottom" secondItem="QrN-2n-VqQ" secondAttribute="bottom" priority="999" constant="5" id="cMc-Hl-4gT"/>
+                                            <constraint firstItem="V5m-W6-fBK" firstAttribute="trailing" secondItem="QrN-2n-VqQ" secondAttribute="trailing" id="eWa-EO-BQw"/>
                                             <constraint firstItem="QrN-2n-VqQ" firstAttribute="leading" secondItem="12n-mg-urX" secondAttribute="leading" priority="999" constant="5" id="otd-6R-YzF"/>
                                             <constraint firstItem="QrN-2n-VqQ" firstAttribute="top" secondItem="12n-mg-urX" secondAttribute="top" priority="999" constant="5" id="tvJ-Ma-sbV"/>
+                                            <constraint firstItem="V5m-W6-fBK" firstAttribute="centerY" secondItem="QrN-2n-VqQ" secondAttribute="centerY" id="vyS-hz-EoP"/>
                                         </constraints>
                                     </view>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bNc-b4-D5d" userLabel="input buttons container">
@@ -383,6 +392,7 @@ you are next.</string>
                         <outlet property="sendMessageButton" destination="cAh-Q0-iyj" id="l3R-V1-eoM"/>
                         <outlet property="sendMessageButtonWidthConstraint" destination="e7A-ap-Kns" id="JWC-1w-kCB"/>
                         <outlet property="textInput" destination="QrN-2n-VqQ" id="LGI-P3-iCc"/>
+                        <outlet property="textInputPlaceholderLabel" destination="V5m-W6-fBK" id="ymg-jm-gJC"/>
                         <outlet property="videoContainerView" destination="rVm-KF-mbW" id="4Md-X0-j7W"/>
                         <outlet property="videoContainerViewHeightConstraint" destination="drK-a0-uHv" id="AXS-eX-BYF"/>
                         <segue destination="sVb-C5-GLO" kind="show" identifier="ninchatsdk.segue.ChatToRatings" id="ewI-Fq-Ryx"/>

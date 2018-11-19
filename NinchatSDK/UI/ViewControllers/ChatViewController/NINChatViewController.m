@@ -85,6 +85,9 @@ static NSString* const kCloseChatText = @"Close chat";
 // The text input box
 @property (nonatomic, strong) IBOutlet NINExpandingTextView* textInput;
 
+// Placeholder text label for the text input box
+@property (nonatomic, strong) IBOutlet UILabel* textInputPlaceholderLabel;
+
 // Add attachment -button
 @property (nonatomic, strong) IBOutlet UIButton* attachmentButton;
 
@@ -442,6 +445,14 @@ static NSString* const kCloseChatText = @"Close chat";
 
 #pragma mark - From UITextViewDelegate
 
+-(void) textViewDidChange:(UITextView *)textView {
+    // Show or hide the placeholder text when entering text into the input
+    CGFloat newPlaceholderAlpha = (textView.text.length == 0) ? 1 : 0;
+    [UIView animateWithDuration:0.2 animations:^{
+        self.textInputPlaceholderLabel.alpha = newPlaceholderAlpha;
+    }];
+}
+
 -(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
     if ([text isEqualToString:@"\n"]){
         // Send button was pressed on the keyboard
@@ -756,8 +767,8 @@ static NSString* const kCloseChatText = @"Close chat";
     self.localVideoView.delegate = self;
 
     // Add a faint border around the text input
-    self.textInput.layer.borderWidth = 0.5;
-    self.textInput.layer.borderColor = [UIColor colorWithWhite:0 alpha:0.3].CGColor;
+//    self.textInput.layer.borderWidth = 0.5;
+//    self.textInput.layer.borderColor = [UIColor colorWithWhite:0 alpha:0.3].CGColor;
 
     // Give the local video view a slight border
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;

@@ -203,6 +203,8 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             return;
         }
 
+        NSLog(@"Got site config: %@", config);
+
         weakSelf.sessionManager.siteConfiguration = config;
 
         // Open the chat session
@@ -248,7 +250,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 
 -(void) dealloc {
     //TODO remove
-    self.sessionManager = nil;
+//    self.sessionManager = nil;
 
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }

@@ -18,6 +18,21 @@
 
 @implementation NINQueue
 
+// Queue objects are equal if their IDs match
+-(BOOL) isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+
+    if (![object isKindOfClass:[NINQueue class]]) {
+        return NO;
+    }
+
+    NINQueue* queue = (NINQueue*)object;
+
+    return [self.queueID isEqualToString:queue.queueID];
+}
+
 -(NSString*) description {
     return [NSString stringWithFormat:@"Queue ID: %@, Name: %@", self.queueID, self.name];
 }
