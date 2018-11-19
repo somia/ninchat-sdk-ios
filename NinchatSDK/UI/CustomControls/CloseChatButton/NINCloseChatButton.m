@@ -31,22 +31,27 @@
     UIImage* overrideImage = [session overrideImageAssetForKey:NINImageAssetKeyChatCloseButton];
 
     if (overrideImage != nil) {
+        // Overriding (setting) the button background image; no border.
         [self.theButton setBackgroundImage:overrideImage forState:UIControlStateNormal];
         self.theButton.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
-        self.closeButtonImageView.hidden = YES;
-    } else {
-        self.closeButtonImageView.hidden = NO;
-        UIImage* icon = [session overrideImageAssetForKey:NINImageAssetKeyIconChatCloseButton];
-        if (icon != nil) {
-            self.closeButtonImageView.image = icon;
-        }
+//        self.closeButtonImageView.hidden = YES;
+    }
 
-        UIColor* textColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
-        if (textColor != nil) {
-            self.buttonTitleLabel.textColor = textColor;
-        }
+    // Handle overriding the button icon image
+    self.closeButtonImageView.hidden = NO;
+    UIImage* icon = [session overrideImageAssetForKey:NINImageAssetKeyIconChatCloseButton];
+    if (icon != nil) {
+        self.closeButtonImageView.image = icon;
+    }
+
+    // Handle overriding the button text & border color
+    UIColor* textColor = [session overrideColorAssetForKey:NINColorAssetKeyButtonSecondaryText];
+    if (textColor != nil) {
+        self.buttonTitleLabel.textColor = textColor;
+        self.layer.borderColor = textColor.CGColor;
+        self.closeButtonImageView.tintColor = textColor;
     }
 }
 
