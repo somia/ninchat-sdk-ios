@@ -290,11 +290,11 @@ you are next.</string>
                                         <rect key="frame" x="0.0" y="46.5" width="375" height="34"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cAh-Q0-iyj">
-                                                <rect key="frame" x="346" y="5" width="24" height="24"/>
+                                                <rect key="frame" x="342" y="3" width="28" height="28"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="24" id="PyX-CS-Jgj"/>
-                                                    <constraint firstAttribute="width" constant="24" id="e7A-ap-Kns"/>
+                                                    <constraint firstAttribute="height" constant="28" id="PyX-CS-Jgj"/>
+                                                    <constraint firstAttribute="width" constant="28" id="e7A-ap-Kns"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
                                                 <color key="tintColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
@@ -306,11 +306,11 @@ you are next.</string>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XXu-e3-RTV">
-                                                <rect key="frame" x="312" y="5" width="24" height="24"/>
+                                                <rect key="frame" x="304" y="3" width="28" height="28"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="24" id="bbd-xH-485"/>
-                                                    <constraint firstAttribute="height" constant="24" id="p8A-X4-Moz"/>
+                                                    <constraint firstAttribute="width" constant="28" id="bbd-xH-485"/>
+                                                    <constraint firstAttribute="height" constant="28" id="p8A-X4-Moz"/>
                                                 </constraints>
                                                 <color key="tintColor" red="0.28627450980392155" green="0.67450980392156867" blue="0.99215686274509807" alpha="1" colorSpace="calibratedRGB"/>
                                                 <state key="normal" image="icon_attachment"/>
@@ -321,11 +321,10 @@ you are next.</string>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
+                                            <constraint firstItem="cAh-Q0-iyj" firstAttribute="centerY" secondItem="bNc-b4-D5d" secondAttribute="centerY" id="77K-Wl-hIF"/>
                                             <constraint firstItem="XXu-e3-RTV" firstAttribute="centerY" secondItem="bNc-b4-D5d" secondAttribute="centerY" id="7Nm-4n-PQd"/>
                                             <constraint firstAttribute="trailing" secondItem="cAh-Q0-iyj" secondAttribute="trailing" constant="5" id="FcP-jZ-2eD"/>
-                                            <constraint firstAttribute="bottom" secondItem="cAh-Q0-iyj" secondAttribute="bottom" priority="999" constant="5" id="Ip7-A0-a0b"/>
                                             <constraint firstItem="cAh-Q0-iyj" firstAttribute="leading" secondItem="XXu-e3-RTV" secondAttribute="trailing" constant="10" id="UjH-ZG-KOU"/>
-                                            <constraint firstItem="cAh-Q0-iyj" firstAttribute="top" secondItem="bNc-b4-D5d" secondAttribute="top" constant="5" id="cxJ-cN-K7Z"/>
                                             <constraint firstAttribute="height" priority="999" constant="34" id="vje-tH-fFC"/>
                                         </constraints>
                                     </view>
@@ -381,7 +380,7 @@ you are next.</string>
                         <outlet property="chatViewHeightConstraint" destination="FdO-24-78A" id="IzG-o9-EzZ"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
                         <outlet property="hangupButton" destination="nxH-tm-Ax2" id="B98-HT-oZq"/>
-                        <outlet property="inputControlsContainerView" destination="Kml-pm-EfW" id="lRY-QX-qJe"/>
+                        <outlet property="inputControlsContainerView" destination="bNc-b4-D5d" id="r1Z-DB-wYZ"/>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>

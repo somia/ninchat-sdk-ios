@@ -55,6 +55,9 @@
 // The message's image
 @property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
 
+// 'Padding' between message image and the bubble's top edge. Used to adjust the padding.
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint* messageImageTopConstraint;
+
 // Video play image
 @property (nonatomic, strong) IBOutlet UIImageView* videoPlayImageView;
 
@@ -344,6 +347,9 @@
         // Other's message - on the left
         [self configureForOthersMessageWithSeries:message.series avatarURL:message.sender.iconURL imageAssets:imageAssets colorAssets:colorAssets];
     }
+
+    // Adjust the padding depending on whether the message is a series message or not
+    self.messageImageTopConstraint.constant = (message.series) ? 15 : 9;
 
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;

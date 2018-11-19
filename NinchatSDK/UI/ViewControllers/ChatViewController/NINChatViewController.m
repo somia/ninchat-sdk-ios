@@ -737,6 +737,13 @@ static NSString* const kCloseChatText = @"Close chat";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"UIDeviceOrientationDidChangeNotification" object:nil];
 }
 
+-(void) inputControlsContainerTapped:(UITapGestureRecognizer*)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        // Make text input the first responder (= input focus + open keyboard)
+        [self.textInput becomeFirstResponder];
+    }
+}
+
 -(void) viewDidLoad {
     [super viewDidLoad];
 
@@ -765,6 +772,10 @@ static NSString* const kCloseChatText = @"Close chat";
 
     self.remoteVideoView.delegate = self;
     self.localVideoView.delegate = self;
+
+    // Add tap gesture recognizer for the input controls container view
+    UIGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inputControlsContainerTapped:)];
+    [self.inputControlsContainerView addGestureRecognizer:tapRecognizer];
 
     // Add a faint border around the text input
 //    self.textInput.layer.borderWidth = 0.5;
