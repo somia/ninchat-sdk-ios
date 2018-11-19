@@ -392,6 +392,7 @@ static NSString* const kCloseChatText = @"Close chat";
             UIImagePickerController* pickerController = [UIImagePickerController new];
             pickerController.sourceType = [sourceTypes[selectedIndex] integerValue];
             pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
+            pickerController.allowsEditing = YES;
             pickerController.delegate = self;
 
             [self presentViewController:pickerController animated:YES completion:nil];
@@ -456,14 +457,19 @@ static NSString* const kCloseChatText = @"Close chat";
 -(void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString*,id> *)info {
 
     runInBackgroundThread(^{
-        NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
-        PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
-        NSString* fileName = [phAsset valueForKey:@"filename"];
+        NSString* fileName = @"photo.jpg";
+
+        // Photos from photo library have file names; extract it
+        if (picker.sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
+            NSURL* referenceURL = info[UIImagePickerControllerReferenceURL];
+            PHAsset* phAsset = [[PHAsset fetchAssetsWithALAssetURLs:@[referenceURL] options:nil] lastObject];
+            fileName = [phAsset valueForKey:@"filename"];
+        }
 
         NSString* mediaType = (NSString*)info[UIImagePickerControllerMediaType];
 
         if ([mediaType isEqualToString:(NSString*)kUTTypeImage]) {
-            UIImage* image = info[UIImagePickerControllerOriginalImage];
+            UIImage* image = info[UIImagePickerControllerEditedImage];
             NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
 
             [self.sessionManager sendFileWithFilename:fileName withData:imageData completion:^(NSError* error) {
