@@ -64,11 +64,14 @@
 -(void) awakeFromNib {
     [super awakeFromNib];
 
-    // Add rounded corners and a border
-    self.layer.cornerRadius = self.bounds.size.height / 2;
-    self.layer.masksToBounds = YES;
-    self.layer.borderColor = [UIColor colorWithRed:0 green:138/255.0 blue:1 alpha:1].CGColor;
-    self.layer.borderWidth = 1;
+    // Only do this if the corner radius has not been set yet
+    if (self.layer.cornerRadius < 0.1) {
+        // Add rounded corners and a border
+        self.layer.cornerRadius = self.bounds.size.height / 2;
+        self.layer.masksToBounds = YES;
+        self.layer.borderColor = [UIColor colorWithRed:0 green:138/255.0 blue:1 alpha:1].CGColor;
+        self.layer.borderWidth = 1;
+    }
 
     // Workaround for https://openradar.appspot.com/18448072
     UIImage* image = self.closeButtonImageView.image;
