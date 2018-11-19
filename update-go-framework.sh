@@ -1,10 +1,12 @@
 #!/bin/bash
 
+set -e
+
 echo "Will rebuild the low-level framework."
 
 framework="NinchatLowLevelClient.framework"
 
-mygopath="$GOPATH:`pwd`/go-sdk"
+mygopath="`pwd`/go-sdk:$GOPATH"
 gocodedir="`pwd`/go-sdk/src/github.com/ninchat/ninchat-go/mobile/"
 tmpframework="/tmp/$framework"
 frameworkdir="Frameworks/$framework"
@@ -22,10 +24,6 @@ fi
 echo "Running gomobile tool.."
 GOPATH=$mygopath gomobile bind -target ios -prefix NINLowLevel \
       -o $tmpframework github.com/ninchat/ninchat-go/mobile
-if [ $? -ne 0 ]; then
-    echo "gomobile cmd failed, aborting."
-    exit 1
-fi
 
 # Copy the main header + the binary over to the framework dir
 cp "$tmpframework/Headers/NINLowLevelClient.objc.h" "$frameworkdir/Headers/"
