@@ -36,7 +36,6 @@
         self.theButton.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
-//        self.closeButtonImageView.hidden = YES;
     }
 
     // Handle overriding the button icon image

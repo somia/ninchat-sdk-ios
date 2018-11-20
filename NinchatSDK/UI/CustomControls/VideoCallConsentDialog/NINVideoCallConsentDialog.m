@@ -146,6 +146,11 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     self.rejectButton.layer.cornerRadius = self.rejectButton.bounds.size.height / 2;
     self.rejectButton.layer.borderWidth = 1;
     self.rejectButton.layer.borderColor = [UIColor colorWithRed:0 green:138/255.0 blue:255/255.0 alpha:1].CGColor;
+
+    // Workaround for https://openradar.appspot.com/18448072
+    UIImage* image = self.avatarImageView.image;
+    self.avatarImageView.image = nil;
+    self.avatarImageView.image = image;
 }
 
 -(void) dealloc {
