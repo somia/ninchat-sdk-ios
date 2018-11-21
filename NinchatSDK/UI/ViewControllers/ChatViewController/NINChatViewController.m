@@ -777,10 +777,6 @@ static NSString* const kCloseChatText = @"Close chat";
     UIGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inputControlsContainerTapped:)];
     [self.inputControlsContainerView addGestureRecognizer:tapRecognizer];
 
-    // Add a faint border around the text input
-//    self.textInput.layer.borderWidth = 0.5;
-//    self.textInput.layer.borderColor = [UIColor colorWithWhite:0 alpha:0.3].CGColor;
-
     // Give the local video view a slight border
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
     self.localVideoView.layer.borderWidth = 1.0;
