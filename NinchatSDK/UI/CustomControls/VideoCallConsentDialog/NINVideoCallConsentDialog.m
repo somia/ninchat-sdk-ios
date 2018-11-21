@@ -13,6 +13,8 @@
 #import "NINChannelUser.h"
 #import "NINChatSession+Internal.h"
 #import "UIButton+Ninchat.h"
+#import "NINPermissions.h"
+#import "NINToast.h"
 
 @interface NINVideoCallConsentDialog ()
 
@@ -35,6 +37,18 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 @implementation NINVideoCallConsentDialog
 
 #pragma mark - Private methods
+
+-(void) closeWithResult:(NINConsentDialogResult)result {
+    [UIView animateWithDuration:kAnimationDuration animations:^{
+        self.transform = CGAffineTransformMakeTranslation(0, -self.bounds.size.height);
+        self.faderView.alpha = 0;
+    } completion:^(BOOL finished) {
+        [self.faderView removeFromSuperview];
+        [self removeFromSuperview];
+
+        self.closedBlock(result);
+    }];
+}
 
 -(void) applyAssetOverrides:(NINChatSession*)session {
     [self.acceptButton overrideAssetsWithSession:session isPrimaryButton:YES];
@@ -108,21 +122,26 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
     }];
 
+    runOnMainThreadWithDelay(^{
+        // Check microphone permissions
+        checkMicrophonePermission(^(NSError* error) {
+            if (error != nil) {
+                [NINToast showWithErrorMessage:@"Microphone access denied." callback:nil];
+                [d closeWithResult:NINConsentDialogResultRejected];
+            } else {
+                // Check camera permissions
+                checkVideoPermission(^(NSError* error) {
+                    if (error != nil) {
+                        [NINToast showWithErrorMessage:@"Camera access denied." callback:nil];
+                        [d closeWithResult:NINConsentDialogResultRejected];
+                    }
+                });
+            }
+        });
+
+    }, 0.1);
+
     return d;
-}
-
-#pragma mark - Private methods
-
--(void) closeWithResult:(NINConsentDialogResult)result {
-    [UIView animateWithDuration:kAnimationDuration animations:^{
-        self.transform = CGAffineTransformMakeTranslation(0, -self.bounds.size.height);
-        self.faderView.alpha = 0;
-    } completion:^(BOOL finished) {
-        [self.faderView removeFromSuperview];
-        [self removeFromSuperview];
-
-        self.closedBlock(result);
-    }];
 }
 
 #pragma mark - IBAction handlers

@@ -92,6 +92,8 @@
 		497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */; };
 		497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */; };
 		497C4EDC214A8D170090C5E6 /* NINCloseChatButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */; };
+		4986E5A921A573ED00104CD4 /* NINPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = 4986E5A721A573ED00104CD4 /* NINPermissions.h */; };
+		4986E5AA21A573ED00104CD4 /* NINPermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4986E5A821A573ED00104CD4 /* NINPermissions.m */; };
 		4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944355208DF33400101DCA /* NinchatSDK.framework */; };
 		49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49944363208DF33400101DCA /* NinchatSDKTests.m */; };
 		49944366208DF33400101DCA /* NinchatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 49944358208DF33400101DCA /* NinchatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -229,6 +231,8 @@
 		497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINCloseChatButton.h; sourceTree = "<group>"; };
 		497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINCloseChatButton.m; sourceTree = "<group>"; };
 		497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINCloseChatButton.xib; sourceTree = "<group>"; };
+		4986E5A721A573ED00104CD4 /* NINPermissions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINPermissions.h; sourceTree = "<group>"; };
+		4986E5A821A573ED00104CD4 /* NINPermissions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINPermissions.m; sourceTree = "<group>"; };
 		49944355208DF33400101DCA /* NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944358208DF33400101DCA /* NinchatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDK.h; sourceTree = "<group>"; };
 		49944359208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -625,6 +629,8 @@
 				49B699C92156312000E6C83D /* NSString+Ninchat.m */,
 				496F1EAA2164F3A5006CF321 /* UIButton+Ninchat.h */,
 				496F1EAB2164F3A5006CF321 /* UIButton+Ninchat.m */,
+				4986E5A721A573ED00104CD4 /* NINPermissions.h */,
+				4986E5A821A573ED00104CD4 /* NINPermissions.m */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -714,6 +720,7 @@
 				496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */,
 				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				49D77F2F21566E5700900224 /* UIImageView+Ninchat.h in Headers */,
+				4986E5A921A573ED00104CD4 /* NINPermissions.h in Headers */,
 				496F1EBC21663205006CF321 /* NINChoiceDialogRow.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
 				49CD0778215CB1A700046AB9 /* NSString+Ninchat.h in Headers */,
@@ -940,6 +947,7 @@
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49118961214BE54F008F1748 /* NSDateFormatter+Ninchat.m in Sources */,
 				49B699C4215625E200E6C83D /* NSMutableAttributedString+Ninchat.m in Sources */,
+				4986E5AA21A573ED00104CD4 /* NINPermissions.m in Sources */,
 				49D77F3021566E5700900224 /* UIImageView+Ninchat.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,
 				49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */,

@@ -28,6 +28,7 @@
 #import "NINFileInfo.h"
 #import "NINExpandingTextView.h"
 #import "NINChoiceDialog.h"
+#import "NINPermissions.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -127,6 +128,26 @@ static NSString* const kCloseChatText = @"Close chat";
 @implementation NINChatViewController
 
 #pragma mark - Private methods
+/*
+switch AVCaptureDevice.authorizationStatus(for: .video) {
+case .authorized: // The user has previously granted access to the camera.
+    self.setupCaptureSession()
+
+case .notDetermined: // The user has not yet been asked for camera access.
+    AVCaptureDevice.requestAccess(for: .video) { granted in
+        if granted {
+            self.setupCaptureSession()
+        }
+    }
+
+case .denied: // The user has previously denied access.
+    return
+case .restricted: // The user can't grant access due to restrictions.
+    return
+}
+*/
+
+//-(void) authorizeCamera
 
 -(void) applyAssetOverrides {
     NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
@@ -387,18 +408,41 @@ static NSString* const kCloseChatText = @"Close chat";
 -(IBAction) attachmentButtonPressed:(id)sender {
     NSLog(@"Attachment button pressed");
 
+    __weak typeof(self) weakSelf = self;
+
+    void (^showPicker)(UIImagePickerControllerSourceType) = ^(UIImagePickerControllerSourceType sourceType) {
+        UIImagePickerController* pickerController = [UIImagePickerController new];
+        pickerController.sourceType = sourceType;
+        pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
+        pickerController.allowsEditing = YES;
+        pickerController.delegate = weakSelf;
+
+        [weakSelf presentViewController:pickerController animated:YES completion:nil];
+    };
+
     NSArray* sourceTypes = @[@(UIImagePickerControllerSourceTypeCamera), @(UIImagePickerControllerSourceTypePhotoLibrary)];
     NSArray* sourceTitles = @[@"Camera", @"Photo Library"];
 
     [NINChoiceDialog showWithOptionTitles:sourceTitles completion:^(BOOL canceled, NSInteger selectedIndex) {
         if (!canceled) {
-            UIImagePickerController* pickerController = [UIImagePickerController new];
-            pickerController.sourceType = [sourceTypes[selectedIndex] integerValue];
-            pickerController.mediaTypes = @[(NSString*)kUTTypeImage, (NSString*)kUTTypeMovie];
-            pickerController.allowsEditing = YES;
-            pickerController.delegate = self;
-
-            [self presentViewController:pickerController animated:YES completion:nil];
+            UIImagePickerControllerSourceType sourceType = [sourceTypes[selectedIndex] integerValue];
+            if (sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
+                checkPhotoLibraryPermission(^(NSError* error) {
+                    if (error != nil) {
+                        [NINToast showWithErrorMessage:@"Photo Library access is denied." callback:nil];
+                    } else {
+                        showPicker(sourceType);
+                    }
+                });
+            } else {
+                checkVideoPermission(^(NSError* error) {
+                    if (error != nil) {
+                        [NINToast showWithErrorMessage:@"Camera access is denied." callback:nil];
+                    } else {
+                        showPicker(sourceType);
+                    }
+                });
+            }
         }
     }];
 }
