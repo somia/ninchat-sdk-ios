@@ -12,6 +12,7 @@
 #import "NINUtils.h"
 #import "NINChannelUser.h"
 #import "NINChatSession+Internal.h"
+#import "NINSessionManager.h"
 #import "UIButton+Ninchat.h"
 #import "NINPermissions.h"
 #import "NINToast.h"
@@ -79,7 +80,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 #pragma mark - Public methods
 
-+(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user session:(NINChatSession*)session closedBlock:(consentDialogClosedBlock)closedBlock {
++(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user sessionManager:(NINSessionManager*)sessionManager closedBlock:(consentDialogClosedBlock)closedBlock {
     NINVideoCallConsentDialog* d = [NINVideoCallConsentDialog loadViewFromNib];
     d.translatesAutoresizingMaskIntoConstraints = NO;
     d.closedBlock = closedBlock;
@@ -87,7 +88,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     [d.avatarImageView setImageWithURL:[NSURL URLWithString:user.iconURL]];
     d.usernameLabel.text = user.displayName;
 
-    [d applyAssetOverrides:session];
+    [d applyAssetOverrides:sessionManager.ninchatSession];
 
     // Create a "fader" view to fade out the background a bit and constrain it to match the view
     d.faderView = [[UIView alloc] initWithFrame:view.bounds];
@@ -121,6 +122,10 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
     }];
 
+    // UI texts
+    d.titleLabel.text = [sessionManager translation:@"You are invited to a video chat" formatParams:nil];
+    d.infoLabel.text = [sessionManager translation:@"wants to video chat with you" formatParams:nil];
+    
     runOnMainThreadWithDelay(^{
         // Check microphone permissions
         checkMicrophonePermission(^(NSError* error) {
