@@ -249,9 +249,6 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 }
 
 -(void) dealloc {
-    //TODO remove
-//    self.sessionManager = nil;
-
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 

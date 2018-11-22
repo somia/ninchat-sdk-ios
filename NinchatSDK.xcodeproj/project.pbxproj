@@ -94,6 +94,9 @@
 		497C4EDC214A8D170090C5E6 /* NINCloseChatButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */; };
 		4986E5A921A573ED00104CD4 /* NINPermissions.h in Headers */ = {isa = PBXBuildFile; fileRef = 4986E5A721A573ED00104CD4 /* NINPermissions.h */; };
 		4986E5AA21A573ED00104CD4 /* NINPermissions.m in Sources */ = {isa = PBXBuildFile; fileRef = 4986E5A821A573ED00104CD4 /* NINPermissions.m */; };
+		4986E5AD21A6C13D00104CD4 /* NINConfirmCloseChatDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4986E5AC21A6C13D00104CD4 /* NINConfirmCloseChatDialog.xib */; };
+		4986E5B021A6C32600104CD4 /* NINConfirmCloseChatDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 4986E5AE21A6C32600104CD4 /* NINConfirmCloseChatDialog.h */; };
+		4986E5B121A6C32600104CD4 /* NINConfirmCloseChatDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 4986E5AF21A6C32600104CD4 /* NINConfirmCloseChatDialog.m */; };
 		4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49944355208DF33400101DCA /* NinchatSDK.framework */; };
 		49944364208DF33400101DCA /* NinchatSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49944363208DF33400101DCA /* NinchatSDKTests.m */; };
 		49944366208DF33400101DCA /* NinchatSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 49944358208DF33400101DCA /* NinchatSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -233,6 +236,9 @@
 		497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINCloseChatButton.xib; sourceTree = "<group>"; };
 		4986E5A721A573ED00104CD4 /* NINPermissions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINPermissions.h; sourceTree = "<group>"; };
 		4986E5A821A573ED00104CD4 /* NINPermissions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINPermissions.m; sourceTree = "<group>"; };
+		4986E5AC21A6C13D00104CD4 /* NINConfirmCloseChatDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINConfirmCloseChatDialog.xib; sourceTree = "<group>"; };
+		4986E5AE21A6C32600104CD4 /* NINConfirmCloseChatDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINConfirmCloseChatDialog.h; sourceTree = "<group>"; };
+		4986E5AF21A6C32600104CD4 /* NINConfirmCloseChatDialog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINConfirmCloseChatDialog.m; sourceTree = "<group>"; };
 		49944355208DF33400101DCA /* NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49944358208DF33400101DCA /* NinchatSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NinchatSDK.h; sourceTree = "<group>"; };
 		49944359208DF33400101DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -340,6 +346,7 @@
 		49140B8A20F4BF3F00A00EA8 /* CustomControls */ = {
 			isa = PBXGroup;
 			children = (
+				4986E5AB21A6C11500104CD4 /* ConfirmCloseChatDialog */,
 				496F1EB321663135006CF321 /* ChoiceDialog */,
 				496F1EAE21660FB9006CF321 /* ExpandingTextView */,
 				49D77F3121569BE600900224 /* Toast */,
@@ -496,6 +503,16 @@
 				497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */,
 			);
 			path = CloseChatButton;
+			sourceTree = "<group>";
+		};
+		4986E5AB21A6C11500104CD4 /* ConfirmCloseChatDialog */ = {
+			isa = PBXGroup;
+			children = (
+				4986E5AE21A6C32600104CD4 /* NINConfirmCloseChatDialog.h */,
+				4986E5AF21A6C32600104CD4 /* NINConfirmCloseChatDialog.m */,
+				4986E5AC21A6C13D00104CD4 /* NINConfirmCloseChatDialog.xib */,
+			);
+			path = ConfirmCloseChatDialog;
 			sourceTree = "<group>";
 		};
 		4994434B208DF33400101DCA = {
@@ -708,6 +725,7 @@
 				496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */,
 				49140B8720F395A700A00EA8 /* NINQueueViewController.h in Headers */,
 				497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */,
+				4986E5B021A6C32600104CD4 /* NINConfirmCloseChatDialog.h in Headers */,
 				49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */,
 				494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
@@ -822,6 +840,7 @@
 				493044222158DD5F00DECB0C /* NINChatMetaCell.xib in Resources */,
 				49721CD421295B0300695F33 /* NINChatView.xib in Resources */,
 				494330DF213FBECD006E2C9C /* SourceSansPro-BoldItalic.ttf in Resources */,
+				4986E5AD21A6C13D00104CD4 /* NINConfirmCloseChatDialog.xib in Resources */,
 				494330DE213FBECD006E2C9C /* SourceSansPro-ExtraLight.ttf in Resources */,
 				49721CDA21295CC000695F33 /* NINChatBubbleCell.xib in Resources */,
 				494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */,
@@ -956,6 +975,7 @@
 				49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */,
 				499443B5208F320700101DCA /* NINChatSession.m in Sources */,
 				49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */,
+				4986E5B121A6C32600104CD4 /* NINConfirmCloseChatDialog.m in Sources */,
 				49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */,
 				494330C8213FB3B5006E2C9C /* NINVideoCallConsentDialog.m in Sources */,
 				49721CCC2122F87B00695F33 /* NINWebRTCServerInfo.m in Sources */,

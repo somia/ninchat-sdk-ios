@@ -29,6 +29,7 @@
 #import "NINExpandingTextView.h"
 #import "NINChoiceDialog.h"
 #import "NINPermissions.h"
+#import "NINConfirmCloseChatDialog.h"
 
 // Segue IDs
 static NSString* const kSegueIdChatToRating = @"ninchatsdk.segue.ChatToRatings";
@@ -128,6 +129,19 @@ static NSString* const kCloseChatText = @"Close chat";
 @implementation NINChatViewController
 
 #pragma mark - Private methods
+
+-(void) closeChatButtonPressed {
+    NSLog(@"Close chat button pressed!");
+
+    __weak typeof(self) weakSelf = self;
+
+    [NINConfirmCloseChatDialog showOnView:self.view sessionManager:self.sessionManager closedBlock:^(NINConfirmCloseChatDialogResult result) {
+        if (result == NINConfirmCloseChatDialogResultClose) {
+            [weakSelf disconnectWebRTC];
+            [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
+        }
+    }];
+}
 
 -(void) applyAssetOverrides {
     NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
@@ -250,7 +264,7 @@ static NSString* const kCloseChatText = @"Close chat";
             [weakSelf.textInput resignFirstResponder];
 
             // Show answer / reject dialog for the incoming call
-            [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] session:self.sessionManager.ninchatSession closedBlock:^(NINConsentDialogResult result) {
+            [NINVideoCallConsentDialog showOnView:weakSelf.view forRemoteUser:note.userInfo[@"messageUser"] session:weakSelf.sessionManager.ninchatSession closedBlock:^(NINConsentDialogResult result) {
                 [weakSelf pickupWithAnswer:(result == NINConsentDialogResultAccepted)];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCOffer]) {
@@ -673,9 +687,7 @@ static NSString* const kCloseChatText = @"Close chat";
 }
 
 -(void) closeChatRequestedByChatView:(NINChatView*)chatView {
-//    [self.sessionManager closeChat];
-    [self disconnectWebRTC];
-    [self performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
+    [self closeChatButtonPressed];
 }
 
 #pragma mark - From NINBaseViewController
@@ -789,9 +801,7 @@ static NSString* const kCloseChatText = @"Close chat";
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
-        NSLog(@"Close chat button pressed!");
-        [weakSelf disconnectWebRTC];
-        [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
+        [weakSelf closeChatButtonPressed];
     };
 
     self.chatView.dataSource = self;

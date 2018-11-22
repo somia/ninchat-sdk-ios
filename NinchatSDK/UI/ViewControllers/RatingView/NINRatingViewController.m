@@ -145,6 +145,11 @@ static NSString* const kSkipText = @"Skip";
     [self.titleTextView setFormattedText:[self.sessionManager translation:kTitleText formatParams:nil]];
     [self.skipButton setTitle:[self.sessionManager translation:kSkipText formatParams:nil] forState:UIControlStateNormal];
 
+    // UI texts
+    self.positiveLabel.text = [self.sessionManager translation:@"Good" formatParams:nil];
+    self.neutralLabel.text = [self.sessionManager translation:@"Okay" formatParams:nil];
+    self.negativeLabel.text =  [self.sessionManager translation:@"Poor" formatParams:nil];
+
     // Apply asset overrides
     [self applyAssetOverrides];
 }
