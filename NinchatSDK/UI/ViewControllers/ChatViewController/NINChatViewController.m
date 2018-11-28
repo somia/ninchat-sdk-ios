@@ -439,6 +439,11 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [NINChoiceDialog showWithOptionTitles:sourceTitles completion:^(BOOL canceled, NSInteger selectedIndex) {
         if (!canceled) {
             UIImagePickerControllerSourceType sourceType = [sourceTypes[selectedIndex] integerValue];
+            if (![UIImagePickerController isSourceTypeAvailable:sourceType]) {
+                [NINToast showWithErrorMessage:@"That source type is not available on this device." callback:nil];
+                return;
+            }
+
             if (sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
                 checkPhotoLibraryPermission(^(NSError* error) {
                     if (error != nil) {
