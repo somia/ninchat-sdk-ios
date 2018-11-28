@@ -19,6 +19,7 @@
 // UI strings
 static NSString* const kQueuePositionN = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.";
 static NSString* const kQueuePositionNext = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.";
+static NSString* const kCloseChatText = @"Close chat";
 
 static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
@@ -64,6 +65,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         self.motdTextView.linkTextAttributes = @{NSForegroundColorAttributeName: linkColor};
     }
 
+    [self.closeChatButton setButtonTitle:[self.sessionManager translation:kCloseChatText formatParams:nil]];
     [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 }
 
