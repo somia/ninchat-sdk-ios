@@ -506,15 +506,15 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self updateTextInputPlaceholder];
 }
 
--(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
-    if ([text isEqualToString:@"\n"]){
-        // Send button was pressed on the keyboard
-        [self sendTextMessage];
-        return NO;
-    } else {
-        return YES;
-    }
-}
+//-(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
+//    if ([text isEqualToString:@"\n"]){
+//        // Send button was pressed on the keyboard
+//        [self sendTextMessage];
+//        return NO;
+//    } else {
+//        return YES;
+//    }
+//}
 
 #pragma mark - From UIImagePickerControllerDelegate
 
