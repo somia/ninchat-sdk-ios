@@ -52,7 +52,11 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
  * It cannot hold a reference to 'proxy objects' ie. the ClientSession.
  */
 @interface SessionCallbackHandler : NSObject <NINLowLevelClientSessionEventHandler, NINLowLevelClientEventHandler, NINLowLevelClientCloseHandler, NINLowLevelClientLogHandler, NINLowLevelClientConnStateHandler>
+
 @property (nonatomic, weak) NINSessionManager* sessionManager;
+
++(instancetype) handlerWithSessionManager:(NINSessionManager*)sessionManager;
+
 @end
 
 /**
@@ -77,6 +81,8 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 /** Low-level chat session reference. */
 @property (nonatomic, strong) NINLowLevelClientSession* session;
 
+/** Callback 'adapter' for the low-level library. */
+@property (nonatomic, strong) SessionCallbackHandler* sessionCallbackHandler;
 /** My user's user ID. */
 @property (nonatomic, strong) NSString* myUserID;
 
@@ -1118,6 +1124,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     [self.session close];
     self.session = nil;
+    self.sessionCallbackHandler = nil;
 }
 
 // Low-level shutdown of the chatsession; invalidates session resource.
@@ -1195,16 +1202,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return NO;
     });
 
-    SessionCallbackHandler* callbackHandler = [SessionCallbackHandler new];
-    callbackHandler.sessionManager = self;
-
+    self.sessionCallbackHandler = [SessionCallbackHandler handlerWithSessionManager:self];
     self.session = [NINLowLevelClientSession new];
     [self.session setAddress:self.serverAddress];
-    [self.session setOnClose:callbackHandler];
-    [self.session setOnConnState:callbackHandler];
-    [self.session setOnLog:callbackHandler];
-    [self.session setOnSessionEvent:callbackHandler];
-    [self.session setOnEvent:callbackHandler];
+    [self.session setOnClose:self.sessionCallbackHandler];
+    [self.session setOnConnState:self.sessionCallbackHandler];
+    [self.session setOnLog:self.sessionCallbackHandler];
+    [self.session setOnSessionEvent:self.sessionCallbackHandler];
+    [self.session setOnEvent:self.sessionCallbackHandler];
 
     NSError* error = nil;
     [self.session setParams:sessionParams error:&error];
@@ -1344,6 +1349,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 #pragma mark - SessionCallbackHandler
 
 @implementation SessionCallbackHandler
+
++(instancetype) handlerWithSessionManager:(NINSessionManager*)sessionManager {
+    SessionCallbackHandler* handler = [SessionCallbackHandler new];
+    handler.sessionManager = sessionManager;
+    return handler;
+}
 
 -(void) onEvent:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload lastReply:(BOOL)lastReply {
     runOnMainThread(^{
