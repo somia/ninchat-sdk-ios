@@ -39,6 +39,11 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 #pragma mark - Private methods
 
 -(void) applyAssetOverrides {
+    UIImage* progressImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconLoader];
+    if (progressImage != nil) {
+        self.spinnerImageView.image = progressImage;
+    }
+
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
     if (topBackgroundColor != nil) {
         self.topContainerView.backgroundColor = topBackgroundColor;
@@ -105,12 +110,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     } channelJoined:^{
         [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
     }];
-
-    // Look for customized images
-    UIImage* progressImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconLoader];
-    if (progressImage != nil) {
-        self.spinnerImageView.image = progressImage;
-    }
 
     // Spin the whirl icon continuoysly
     if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {

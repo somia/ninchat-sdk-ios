@@ -33,6 +33,7 @@
     if (overrideImage != nil) {
         // Overriding (setting) the button background image; no border.
         [self.theButton setBackgroundImage:overrideImage forState:UIControlStateNormal];
+        self.backgroundColor = [UIColor clearColor];
         self.theButton.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0;
         self.layer.borderWidth = 0;
