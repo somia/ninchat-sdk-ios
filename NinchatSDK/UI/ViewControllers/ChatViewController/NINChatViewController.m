@@ -39,6 +39,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 // UI (Localizable) strings
 static NSString* const kCloseChatText = @"Close chat";
+static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 @interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 
@@ -130,6 +131,14 @@ static NSString* const kCloseChatText = @"Close chat";
 
 #pragma mark - Private methods
 
+-(void) updateTextInputPlaceholder {
+    // Show or hide the placeholder text when entering text into the input
+    CGFloat newPlaceholderAlpha = (self.textInput.text.length == 0) ? 1 : 0;
+    [UIView animateWithDuration:0.2 animations:^{
+        self.textInputPlaceholderLabel.alpha = newPlaceholderAlpha;
+    }];
+}
+
 -(void) closeChatButtonPressed {
     NSLog(@"Close chat button pressed!");
 
@@ -180,6 +189,12 @@ static NSString* const kCloseChatText = @"Close chat";
     UIColor* inputTextColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetKeyTextareaText];
     if (inputTextColor != nil) {
         self.textInput.textColor = inputTextColor;
+    }
+
+    // UI strings
+    NSString* enterYourMessage = [self.sessionManager translation:kTextInputPlaceholderText formatParams:nil];
+    if (enterYourMessage != nil) {
+        self.textInputPlaceholderLabel.text = enterYourMessage;
     }
 }
 
@@ -354,6 +369,7 @@ static NSString* const kCloseChatText = @"Close chat";
     NSString* text = [self.textInput.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     self.textInput.text = nil;
     [self.textInput resignFirstResponder];
+    [self updateTextInputPlaceholder];
 
     if ([text length] > 0) {
         [self.sessionManager sendTextMessage:text completion:^(NSError* _Nonnull error) {
@@ -487,11 +503,7 @@ static NSString* const kCloseChatText = @"Close chat";
 #pragma mark - From UITextViewDelegate
 
 -(void) textViewDidChange:(UITextView *)textView {
-    // Show or hide the placeholder text when entering text into the input
-    CGFloat newPlaceholderAlpha = (textView.text.length == 0) ? 1 : 0;
-    [UIView animateWithDuration:0.2 animations:^{
-        self.textInputPlaceholderLabel.alpha = newPlaceholderAlpha;
-    }];
+    [self updateTextInputPlaceholder];
 }
 
 -(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
