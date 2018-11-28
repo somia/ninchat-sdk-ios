@@ -61,7 +61,7 @@
                     <viewLayoutGuide key="safeArea" id="hS2-DI-uvB"/>
                 </view>
             </subviews>
-            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="0Gu-aM-iur" secondAttribute="bottom" id="Rgm-SH-B6g"/>
                 <constraint firstAttribute="trailing" secondItem="0Gu-aM-iur" secondAttribute="trailing" id="bPM-70-6sx"/>
