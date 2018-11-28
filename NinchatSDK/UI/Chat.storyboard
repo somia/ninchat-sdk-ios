@@ -442,7 +442,7 @@ you are next.</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yp6-u1-JT0">
-                                        <rect key="frame" x="308" y="19.5" width="21" height="21"/>
+                                        <rect key="frame" x="314" y="19.5" width="21" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="21" id="fQ1-Rd-hPK"/>
                                             <constraint firstAttribute="height" constant="21" id="kOK-LX-wUy"/>
@@ -453,10 +453,10 @@ you are next.</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RUE-nC-9kB">
-                                        <rect key="frame" x="344" y="19.5" width="21" height="21"/>
+                                        <rect key="frame" x="350" y="22.5" width="15" height="15"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="21" id="Mbi-R8-Se6"/>
-                                            <constraint firstAttribute="height" constant="21" id="fIh-17-J1x"/>
+                                            <constraint firstAttribute="width" constant="15" id="Mbi-R8-Se6"/>
+                                            <constraint firstAttribute="height" constant="15" id="fIh-17-J1x"/>
                                         </constraints>
                                         <state key="normal" image="icon_close_x"/>
                                         <connections>
