@@ -10,4 +10,6 @@
 
 @interface NSDateFormatter (Ninchat)
 
++(NSDateFormatter*) shortTimeFormatter;
+
 @end

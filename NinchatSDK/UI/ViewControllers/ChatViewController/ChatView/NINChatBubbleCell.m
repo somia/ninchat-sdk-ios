@@ -17,6 +17,7 @@
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
 #import "UITextView+Ninchat.h"
+#import "NSDateFormatter+Ninchat.h"
 #import "NINVideoThumbnailManager.h"
 #import "NINToast.h"
 
@@ -337,6 +338,9 @@
     if (self.senderNameLabel.text.length < 1) {
         self.senderNameLabel.text = @"Guest";
     }
+
+    // Set message timestamp
+    self.timeLabel.text = [[NSDateFormatter shortTimeFormatter] stringFromDate:message.timestamp];
 
     self.topLabelsContainerHeightConstraint.constant = message.series ? 0 : self.topLabelsContainerHeight;
 
