@@ -13,7 +13,7 @@
 
 @class NINChatView;
 @class NINFileInfo;
-@class NINChatSession;
+@class NINSessionManager;
 
 /** Data source for the chat view. */
 @protocol NINChatViewDataSource
@@ -45,8 +45,8 @@
 /** My delegate. */
 @property (nonatomic, weak) id<NINChatViewDelegate> delegate;
 
-/** Chat session. */
-@property (nonatomic, strong) NINChatSession* session;
+/** Chat session manager. */
+@property (nonatomic, strong) NINSessionManager* sessionManager;
 
 /** A new message was added at the bottom of the list (index = 0). Updates the view. */
 -(void) newMessageWasAdded;

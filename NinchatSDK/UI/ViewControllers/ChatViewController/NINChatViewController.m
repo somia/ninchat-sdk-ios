@@ -801,7 +801,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [super viewDidLoad];
 
     // Pass the session reference to chat view for handling the asset overrides
-    self.chatView.session = self.sessionManager.ninchatSession;
+    self.chatView.sessionManager = self.sessionManager;
 
     // Add tileable pattern image as the view background
     UIImage* bgImage = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyChatBackground];

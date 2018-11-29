@@ -15,6 +15,8 @@
 #import "NINChatMetaCell.h"
 #import "NINVideoThumbnailManager.h"
 #import "NINChatSession+Internal.h"
+#import "NINSessionManager.h"
+#import "NINAvatarConfig.h"
 
 @interface NINChatView () <UITableViewDelegate, UITableViewDataSource> {
     NSArray<NSIndexPath*>* _zeroIndexPathArray;
@@ -37,6 +39,12 @@
  */
 @property (nonatomic, strong) NSDictionary<NINColorAssetKey,UIColor*>* colorAssets;
 
+/** Configuration for agent avatar. */
+@property (nonatomic, strong) NINAvatarConfig* agentAvatarConfig;
+
+/** Configuration for user avatar. */
+@property (nonatomic, strong) NINAvatarConfig* userAvatarConfig;
+
 @end
 
 @implementation NINChatView
@@ -44,10 +52,12 @@
 #pragma mark - Private methods
 
 -(NSDictionary<NINImageAssetKey, UIImage*>*) createImageAssetDictionary {
-    NSCAssert(self.session != nil, @"Session cannot be nil");
+    NSCAssert(self.sessionManager != nil, @"Session cannot be nil");
+
+    NINChatSession* session = self.sessionManager.ninchatSession;
 
     // User typing indicator
-    UIImage* userTypingIcon = [self.session overrideImageAssetForKey:NINImageAssetKeyChatWritingIndicator];
+    UIImage* userTypingIcon = [session overrideImageAssetForKey:NINImageAssetKeyChatWritingIndicator];
 
     if (userTypingIcon == nil) {
         NSMutableArray* frames = [NSMutableArray arrayWithCapacity:25];
@@ -59,43 +69,43 @@
     }
 
     // Left side bubble
-    UIImage* leftSideBubble = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeft];
+    UIImage* leftSideBubble = [session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeft];
     if (leftSideBubble == nil) {
         leftSideBubble = [UIImage imageNamed:@"chat_bubble_left" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Left side bubble (series)
-    UIImage* leftSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftRepeated];
+    UIImage* leftSideBubbleSeries = [session overrideImageAssetForKey:NINImageAssetKeyChatBubbleLeftRepeated];
     if (leftSideBubbleSeries == nil) {
         leftSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_left_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Right side bubble
-    UIImage* rightSideBubble = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRight];
+    UIImage* rightSideBubble = [session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRight];
     if (rightSideBubble == nil) {
         rightSideBubble = [UIImage imageNamed:@"chat_bubble_right" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Right side bubble (series)
-    UIImage* rightSideBubbleSeries = [self.session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightRepeated];
+    UIImage* rightSideBubbleSeries = [session overrideImageAssetForKey:NINImageAssetKeyChatBubbleRightRepeated];
     if (rightSideBubbleSeries == nil) {
         rightSideBubbleSeries = [UIImage imageNamed:@"chat_bubble_right_series" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Left side avatar
-    UIImage* leftSideAvatar = [self.session overrideImageAssetForKey:NINImageAssetKeyChatAvatarLeft];
+    UIImage* leftSideAvatar = [session overrideImageAssetForKey:NINImageAssetKeyChatAvatarLeft];
     if (leftSideAvatar == nil) {
         leftSideAvatar = [UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Right side avatar
-    UIImage* rightSideAvatar = [self.session overrideImageAssetForKey:NINImageAssetKeyChatAvatarRight];
+    UIImage* rightSideAvatar = [session overrideImageAssetForKey:NINImageAssetKeyChatAvatarRight];
     if (rightSideAvatar == nil) {
         rightSideAvatar = [UIImage imageNamed:@"icon_avatar_mine" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Play video icon
-    UIImage* playVideoIcon = [self.session overrideImageAssetForKey:NINImageAssetKeyChatPlayVideo];
+    UIImage* playVideoIcon = [session overrideImageAssetForKey:NINImageAssetKeyChatPlayVideo];
     if (playVideoIcon == nil) {
         playVideoIcon = [UIImage imageNamed:@"icon_play" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
@@ -111,14 +121,14 @@
 }
 
 -(NSDictionary<NINColorAssetKey, UIColor*>*) createColorAssetDictionary {
-    NSCAssert(self.session != nil, @"Session cannot be nil");
+    NSCAssert(self.sessionManager != nil, @"Session cannot be nil");
 
     NSArray* relatedKeys = @[NINColorAssetKeyInfoText, NINColorAssetKeyChatName, NINColorAssetKeyChatTimestamp, NINColorAssetKeyChatBubbleLeftText, NINColorAssetKeyChatBubbleRightText, NINColorAssetKeyChatBubbleLeftLink, NINColorAssetKeyChatBubbleRightLink];
 
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
 
     for (NINColorAssetKey key in relatedKeys) {
-        UIColor* color = [self.session overrideColorAssetForKey:key];
+        UIColor* color = [self.sessionManager.ninchatSession overrideColorAssetForKey:key];
         if (color != nil) {
             dict[key] = color;
         }
@@ -129,11 +139,15 @@
 
 #pragma mark - Public methods
 
--(void) setSession:(NINChatSession*)session {
-    _session = session;
+-(void) setSessionManager:(NINSessionManager*)sessionManager {
+    _sessionManager = sessionManager;
 
     self.imageAssets = [self createImageAssetDictionary];
     self.colorAssets = [self createColorAssetDictionary];
+
+    NSDictionary* defaultDict = sessionManager.siteConfiguration[@"default"];
+    self.agentAvatarConfig = [NINAvatarConfig configWithAvatar:defaultDict[@"agentAvatar"] name:defaultDict[@"agentName"]];
+    self.userAvatarConfig = [NINAvatarConfig configWithAvatar:defaultDict[@"userAvatar"] name:defaultDict[@"userName"]];
 }
 
 -(void) newMessageWasAdded {
@@ -155,7 +169,7 @@
     if ([message isKindOfClass:NINChannelMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = _videoThumbnailManager;
-        [cell populateWithChannelMessage:message imageAssets:self.imageAssets colorAssets:self.colorAssets];
+        [cell populateWithChannelMessage:message imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
@@ -169,12 +183,12 @@
     } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = nil;
-        [cell populateWithUserTypingMessage:message imageAssets:self.imageAssets colorAssets:self.colorAssets];
+        [cell populateWithUserTypingMessage:message imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig];
         return cell;
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];
 
-        [cell populateWithMessage:message colorAssets:self.colorAssets session:self.session];
+        [cell populateWithMessage:message colorAssets:self.colorAssets session:self.sessionManager.ninchatSession];
         cell.closeChatCallback = ^{
             [weakSelf.delegate closeChatRequestedByChatView:weakSelf];
         };

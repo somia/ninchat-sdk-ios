@@ -55,6 +55,8 @@
 		494330E3213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */; };
 		495762A220EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
+		4961A19D21B03BB9002ACB43 /* NINAvatarConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 4961A19B21B03BB8002ACB43 /* NINAvatarConfig.h */; };
+		4961A19E21B03BB9002ACB43 /* NINAvatarConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */; };
 		49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49622FAB214FCD3700570D59 /* NINFileInfo.h */; };
 		49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 49622FAC214FCD3700570D59 /* NINFileInfo.m */; };
 		496230142153E94800570D59 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
@@ -198,6 +200,8 @@
 		494330D7213FBECD006E2C9C /* SourceSansPro-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SourceSansPro-SemiBold.ttf"; sourceTree = "<group>"; };
 		495762A020EE1AC700BC39A8 /* NINUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUtils.h; sourceTree = "<group>"; };
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
+		4961A19B21B03BB8002ACB43 /* NINAvatarConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NINAvatarConfig.h; sourceTree = "<group>"; };
+		4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINAvatarConfig.m; sourceTree = "<group>"; };
 		49622FAB214FCD3700570D59 /* NINFileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINFileInfo.h; sourceTree = "<group>"; };
 		49622FAC214FCD3700570D59 /* NINFileInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINFileInfo.m; sourceTree = "<group>"; };
 		496230132153E94800570D59 /* Libjingle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Libjingle.framework; sourceTree = "<group>"; };
@@ -616,6 +620,8 @@
 		49B699C62156260A00E6C83D /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				4961A19B21B03BB8002ACB43 /* NINAvatarConfig.h */,
+				4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */,
 				496F85F02137DD43001FD1C4 /* NINChannelUser.h */,
 				496F85F12137DD43001FD1C4 /* NINChannelUser.m */,
 				49140B7420F2748800A00EA8 /* NINChannelMessage.h */,
@@ -728,6 +734,7 @@
 				4986E5B021A6C32600104CD4 /* NINConfirmCloseChatDialog.h in Headers */,
 				49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */,
 				494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */,
+				4961A19D21B03BB9002ACB43 /* NINAvatarConfig.h in Headers */,
 				49944366208DF33400101DCA /* NinchatSDK.h in Headers */,
 				49F5FA2420F4E89A00A4A526 /* NINBaseViewController.h in Headers */,
 				49F5FA3920F781D600A4A526 /* NINQueue.h in Headers */,
@@ -962,6 +969,7 @@
 				496F85F7213838E7001FD1C4 /* NINTouchView.m in Sources */,
 				49CD077C215CD4AD00046AB9 /* NINUserTypingMessage.m in Sources */,
 				496F85F32137DD43001FD1C4 /* NINChannelUser.m in Sources */,
+				4961A19E21B03BB9002ACB43 /* NINAvatarConfig.m in Sources */,
 				496F1EAD2164F3A5006CF321 /* UIButton+Ninchat.m in Sources */,
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49118961214BE54F008F1748 /* NSDateFormatter+Ninchat.m in Sources */,
