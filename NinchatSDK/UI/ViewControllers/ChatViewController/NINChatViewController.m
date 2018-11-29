@@ -123,7 +123,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
 // NSNotificationCenter observer for user is ryping into the chat
-@property (nonatomic, strong) id<NSObject> typingObserver;
+//@property (nonatomic, strong) id<NSObject> typingObserver;
 
 @end
 
@@ -139,6 +139,18 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     }];
 }
 
+-(void) stopObserverChatEvents {
+    if (self.messagesObserver != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
+        self.messagesObserver = nil;
+    }
+
+    if (self.signalingObserver != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
+        self.signalingObserver = nil;
+    }
+}
+
 -(void) closeChatButtonPressed {
     NSLog(@"Close chat button pressed!");
 
@@ -146,6 +158,8 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     [NINConfirmCloseChatDialog showOnView:self.view sessionManager:self.sessionManager closedBlock:^(NINConfirmCloseChatDialogResult result) {
         if (result == NINConfirmCloseChatDialogResultClose) {
+            [weakSelf stopObserverChatEvents];
+            
             [weakSelf disconnectWebRTC];
             [weakSelf performSegueWithIdentifier:kSegueIdChatToRating sender:nil];
         }
@@ -756,39 +770,16 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
-    __weak typeof(self) weakSelf = self;
-
-    // Start listening to new messages
-    self.messagesObserver = fetchNotification(kChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
-        NSNumber* removedAtIndex = note.userInfo[@"removedMessageAtIndex"];
-        if (removedAtIndex == nil) {
-            [weakSelf.chatView newMessageWasAdded];
-        } else {
-            [weakSelf.chatView messageWasRemovedAtIndex:removedAtIndex.integerValue];
-        }
-
-        return NO;
-    });
-
-    // Start listening to WebRTC signaling messages from the chat session manager
-    [self listenToWebRTCSignaling];
+//    __weak typeof(self) weakSelf = self;
 
     // Set the constraints so that video is initially hidden
     [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
 }
 
--(void) viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self.messagesObserver];
-    self.messagesObserver = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self.signalingObserver];
-    self.signalingObserver = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self.typingObserver];
-    self.typingObserver = nil;
-}
+//-(void) viewWillDisappear:(BOOL)animated {
+//    [super viewWillDisappear:animated];
+//
+//}
 
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -848,12 +839,48 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 
+    // Listen to chat ended messages
+    fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* notification) {
+        [weakSelf stopObserverChatEvents];
+
+        // Disable message input controls
+        weakSelf.textInput.userInteractionEnabled = NO;
+        [weakSelf.textInput resignFirstResponder];
+        weakSelf.sendMessageButton.enabled = NO;
+        weakSelf.attachmentButton.enabled = NO;
+        weakSelf.hangupButton.enabled = NO;
+        weakSelf.cameraEnabledButton.enabled = NO;
+        weakSelf.microphoneEnabledButton.enabled = NO;
+        [weakSelf.inputControlsContainerView removeGestureRecognizer:tapRecognizer];
+
+        return YES;
+    });
+
+    // Start listening to WebRTC signaling messages from the chat session manager
+    [self listenToWebRTCSignaling];
+
+    // Start listening to new messages
+    self.messagesObserver = fetchNotification(kChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
+        NSNumber* removedAtIndex = note.userInfo[@"removedMessageAtIndex"];
+        if (removedAtIndex == nil) {
+            [weakSelf.chatView newMessageWasAdded];
+        } else {
+            [weakSelf.chatView messageWasRemovedAtIndex:removedAtIndex.integerValue];
+        }
+
+        return NO;
+    });
+
     // Apply asset overrides
     [self applyAssetOverrides];
 }
 
 -(void) dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+
+    [self stopObserverChatEvents];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self.typingObserver];
+//    self.typingObserver = nil;
 
     [self disconnectWebRTC];
 }

@@ -475,6 +475,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     if (closed || suspended) {
+        // Add a meta message about the conversation having ended
         NSString* text = [self translation:kConversationEndedText formatParams:nil];
         NSString* closeButtonTitle = [self translation:kCloseChatButtonText formatParams:nil];
         [self addNewChatMessage:[NINChatMetaMessage messageWithText:text timestamp:[NSDate date] closeChatButtonTitle:closeButtonTitle]];
