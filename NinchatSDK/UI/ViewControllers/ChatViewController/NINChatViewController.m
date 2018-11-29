@@ -835,7 +835,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
     self.localVideoView.layer.borderWidth = 1.0;
 
+    // Make buttons round
+    self.hangupButton.layer.cornerRadius = self.hangupButton.bounds.size.height / 2;
     self.microphoneEnabledButton.layer.cornerRadius = self.microphoneEnabledButton.bounds.size.height / 2;
+    self.cameraEnabledButton.layer.cornerRadius = self.cameraEnabledButton.bounds.size.height / 2;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 

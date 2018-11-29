@@ -380,7 +380,7 @@ you are next.</string>
                         <outlet property="chatViewHeightConstraint" destination="FdO-24-78A" id="IzG-o9-EzZ"/>
                         <outlet property="closeChatButton" destination="Sle-hz-0wC" id="zxz-JL-RiS"/>
                         <outlet property="hangupButton" destination="nxH-tm-Ax2" id="B98-HT-oZq"/>
-                        <outlet property="inputControlsContainerView" destination="bNc-b4-D5d" id="r1Z-DB-wYZ"/>
+                        <outlet property="inputControlsContainerView" destination="Kml-pm-EfW" id="WEy-1o-VdQ"/>
                         <outlet property="localVideoView" destination="zsk-Qd-9k4" id="UYi-sw-CNg"/>
                         <outlet property="localViewHeightConstraint" destination="OIh-QV-c1x" id="dND-NS-7Ak"/>
                         <outlet property="localViewWidthConstraint" destination="4W8-sh-e3i" id="jyj-vv-Mdz"/>
