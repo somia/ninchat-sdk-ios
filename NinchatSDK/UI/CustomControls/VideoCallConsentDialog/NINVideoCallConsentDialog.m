@@ -133,25 +133,6 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     // UI texts
     d.titleLabel.text = [sessionManager translation:@"You are invited to a video chat" formatParams:nil];
     d.infoLabel.text = [sessionManager translation:@"wants to video chat with you" formatParams:nil];
-    
-    runOnMainThreadWithDelay(^{
-        // Check microphone permissions
-        checkMicrophonePermission(^(NSError* error) {
-            if (error != nil) {
-                [NINToast showWithErrorMessage:@"Microphone access denied." callback:nil];
-                [d closeWithResult:NINConsentDialogResultRejected];
-            } else {
-                // Check camera permissions
-                checkVideoPermission(^(NSError* error) {
-                    if (error != nil) {
-                        [NINToast showWithErrorMessage:@"Camera access denied." callback:nil];
-                        [d closeWithResult:NINConsentDialogResultRejected];
-                    }
-                });
-            }
-        });
-
-    }, 0.1);
 
     return d;
 }
@@ -159,7 +140,30 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 #pragma mark - IBAction handlers
 
 -(IBAction) acceptButtonPressed:(UIButton*)button {
-    [self closeWithResult:NINConsentDialogResultAccepted];
+    // Check microphone permissions
+    checkMicrophonePermission(^(NSError* error) {
+        if (error != nil) {
+            [NINToast showWithErrorMessage:@"Microphone access denied." touchedCallback:^{
+                NSLog(@"Showing app settings");
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+            } callback:nil];
+            [self closeWithResult:NINConsentDialogResultRejected];
+        } else {
+            // Check camera permissions
+            checkVideoPermission(^(NSError* error) {
+                if (error != nil) {
+                    [NINToast showWithErrorMessage:@"Camera access denied." touchedCallback:^{
+                        NSLog(@"Showing app settings");
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                    } callback:nil];
+                    [self closeWithResult:NINConsentDialogResultRejected];
+                } else {
+                    // Permissions ok, can accept this call!
+                    [self closeWithResult:NINConsentDialogResultAccepted];
+                }
+            });
+        }
+    });
 }
 
 -(IBAction) rejectButtonPressed:(UIButton*)button {

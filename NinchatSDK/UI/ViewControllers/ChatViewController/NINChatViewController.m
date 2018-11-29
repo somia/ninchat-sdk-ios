@@ -447,7 +447,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
             if (sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
                 checkPhotoLibraryPermission(^(NSError* error) {
                     if (error != nil) {
-                        [NINToast showWithErrorMessage:@"Photo Library access is denied." callback:nil];
+                        [NINToast showWithErrorMessage:@"Photo Library access is denied." touchedCallback:^{
+                            NSLog(@"Showing app settings");
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                        } callback:nil];
                     } else {
                         showPicker(sourceType);
                     }
@@ -455,7 +458,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
             } else {
                 checkVideoPermission(^(NSError* error) {
                     if (error != nil) {
-                        [NINToast showWithErrorMessage:@"Camera access is denied." callback:nil];
+                        [NINToast showWithErrorMessage:@"Camera access is denied." touchedCallback:^{
+                            NSLog(@"Showing app settings");
+                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                        } callback:nil];
                     } else {
                         showPicker(sourceType);
                     }
