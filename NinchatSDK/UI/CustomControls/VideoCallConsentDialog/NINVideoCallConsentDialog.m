@@ -17,6 +17,10 @@
 #import "NINPermissions.h"
 #import "NINToast.h"
 
+// UI texts
+static NSString* const kAcceptText = @"Accept";
+static NSString* const kDeclineText = @"Decline";
+
 @interface NINVideoCallConsentDialog ()
 
 @property (nonatomic, strong) IBOutlet UIView* headerContainerView;
@@ -89,6 +93,10 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     d.usernameLabel.text = user.displayName;
 
     [d applyAssetOverrides:sessionManager.ninchatSession];
+
+    // Set translated UI texts
+    [d.acceptButton setTitle:[sessionManager translation:kAcceptText formatParams:nil] forState:UIControlStateNormal];
+    [d.rejectButton setTitle:[sessionManager translation:kDeclineText formatParams:nil] forState:UIControlStateNormal];
 
     // Create a "fader" view to fade out the background a bit and constrain it to match the view
     d.faderView = [[UIView alloc] initWithFrame:view.bounds];
