@@ -29,7 +29,6 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 @property (nonatomic, strong) IBOutlet UIView* bottomContainerView;
 @property (nonatomic, strong) IBOutlet UITextView* welcomeTextView;
 @property (nonatomic, strong) IBOutlet UIStackView* queueButtonsStackView;
-//@property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
 @property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 
@@ -40,7 +39,6 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 #pragma mark - Private methods
 
 -(void) applyAssetOverrides {
-//    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:YES];
     [self.closeWindowButton overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:NO];
 
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
@@ -71,17 +69,6 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 }
 
 #pragma mark - IBAction handlers
-
--(IBAction) startChatButtonPressed:(UIButton*)button {
-    // Select a queue; just pick the first one available
-    if (self.sessionManager.queues.count == 0) {
-        // No queues? well this simply wont do.
-        NSLog(@"** ERROR ** No queues found!");
-        return;
-    }
-
-    [self performSegueWithIdentifier:kSegueIdInitialToQueue sender:self.sessionManager.queues[0]];
-}
 
 -(IBAction) closeWindowButtonPressed:(UIButton*)button {
     [self.sessionManager closeChat];
@@ -121,15 +108,15 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 }
 
 -(void) createQueueButtons {
-    const CGFloat buttonHeight = 60.0;
     const NSInteger maxButtons = 3;
 
     // Remote any existing buttons in the stack view
-    for (UIView* view in self.queueButtonsStackView.arrangedSubviews) {
-        [self.queueButtonsStackView removeArrangedSubview:view];
+    for (UIView* view in self.queueButtonsStackView.subviews) {
+        [view removeFromSuperview];
     }
 
     NSInteger numButtons = MIN(maxButtons, self.sessionManager.audienceQueues.count);
+    CGFloat buttonHeight = (numButtons > 2) ? 40.0 : 60.0;
 
     UIColor* defaultBgColor = [UIColor colorWithRed:73.0/255 green:172.0/255 blue:253.0/255 alpha:1];
     UIColor* defaultTextColor = [UIColor whiteColor];
@@ -140,9 +127,10 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     for (NSInteger i = 0; i < numButtons; i++) {
         NINQueue* queue = self.sessionManager.audienceQueues[i];
         UIButton* button = [UIButton buttonWithPressedCallback:^{
-            NSLog(@"Queue picked: %@", queue);
+            [weakSelf performSegueWithIdentifier:kSegueIdInitialToQueue sender:queue];
         }];
         button.translatesAutoresizingMaskIntoConstraints = NO;
+        button.contentEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
 
         // Configure the button visuals
         button.layer.cornerRadius = buttonHeight / 2;
@@ -155,7 +143,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
         [self.queueButtonsStackView addArrangedSubview:button];
 
         // Set button height via constraint
-        [constraints addObject:[button.heightAnchor constraintEqualToConstant:60]];
+        [constraints addObject:[button.heightAnchor constraintEqualToConstant:buttonHeight]];
     }
 
     [NSLayoutConstraint activateConstraints:constraints];
@@ -174,12 +162,8 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 
     // Create queue buttons
     [self createQueueButtons];
-//    if (self.sessionManager.queues.count > 0) {
-//        [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
-//    }
 
     // Rounded button corners
-//    self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
     self.closeWindowButton.layer.borderColor = [UIColor colorWithRed:73/255.0 green:172/255.0 blue:253/255.0 alpha:1].CGColor;
     self.closeWindowButton.layer.borderWidth = 1;

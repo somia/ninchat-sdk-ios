@@ -189,8 +189,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     // Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
     // if not, we use the complete list of queues.
-//    NSArray* audienceQueueIDs = self.siteConfiguration[@"default"][@"audienceQueues"];
-    NSArray* audienceQueueIDs = @[@"5lmpjrbl00m3g", @"5lmpjrbl00m3g"];
+    NSArray* audienceQueueIDs = self.siteConfiguration[@"default"][@"audienceQueues"];
     if (audienceQueueIDs == nil) {
         _audienceQueues = [NSMutableArray arrayWithArray:_queues];
     } else {
@@ -202,7 +201,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             }
         }
     }
-    NSLog(@"Audience queues: %@", _audienceQueues);
 
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }

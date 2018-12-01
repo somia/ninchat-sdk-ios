@@ -17,18 +17,15 @@ static char kAssociatedObjectKey;
 
 @interface CallbackHandler : NSObject
 
-+(instancetype) handlerWithAttachTarget:(NSObject*)attachTarget callback:(emptyBlock)callback;
-
 @property (nonatomic, strong) emptyBlock callback;
 
 @end
 
 @implementation CallbackHandler
 
-+(instancetype) handlerWithAttachTarget:(NSObject*)attachTarget callback:(emptyBlock)callback {
++(instancetype) handlerWithCallback:(emptyBlock)callback {
     CallbackHandler* handler = [CallbackHandler new];
     handler.callback = callback;
-    objc_setAssociatedObject(attachTarget, &kAssociatedObjectKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
     return handler;
 }
@@ -45,7 +42,10 @@ static char kAssociatedObjectKey;
 
 +(instancetype) buttonWithPressedCallback:(emptyBlock)callback {
     UIButton* button = [UIButton new];
-    [CallbackHandler handlerWithAttachTarget:button callback:callback];
+    CallbackHandler* handler = [CallbackHandler handlerWithCallback:callback];
+    objc_setAssociatedObject(button, &kAssociatedObjectKey, handler, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [button addTarget:handler action:@selector(pressed) forControlEvents:UIControlEventTouchUpInside];
+
     return button;
 }
 
