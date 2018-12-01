@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINPrivateTypes.h"
 #import "NINChatSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIButton (Ninchat)
+
++(instancetype) buttonWithPressedCallback:(emptyBlock)callback;
 
 -(void) overrideAssetsWithSession:(NINChatSession*)session isPrimaryButton:(BOOL)primary;
 
