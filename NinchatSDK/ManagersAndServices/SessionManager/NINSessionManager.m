@@ -68,6 +68,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
     /** Mutable queue list. */
     NSMutableArray<NINQueue*>* _queues;
 
+    /** Mutable audience queue list. */
+    NSMutableArray<NINQueue*>* _audienceQueues;
+
     /** Mutable channel messages list. */
     NSMutableArray<id<NINChatMessage>>* _chatMessages;
 
@@ -183,6 +186,23 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         [_queues addObject:[NINQueue queueWithId:queueId andName:queueName]];
     }
+
+    // Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
+    // if not, we use the complete list of queues.
+//    NSArray* audienceQueueIDs = self.siteConfiguration[@"default"][@"audienceQueues"];
+    NSArray* audienceQueueIDs = @[@"5lmpjrbl00m3g", @"5lmpjrbl00m3g"];
+    if (audienceQueueIDs == nil) {
+        _audienceQueues = [NSMutableArray arrayWithArray:_queues];
+    } else {
+        _audienceQueues = [NSMutableArray arrayWithCapacity:audienceQueueIDs.count];
+        for (NSString* queueID in audienceQueueIDs) {
+            NINQueue* q = [self queueForId:queueID];
+            if (q != nil) {
+                [_audienceQueues addObject:q];
+            }
+        }
+    }
+    NSLog(@"Audience queues: %@", _audienceQueues);
 
     postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }

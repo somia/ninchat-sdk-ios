@@ -28,7 +28,8 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 @property (nonatomic, strong) IBOutlet UIView* topContainerView;
 @property (nonatomic, strong) IBOutlet UIView* bottomContainerView;
 @property (nonatomic, strong) IBOutlet UITextView* welcomeTextView;
-@property (nonatomic, strong) IBOutlet UIButton* startChatButton;
+@property (nonatomic, strong) IBOutlet UIStackView* queueButtonsStackView;
+//@property (nonatomic, strong) IBOutlet UIButton* startChatButton;
 @property (nonatomic, strong) IBOutlet UIButton* closeWindowButton;
 @property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 
@@ -39,7 +40,7 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
 #pragma mark - Private methods
 
 -(void) applyAssetOverrides {
-    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:YES];
+//    [self.startChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:YES];
     [self.closeWindowButton overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:NO];
 
     UIColor* topBackgroundColor = [self.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetBackgroundTop];
@@ -119,6 +120,47 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     }
 }
 
+-(void) createQueueButtons {
+    const CGFloat buttonHeight = 60.0;
+    const NSInteger maxButtons = 3;
+
+    // Remote any existing buttons in the stack view
+    for (UIView* view in self.queueButtonsStackView.arrangedSubviews) {
+        [self.queueButtonsStackView removeArrangedSubview:view];
+    }
+
+    NSInteger numButtons = MIN(maxButtons, self.sessionManager.audienceQueues.count);
+
+    UIColor* defaultBgColor = [UIColor colorWithRed:73.0/255 green:172.0/255 blue:253.0/255 alpha:1];
+    UIColor* defaultTextColor = [UIColor whiteColor];
+    NSMutableArray* constraints = [NSMutableArray array];
+
+    __weak typeof(self) weakSelf = self;
+
+    for (NSInteger i = 0; i < numButtons; i++) {
+        NINQueue* queue = self.sessionManager.audienceQueues[i];
+        UIButton* button = [UIButton buttonWithPressedCallback:^{
+            NSLog(@"Queue picked: %@", queue);
+        }];
+        button.translatesAutoresizingMaskIntoConstraints = NO;
+
+        // Configure the button visuals
+        button.layer.cornerRadius = buttonHeight / 2;
+        button.backgroundColor = defaultBgColor;
+        [button setTitleColor:defaultTextColor forState:UIControlStateNormal];
+        [button setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": queue.name}] forState:UIControlStateNormal];
+        [button overrideAssetsWithSession:self.sessionManager.ninchatSession isPrimaryButton:YES];
+
+        // Add the button to the stack view
+        [self.queueButtonsStackView addArrangedSubview:button];
+
+        // Set button height via constraint
+        [constraints addObject:[button.heightAnchor constraintEqualToConstant:60]];
+    }
+
+    [NSLayoutConstraint activateConstraints:constraints];
+}
+
 -(void) viewDidLoad {
     [super viewDidLoad];
 
@@ -127,14 +169,17 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     [self.welcomeTextView setFormattedText:welcomeText];
     self.welcomeTextView.delegate = self;
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
-    if (self.sessionManager.queues.count > 0) {
-        [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
-    }
     [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
     self.motdTextView.delegate = self;
 
+    // Create queue buttons
+    [self createQueueButtons];
+//    if (self.sessionManager.queues.count > 0) {
+//        [self.startChatButton setTitle:[self.sessionManager translation:kJoinQueueText formatParams:@{@"audienceQueue.queue_attrs.name": self.sessionManager.queues[0].name}] forState:UIControlStateNormal];
+//    }
+
     // Rounded button corners
-    self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
+//    self.startChatButton.layer.cornerRadius = self.startChatButton.bounds.size.height / 2;
     self.closeWindowButton.layer.cornerRadius = self.closeWindowButton.bounds.size.height / 2;
     self.closeWindowButton.layer.borderColor = [UIColor colorWithRed:73/255.0 green:172/255.0 blue:253/255.0 alpha:1].CGColor;
     self.closeWindowButton.layer.borderWidth = 1;
