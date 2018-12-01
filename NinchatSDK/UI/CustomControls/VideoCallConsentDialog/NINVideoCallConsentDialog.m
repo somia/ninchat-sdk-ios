@@ -16,6 +16,7 @@
 #import "UIButton+Ninchat.h"
 #import "NINPermissions.h"
 #import "NINToast.h"
+#import "NINAvatarConfig.h"
 
 // UI texts
 static NSString* const kAcceptText = @"Accept";
@@ -89,8 +90,21 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     d.translatesAutoresizingMaskIntoConstraints = NO;
     d.closedBlock = closedBlock;
 
-    [d.avatarImageView setImageWithURL:[NSURL URLWithString:user.iconURL]];
-    d.usernameLabel.text = user.displayName;
+    NINAvatarConfig* agentAvatarConfig = [NINAvatarConfig configWithAvatar:sessionManager.siteConfiguration[@"default"][@"agentAvatar"] name:sessionManager.siteConfiguration[@"default"][@"agentName"]];
+
+    // Caller's Avatar image
+    if (agentAvatarConfig.imageOverrideUrl != nil) {
+        [d.avatarImageView setImageWithURL:[NSURL URLWithString:agentAvatarConfig.imageOverrideUrl]];
+    } else {
+        [d.avatarImageView setImageWithURL:[NSURL URLWithString:user.iconURL]];
+    }
+
+    // Caller's name
+    if (agentAvatarConfig.nameOverride != nil) {
+        d.usernameLabel.text = agentAvatarConfig.nameOverride;
+    } else {
+        d.usernameLabel.text = user.displayName;
+    }
 
     [d applyAssetOverrides:sessionManager.ninchatSession];
 
