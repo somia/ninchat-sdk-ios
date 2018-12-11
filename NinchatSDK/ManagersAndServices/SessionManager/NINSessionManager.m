@@ -156,7 +156,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
         return;
     }
-    NSLog(@"queues: %@", queues.string);
 
     NINClientPropsParser* queuesParser = [NINClientPropsParser new];
     [queues accept:queuesParser error:&error];
@@ -373,7 +372,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    NSLog(@"Joined channel ID: %@", channelId);
+    [self.ninchatSession sdklog:@"Joined channel ID: %@", channelId];
 
     // Set the currently active channel
     self.currentChannelID = channelId;
@@ -416,30 +415,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
     }
 
-    //TODO remove; this is test data
-//    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"The other guy" displayName:@"The other guy" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
-//    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
-//    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
-//    [self addNewChatMessage:msg1];
-
-    // Simulate the other guy sending "Writing.." event
-//    [self addNewChatMessage:[NINUserTypingMessage messageWithUser:user1 timestamp:NSDate.date]];
-//    runOnMainThreadWithDelay(^{
-//        [self removeChatMessageAtIndex:0];
-//    }, 5.0);
-
-//     NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil senderName:@"Kalle" avatarURL:nil timestamp:[NSDate date] mine:YES series:NO senderUserID:@"1"];
-//    NINChannelUser* user1 = [NINChannelUser userWithID:@"1" realName:@"Matti Dahlbom" displayName:@"Matti Dahlbom" iconURL:@"http://777-team.org/~matti/pics/larvi.jpg" guest:NO];
-//    NINFileInfo* attachment = [NINFileInfo imageFileInfoWithID:@"1" name:@"123.jpg" mimeType:@"image/jpeg" size:123 url:@"http://777-team.org/~matti/pics/larvi.jpg" urlExpiry:nil aspectRatio:0.7];
-//    NINChannelMessage* msg1 = [NINChannelMessage messageWithID:@"1" textContent:nil sender:user1 timestamp:[NSDate date] mine:NO attachment:attachment];
-//    [self addNewChatMessage:msg1];
-
-    /*
-     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"first short msg" senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
-     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
-     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"So then heres a longer message which is supposed to require several lines of text to render the whole text into the bubble.." senderName:@"Kalle Katajainen" avatarURL:@"https://bit.ly/2NvjgTy" timestamp:[NSDate date] mine:NO series:NO senderUserID:@"1"]];
-     [_channelMessages addObject:[NINChannelMessage messageWithTextContent:@"My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply My long reply" senderName:@"Matti Dahlbom" avatarURL:@"https://bit.ly/2ww2E6V" timestamp:[NSDate date] mine:YES series:NO senderUserID:@"2"]];
-     */
     // Signal channel join event to the asynchronous listener
     postNotification(kChannelJoinedNotification, @{});
 }
@@ -530,7 +505,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             [stunServerArray addObject:[NINWebRTCServerInfo serverWithURL:[urls get:j] username:nil credential:nil]];
         }
     }
-    NSLog(@"Parsed STUN servers: %@", stunServerArray);
 
     // Parse the TURN server list
     NINLowLevelClientObjects* turnServers = [params getObjectArray:@"turn_servers" error:&error];
@@ -563,7 +537,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             [turnServerArray addObject:[NINWebRTCServerInfo serverWithURL:[urls get:j] username:username credential:credential]];
         }
     }
-    NSLog(@"Parsed TURN servers: %@", turnServerArray);
 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"stunServers": stunServerArray, @"turnServers": turnServerArray});
 }
@@ -664,8 +637,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             // Use the first object in the list
             NSDictionary* fileObject = fileObjectsList.firstObject;
 
-//            NSLog(@"File object: %@", fileObject);
-
             NSString* filename = fileObject[@"file_attrs"][@"name"];
             NSString* fileMediaType = fileObject[@"file_attrs"][@"type"];
             NSInteger fileSize = [fileObject[@"file_attrs"][@"size"] integerValue];
@@ -704,8 +675,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             [self addNewChatMessage:msg];
         }
     }
-
-//    NSLog(@"handleInboundChatMessageWithPayload: returning");
 }
 
 -(void) handleInboundMessage:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload actionId:(long)actionId {
@@ -716,8 +685,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     NSString* messageType = [params getString:@"message_type" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
-
-//    NSLog(@"Got message_type: %@, message_id: %@, actionId: %ld", messageType, messageID, actionId);
 
     NSString* messageUserID = [params getString:@"message_user_id" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
@@ -1015,7 +982,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [params setString:@"channel_id" val:self.currentChannelID];
 
     if ([messageType isEqualToString:@"ninchat.com/metadata"] && payloadDict[@"data"][@"rating"] != nil) {
-        NSLog(@"Sending ratings, adding extra params to make message pass on closed channel");
         [params setStringArray:@"message_recipient_ids" ref:[NINLowLevelClientStrings new]];
         [params setBool:@"message_fold" val:YES];
     }
@@ -1025,8 +991,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [params setInt:@"message_ttl" val:10];
     }
 
-    NSLog(@"Sending message with type '%@' and payload: %@", messageType, payloadDict);
-    
     NSError* error;
     NSData* payloadContentJsonData = [NSJSONSerialization dataWithJSONObject:payloadDict options:0 error:&error];
     if (error != nil) {
@@ -1129,8 +1093,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         completion(error);
     }
 
-    NSLog(@"Set writing: %d", isWriting);
-
     // When this action completes, trigger the completion block callback
     connectCallbackToActionCompletion(actionId, completion);
 }
@@ -1148,7 +1110,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 // Low-level shutdown of the chatsession; invalidates session resource.
 -(void) closeChat {
-    NSLog(@"Shutting down chat Session..");
+    [self.ninchatSession sdklog:@"Shutting down chat Session.."];
 
     // Delete our guest user.
     __weak typeof(self) weakSelf = self;
@@ -1163,8 +1125,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 // High-level chat ending; sends channel metadata and then closes session.
 -(void) finishChat:(NSNumber* _Nullable)rating {
     NSCAssert(self.session != nil, @"No chat session");
-
-    NSLog(@"finishChat: %@", rating);
 
     if (rating != nil) {
         NSDictionary* payloadDict = @{@"data": @{@"rating": rating}};
@@ -1265,8 +1225,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) onEvent:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload lastReply:(BOOL)lastReply {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
-    NSLog(@"Event: %@", params.string);
-
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
     if (error != nil) {
@@ -1307,25 +1265,20 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) onLog:(NSString*)msg {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
-    NSLog(@"Log: %@", msg);
 }
 
 -(void) onConnState:(NSString*)state {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
-    NSLog(@"Connection state: %@", state);
 }
 
 -(void) onClose {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
 
-    NSLog(@"Session closed.");
 }
 
 -(void) onSessionEvent:(NINLowLevelClientProps*)params {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
-
-    NSLog(@"Session event: %@", [params string]);
 
     NSError* error = nil;
     NSString* event = [params getString:@"event" error:&error];
@@ -1405,9 +1358,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     });
 }
 
--(void) dealloc {
-    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
-}
+//-(void) dealloc {
+//    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
+//}
 
 @end
 

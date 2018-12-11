@@ -143,13 +143,15 @@
 }
 
 // Returns YES if the default avatar image should be applied afterwards
--(BOOL) applyAvatarConfig:(NINAvatarConfig*)config imageView:(UIImageView*)imageView {
+-(BOOL) applyAvatarConfig:(NINAvatarConfig*)config imageView:(UIImageView*)imageView widthConstraint:(NSLayoutConstraint*)widthConstraint {
     if (!config.show) {
         imageView.hidden = YES;
+        widthConstraint.constant = 14;
         return NO;
     }
 
     imageView.hidden = NO;
+    widthConstraint.constant = self.avatarContainerWidth;
 
     if (config.imageOverrideUrl != nil) {
         [imageView setImageWithURL:[NSURL URLWithString:config.imageOverrideUrl]];
@@ -189,7 +191,7 @@
 
     // Apply asset overrides
     [self applyCommonAssetOverrides:imageAssets colorAssets:colorAssets];
-    if ([self applyAvatarConfig:avatarConfig imageView:self.rightAvatarImageView]) {
+    if ([self applyAvatarConfig:avatarConfig imageView:self.rightAvatarImageView widthConstraint:self.rightAvatarWidthConstraint]) {
         [self.rightAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:imageAssets[NINImageAssetKeyChatAvatarRight]];
     }
     UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleRightText];
@@ -233,7 +235,7 @@
 
     // Apply asset overrides
     [self applyCommonAssetOverrides:imageAssets colorAssets:colorAssets];
-    if ([self applyAvatarConfig:avatarConfig imageView:self.leftAvatarImageView]) {
+    if ([self applyAvatarConfig:avatarConfig imageView:self.leftAvatarImageView widthConstraint:self.leftAvatarWidthConstraint]) {
         [self.leftAvatarImageView setImageWithURL:[NSURL URLWithString:avatarURL] placeholderImage:imageAssets[NINImageAssetKeyChatAvatarLeft]];
     }
     UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleLeftText];
