@@ -448,7 +448,11 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     };
 
     NSArray* sourceTypes = @[@(UIImagePickerControllerSourceTypeCamera), @(UIImagePickerControllerSourceTypePhotoLibrary)];
-    NSArray* sourceTitles = @[@"Camera", @"Photo Library"];
+
+    NSArray* sourceTitles = @[
+                              NSLocalizedStringFromTableInBundle(@"Camera", @"Localizable", findResourceBundle(), @""),
+                              NSLocalizedStringFromTableInBundle(@"Photo Library", @"Localizable", findResourceBundle(), @"")
+                              ];
 
     [NINChoiceDialog showWithOptionTitles:sourceTitles completion:^(BOOL canceled, NSInteger selectedIndex) {
         if (!canceled) {

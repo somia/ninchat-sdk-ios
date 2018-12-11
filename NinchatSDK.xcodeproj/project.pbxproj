@@ -57,6 +57,7 @@
 		495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 495762A120EE1AE000BC39A8 /* NINUtils.m */; };
 		4961A19D21B03BB9002ACB43 /* NINAvatarConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 4961A19B21B03BB8002ACB43 /* NINAvatarConfig.h */; };
 		4961A19E21B03BB9002ACB43 /* NINAvatarConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */; };
+		4961A1A121BFF65E002ACB43 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4961A1A321BFF65E002ACB43 /* Localizable.strings */; };
 		49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49622FAB214FCD3700570D59 /* NINFileInfo.h */; };
 		49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 49622FAC214FCD3700570D59 /* NINFileInfo.m */; };
 		496230142153E94800570D59 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
@@ -202,6 +203,8 @@
 		495762A120EE1AE000BC39A8 /* NINUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUtils.m; sourceTree = "<group>"; };
 		4961A19B21B03BB8002ACB43 /* NINAvatarConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NINAvatarConfig.h; sourceTree = "<group>"; };
 		4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NINAvatarConfig.m; sourceTree = "<group>"; };
+		4961A1A221BFF65E002ACB43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		4961A1A421BFF6B0002ACB43 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49622FAB214FCD3700570D59 /* NINFileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINFileInfo.h; sourceTree = "<group>"; };
 		49622FAC214FCD3700570D59 /* NINFileInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINFileInfo.m; sourceTree = "<group>"; };
 		496230132153E94800570D59 /* Libjingle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Libjingle.framework; sourceTree = "<group>"; };
@@ -557,6 +560,7 @@
 				499443B3208F320700101DCA /* NINChatSession.m */,
 				49140B7320F267EE00A00EA8 /* NINPublicTypes.h */,
 				499443BC208F37A300101DCA /* PrefixHeader.pch */,
+				4961A1A321BFF65E002ACB43 /* Localizable.strings */,
 			);
 			path = NinchatSDK;
 			sourceTree = "<group>";
@@ -827,6 +831,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				fi,
 			);
 			mainGroup = 4994434B208DF33400101DCA;
 			productRefGroup = 49944356208DF33400101DCA /* Products */;
@@ -853,6 +858,7 @@
 				494330CA213FB43C006E2C9C /* NINVideoCallConsentDialog.xib in Resources */,
 				494330D9213FBECD006E2C9C /* SourceSansPro-Light.ttf in Resources */,
 				494330E1213FBECD006E2C9C /* SourceSansPro-SemiBoldItalic.ttf in Resources */,
+				4961A1A121BFF65E002ACB43 /* Localizable.strings in Resources */,
 				49B699C02155550100E6C83D /* NinchatLowLevelClient.podspec in Resources */,
 				496F1EB92166316C006CF321 /* NINChoiceDialog.xib in Resources */,
 				494330E0213FBECD006E2C9C /* SourceSansPro-ExtraLightItalic.ttf in Resources */,
@@ -1021,11 +1027,24 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		4961A1A321BFF65E002ACB43 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4961A1A221BFF65E002ACB43 /* en */,
+				4961A1A421BFF6B0002ACB43 /* fi */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		49944367208DF33400101DCA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1092,6 +1111,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";

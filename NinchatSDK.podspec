@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.26"
+  s.version      = "0.0.27"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     ss.public_header_files = "NinchatSDK/*.h"
     #ss.prefix_header_file = "NinchatSDK/PrefixHeader.pch"
     ss.resource_bundles = {
-        "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets}"],
+        "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets,strings}"],
     }
   end
 
