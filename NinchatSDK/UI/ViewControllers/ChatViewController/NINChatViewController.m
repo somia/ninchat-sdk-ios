@@ -376,7 +376,16 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 -(void) applicationWillResignActive:(UIApplication*)application {
     NSLog(@"applicationWillResignActive:");
+
+    // Close any WebRTC session as the library does not recover from being
+    // backgrounded; should request for VoIP to do so
     [self disconnectWebRTC];
+
+    // Hide the video views
+    [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
+
+    // Get rid of the keyboard
+    [self.textInput resignFirstResponder];
 }
 
 -(void) sendTextMessage {
@@ -534,16 +543,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 -(void) textViewDidChange:(UITextView *)textView {
     [self updateTextInputPlaceholder];
 }
-
-//-(BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text {
-//    if ([text isEqualToString:@"\n"]){
-//        // Send button was pressed on the keyboard
-//        [self sendTextMessage];
-//        return NO;
-//    } else {
-//        return YES;
-//    }
-//}
 
 #pragma mark - From UIImagePickerControllerDelegate
 
@@ -774,16 +773,9 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
-//    __weak typeof(self) weakSelf = self;
-
     // Set the constraints so that video is initially hidden
     [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
 }
-
-//-(void) viewWillDisappear:(BOOL)animated {
-//    [super viewWillDisappear:animated];
-//
-//}
 
 -(void) viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -841,6 +833,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.microphoneEnabledButton.layer.cornerRadius = self.microphoneEnabledButton.bounds.size.height / 2;
     self.cameraEnabledButton.layer.cornerRadius = self.cameraEnabledButton.bounds.size.height / 2;
 
+    // Listen to app sent to background -notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 
     // Listen to chat ended messages
@@ -883,8 +876,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
 
     [self stopObserverChatEvents];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self.typingObserver];
-//    self.typingObserver = nil;
 
     [self disconnectWebRTC];
 }

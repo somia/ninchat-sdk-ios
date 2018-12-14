@@ -19,7 +19,15 @@
 #pragma mark - Private methods
 
 -(void) keyboardWillShow:(NSNotification*)notification {
-    CGSize keyboardSize = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
+    CGRect beginRect = [notification.userInfo[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
+    CGRect endRect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+
+    if (CGRectEqualToRect(beginRect, endRect)) {
+        // Keyboard already visible - take no action.
+        return;
+    }
+
+    CGSize keyboardSize = endRect.size;
     CGFloat animationDuration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
 
     CGFloat amountToRaiseView = keyboardSize.height;
