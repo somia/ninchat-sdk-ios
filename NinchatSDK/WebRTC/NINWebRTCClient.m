@@ -134,10 +134,10 @@
 
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
-        NSLog(@"WebRTC: got signaling message: %@", note.userInfo[@"messageType"]);
+//        NSLog(@"WebRTC: got signaling message: %@", note.userInfo[@"messageType"]);
 
         NSDictionary* payload = note.userInfo[@"payload"];
-        NSLog(@"WebRTC: Signaling message payload: %@", payload);
+//        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
             RTCICECandidate* candidate = [RTCICECandidate fromDictionary:payload[@"sdp"]];
@@ -165,7 +165,7 @@
     } else {
         // We are the 'callee', ie. we are answering.
         NSCAssert(sdp != nil, @"Must have Offer SDP data");
-        NSLog(@"WebRTC: answering call with SDP: %@", sdp);
+//        NSLog(@"WebRTC: answering call with SDP: %@", sdp);
         [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
     }
 }

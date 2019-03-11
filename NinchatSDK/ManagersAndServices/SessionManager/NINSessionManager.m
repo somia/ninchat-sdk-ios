@@ -703,7 +703,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [messageType isEqualToString:kNINMessageTypeWebRTCAnswer] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCOffer] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCCall] ||
-        [messageType isEqualToString:kNINMessageTypeWebRTCHangup]) {
+        [messageType isEqualToString:kNINMessageTypeWebRTCHangup] ||
+        [messageType isEqualToString:kNINMessageTypeWebRTCPickup]) {
+
+//        [self.ninchatSession sdklog:@"Got RTC signaling message from Ninchat API: %@", messageType];
 
         if (actionId != 0) {
             // This message originates from me; we can ignore it.
