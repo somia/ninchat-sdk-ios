@@ -8,14 +8,16 @@
 
 #import "RTCICECandidate+Dictionary.h"
 
-@implementation RTCICECandidate (Dictionary)
+@implementation RTCIceCandidate (Dictionary)
 
 -(NSDictionary*) dictionary {
     return @{@"label": @(self.sdpMLineIndex), @"id": self.sdpMid, @"candidate": self.sdp};
 }
 
-+(RTCICECandidate*) fromDictionary:(NSDictionary*)dictionary {
-    return [[RTCICECandidate alloc] initWithMid:dictionary[@"id"] index:[dictionary[@"label"] integerValue] sdp:dictionary[@"candidate"]];
++(RTCIceCandidate*) fromDictionary:(NSDictionary*)dictionary {
+//    return [[RTCIceCandidate alloc] initWithMid:dictionary[@"id"] index:[dictionary[@"label"] integerValue] sdp:dictionary[@"candidate"]];
+
+    return [[RTCIceCandidate alloc] initWithSdp:dictionary[@"candidate"] sdpMLineIndex:[dictionary[@"label"] intValue] sdpMid:dictionary[@"id"]];
 }
 
 @end

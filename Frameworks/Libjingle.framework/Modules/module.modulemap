@@ -1,6 +1,0 @@
-framework module Libjingle {
-  umbrella header "Libjingle.h"
-
-  export *
-  module * { export * }
-}

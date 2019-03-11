@@ -11,11 +11,11 @@
 @implementation RTCSessionDescription (Dictionary)
 
 -(NSDictionary*) dictionary {
-    return @{@"type": self.type, @"sdp": self.description};
+    return @{@"type": @(self.type), @"sdp": self.description};
 }
 
 +(RTCSessionDescription*) fromDictionary:(NSDictionary*)dictionary {
-    return [[RTCSessionDescription alloc] initWithType:dictionary[@"type"] sdp:dictionary[@"sdp"]];
+    return [[RTCSessionDescription alloc] initWithType:[dictionary[@"type"] intValue] sdp:dictionary[@"sdp"]];
 }
 
 @end

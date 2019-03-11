@@ -14,22 +14,26 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
+  - GoogleWebRTC (1.1.26989)
   - NinchatLowLevelClient (0.0.11)
 
 DEPENDENCIES:
   - AFNetworking (~> 3.0)
+  - GoogleWebRTC (~> 1.1)
   - NinchatLowLevelClient (~> 0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - AFNetworking
+    - GoogleWebRTC
   https://github.com/somia/ninchat-podspecs.git:
     - NinchatLowLevelClient
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  GoogleWebRTC: ee984407e3a0fa1183d605900d9c71eee8cbcbdf
   NinchatLowLevelClient: ecd9900e5795e60e3e5f5065f3bb1f61b566acb7
 
-PODFILE CHECKSUM: 296ce02410a26c53443136713a9e35e3cfdf66c7
+PODFILE CHECKSUM: 07674fd9c8d1ffe48ee21e4b680f5263977963e4
 
 COCOAPODS: 1.5.3

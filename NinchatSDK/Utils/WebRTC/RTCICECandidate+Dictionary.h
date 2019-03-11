@@ -6,17 +6,16 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-//#import "RTCICECandidate.h"
-@import Libjingle;
+@import WebRTC;
 
 /**
  * Methods for converting RTCICECandidate to / from dictionary representation.
  *
  * The dictionary format is compatible with JSON encoding of the object.
  */
-@interface RTCICECandidate (Dictionary)
+@interface RTCIceCandidate (Dictionary)
 
 -(NSDictionary*) dictionary;
-+(RTCICECandidate*) fromDictionary:(NSDictionary*)dictionary;
++(RTCIceCandidate*) fromDictionary:(NSDictionary*)dictionary;
 
 @end

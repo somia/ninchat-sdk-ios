@@ -8,7 +8,7 @@
 
 @import AVFoundation;
 
-@import Libjingle;
+@import WebRTC;
 
 #import "RTCSessionDescription+Dictionary.h"
 #import "RTCICECandidate+Dictionary.h"
@@ -21,8 +21,14 @@
 
 // See the WebRTC signaling diagram:
 // https://mdn.mozillademos.org/files/12363/WebRTC%20-%20Signaling%20Diagram.svg
+// See the iOS AppARD example implementation:
+// https://webrtc.googlesource.com/src/+/master/examples/objc/AppRTCMobile/ARDAppClient.m
 
-@interface NINWebRTCClient () <RTCPeerConnectionDelegate, RTCSessionDescriptionDelegate>
+static NSString* const kStreamId = @"NINCHATS";
+static NSString* const kAudioTrackId = @"NINCHATa0";
+static NSString* const kVideoTrackId = @"NINCHATv0";
+
+@interface NINWebRTCClient () <RTCPeerConnectionDelegate>
 
 // Session manager, used for signaling
 @property (nonatomic, weak) NINSessionManager* sessionManager;
@@ -34,7 +40,7 @@
 @property (nonatomic, strong) RTCPeerConnectionFactory* peerConnectionFactory;
 
 // List of our ICE servers (STUN, TURN)
-@property (nonatomic, strong) NSMutableArray<RTCICEServer*>* iceServers;
+@property (nonatomic, strong) NSMutableArray<RTCIceServer*>* iceServers;
 
 // Current RTC peer connection if any
 @property (nonatomic, strong) RTCPeerConnection* peerConnection;
@@ -57,13 +63,22 @@
 
 #pragma mark - Private Methods
 
--(RTCMediaConstraints*) defaultOfferConstraints {
-    NSArray* mandatoryConstraints = @[[[RTCPair alloc] initWithKey:@"OfferToReceiveAudio" value:@"true"],
-                                      [[RTCPair alloc] initWithKey:@"OfferToReceiveVideo" value:@"true"]];
+-(RTCMediaConstraints*) defaultOfferOrAnswerConstraints {
+    NSDictionary<NSString*, NSString*>* mandatoryConstraints = @{@"OfferToReceiveAudio": @"true", @"OfferToReceiveVideo": @"true"};
+
     return [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints optionalConstraints:nil];
 }
 
 -(RTCVideoTrack*) createLocalVideoTrack {
+    RTCVideoSource* videoSource = [self.peerConnectionFactory videoSource];
+
+#if !TARGET_IPHONE_SIMULATOR
+    // Camera capture only works on the device, not the simulator
+    RTCCameraVideoCapturer *capturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:videoSource];
+#endif
+    return [self.peerConnectionFactory videoTrackWithSource:videoSource trackId:kVideoTrackId];
+
+    /*
     RTCVideoTrack *localVideoTrack = nil;
 
 #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
@@ -83,11 +98,34 @@
     localVideoTrack = [self.peerConnectionFactory videoTrackWithID:@"ARDAMSv0" source:videoSource];
 #endif
     return localVideoTrack;
+    */
 }
 
--(RTCMediaStream*) createLocalMediaStream {
-    //TODO what are these labels
-    RTCMediaStream* localStream = [self.peerConnectionFactory mediaStreamWithLabel:@"ARDAMS"];
+-(void) createMediaSenders {
+    NSLog(@"Configuring local audio & video sources");
+
+    // Create local audio track
+    NSDictionary *mandatoryConstraints = @{};
+    RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints optionalConstraints:nil];
+    RTCAudioSource* audioSource = [self.peerConnectionFactory audioSourceWithConstraints:constraints];
+    RTCAudioTrack* audioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
+                                                                         trackId:kAudioTrackId];
+    [self.peerConnection addTrack:audioTrack streamIds:@[kStreamId]];
+
+    // Create local video track
+    RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
+    if (localVideoTrack != nil) {
+        [self.peerConnection addTrack:localVideoTrack streamIds:@[kStreamId]];
+
+//        [localStream addVideoTrack:localVideoTrack];
+//        [self.delegate webrtcClient:self didReceiveLocalVideoTrack:localVideoTrack];
+
+//        RTCVideoTrack* videoTrack = (RTCVideoTrack*)([self videoTransceiver].receiver.track);
+        [self.delegate webrtcClient:self didReceiveLocalVideoTrack:localVideoTrack];
+    }
+
+    /*
+    RTCMediaStream* localStream = [self.peerConnectionFactory mediaStreamWithStreamId:@"NINS"];
 
     RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
     if (localVideoTrack != nil) {
@@ -95,12 +133,79 @@
         [self.delegate webrtcClient:self didReceiveLocalVideoTrack:localVideoTrack];
     }
 
-    //TODO what are these labels
-    [localStream addAudioTrack:[self.peerConnectionFactory audioTrackWithID:@"ARDAMSa0"]];
+    [localStream addAudioTrack:[self.peerConnectionFactory audioTrackWithTrackId:@"NINSa0"]];
 
     //TODO
 //    if (_isSpeakerEnabled) [self enableSpeaker];
     return localStream;
+     */
+}
+
+-(void) didCreateSessionDescription:(RTCSessionDescription*)sdp error:(NSError*)error {
+    NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+    NSLog(@"didCreateSessionDescription: error: %@", error);
+
+    if (error != nil) {
+        NSLog(@"WebRTC: got create session error: %@", error);
+        [self disconnect];
+        [self.delegate webrtcClient:self didGetError:error];
+        return;
+    }
+
+    __weak typeof(self) weakSelf = self;
+
+    [self.peerConnection setLocalDescription:sdp completionHandler:^(NSError * _Nullable error) {
+        runOnMainThread(^{
+            NSLog(@"setLocalDescription error: %@", error);
+            [weakSelf didSetSessionDescription:error];
+        });
+    }];
+
+    // Decide what type of signaling message to send based on the SDP type
+    NSDictionary* typeMap = @{@(RTCSdpTypeOffer): kNINMessageTypeWebRTCOffer, @(RTCSdpTypeAnswer): kNINMessageTypeWebRTCAnswer};
+    NSString* messageType = typeMap[@(sdp.type)];
+    if (messageType == nil) {
+        NSLog(@"WebRTC: Unknown SDP type: %ld", (long)sdp.type);
+        return;
+    }
+
+    //        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
+
+    // Send signaling message about the offer/answer
+    [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
+        if (error != nil) {
+            NSLog(@"WebRTC: Message send error: %@", error);
+            [NINToast showWithErrorMessage:@"Failed to send RTC signaling message" callback:nil];
+        }
+    }];
+
+}
+
+-(void) didSetSessionDescription:(NSError*)error {
+    NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+    NSLog(@"didSetSessionDescription: error: %@", error);
+
+    if (error != nil) {
+        NSLog(@"WebRTC: got set session error: %@", error);
+        [self disconnect];
+        [self.delegate webrtcClient:self didGetError:error];
+        return;
+    }
+
+    __weak typeof(self) weakSelf = self;
+
+    if ((self.operatingMode == NINWebRTCClientOperatingModeCallee) && (self.peerConnection.localDescription == nil)) {
+        NSLog(@"WebRTC: Creating answer");
+
+        RTCMediaConstraints* constraints = [self defaultOfferOrAnswerConstraints];
+        [self.peerConnection answerForConstraints:constraints completionHandler:^(RTCSessionDescription * _Nullable sdp, NSError * _Nullable error) {
+            runOnMainThread(^{
+                [weakSelf didCreateSessionDescription:sdp error:error];
+            });
+        }];
+    }
 }
 
 #pragma mark - Public Methods
@@ -140,33 +245,61 @@
 //        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
-            RTCICECandidate* candidate = [RTCICECandidate fromDictionary:payload[@"sdp"]];
-            [weakSelf.peerConnection addICECandidate:candidate];
+            RTCIceCandidate* candidate = [RTCIceCandidate fromDictionary:payload[@"sdp"]];
+            [weakSelf.peerConnection addIceCandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
             RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
             NSCAssert(description != nil, @"Session description cannot be null");
-            NSLog(@"Setting local remote description with SDP: %@", description);
-            [weakSelf.peerConnection setRemoteDescriptionWithDelegate:weakSelf sessionDescription:description];
+            NSLog(@"Setting remote description with SDP: %@", description);
+
+            [weakSelf.peerConnection setRemoteDescription:description completionHandler:^(NSError * _Nullable error) {
+                runOnMainThread(^{
+                    [weakSelf didSetSessionDescription:error];
+                });
+            }];
         }
 
         return NO;
     });
 
-    NSArray* optionalConstraints = @[[[RTCPair alloc] initWithKey:@"DtlsSrtpKeyAgreement" value:@"true"]];
+    // Configure & create our RTC peer connection
+    NSDictionary<NSString*, NSString*>* optionalConstraints = @{@"DtlsSrtpKeyAgreement": @"true"};
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:optionalConstraints];
 
-    self.peerConnection = [self.peerConnectionFactory peerConnectionWithICEServers:self.iceServers constraints:constraints delegate:self];
-    [self.peerConnection addStream:[self createLocalMediaStream]];
+    RTCConfiguration* configuration = [[RTCConfiguration alloc] init];
+    configuration.iceServers = self.iceServers;
+    configuration.sdpSemantics = RTCSdpSemanticsUnifiedPlan;
+    RTCCertificate *pcert = [RTCCertificate generateCertificateWithParams:@{@"expires" : @100000,
+                                                                            @"name" : @"RSASSA-PKCS1-v1_5"}];
+    configuration.certificate = pcert;
+
+    self.peerConnection = [self.peerConnectionFactory peerConnectionWithConfiguration:configuration constraints:constraints delegate:self];
+//    [self.peerConnection addStream:[self createLocalMediaStream]];
+
+    // Set up the local audio & video sources / tracks
+    [self createMediaSenders];
 
     if (self.operatingMode == NINWebRTCClientOperatingModeCaller) {
         // We are the 'caller', ie. the connection initiator; create a connection offer
         NSLog(@"WebRTC: making a call.");
-        [self.peerConnection createOfferWithDelegate:self constraints:[self defaultOfferConstraints]];
+        [self.peerConnection offerForConstraints:[self defaultOfferOrAnswerConstraints] completionHandler:^(RTCSessionDescription * _Nullable sdp, NSError * _Nullable error) {
+            NSLog(@"Created SDK offer with error: %@", error);
+
+            runOnMainThread(^{
+                [weakSelf didCreateSessionDescription:sdp error:error];
+            });
+        }];
     } else {
         // We are the 'callee', ie. we are answering.
         NSCAssert(sdp != nil, @"Must have Offer SDP data");
 //        NSLog(@"WebRTC: answering call with SDP: %@", sdp);
-        [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
+        [self.peerConnection setRemoteDescription:[RTCSessionDescription fromDictionary:sdp] completionHandler:^(NSError * _Nullable error) {
+            runOnMainThread(^{
+                [weakSelf didSetSessionDescription:error];
+            });
+        }];
+//        [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
+
     }
 }
 
@@ -220,7 +353,19 @@
 
 #pragma mark - From RTCPeerConnectionDelegate
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream {
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream {
+//    NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
+//
+//    runOnMainThread(^{
+//        if (stream.videoTracks.count > 0) {
+//            [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:stream.videoTracks[0]];
+//            //            if (_isSpeakerEnabled) [self enableSpeaker]; //Use the "handsfree" speaker instead of the ear speaker.
+//        }
+//    });
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didAddStream:(nonnull RTCMediaStream *)stream {
+
     NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
 
     runOnMainThread(^{
@@ -235,7 +380,19 @@
     NSLog(@"WebRTC: opened data channel: %@", dataChannel);
 }
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCICECandidate *)candidate {
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCIceCandidate *)candidate {
+//    NSLog(@"WebRTC: got ICE candidate: %@", candidate);
+//
+//    runOnMainThread(^{
+//        [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCIceCandidate payloadDict:@{@"candidate": candidate.dictionary} completion:^(NSError* error) {
+//            if (error != nil) {
+//                NSLog(@"WebRTC: Failed to send ICE candidate: %@", error);
+//            }
+//        }];
+//    });
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didGenerateIceCandidate:(nonnull RTCIceCandidate *)candidate {
     NSLog(@"WebRTC: got ICE candidate: %@", candidate);
 
     runOnMainThread(^{
@@ -247,29 +404,58 @@
     });
 }
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCICEConnectionState)newState {
-    NSLog(@"WebRTC: ICE connection state changed: %d", newState);
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCIceConnectionState)newState {
+//    NSLog(@"WebRTC: ICE connection state changed: %ld", (long)newState);
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeIceConnectionState:(RTCIceConnectionState)newState {
+    NSLog(@"WebRTC: ICE connection state changed: %ld", (long)newState);
 }
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection iceGatheringChanged:(RTCICEGatheringState)newState {
-//    NSLog(@"WebRTC: ICE gathering state changed: %d", newState);
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection iceGatheringChanged:(RTCIceGatheringState)newState {
+////    NSLog(@"WebRTC: ICE gathering state changed: %d", newState);
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeIceGatheringState:(RTCIceGatheringState)newState {
+    NSLog(@"WebRTC: ICE gathering state changed: %ld", (long)newState);
 }
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection removedStream:(RTCMediaStream *)stream {
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection removedStream:(RTCMediaStream *)stream {
+//    NSLog(@"WebRTC: removed stream: %@", stream);
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didRemoveStream:(nonnull RTCMediaStream *)stream {
     NSLog(@"WebRTC: removed stream: %@", stream);
 }
 
--(void) peerConnection:(RTCPeerConnection *)peerConnection signalingStateChanged:(RTCSignalingState)stateChanged {
-//    NSLog(@"WebRTC: Signaling state changed: %d", stateChanged);
+//-(void) peerConnection:(RTCPeerConnection *)peerConnection signalingStateChanged:(RTCSignalingState)stateChanged {
+////    NSLog(@"WebRTC: Signaling state changed: %d", stateChanged);
+//}
+
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeSignalingState:(RTCSignalingState)stateChanged {
+    // No op
 }
 
--(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection {
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didRemoveIceCandidates:(nonnull NSArray<RTCIceCandidate *> *)candidates {
+    NSLog(@"Removed ice candidates: %@", candidates);
+}
+
+//-(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection {
+//    //TODO see:
+//    // https://stackoverflow.com/questions/31165316/webrtc-renegotiate-the-peer-connection-to-switch-streams
+//    // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
+////    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
+//}
+
+- (void)peerConnectionShouldNegotiate:(nonnull RTCPeerConnection *)peerConnection {
     //TODO see:
     // https://stackoverflow.com/questions/31165316/webrtc-renegotiate-the-peer-connection-to-switch-streams
     // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
-//    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
+    //    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
 }
 
+
+/*
 #pragma mark - From RTCSessionDescriptionDelegate
 
 - (void)peerConnection:(RTCPeerConnection *)peerConnection didCreateSessionDescription:(RTCSessionDescription *)sdp error:(NSError *)error {
@@ -324,6 +510,7 @@
         }
     });
 }
+*/
 
 #pragma mark - Initializers
 

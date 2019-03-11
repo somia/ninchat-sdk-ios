@@ -6,8 +6,7 @@
 //  Copyright © 2018 Somia Reality Oy. All rights reserved.
 //
 
-//#import "RTCSessionDescription.h"
-@import Libjingle;
+@import WebRTC;
 
 /**
  * Methods for converting RTCSessionDescription to / from dictionary representation.

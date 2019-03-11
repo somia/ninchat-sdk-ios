@@ -2,7 +2,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.28"
+  s.version      = "0.0.29"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
@@ -12,21 +12,10 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "9.0"
 
-  # Handle libjingle_peerconnection as a subspec; its static binary is vendored as a framework
-  s.subspec "Libjingle" do |lj|
-    lj.vendored_frameworks = "Frameworks/Libjingle.framework"
-    lj.frameworks = "VideoToolbox", "AVFoundation", "CoreMedia", "AudioToolbox", "GLKit"
-    lj.libraries = "stdc++"
-  end
-
   # Handle the SDK itself as a subspec with dependencies to the frameworks
   s.subspec "SDK" do |ss|
-      #ss.dependency "#{s.name}/Client"
-    ss.dependency "#{s.name}/Libjingle"
-
     ss.source_files  = "NinchatSDK/**/*.{h,m}"
     ss.public_header_files = "NinchatSDK/*.h"
-    #ss.prefix_header_file = "NinchatSDK/PrefixHeader.pch"
     ss.resource_bundles = {
         "NinchatSDKUI" => ["NinchatSDK/**/*.{storyboard,xib,xcassets,strings}"],
     }
@@ -53,6 +42,7 @@ Pod::Spec.new do |s|
   # Cocoapods dependencies
   s.dependency "AFNetworking", "~> 3.0"
   s.dependency "NinchatLowLevelClient", "~> 0"
+  s.dependency "GoogleWebRTC", "~> 1.1"
 
   s.module_name = "NinchatSDK"
   s.requires_arc = true

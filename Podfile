@@ -7,6 +7,7 @@ source 'https://github.com/somia/ninchat-podspecs.git'
 def all_pods
     pod 'AFNetworking', '~> 3.0'
     pod 'NinchatLowLevelClient', '~> 0'
+    pod 'GoogleWebRTC', '~> 1.1'
     #pod 'NinchatLowLevelClient', :path => '.'
 end
 

@@ -60,7 +60,6 @@
 		4961A1A121BFF65E002ACB43 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4961A1A321BFF65E002ACB43 /* Localizable.strings */; };
 		49622FAD214FCD3700570D59 /* NINFileInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 49622FAB214FCD3700570D59 /* NINFileInfo.h */; };
 		49622FAE214FCD3700570D59 /* NINFileInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 49622FAC214FCD3700570D59 /* NINFileInfo.m */; };
-		496230142153E94800570D59 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		496230162153EC2F00570D59 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
 		496230182153EC4A00570D59 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
 		496230192153ED6300570D59 /* NINPublicTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7320F267EE00A00EA8 /* NINPublicTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -120,7 +119,6 @@
 		49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 49CD077E216205C600046AB9 /* NINVideoThumbnailManager.h */; };
 		49CD0781216205C600046AB9 /* NINVideoThumbnailManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CD077F216205C600046AB9 /* NINVideoThumbnailManager.m */; };
 		49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D77F1F21563EBA00900224 /* NSString+NinchatTests.m */; };
-		49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230132153E94800570D59 /* Libjingle.framework */; };
 		49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230152153EC2F00570D59 /* libstdc++.tbd */; };
 		49D77F2321563FAC00900224 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 496230172153EC4A00570D59 /* VideoToolbox.framework */; };
 		49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */ = {isa = PBXBuildFile; fileRef = 49D77F242156497600900224 /* UITextView+Ninchat.h */; };
@@ -207,7 +205,6 @@
 		4961A1A421BFF6B0002ACB43 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		49622FAB214FCD3700570D59 /* NINFileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINFileInfo.h; sourceTree = "<group>"; };
 		49622FAC214FCD3700570D59 /* NINFileInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINFileInfo.m; sourceTree = "<group>"; };
-		496230132153E94800570D59 /* Libjingle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Libjingle.framework; sourceTree = "<group>"; };
 		496230152153EC2F00570D59 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
 		496230172153EC4A00570D59 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		496F1EAA2164F3A5006CF321 /* UIButton+Ninchat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+Ninchat.h"; sourceTree = "<group>"; };
@@ -302,7 +299,6 @@
 			files = (
 				496230182153EC4A00570D59 /* VideoToolbox.framework in Frameworks */,
 				496230162153EC2F00570D59 /* libstdc++.tbd in Frameworks */,
-				496230142153E94800570D59 /* Libjingle.framework in Frameworks */,
 				3B7C28569C52B8BCE90E5F43 /* Pods_NinchatSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,7 +308,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49D77F2221563FA900900224 /* libstdc++.tbd in Frameworks */,
-				49D77F2121563F9E00900224 /* Libjingle.framework in Frameworks */,
 				49D77F2321563FAC00900224 /* VideoToolbox.framework in Frameworks */,
 				4994435F208DF33400101DCA /* NinchatSDK.framework in Frameworks */,
 				7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */,
@@ -580,7 +575,6 @@
 			children = (
 				496230172153EC4A00570D59 /* VideoToolbox.framework */,
 				496230152153EC2F00570D59 /* libstdc++.tbd */,
-				496230132153E94800570D59 /* Libjingle.framework */,
 				5317ED40D8AD5529D4109826 /* Pods_NinchatSDK.framework */,
 				CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */,
 			);
@@ -898,10 +892,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
+				"${PODS_ROOT}/GoogleWebRTC/Frameworks/frameworks/WebRTC.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

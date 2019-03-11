@@ -11,7 +11,7 @@
 @import AVKit;
 @import Photos;
 
-@import Libjingle;
+@import WebRTC;
 
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"
@@ -41,7 +41,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 static NSString* const kCloseChatText = @"Close chat";
 static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
-@interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCEAGLVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
+@interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
 @property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
@@ -637,7 +637,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self.remoteVideoTrack addRenderer:self.remoteVideoView];
 }
 
-#pragma mark - From RTCEAGLVideoViewDelegate
+#pragma mark - From RTCVideoViewDelegate
 
 - (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
 //    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
