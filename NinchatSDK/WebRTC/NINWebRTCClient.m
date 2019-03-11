@@ -121,8 +121,6 @@
     
     [NSNotificationCenter.defaultCenter removeObserver:self.signalingObserver];
     self.signalingObserver = nil;
-
-    [self.sessionManager.ninchatSession sdklog:@"WebRTC Client disconnected."];
 }
 
 -(void) startWithSDP:(NSDictionary*)sdp {

@@ -377,15 +377,22 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 -(void) applicationWillResignActive:(UIApplication*)application {
     NSLog(@"applicationWillResignActive:");
 
-    // Close any WebRTC session as the library does not recover from being
-    // backgrounded; should request for VoIP to do so
-    [self disconnectWebRTC];
+    [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCHangup payloadDict:@{} completion:^(NSError* error) {
 
-    // Hide the video views
-    [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
+        if (error != nil) {
+            NSLog(@"Failed to send hang-up: %@", error);
+        }
 
-    // Get rid of the keyboard
-    [self.textInput resignFirstResponder];
+        // Close any WebRTC session as the library does not recover from being
+        // backgrounded; should request for VoIP to do so
+        [self disconnectWebRTC];
+
+        // Hide the video views
+        [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
+
+        // Get rid of the keyboard
+        [self.textInput resignFirstResponder];
+    }];
 }
 
 -(void) sendTextMessage {
