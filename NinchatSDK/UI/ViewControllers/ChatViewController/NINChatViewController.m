@@ -44,8 +44,11 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 @interface NINChatViewController () <NINChatViewDataSource, NINChatViewDelegate, NINWebRTCClientDelegate, RTCVideoViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 
 // Our video views; one for remote (received) and one for local (capturing device camera feed)
-@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
-@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* localVideoView;
+//@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* remoteVideoView;
+//@property (strong, nonatomic) IBOutlet RTCEAGLVideoView* localVideoView;
+
+@property (strong, nonatomic) IBOutlet UIView* remoteVideoViewContainer;
+@property (strong, nonatomic) IBOutlet RTCCameraPreviewView* localVideoView;
 
 // Remote video view constraints for adjusting aspect ratio
 @property (strong, nonatomic) IBOutlet NSLayoutConstraint* remoteViewWidthConstraint;
@@ -104,11 +107,14 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 @property (strong, nonatomic) RTCVideoTrack* remoteVideoTrack;
 
 // Local video track
-@property (strong, nonatomic) RTCVideoTrack* localVideoTrack;
+//@property (strong, nonatomic) RTCVideoTrack* localVideoTrack;
 
 // Video resolutions - used for adjusting aspect ratio
 @property (assign, nonatomic) CGSize remoteVideoSize;
-@property (assign, nonatomic) CGSize localVideoSize;
+//@property (assign, nonatomic) CGSize localVideoSize;
+
+// Remote video view. Implementing class varies whether or not Metal is supported.
+@property (nonatomic, strong) __kindof UIView<RTCVideoRenderer>* remoteVideoView;
 
 // WebRTC client for the video call.
 @property (nonatomic, strong) NINWebRTCClient* webrtcClient;
@@ -226,6 +232,56 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     }
 }
 
+-(void) resizeRemoteVideoViewForVideoSize:(CGSize)videoSize {
+    NSLog(@"Adjusting remote video view size");
+
+    CGSize defaultAspectRatio = CGSizeMake(4, 3);
+    CGSize aspectRatio = CGSizeEqualToSize(videoSize, CGSizeZero) ? defaultAspectRatio : videoSize;
+
+    self.remoteVideoSize = videoSize;
+
+    // Fit the remote video view inside the view container with proper aspect ratio
+    CGRect videoRect = self.videoContainerView.bounds;
+    CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+
+    //        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
+
+    self.remoteViewWidthConstraint.constant = videoFrame.size.width;
+    self.remoteViewHeightConstraint.constant = videoFrame.size.height;
+
+    // Animate the frame size change
+    [UIView animateWithDuration:0.4f animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+-(void) resizeLocalVideoView {
+    NSLog(@"Adjusting local video view size");
+
+    CGFloat containerWidth = self.videoContainerView.bounds.size.width;
+    CGFloat containerHeight = self.videoContainerView.bounds.size.height;
+    CGSize defaultAspectRatio = CGSizeMake(4, 3);
+    CGSize videoSize = CGSizeMake(120, 120);
+    CGSize aspectRatio = CGSizeEqualToSize(videoSize, CGSizeZero) ? defaultAspectRatio : videoSize;
+
+    NSLog(@"Adjusting local video view size");
+//    self.localVideoSize = videoSize;
+
+    // Fit the local video view inside a box sized proportionately to the video container
+    CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
+    CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+
+    //        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
+
+    self.localViewWidthConstraint.constant = videoFrame.size.width;
+    self.localViewHeightConstraint.constant = videoFrame.size.height;
+
+    // Animate the frame size change
+    [UIView animateWithDuration:0.4f animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
 -(void) adjustConstraintsForSize:(CGSize)size animate:(BOOL)animate {
     BOOL portrait = (size.height > size.width);
 
@@ -300,7 +356,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
             NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
 
             NSDictionary* offerPayload = note.userInfo[@"payload"];
-//            NSLog(@"Offer payload: %@", offerPayload);
+            NSLog(@"Offer payload: %@", offerPayload);
 
             // Fetch our STUN / TURN server information
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {
@@ -344,19 +400,8 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     if (self.webrtcClient != nil) {
         NSLog(@"Disconnecting webrtc resources");
 
-        // Clean up local video view
-        if (self.localVideoTrack != nil) {
-            [self.localVideoTrack removeRenderer:self.localVideoView];
-        }
-        self.localVideoTrack = nil;
-        [self.localVideoView renderFrame:nil];
-
-        // Clean up remote video view
-        if (self.remoteVideoTrack != nil) {
-            [self.remoteVideoTrack removeRenderer:self.remoteVideoView];
-        }
         self.remoteVideoTrack = nil;
-        [self.remoteVideoView renderFrame:nil];
+        self.localVideoView.captureSession = nil;
 
         // Finally, disconnect the WebRTC client.
         [self.webrtcClient disconnect];
@@ -370,8 +415,11 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 }
 
 -(void) orientationChanged:(NSNotification*)notification {
-    [self videoView:self.remoteVideoView didChangeVideoSize:self.remoteVideoSize];
-    [self videoView:self.localVideoView didChangeVideoSize:self.localVideoSize];
+//    [self videoView:self.remoteVideoView didChangeVideoSize:self.remoteVideoSize];
+//    [self videoView:self.localVideoView didChangeVideoSize:self.localVideoSize];
+
+    [self resizeRemoteVideoViewForVideoSize:self.remoteVideoSize];
+    [self resizeLocalVideoView];
 }
 
 -(void) applicationWillResignActive:(UIApplication*)application {
@@ -617,66 +665,114 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self adjustConstraintsForSize:self.view.bounds.size animate:YES];
 }
 
--(void) webrtcClient:(NINWebRTCClient *)client didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
-    NSLog(@"NINCHAT: didReceiveLocalVideoTrack: %@", localVideoTrack);
-
-    if (self.localVideoTrack != nil) {
-        [self.localVideoTrack removeRenderer:self.localVideoView];
-        self.localVideoTrack = nil;
-        [self.localVideoView renderFrame:nil];
-    }
-
-    self.localVideoTrack = localVideoTrack;
-    [self.localVideoTrack addRenderer:self.localVideoView];
+-(void) webrtcClient:(NINWebRTCClient*)client didCreateLocalCapturer:(RTCCameraVideoCapturer*)localCapturer {
+    NSLog(@"didCreateLocalCapturer: %@", localCapturer);
+    self.localVideoView.captureSession = localCapturer.captureSession;
 }
 
--(void) webrtcClient:(NINWebRTCClient *)client didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
+/** Called when the video call is initiated and the remote video track is available. */
+-(void) webrtcClient:(NINWebRTCClient*)client didReceiveRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
     NSLog(@"NINCHAT: didReceiveRemoteVideoTrack: %@", remoteVideoTrack);
 
+    if (self.remoteVideoView != nil) {
+        [self.remoteVideoView removeFromSuperview];
+        self.remoteVideoView = nil;
+    }
+
+#if defined(RTC_SUPPORTS_METAL)
+    RTCMTLVideoView* remoteView = [[RTCMTLVideoView alloc] initWithFrame:CGRectZero];
+    remoteView.delegate = self;
+    self.remoteVideoView = remoteView;
+#else
+    RTCEAGLVideoView* remoteView = [[RTCEAGLVideoView alloc] initWithFrame:CGRectZero];
+    remoteView.delegate = self;
+    self.remoteVideoView = remoteView;
+#endif
+
+    // Debug
+    self.remoteVideoView.backgroundColor = [UIColor yellowColor];
+    self.remoteVideoView.tag = 678;
+
+    // Anchor the remote view to its container view
+    self.remoteVideoView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.remoteVideoViewContainer addSubview:self.remoteVideoView];
+    NSArray<NSLayoutConstraint*>* constraints = constrainToMatch(self.remoteVideoViewContainer, self.remoteVideoView);
+    [NSLayoutConstraint activateConstraints:constraints];
+
+    if (remoteVideoTrack == self.remoteVideoTrack) {
+        return;
+    }
+    [self.remoteVideoTrack removeRenderer:self.remoteVideoView];
+    self.remoteVideoTrack = nil;
+    [self.remoteVideoView renderFrame:nil];
     self.remoteVideoTrack = remoteVideoTrack;
     [self.remoteVideoTrack addRenderer:self.remoteVideoView];
 }
 
+- (void)webrtcClient:(NINWebRTCClient *)client didChangeConnectionState:(RTCIceConnectionState)newState {
+    switch (newState) {
+        case RTCIceConnectionStateConnected:
+            NSLog(@"WebRTC Connected!");
+            break;
+        case RTCIceConnectionStateCompleted:
+            NSLog(@"WebRTC connection completed.");
+            break;
+        case RTCIceConnectionStateFailed:
+            NSLog(@"WebRTC connection failed.");
+            break;
+        case RTCIceConnectionStateDisconnected:
+            NSLog(@"WebRTC connection disconnected.");
+            break;
+        case RTCIceConnectionStateClosed:
+            NSLog(@"WebRTC connection closed.");
+            break;
+        default:
+            break;
+    }
+}
+
 #pragma mark - From RTCVideoViewDelegate
 
-- (void)videoView:(RTCEAGLVideoView *)videoView didChangeVideoSize:(CGSize)size {
-//    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
+-(void) videoView:(id<RTCVideoRenderer>)videoView didChangeVideoSize:(CGSize)size {
+    NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
 
-    CGFloat containerWidth = self.videoContainerView.bounds.size.width;
-    CGFloat containerHeight = self.videoContainerView.bounds.size.height;
-    CGSize defaultAspectRatio = CGSizeMake(4, 3);
-    CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+    [self resizeRemoteVideoViewForVideoSize:size];
 
-    if (videoView == self.localVideoView) {
-//        NSLog(@"Adjusting local video view size");
-        self.localVideoSize = size;
-
-        // Fit the local video view inside a box sized proportionately to the video container
-        CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
-        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
-
-//        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
-
-        self.localViewWidthConstraint.constant = videoFrame.size.width;
-        self.localViewHeightConstraint.constant = videoFrame.size.height;
-    } else {
-//        NSLog(@"Adjusting remote video view size");
-        self.remoteVideoSize = size;
-
-        // Fit the remote video view inside the view container with proper aspect ratio
-        CGRect videoRect = self.videoContainerView.bounds;
-        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
-
-//        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
-
-        self.remoteViewWidthConstraint.constant = videoFrame.size.width;
-        self.remoteViewHeightConstraint.constant = videoFrame.size.height;
-    }
-
-    // Animate the frame size change
-    [UIView animateWithDuration:0.4f animations:^{
-        [self.view layoutIfNeeded];
-    }];
+    //    CGFloat containerWidth = self.videoContainerView.bounds.size.width;
+    //    CGFloat containerHeight = self.videoContainerView.bounds.size.height;
+    //    CGSize defaultAspectRatio = CGSizeMake(4, 3);
+    //    CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
+    //
+    //    if ((RTCCameraPreviewView*)videoView == self.localVideoView) {
+    //        NSLog(@"Adjusting local video view size");
+    //        self.localVideoSize = size;
+    //
+    //        // Fit the local video view inside a box sized proportionately to the video container
+    //        CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
+    //        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+    //
+    ////        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
+    //
+    //        self.localViewWidthConstraint.constant = videoFrame.size.width;
+    //        self.localViewHeightConstraint.constant = videoFrame.size.height;
+    //    } else {
+    //        NSLog(@"Adjusting remote video view size");
+    //        self.remoteVideoSize = size;
+    //
+    //        // Fit the remote video view inside the view container with proper aspect ratio
+    //        CGRect videoRect = self.videoContainerView.bounds;
+    //        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+    //
+    ////        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
+    //
+    //        self.remoteViewWidthConstraint.constant = videoFrame.size.width;
+    //        self.remoteViewHeightConstraint.constant = videoFrame.size.height;
+    //    }
+    //
+    //    // Animate the frame size change
+    //    [UIView animateWithDuration:0.4f animations:^{
+    //        [self.view layoutIfNeeded];
+    //    }];
 }
 
 #pragma mark - From UIViewController
@@ -824,8 +920,8 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.chatView.dataSource = self;
     self.chatView.delegate = self;
 
-    self.remoteVideoView.delegate = self;
-    self.localVideoView.delegate = self;
+    //    self.remoteVideoView.delegate = self;
+    //    self.localVideoView.delegate = self;
 
     // Add tap gesture recognizer for the input controls container view
     UIGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inputControlsContainerTapped:)];

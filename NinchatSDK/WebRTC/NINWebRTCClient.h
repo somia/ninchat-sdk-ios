@@ -8,20 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
+@import WebRTC;
+
 #import "NINPrivateTypes.h"
 
 @class NINSessionManager;
 @class NINWebRTCServerInfo;
 @class NINWebRTCClient;
-@class RTCVideoTrack;
 
 /**
  * Delegate protocol for NINWebRTCClient. All the methods are called on the main thread.
  */
 @protocol NINWebRTCClientDelegate <NSObject>
 
-/** A new local video track was initiated. */
--(void) webrtcClient:(NINWebRTCClient*)client didReceiveLocalVideoTrack:(RTCVideoTrack*)localVideoTrack;
+/** Connection state was changed. */
+-(void) webrtcClient:(NINWebRTCClient*)client didChangeConnectionState:(RTCIceConnectionState)newState;
+
+/** A local video capturer was created. */
+-(void) webrtcClient:(NINWebRTCClient*)client didCreateLocalCapturer:(RTCCameraVideoCapturer*)localCapturer;
 
 /** A new remote video track was initiated. */
 -(void) webrtcClient:(NINWebRTCClient*)client didReceiveRemoteVideoTrack:(RTCVideoTrack*)remoteVideoTrack;

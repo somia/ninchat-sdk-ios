@@ -8,8 +8,6 @@
 
 @import AVFoundation;
 
-@import WebRTC;
-
 #import "RTCSessionDescription+Dictionary.h"
 #import "RTCICECandidate+Dictionary.h"
 
@@ -21,9 +19,11 @@
 
 // See the WebRTC signaling diagram:
 // https://mdn.mozillademos.org/files/12363/WebRTC%20-%20Signaling%20Diagram.svg
+//
 // See the iOS AppARD example implementation:
 // https://webrtc.googlesource.com/src/+/master/examples/objc/AppRTCMobile/ARDAppClient.m
 
+// RTC stream / track IDs
 static NSString* const kStreamId = @"NINCHATS";
 static NSString* const kAudioTrackId = @"NINCHATa0";
 static NSString* const kVideoTrackId = @"NINCHATv0";
@@ -48,14 +48,23 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 // NSNotificationCenter observer for WebRTC signaling events from session manager
 @property (nonatomic, strong) id<NSObject> signalingObserver;
 
+// Local video capturer
+@property (nonatomic, strong) RTCCameraVideoCapturer* localCapturer;
+
 // Default local audio track
 @property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
 
 // Default local video track
 @property(nonatomic, strong) RTCVideoTrack* defaultLocalVideoTrack;
 
-// Whether to enable the speaker
-//@property (nonatomic, assign) BOOL isSpeakerEnabled;
+// Mapping for the ICE signaling state --> state name
+@property (nonatomic, strong) NSDictionary<NSNumber*, NSString*>* iceSignalingStates;
+
+// Mapping for the ICE connection state --> state name
+@property (nonatomic, strong) NSDictionary<NSNumber*, NSString*>* iceConnectionStates;
+
+// Mapping for the ICE gathering state --> state name
+@property (nonatomic, strong) NSDictionary<NSNumber*, NSString*>* iceGatheringStates;
 
 @end
 
@@ -63,10 +72,111 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 
 #pragma mark - Private Methods
 
+-(RTCRtpTransceiver*) videoTransceiver {
+    for (RTCRtpTransceiver* transceiver in self.peerConnection.transceivers) {
+        if (transceiver.mediaType == RTCRtpMediaTypeVideo) {
+            return transceiver;
+        }
+    }
+
+    return nil;
+}
+
 -(RTCMediaConstraints*) defaultOfferOrAnswerConstraints {
     NSDictionary<NSString*, NSString*>* mandatoryConstraints = @{@"OfferToReceiveAudio": @"true", @"OfferToReceiveVideo": @"true"};
 
     return [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints optionalConstraints:nil];
+}
+
+-(void) startLocalCapture {
+    AVCaptureDevicePosition position = AVCaptureDevicePositionFront;
+    AVCaptureDevice* device = [self findCaptureDeviceForPosition:position];
+    NSCAssert(device != nil, @"Failed to find device");
+    AVCaptureDeviceFormat* format = [self selectFormatForDevice:device];
+
+    if (format == nil) {
+        [self.sessionManager.ninchatSession sdklog:@"** ERROR No valid formats for device %@", device];
+        return;
+    }
+
+    NSLog(@"Starting local video capturing..");
+
+//    [self.localCapturer startCaptureWithDevice:device format:format fps:[self selectFpsForFormat:format]];
+
+    NSInteger fps = [self selectFpsForFormat:format];
+    NSLog(@"Using FPS: %ld for local capture", (long)fps);
+
+    [self.localCapturer startCaptureWithDevice:device format:format fps:fps completionHandler:^(NSError * _Nonnull error) {
+        if (error != nil) {
+            [self.sessionManager.ninchatSession sdklog:@"** ERROR failed to start local capture: %@", error];
+            return;
+        }
+
+        NSLog(@"Local capture started OK.");
+    }];
+}
+
+-(void) stopLocalCapture {
+    NSLog(@"Stopping local video capturing..");
+    [self.localCapturer stopCapture];
+}
+
+-(AVCaptureDevice*) findCaptureDeviceForPosition:(AVCaptureDevicePosition)position {
+    NSArray<AVCaptureDevice*>* captureDevices = [RTCCameraVideoCapturer captureDevices];
+
+    for (AVCaptureDevice* device in captureDevices) {
+        if (device.position == position) {
+            return device;
+        }
+    }
+
+    return captureDevices[0];
+}
+
+-(AVCaptureDeviceFormat*) selectFormatForDevice:(AVCaptureDevice*)device {
+    NSArray<AVCaptureDeviceFormat*>* formats = [RTCCameraVideoCapturer supportedFormatsForDevice:device];
+    AVCaptureDeviceFormat* selectedFormat = formats.firstObject;
+
+    // We will try to find closest match for this video dimension
+    CGSize targetDimension = CGSizeMake(640, 480);
+    NSInteger currentDiff = INT_MAX;
+
+    for (AVCaptureDeviceFormat* format in formats) {
+//        NSLog(@"Device format found: %@", format.formatDescription);
+
+        //TODO look at the format resolution and try to match the current video window size.
+        
+//        FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+//        if (pixelFormat == self.localCapturer.preferredOutputPixelFormat) {
+//            selectedFormat = format;
+//        }
+
+        CMVideoDimensions dimension = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+        FourCharCode pixelFormat = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+//        NSLog(@"Device format found: %@, dimensions: %@, pixel format: %u", format.formatDescription, dimension, (unsigned int)pixelFormat);
+
+        int diff = fabs(targetDimension.width - dimension.width) + fabs(targetDimension.width - dimension.height);
+        if (diff < currentDiff) {
+            selectedFormat = format;
+            currentDiff = diff;
+        } else if (diff == currentDiff && pixelFormat == [self.localCapturer preferredOutputPixelFormat]) {
+            selectedFormat = format;
+        }
+    }
+
+    NSLog(@"Selected video format: %@", selectedFormat.formatDescription);
+
+    return selectedFormat;
+}
+
+-(NSInteger) selectFpsForFormat:(AVCaptureDeviceFormat*)format {
+    Float64 maxSupportedFramerate = 0;
+
+    for (AVFrameRateRange* fpsRange in format.videoSupportedFrameRateRanges) {
+        maxSupportedFramerate = fmax(maxSupportedFramerate, fpsRange.maxFrameRate);
+    }
+
+    return fmin(maxSupportedFramerate, 30);
 }
 
 -(RTCVideoTrack*) createLocalVideoTrack {
@@ -74,38 +184,39 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 
 #if !TARGET_IPHONE_SIMULATOR
     // Camera capture only works on the device, not the simulator
-    RTCCameraVideoCapturer *capturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:videoSource];
+    self.localCapturer = [[RTCCameraVideoCapturer alloc] initWithDelegate:videoSource];
+    [self.delegate webrtcClient:self didCreateLocalCapturer:self.localCapturer];
+    [self startLocalCapture];
 #endif
+
     return [self.peerConnectionFactory videoTrackWithSource:videoSource trackId:kVideoTrackId];
 
-    /*
-    RTCVideoTrack *localVideoTrack = nil;
-
-#if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
-    // Camera capture only works on the device, not the simulator
-    NSString* cameraID = nil;
-    for (AVCaptureDevice* captureDevice in [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo]) {
-        if (captureDevice.position == AVCaptureDevicePositionFront) {
-            cameraID = [captureDevice localizedName];
-            break;
-        }
-    }
-    NSCAssert(cameraID != nil, @"Unable to get the front camera id");
-
-    RTCVideoCapturer* capturer = [RTCVideoCapturer capturerWithDeviceName:cameraID];
-    RTCMediaConstraints* mediaConstraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:nil];
-    RTCVideoSource* videoSource = [self.peerConnectionFactory videoSourceWithCapturer:capturer constraints:mediaConstraints];
-    localVideoTrack = [self.peerConnectionFactory videoTrackWithID:@"ARDAMSv0" source:videoSource];
-#endif
-    return localVideoTrack;
-    */
+//    RTCVideoTrack *localVideoTrack = nil;
+//
+//#if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
+//    // Camera capture only works on the device, not the simulator
+//    NSString* cameraID = nil;
+//    for (AVCaptureDevice* captureDevice in [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo]) {
+//        if (captureDevice.position == AVCaptureDevicePositionFront) {
+//            cameraID = [captureDevice localizedName];
+//            break;
+//        }
+//    }
+//    NSCAssert(cameraID != nil, @"Unable to get the front camera id");
+//
+//    RTCVideoCapturer* capturer = [RTCVideoCapturer capturerWithDeviceName:cameraID];
+//    RTCMediaConstraints* mediaConstraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:nil];
+//    RTCVideoSource* videoSource = [self.peerConnectionFactory videoSourceWithCapturer:capturer constraints:mediaConstraints];
+//    localVideoTrack = [self.peerConnectionFactory videoTrackWithID:@"ARDAMSv0" source:videoSource];
+//#endif
+//    return localVideoTrack;
 }
 
 -(void) createMediaSenders {
     NSLog(@"Configuring local audio & video sources");
 
-    // Create local audio track
-    NSDictionary *mandatoryConstraints = @{};
+    // Create local audio track and add it to the peer connection
+    NSDictionary* mandatoryConstraints = @{};
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:mandatoryConstraints optionalConstraints:nil];
     RTCAudioSource* audioSource = [self.peerConnectionFactory audioSourceWithConstraints:constraints];
     RTCAudioTrack* audioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
@@ -115,13 +226,12 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     // Create local video track
     RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
     if (localVideoTrack != nil) {
+        // Add the local video track to the peer connection
         [self.peerConnection addTrack:localVideoTrack streamIds:@[kStreamId]];
 
-//        [localStream addVideoTrack:localVideoTrack];
-//        [self.delegate webrtcClient:self didReceiveLocalVideoTrack:localVideoTrack];
-
-//        RTCVideoTrack* videoTrack = (RTCVideoTrack*)([self videoTransceiver].receiver.track);
-        [self.delegate webrtcClient:self didReceiveLocalVideoTrack:localVideoTrack];
+        // Set up remote rendering; once the video frames are received, the video will commence
+        RTCVideoTrack* track = (RTCVideoTrack*)(self.videoTransceiver.receiver.track);
+        [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:track];
     }
 
     /*
@@ -145,6 +255,7 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
     NSLog(@"didCreateSessionDescription: error: %@", error);
+//    NSLog(@"SDP: %@", sdp);
 
     if (error != nil) {
         NSLog(@"WebRTC: got create session error: %@", error);
@@ -155,9 +266,9 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 
     __weak typeof(self) weakSelf = self;
 
+    NSLog(@"Setting local description");
     [self.peerConnection setLocalDescription:sdp completionHandler:^(NSError * _Nullable error) {
         runOnMainThread(^{
-            NSLog(@"setLocalDescription error: %@", error);
             [weakSelf didSetSessionDescription:error];
         });
     }];
@@ -170,7 +281,7 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
         return;
     }
 
-    //        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
+    NSLog(@"Sending RTC signaling message of type: %@", messageType);
 
     // Send signaling message about the offer/answer
     [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
@@ -179,7 +290,6 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
             [NINToast showWithErrorMessage:@"Failed to send RTC signaling message" callback:nil];
         }
     }];
-
 }
 
 -(void) didSetSessionDescription:(NSError*)error {
@@ -213,6 +323,9 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 -(void) disconnect {
     [self.sessionManager.ninchatSession sdklog:@"WebRTC Client disconnecting."];
 
+    [self stopLocalCapture];
+    self.localCapturer = nil;
+
     if (self.peerConnection != nil) {
         [self.peerConnection close];
         self.peerConnection = nil;
@@ -233,7 +346,7 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     NSCAssert(self.sessionManager != nil, @"Invalid state - client was disconnected?");
     NSCAssert(self.signalingObserver == nil, @"Cannot have active observer already");
 
-//    NSLog(@"WebRTC: Starting with SDP: %@", sdp);
+    NSLog(@"WebRTC: Starting..");
 
     __weak typeof(self) weakSelf = self;
 
@@ -245,12 +358,15 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 //        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
-            RTCIceCandidate* candidate = [RTCIceCandidate fromDictionary:payload[@"sdp"]];
+            NSDictionary* candidateDict = payload[@"candidate"];
+//            NSLog(@"Received ICE candidate from remote Ninchat API: %@", candidateDict);
+            RTCIceCandidate* candidate = [RTCIceCandidate fromDictionary:candidateDict];
+//            NSLog(@"--> Parsed into: %@", candidate);
             [weakSelf.peerConnection addIceCandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
             RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
             NSCAssert(description != nil, @"Session description cannot be null");
-            NSLog(@"Setting remote description with SDP: %@", description);
+            NSLog(@"Setting remote description from Answer with SDP: %@", description);
 
             [weakSelf.peerConnection setRemoteDescription:description completionHandler:^(NSError * _Nullable error) {
                 runOnMainThread(^{
@@ -263,18 +379,18 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     });
 
     // Configure & create our RTC peer connection
+    NSLog(@"Configuring & initializing RTC Peer Connectiong");
     NSDictionary<NSString*, NSString*>* optionalConstraints = @{@"DtlsSrtpKeyAgreement": @"true"};
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:optionalConstraints];
 
     RTCConfiguration* configuration = [[RTCConfiguration alloc] init];
     configuration.iceServers = self.iceServers;
     configuration.sdpSemantics = RTCSdpSemanticsUnifiedPlan;
-    RTCCertificate *pcert = [RTCCertificate generateCertificateWithParams:@{@"expires" : @100000,
-                                                                            @"name" : @"RSASSA-PKCS1-v1_5"}];
-    configuration.certificate = pcert;
+//    RTCCertificate *pcert = [RTCCertificate generateCertificateWithParams:@{@"expires" : @100000,
+//                                                                            @"name" : @"RSASSA-PKCS1-v1_5"}];
+//    configuration.certificate = pcert;
 
     self.peerConnection = [self.peerConnectionFactory peerConnectionWithConfiguration:configuration constraints:constraints delegate:self];
-//    [self.peerConnection addStream:[self createLocalMediaStream]];
 
     // Set up the local audio & video sources / tracks
     [self createMediaSenders];
@@ -292,18 +408,20 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     } else {
         // We are the 'callee', ie. we are answering.
         NSCAssert(sdp != nil, @"Must have Offer SDP data");
-//        NSLog(@"WebRTC: answering call with SDP: %@", sdp);
+        NSLog(@"WebRTC: answering call");
         [self.peerConnection setRemoteDescription:[RTCSessionDescription fromDictionary:sdp] completionHandler:^(NSError * _Nullable error) {
             runOnMainThread(^{
                 [weakSelf didSetSessionDescription:error];
             });
         }];
-//        [self.peerConnection setRemoteDescriptionWithDelegate:self sessionDescription:[RTCSessionDescription fromDictionary:sdp]];
-
     }
 }
 
 -(void) muteLocalAudio {
+    if (self.peerConnection.localStreams.count == 0) {
+        return;
+    }
+
     RTCMediaStream* localStream = self.peerConnection.localStreams[0];
     self.defaultLocalAudioTrack = localStream.audioTracks[0];
     [localStream removeAudioTrack:localStream.audioTracks[0]];
@@ -312,18 +430,23 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 }
 
 -(void) unmuteLocalAudio {
+    if (self.peerConnection.localStreams.count == 0) {
+        return;
+    }
+
     RTCMediaStream* localStream = self.peerConnection.localStreams[0];
     [localStream addAudioTrack:self.defaultLocalAudioTrack];
     [self.peerConnection removeStream:localStream];
     [self.peerConnection addStream:localStream];
-//    if (self.isSpeakerEnabled) {
-//        [self enableSpeaker];
-//    }
 }
 
 -(void) disableLocalVideo {
 #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
     // Camera capture only works on the device, not the simulator
+    if (self.peerConnection.localStreams.count == 0) {
+        return;
+    }
+
     RTCMediaStream *localStream = self.peerConnection.localStreams[0];
     self.defaultLocalVideoTrack = localStream.videoTracks[0];
     [localStream removeVideoTrack:localStream.videoTracks[0]];
@@ -334,6 +457,10 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 -(void) enableLocalVideo {
 #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
     // Camera capture only works on the device, not the simulator
+    if (self.peerConnection.localStreams.count == 0) {
+        return;
+    }
+
     RTCMediaStream* localStream = self.peerConnection.localStreams[0];
     [localStream addVideoTrack:self.defaultLocalVideoTrack];
     [self.peerConnection removeStream:localStream];
@@ -341,111 +468,65 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
 #endif
 }
 
-//-(void) enableSpeaker {
-//    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-//    self.isSpeakerEnabled = YES;
-//}
-//
-//-(void) disableSpeaker {
-//    [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideNone error:nil];
-//    self.isSpeakerEnabled = NO;
-//}
-
 #pragma mark - From RTCPeerConnectionDelegate
 
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection addedStream:(RTCMediaStream *)stream {
-//    NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
-//
+-(void) peerConnection:(nonnull RTCPeerConnection *)peerConnection didAddStream:(nonnull RTCMediaStream *)stream {
+
+    NSLog(@"WebRTC: Received stream %@ with %lu video tracks and %lu audio tracks", stream.streamId, (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
+
 //    runOnMainThread(^{
 //        if (stream.videoTracks.count > 0) {
 //            [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:stream.videoTracks[0]];
-//            //            if (_isSpeakerEnabled) [self enableSpeaker]; //Use the "handsfree" speaker instead of the ear speaker.
 //        }
 //    });
-//}
+}
 
-- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didAddStream:(nonnull RTCMediaStream *)stream {
+-(void) peerConnection:(RTCPeerConnection*)peerConnection didStartReceivingOnTransceiver:(RTCRtpTransceiver*)transceiver {
+    RTCMediaStreamTrack *track = transceiver.receiver.track;
+    NSLog(@"WebRTC: Now receiving %@ on track %@.", track.kind, track.trackId);
+}
 
-    NSLog(@"WebRTC: Received %lu video tracks and %lu audio tracks", (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
-
-    runOnMainThread(^{
-        if (stream.videoTracks.count > 0) {
-            [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:stream.videoTracks[0]];
-            //            if (_isSpeakerEnabled) [self enableSpeaker]; //Use the "handsfree" speaker instead of the ear speaker.
-        }
-    });
+- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didRemoveStream:(nonnull RTCMediaStream *)stream {
+    NSLog(@"WebRTC: removed stream: %@", stream);
 }
 
 -(void) peerConnection:(RTCPeerConnection *)peerConnection didOpenDataChannel:(RTCDataChannel *)dataChannel {
     NSLog(@"WebRTC: opened data channel: %@", dataChannel);
 }
 
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection gotICECandidate:(RTCIceCandidate *)candidate {
-//    NSLog(@"WebRTC: got ICE candidate: %@", candidate);
-//
-//    runOnMainThread(^{
-//        [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCIceCandidate payloadDict:@{@"candidate": candidate.dictionary} completion:^(NSError* error) {
-//            if (error != nil) {
-//                NSLog(@"WebRTC: Failed to send ICE candidate: %@", error);
-//            }
-//        }];
-//    });
-//}
-
 - (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didGenerateIceCandidate:(nonnull RTCIceCandidate *)candidate {
-    NSLog(@"WebRTC: got ICE candidate: %@", candidate);
+//    NSLog(@"WebRTC: Generated ICE candidate: %@", candidate.dictionary);
 
     runOnMainThread(^{
         [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCIceCandidate payloadDict:@{@"candidate": candidate.dictionary} completion:^(NSError* error) {
             if (error != nil) {
-                NSLog(@"WebRTC: Failed to send ICE candidate: %@", error);
+                NSLog(@"WebRTC: ERROR: Failed to send ICE candidate: %@", error);
+                return;
             }
+//            NSLog(@"ICE candidate sent to remote Ninchat API.");
         }];
     });
 }
 
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection iceConnectionChanged:(RTCIceConnectionState)newState {
-//    NSLog(@"WebRTC: ICE connection state changed: %ld", (long)newState);
-//}
-
 - (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeIceConnectionState:(RTCIceConnectionState)newState {
-    NSLog(@"WebRTC: ICE connection state changed: %ld", (long)newState);
-}
+    NSLog(@"WebRTC: ICE connection state changed: %ld (%@)", (long)newState, self.iceConnectionStates[@(newState)]);
 
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection iceGatheringChanged:(RTCIceGatheringState)newState {
-////    NSLog(@"WebRTC: ICE gathering state changed: %d", newState);
-//}
+    runOnMainThread(^{
+        [self.delegate webrtcClient:self didChangeConnectionState:newState];
+    });
+}
 
 - (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeIceGatheringState:(RTCIceGatheringState)newState {
-    NSLog(@"WebRTC: ICE gathering state changed: %ld", (long)newState);
+    NSLog(@"WebRTC: ICE gathering state changed: %ld (%@)", (long)newState, self.iceGatheringStates[@(newState)]);
 }
-
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection removedStream:(RTCMediaStream *)stream {
-//    NSLog(@"WebRTC: removed stream: %@", stream);
-//}
-
-- (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didRemoveStream:(nonnull RTCMediaStream *)stream {
-    NSLog(@"WebRTC: removed stream: %@", stream);
-}
-
-//-(void) peerConnection:(RTCPeerConnection *)peerConnection signalingStateChanged:(RTCSignalingState)stateChanged {
-////    NSLog(@"WebRTC: Signaling state changed: %d", stateChanged);
-//}
 
 - (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didChangeSignalingState:(RTCSignalingState)stateChanged {
-    // No op
+    NSLog(@"WebRTC: ICE signaling state changed: %ld (%@)", (long)stateChanged, self.iceSignalingStates[@(stateChanged)]);
 }
 
 - (void)peerConnection:(nonnull RTCPeerConnection *)peerConnection didRemoveIceCandidates:(nonnull NSArray<RTCIceCandidate *> *)candidates {
-    NSLog(@"Removed ice candidates: %@", candidates);
+    NSLog(@"WebRTC: Removed ICE candidates: %@", candidates);
 }
-
-//-(void) peerConnectionOnRenegotiationNeeded:(RTCPeerConnection *)peerConnection {
-//    //TODO see:
-//    // https://stackoverflow.com/questions/31165316/webrtc-renegotiate-the-peer-connection-to-switch-streams
-//    // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
-////    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
-//}
 
 - (void)peerConnectionShouldNegotiate:(nonnull RTCPeerConnection *)peerConnection {
     //TODO see:
@@ -453,64 +534,6 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     // https://stackoverflow.com/questions/29511602/how-to-exchange-streams-from-two-peerconnections-with-offer-answer/29530757#29530757
     //    NSLog(@"WebRTC: **WARNING** renegotiation needed - unimplemented!");
 }
-
-
-/*
-#pragma mark - From RTCSessionDescriptionDelegate
-
-- (void)peerConnection:(RTCPeerConnection *)peerConnection didCreateSessionDescription:(RTCSessionDescription *)sdp error:(NSError *)error {
-//    NSLog(@"WebRTC: didCreateSessionDescription: %@", sdp);
-
-    runOnMainThread(^{
-        if (error != nil) {
-            NSLog(@"WebRTC: got create session error: %@", error);
-            [self disconnect];
-            [self.delegate webrtcClient:self didGetError:error];
-            return;
-        }
-
-//        NSLog(@"Setting local session description with SDP: %@", sdp);
-        [self.peerConnection setLocalDescriptionWithDelegate:self sessionDescription:sdp];
-
-        // Decide what type of signaling message to send based on the SDP type
-        NSDictionary* typeMap = @{@"offer": kNINMessageTypeWebRTCOffer, @"answer": kNINMessageTypeWebRTCAnswer};
-        NSString* messageType = typeMap[sdp.type];
-        if (messageType == nil) {
-            NSLog(@"WebRTC: Unknown SDP type: %@", sdp.type);
-            return;
-        }
-
-//        NSLog(@"Sending signaling message with type %@ and payload %@", messageType, @{@"sdp": sdp.dictionary});
-
-        // Send signaling message about the offer/answer
-        [self.sessionManager sendMessageWithMessageType:messageType payloadDict:@{@"sdp": sdp.dictionary} completion:^(NSError* error) {
-            if (error != nil) {
-                NSLog(@"WebRTC: Message send error: %@", error);
-                [NINToast showWithErrorMessage:@"Failed to send RTC signaling message" callback:nil];
-            }
-        }];
-    });
-}
-
-- (void)peerConnection:(RTCPeerConnection *)peerConnection didSetSessionDescriptionWithError:(NSError *)error {
-    NSLog(@"WebRTC: didSetSessionDescriptionWithError: %@", error);
-
-    runOnMainThread(^{
-        if (error != nil) {
-            NSLog(@"WebRTC: got set session error: %@", error);
-            [self.delegate webrtcClient:self didGetError:error];
-            [self disconnect];
-            return;
-        }
-
-        if ((self.operatingMode == NINWebRTCClientOperatingModeCallee) && (self.peerConnection.localDescription == nil)) {
-            NSLog(@"WebRTC: Creating answer");
-            RTCMediaConstraints* constraints = [self defaultOfferConstraints];
-            [self.peerConnection createAnswerWithDelegate:self constraints:constraints];
-        }
-    });
-}
-*/
 
 #pragma mark - Initializers
 
@@ -532,6 +555,25 @@ static NSString* const kVideoTrackId = @"NINCHATv0";
     for (NINWebRTCServerInfo* serverInfo in turnServers) {
         [client.iceServers addObject:serverInfo.iceServer];
     }
+
+    client.iceSignalingStates = @{@(RTCSignalingStateStable): @"RTCSignalingStateStable",
+                                  @(RTCSignalingStateHaveLocalOffer): @"RTCSignalingStateHaveLocalOffer",
+                                  @(RTCSignalingStateHaveLocalPrAnswer): @"RTCSignalingStateHaveLocalPrAnswer",
+                                  @(RTCSignalingStateHaveRemoteOffer): @"RTCSignalingStateHaveRemoteOffer",
+                                  @(RTCSignalingStateHaveRemotePrAnswer): @"RTCSignalingStateHaveRemotePrAnswer"};
+
+    client.iceConnectionStates = @{@(RTCIceConnectionStateNew): @"RTCIceConnectionStateNew",
+                                   @(RTCIceConnectionStateChecking): @"RTCIceConnectionStateChecking",
+                                   @(RTCIceConnectionStateConnected): @"RTCIceConnectionStateConnected",
+                                   @(RTCIceConnectionStateCompleted): @"RTCIceConnectionStateCompleted",
+                                   @(RTCIceConnectionStateFailed): @"RTCIceConnectionStateFailed",
+                                   @(RTCIceConnectionStateDisconnected): @"RTCIceConnectionStateDisconnected",
+                                   @(RTCIceConnectionStateClosed): @"RTCIceConnectionStateClosed",
+                                   @(RTCIceConnectionStateCount): @"RTCIceConnectionStateCount"};
+
+    client.iceGatheringStates = @{@(RTCIceGatheringStateNew): @"RTCIceGatheringStateNew",
+                                  @(RTCIceGatheringStateGathering): @"RTCIceGatheringStateGathering",
+                                  @(RTCIceGatheringStateComplete): @"RTCIceGatheringStateComplete"};
 
     return client;
 }

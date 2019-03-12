@@ -11,10 +11,14 @@
 @implementation NINChatSession (Internal)
 
 -(void) sdklog:(NSString*)format, ... {
+    va_list args;
+    va_start(args, format);
+
+    NSString* log = [[NSString alloc] initWithFormat:format arguments:args];
+    NSLog(@"SDK log: %@", log);
+    
     if ([self.delegate respondsToSelector:@selector(ninchat:didOutputSDKLog:)]) {
-        va_list args;
-        va_start(args, format);
-        [self.delegate ninchat:self didOutputSDKLog:[[NSString alloc] initWithFormat:format arguments:args]];
+        [self.delegate ninchat:self didOutputSDKLog:log];
         va_end(args);
     }
 }
