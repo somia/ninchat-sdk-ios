@@ -54,6 +54,9 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 // Local video capturer
 @property (nonatomic, strong) RTCCameraVideoCapturer* localCapturer;
 
+//TODO remove?
+@property (nonatomic, strong) RTCMediaStream* localStream;
+
 // Default local audio track
 @property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
 
@@ -211,10 +214,15 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     // Create local audio track and add it to the peer connection
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:nil];
     RTCAudioSource* audioSource = [self.peerConnectionFactory audioSourceWithConstraints:constraints];
-    RTCAudioTrack* audioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
+    RTCAudioTrack* localAudioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
                                                                          trackId:kAudioTrackId];
-    NSLog(@"WebRTC: Adding audio track to our stream..");
-    RTCRtpSender* rtpSender = [self.peerConnection addTrack:audioTrack streamIds:@[kStreamId]];
+
+    //TODO remove?
+    NSLog(@"localAudioTrack: %@", localAudioTrack);
+    [self.localStream addAudioTrack:localAudioTrack];
+
+    NSLog(@"WebRTC: Adding audio track to our peer connection.");
+    RTCRtpSender* rtpSender = [self.peerConnection addTrack:localAudioTrack streamIds:@[kStreamId]];
     if (rtpSender == nil) {
         NSLog(@"** ERROR: Failed to add audio track");
     }
@@ -222,8 +230,12 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     // Create local video track
     RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
     if (localVideoTrack != nil) {
+        //TODO remove?
+        NSLog(@"localVideoTrack: %@", localVideoTrack);
+        [self.localStream addVideoTrack:localVideoTrack];
+
         // Add the local video track to the peer connection
-        NSLog(@"WebRTC: Adding video track to our stream..");
+        NSLog(@"WebRTC: Adding video track to our peer connection.");
         RTCRtpSender* rtpSender = [self.peerConnection addTrack:localVideoTrack streamIds:@[kStreamId]];
         if (rtpSender == nil) {
             NSLog(@"** ERROR: Failed to add audio track");
@@ -394,6 +406,9 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 //    configuration.certificate = pcert;
 
     self.peerConnection = [self.peerConnectionFactory peerConnectionWithConfiguration:configuration constraints:constraints delegate:self];
+
+    //TODO create stream?
+    self.localStream = [self.peerConnectionFactory mediaStreamWithStreamId:kStreamId];
 
 //    // Set up the local audio & video sources / tracks
     [self createMediaSenders];

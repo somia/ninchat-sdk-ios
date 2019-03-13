@@ -261,7 +261,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     CGFloat containerWidth = self.videoContainerView.bounds.size.width;
     CGFloat containerHeight = self.videoContainerView.bounds.size.height;
     CGSize defaultAspectRatio = CGSizeMake(4, 3);
+
+    //TODO hm, figure out how to get the local video feed resolution and use that
     CGSize videoSize = CGSizeMake(120, 120);
+
     CGSize aspectRatio = CGSizeEqualToSize(videoSize, CGSizeZero) ? defaultAspectRatio : videoSize;
 
     NSLog(@"Adjusting local video view size");
@@ -737,42 +740,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     NSLog(@"NINCHAT: didChangeVideoSize: %@", NSStringFromCGSize(size));
 
     [self resizeRemoteVideoViewForVideoSize:size];
-
-    //    CGFloat containerWidth = self.videoContainerView.bounds.size.width;
-    //    CGFloat containerHeight = self.videoContainerView.bounds.size.height;
-    //    CGSize defaultAspectRatio = CGSizeMake(4, 3);
-    //    CGSize aspectRatio = CGSizeEqualToSize(size, CGSizeZero) ? defaultAspectRatio : size;
-    //
-    //    if ((RTCCameraPreviewView*)videoView == self.localVideoView) {
-    //        NSLog(@"Adjusting local video view size");
-    //        self.localVideoSize = size;
-    //
-    //        // Fit the local video view inside a box sized proportionately to the video container
-    //        CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
-    //        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
-    //
-    ////        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
-    //
-    //        self.localViewWidthConstraint.constant = videoFrame.size.width;
-    //        self.localViewHeightConstraint.constant = videoFrame.size.height;
-    //    } else {
-    //        NSLog(@"Adjusting remote video view size");
-    //        self.remoteVideoSize = size;
-    //
-    //        // Fit the remote video view inside the view container with proper aspect ratio
-    //        CGRect videoRect = self.videoContainerView.bounds;
-    //        CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
-    //
-    ////        NSLog(@"Setting remote video view size: %@", NSStringFromCGRect(videoFrame));
-    //
-    //        self.remoteViewWidthConstraint.constant = videoFrame.size.width;
-    //        self.remoteViewHeightConstraint.constant = videoFrame.size.height;
-    //    }
-    //
-    //    // Animate the frame size change
-    //    [UIView animateWithDuration:0.4f animations:^{
-    //        [self.view layoutIfNeeded];
-    //    }];
 }
 
 #pragma mark - From UIViewController
@@ -806,7 +773,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 #pragma mark - From NINChatViewDataSource
 
-- (NSInteger)numberOfMessagesForChatView:(NINChatView *)chatView {
+-(NSInteger) numberOfMessagesForChatView:(NINChatView *)chatView {
     return self.sessionManager.chatMessages.count;
 }
 
@@ -928,8 +895,8 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self.inputControlsContainerView addGestureRecognizer:tapRecognizer];
 
     // Give the local video view a slight border
-    self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
-    self.localVideoView.layer.borderWidth = 1.0;
+//    self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
+//    self.localVideoView.layer.borderWidth = 1.0;
 
     // Make buttons round
     self.hangupButton.layer.cornerRadius = self.hangupButton.bounds.size.height / 2;

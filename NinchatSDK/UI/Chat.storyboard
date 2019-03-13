@@ -163,7 +163,7 @@ you are next.</string>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zsk-Qd-9k4" userLabel="Local video View" customClass="RTCCameraPreviewView">
                                         <rect key="frame" x="255" y="157" width="120" height="100"/>
-                                        <color key="backgroundColor" red="1" green="0.0" blue="0.2431916516" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="120" id="4W8-sh-e3i"/>
                                             <constraint firstAttribute="height" constant="100" id="OIh-QV-c1x"/>
