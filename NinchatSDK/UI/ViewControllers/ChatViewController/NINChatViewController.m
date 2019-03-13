@@ -887,9 +887,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.chatView.dataSource = self;
     self.chatView.delegate = self;
 
-    //    self.remoteVideoView.delegate = self;
-    //    self.localVideoView.delegate = self;
-
     // Add tap gesture recognizer for the input controls container view
     UIGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inputControlsContainerTapped:)];
     [self.inputControlsContainerView addGestureRecognizer:tapRecognizer];

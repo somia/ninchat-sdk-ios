@@ -54,7 +54,7 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 // Local video capturer
 @property (nonatomic, strong) RTCCameraVideoCapturer* localCapturer;
 
-//TODO remove?
+// Local media stream
 @property (nonatomic, strong) RTCMediaStream* localStream;
 
 // Default local audio track
@@ -217,8 +217,7 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     RTCAudioTrack* localAudioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
                                                                          trackId:kAudioTrackId];
 
-    //TODO remove?
-    NSLog(@"localAudioTrack: %@", localAudioTrack);
+//    NSLog(@"localAudioTrack: %@", localAudioTrack);
     [self.localStream addAudioTrack:localAudioTrack];
 
     NSLog(@"WebRTC: Adding audio track to our peer connection.");
@@ -230,8 +229,7 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     // Create local video track
     RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
     if (localVideoTrack != nil) {
-        //TODO remove?
-        NSLog(@"localVideoTrack: %@", localVideoTrack);
+//        NSLog(@"localVideoTrack: %@", localVideoTrack);
         [self.localStream addVideoTrack:localVideoTrack];
 
         // Add the local video track to the peer connection
@@ -329,6 +327,8 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     [self stopLocalCapture];
     self.localCapturer = nil;
 
+    self.localStream = nil;
+    
     if (self.peerConnection != nil) {
         [self.peerConnection close];
         self.peerConnection = nil;
@@ -407,10 +407,10 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
     self.peerConnection = [self.peerConnectionFactory peerConnectionWithConfiguration:configuration constraints:constraints delegate:self];
 
-    //TODO create stream?
+    // Create a stream object; this is used to group the audio/video tracks together.
     self.localStream = [self.peerConnectionFactory mediaStreamWithStreamId:kStreamId];
 
-//    // Set up the local audio & video sources / tracks
+    // Set up the local audio & video sources / tracks
     [self createMediaSenders];
 
     if (self.operatingMode == NINWebRTCClientOperatingModeCaller) {
