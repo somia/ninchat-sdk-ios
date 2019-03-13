@@ -356,7 +356,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
             NSLog(@"Got WebRTC offer - initializing webrtc for video call (answer)");
 
             NSDictionary* offerPayload = note.userInfo[@"payload"];
-            NSLog(@"Offer payload: %@", offerPayload);
+//            NSLog(@"Offer payload: %@", offerPayload);
 
             // Fetch our STUN / TURN server information
             [weakSelf.sessionManager beginICEWithCompletionCallback:^(NSError* error, NSArray<NINWebRTCServerInfo*>* stunServers, NSArray<NINWebRTCServerInfo*>* turnServers) {

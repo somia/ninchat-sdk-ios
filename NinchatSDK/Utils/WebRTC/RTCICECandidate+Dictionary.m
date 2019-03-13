@@ -20,23 +20,23 @@ static NSString* const kKeySdpMid = @"sdpMid";
 
 +(RTCIceCandidate*) fromDictionary:(NSDictionary*)dictionary {
     if (dictionary == nil) {
-        NSLog(@"ERROR: Trying to create RTCIceCandidate from nil dictionary!");
+        NSLog(@"** ERROR: Trying to create RTCIceCandidate from nil dictionary!");
         return nil;
     }
 
     NSString* candidate = dictionary[kKeyCandidate];
     if (candidate == nil) {
-        NSLog(@"ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeyCandidate);
+        NSLog(@"** ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeyCandidate);
     }
 
     NSNumber* lineIndex = dictionary[kKeySdpMLineIndex];
     if (lineIndex == nil) {
-        NSLog(@"ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeySdpMLineIndex);
+        NSLog(@"** ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeySdpMLineIndex);
     }
 
     NSString* sdpMid = dictionary[kKeySdpMid];
     if (sdpMid == nil) {
-        NSLog(@"ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeySdpMid);
+        NSLog(@"** ERROR: missing '%@' key in dictionary for RTCIceCandidate", kKeySdpMid);
     }
 
     return [[RTCIceCandidate alloc] initWithSdp:candidate sdpMLineIndex:lineIndex.intValue sdpMid:sdpMid];

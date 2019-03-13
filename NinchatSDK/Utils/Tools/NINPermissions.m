@@ -38,7 +38,7 @@ void checkCaptureDevicePermission(AVMediaType mediaType, callbackWithErrorBlock 
         case AVAuthorizationStatusRestricted:
         case AVAuthorizationStatusDenied:
         {
-            NSLog(@"AVCaptureDevice is authorized.");
+            NSLog(@"AVCaptureDevice is denied / restricted!");
             callback([NSError errorWithDomain:@"NINPermissions" code:1 userInfo:nil]);
             break;
         }
