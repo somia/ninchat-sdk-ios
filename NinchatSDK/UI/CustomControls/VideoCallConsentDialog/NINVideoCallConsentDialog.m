@@ -157,6 +157,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     // Check microphone permissions
     checkMicrophonePermission(^(NSError* error) {
         if (error != nil) {
+            NSLog(@"Microphone permission denied: %@", error);
             [NINToast showWithErrorMessage:@"Microphone access denied." touchedCallback:^{
                 NSLog(@"Showing app settings");
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
@@ -164,8 +165,10 @@ static const NSTimeInterval kAnimationDuration = 0.3;
             [self closeWithResult:NINConsentDialogResultRejected];
         } else {
             // Check camera permissions
+            NSLog(@"Microphone permission OK.");
             checkVideoPermission(^(NSError* error) {
                 if (error != nil) {
+                    NSLog(@"Video (camera) permission denied: %@", error);
                     [NINToast showWithErrorMessage:@"Camera access denied." touchedCallback:^{
                         NSLog(@"Showing app settings");
                         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
@@ -173,6 +176,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
                     [self closeWithResult:NINConsentDialogResultRejected];
                 } else {
                     // Permissions ok, can accept this call!
+                    NSLog(@"Camera permission OK.");
                     [self closeWithResult:NINConsentDialogResultAccepted];
                 }
             });

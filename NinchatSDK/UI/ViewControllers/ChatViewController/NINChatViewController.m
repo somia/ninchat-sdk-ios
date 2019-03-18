@@ -256,28 +256,34 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 }
 
 -(void) resizeLocalVideoView {
-    NSLog(@"Adjusting local video view size");
-
     CGFloat containerWidth = self.videoContainerView.bounds.size.width;
     CGFloat containerHeight = self.videoContainerView.bounds.size.height;
-    CGSize defaultAspectRatio = CGSizeMake(4, 3);
+
+    if ((containerWidth < 1) || (containerHeight < 1)) {
+        // Only set the size of the container size has been defined
+        return;
+    }
+
+//    CGSize defaultAspectRatio = CGSizeMake(4, 3);
 
     //TODO hm, figure out how to get the local video feed resolution and use that
-    CGSize videoSize = CGSizeMake(120, 120);
+//    CGSize videoSize = CGSizeMake(120, 100);
 
-    CGSize aspectRatio = CGSizeEqualToSize(videoSize, CGSizeZero) ? defaultAspectRatio : videoSize;
+//    CGSize aspectRatio = CGSizeEqualToSize(videoSize, CGSizeZero) ? defaultAspectRatio : videoSize;
 
     NSLog(@"Adjusting local video view size");
 //    self.localVideoSize = videoSize;
 
     // Fit the local video view inside a box sized proportionately to the video container
     CGRect videoRect = CGRectMake(0, 0, containerWidth / 3, containerHeight / 3);
-    CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
+//    CGRect videoFrame = AVMakeRectWithAspectRatioInsideRect(aspectRatio, videoRect);
 
     //        NSLog(@"Setting local video view size: %@", NSStringFromCGRect(videoFrame));
 
-    self.localViewWidthConstraint.constant = videoFrame.size.width;
-    self.localViewHeightConstraint.constant = videoFrame.size.height;
+//    self.localViewWidthConstraint.constant = videoFrame.size.width;
+//    self.localViewHeightConstraint.constant = videoFrame.size.height;
+    self.localViewWidthConstraint.constant = videoRect.size.width;
+    self.localViewHeightConstraint.constant = videoRect.size.height;
 
     // Animate the frame size change
     [UIView animateWithDuration:0.4f animations:^{
@@ -380,8 +386,9 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
                 weakSelf.microphoneEnabledButton.selected = NO;
                 weakSelf.cameraEnabledButton.selected = NO;
 
-                // Show the video views
+                // Show the video view
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
+                [self resizeLocalVideoView];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
             NSLog(@"Got WebRTC hang-up - closing the video call.");
@@ -418,15 +425,12 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 }
 
 -(void) orientationChanged:(NSNotification*)notification {
-//    [self videoView:self.remoteVideoView didChangeVideoSize:self.remoteVideoSize];
-//    [self videoView:self.localVideoView didChangeVideoSize:self.localVideoSize];
-
     [self resizeRemoteVideoViewForVideoSize:self.remoteVideoSize];
     [self resizeLocalVideoView];
 }
 
--(void) applicationWillResignActive:(UIApplication*)application {
-    NSLog(@"applicationWillResignActive:");
+-(void) applicationDidEnterBackground:(UIApplication*)application {
+    NSLog(@"applicationDidEnterBackground:");
 
     [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCHangup payloadDict:@{} completion:^(NSError* error) {
 
@@ -444,6 +448,13 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
         // Get rid of the keyboard
         [self.textInput resignFirstResponder];
     }];
+}
+
+-(void) applicationWillResignActive:(UIApplication*)application {
+    NSLog(@"applicationWillResignActive: no action.");
+
+    //TODO: pause video - if one should be active - here?
+
 }
 
 -(void) sendTextMessage {
@@ -558,6 +569,8 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 -(IBAction) hangupButtonPressed:(UIButton*)button {
     __weak typeof(self) weakSelf = self;
+
+    [self.sessionManager.ninchatSession sdklog:@"Hang-up button pressed."];
 
     [self.sessionManager sendMessageWithMessageType:kNINMessageTypeWebRTCHangup payloadDict:@{} completion:^(NSError* error) {
         if (error != nil) {
@@ -901,6 +914,9 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.cameraEnabledButton.layer.cornerRadius = self.cameraEnabledButton.bounds.size.height / 2;
 
     // Listen to app sent to background -notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+    // Listen to app will resign active -notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
 
     // Listen to chat ended messages
@@ -940,6 +956,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 }
 
 -(void) dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
 
     [self stopObserverChatEvents];

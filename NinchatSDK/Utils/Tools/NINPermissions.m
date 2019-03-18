@@ -16,7 +16,7 @@ void checkCaptureDevicePermission(AVMediaType mediaType, callbackWithErrorBlock 
     switch (status) {
         case AVAuthorizationStatusAuthorized:
         {
-            NSLog(@"AVCaptureDevice is authorized.");
+            NSLog(@"AVCaptureDevice is already authorized.");
             callback(nil);
             break;
         }
