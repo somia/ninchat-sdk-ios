@@ -10,7 +10,6 @@ Example Podfile:
 
 ```
 platform :ios, '9.0'
-use_frameworks!
 
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/somia/ninchat-podspecs.git'
@@ -29,6 +28,8 @@ end
 ```
 
 Install by running `pod install`.
+
+NOTE that `use_frameworks!` is optional.
 
 ## Usage
 
