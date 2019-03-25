@@ -587,10 +587,14 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 -(IBAction) audioMuteButtonPressed:(UIButton*)button {
     if (button.selected) {
-        [self.webrtcClient unmuteLocalAudio];
+        if (![self.webrtcClient unmuteLocalAudio]) {
+            return;
+        }
         [self.sessionManager.ninchatSession sdklog:@"Audio unmuted."];
     } else {
-        [self.webrtcClient muteLocalAudio];
+        if (![self.webrtcClient muteLocalAudio]) {
+            return;
+        }
         [self.sessionManager.ninchatSession sdklog:@"Audio muted."];
     }
 
@@ -599,10 +603,14 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
 -(IBAction) cameraEnabledButtonPressed:(UIButton*)button {
     if (button.selected) {
-        [self.webrtcClient enableLocalVideo];
+        if (![self.webrtcClient enableLocalVideo]) {
+            return;
+        }
         [self.sessionManager.ninchatSession sdklog:@"Video enabled."];
     } else {
-        [self.webrtcClient disableLocalVideo];
+        if (![self.webrtcClient disableLocalVideo]) {
+            return;
+        }
         [self.sessionManager.ninchatSession sdklog:@"Video disabled."];
     }
 

@@ -58,10 +58,18 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 @property (nonatomic, strong) RTCMediaStream* localStream;
 
 // Default local audio track
-@property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
+//@property(nonatomic, strong) RTCAudioTrack* defaultLocalAudioTrack;
 
 // Default local video track
-@property(nonatomic, strong) RTCVideoTrack* defaultLocalVideoTrack;
+//@property(nonatomic, strong) RTCVideoTrack* defaultLocalVideoTrack;
+
+// Local audio/video tracks
+@property (nonatomic, strong) RTCAudioTrack* localAudioTrack;
+@property (nonatomic, strong) RTCVideoTrack* localVideoTrack;
+
+// RTP senders for local audio/video tracks
+@property (nonatomic, strong) RTCRtpSender* localAudioSender;
+@property (nonatomic, strong) RTCRtpSender* localVideoSender;
 
 // Mapping for the ICE signaling state --> state name
 @property (nonatomic, strong) NSDictionary<NSNumber*, NSString*>* iceSignalingStates;
@@ -214,38 +222,38 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     // Create local audio track and add it to the peer connection
     RTCMediaConstraints* constraints = [[RTCMediaConstraints alloc] initWithMandatoryConstraints:nil optionalConstraints:nil];
     RTCAudioSource* audioSource = [self.peerConnectionFactory audioSourceWithConstraints:constraints];
-    RTCAudioTrack* localAudioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
+    self.localAudioTrack = [self.peerConnectionFactory audioTrackWithSource:audioSource
                                                                          trackId:kAudioTrackId];
 
 //    NSLog(@"localAudioTrack: %@", localAudioTrack);
-    [self.localStream addAudioTrack:localAudioTrack];
+    [self.localStream addAudioTrack:self.localAudioTrack];
 
     NSLog(@"WebRTC: Adding audio track to our peer connection.");
-    RTCRtpSender* rtpSender = [self.peerConnection addTrack:localAudioTrack streamIds:@[kStreamId]];
-    if (rtpSender == nil) {
+    self.localAudioSender = [self.peerConnection addTrack:self.localAudioTrack streamIds:@[kStreamId]];
+    if (self.localAudioSender == nil) {
         NSLog(@"** ERROR: Failed to add audio track");
     }
 
     // Create local video track
-    RTCVideoTrack* localVideoTrack = [self createLocalVideoTrack];
-    if (localVideoTrack != nil) {
+    self.localVideoTrack = [self createLocalVideoTrack];
+    if (self.localVideoTrack != nil) {
 //        NSLog(@"localVideoTrack: %@", localVideoTrack);
-        [self.localStream addVideoTrack:localVideoTrack];
+        [self.localStream addVideoTrack:self.localVideoTrack];
 
         // Add the local video track to the peer connection
         NSLog(@"WebRTC: Adding video track to our peer connection.");
-        RTCRtpSender* rtpSender = [self.peerConnection addTrack:localVideoTrack streamIds:@[kStreamId]];
-        if (rtpSender == nil) {
-            NSLog(@"** ERROR: Failed to add audio track");
+        self.localVideoSender = [self.peerConnection addTrack:self.localVideoTrack streamIds:@[kStreamId]];
+        if (self.localVideoSender == nil) {
+            NSLog(@"** ERROR: Failed to add video track");
         }
 
 #ifndef NIN_USE_PLANB_SEMANTICS
         // Set up remote rendering; once the video frames are received, the video will commence
-        RTCVideoTrack* track = (RTCVideoTrack*)(self.videoTransceiver.receiver.track);
-        if (track == nil) {
+        RTCVideoTrack* remoteVideoTrack = (RTCVideoTrack*)(self.videoTransceiver.receiver.track);
+        if (remoteVideoTrack == nil) {
             NSLog(@"** ERROR: got nil remotevideo track from tranceiver!");
         }
-        [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:track];
+        [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:remoteVideoTrack];
 #endif
     }
 
@@ -334,8 +342,14 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
         self.peerConnection = nil;
     }
 
-    self.defaultLocalAudioTrack = nil;
-    self.defaultLocalVideoTrack = nil;
+//    self.defaultLocalAudioTrack = nil;
+//    self.defaultLocalVideoTrack = nil;
+
+    self.localAudioSender = nil;
+    self.localVideoSender = nil;
+    self.localAudioTrack = nil;
+    self.localVideoTrack = nil;
+
     self.peerConnectionFactory = nil;
     self.sessionManager = nil;
     self.iceServers = nil;
@@ -356,20 +370,11 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
-//        NSLog(@"WebRTC: got signaling message: %@", note.userInfo[@"messageType"]);
-
         NSDictionary* payload = note.userInfo[@"payload"];
-//        NSLog(@"WebRTC: Signaling message payload: %@", payload);
 
         if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCIceCandidate]) {
             NSDictionary* candidateDict = payload[@"candidate"];
-//            NSLog(@"Received ICE candidate from remote Ninchat API: %@", candidateDict);
             RTCIceCandidate* candidate = [RTCIceCandidate fromDictionary:candidateDict];
-//            NSLog(@"--> Parsed into: %@", candidate);
-            //TODO remove
-            if (weakSelf == nil) {
-                NSLog(@"** ERROR: nil weakSelf when adding ice candidate");
-            }
             [weakSelf.peerConnection addIceCandidate:candidate];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCAnswer]) {
             RTCSessionDescription* description = [RTCSessionDescription fromDictionary:payload[@"sdp"]];
@@ -401,10 +406,6 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     configuration.sdpSemantics = RTCSdpSemanticsUnifiedPlan;
 #endif
 
-//    RTCCertificate *pcert = [RTCCertificate generateCertificateWithParams:@{@"expires" : @100000,
-//                                                                            @"name" : @"RSASSA-PKCS1-v1_5"}];
-//    configuration.certificate = pcert;
-
     self.peerConnection = [self.peerConnectionFactory peerConnectionWithConfiguration:configuration constraints:constraints delegate:self];
 
     // Create a stream object; this is used to group the audio/video tracks together.
@@ -428,10 +429,8 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
         NSCAssert(sdp != nil, @"Must have Offer SDP data");
 
         NSLog(@"WebRTC: answering a call.");
-//        NSLog(@"Offer SDP: %@", sdp);
 
         RTCSessionDescription* description = [RTCSessionDescription fromDictionary:sdp];
-//        NSLog(@"Parsed RTCSessionDescription: %@", description);
 
         NSLog(@"Setting remote description from Offer.");
         [self.peerConnection setRemoteDescription:description completionHandler:^(NSError * _Nullable error) {
@@ -442,54 +441,51 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     }
 }
 
--(void) muteLocalAudio {
-    if (self.peerConnection.localStreams.count == 0) {
-        return;
+-(BOOL) muteLocalAudio {
+    if ((self.localAudioTrack == nil) || !self.localAudioTrack.isEnabled) {
+        NSLog(@"** ERROR: muteLocalAudio prerequisites not filled.");
     }
 
-    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
-    self.defaultLocalAudioTrack = localStream.audioTracks[0];
-    [localStream removeAudioTrack:localStream.audioTracks[0]];
-    [self.peerConnection removeStream:localStream];
-    [self.peerConnection addStream:localStream];
+    self.localAudioTrack.isEnabled = NO;
+    return YES;
 }
 
--(void) unmuteLocalAudio {
-    if (self.peerConnection.localStreams.count == 0) {
-        return;
+-(BOOL) unmuteLocalAudio {
+    if ((self.localAudioTrack == nil) || self.localAudioTrack.isEnabled) {
+        NSLog(@"** ERROR: unmuteLocalAudio prerequisites not filled.");
     }
 
-    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
-    [localStream addAudioTrack:self.defaultLocalAudioTrack];
-    [self.peerConnection removeStream:localStream];
-    [self.peerConnection addStream:localStream];
+    self.localAudioTrack.isEnabled = YES;
+    return YES;
 }
 
--(void) disableLocalVideo {
+-(BOOL) disableLocalVideo {
 #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
     // Camera capture only works on the device, not the simulator
-    if (self.peerConnection.localStreams.count == 0) {
-        return;
+    if ((self.localVideoTrack == nil) || !self.localVideoTrack.isEnabled) {
+        NSLog(@"** ERROR: disableLocalVideo prerequisities not filled.");
+        return NO;
     }
 
-    RTCMediaStream *localStream = self.peerConnection.localStreams[0];
-    self.defaultLocalVideoTrack = localStream.videoTracks[0];
-    [localStream removeVideoTrack:localStream.videoTracks[0]];
-    [self.peerConnection removeStream:localStream];
-    [self.peerConnection addStream:localStream];
+    self.localVideoTrack.isEnabled = NO;
+    return YES;
+#else
+    return YES;
 #endif
 }
--(void) enableLocalVideo {
+
+-(BOOL) enableLocalVideo {
 #if !TARGET_IPHONE_SIMULATOR && TARGET_OS_IPHONE
     // Camera capture only works on the device, not the simulator
-    if (self.peerConnection.localStreams.count == 0) {
-        return;
+    if ((self.localVideoTrack == nil) || self.localVideoTrack.isEnabled) {
+        NSLog(@"** ERROR: enableLocalVideo prerequisities not filled.");
+        return NO;
     }
 
-    RTCMediaStream* localStream = self.peerConnection.localStreams[0];
-    [localStream addVideoTrack:self.defaultLocalVideoTrack];
-    [self.peerConnection removeStream:localStream];
-    [self.peerConnection addStream:localStream];
+    self.localVideoTrack.isEnabled = YES;
+    return YES;
+#else
+    return YES;
 #endif
 }
 
