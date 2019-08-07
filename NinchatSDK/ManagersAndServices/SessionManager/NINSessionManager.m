@@ -11,7 +11,7 @@
 #import "NINQueue.h"
 #import "NINChatSession.h"
 #import "NINChatMessage.h"
-#import "NINChannelMessage.h"
+#import "NINTextMessage.h"
 #import "NINChatMetaMessage.h"
 #import "NINUserTypingMessage.h"
 #import "NINChannelUser.h"
@@ -589,24 +589,24 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) addNewChatMessage:(id<NINChatMessage>)message {
     NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
 
-    if ([message isKindOfClass:NINChannelMessage.class]) {
+    if ([message isKindOfClass:NINTextMessage.class]) {
         // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
-        NINChannelMessage* channelMessage = (NINChannelMessage*)message;
-        channelMessage.series = NO;
+        NINTextMessage* textMessage = (NINTextMessage*)message;
+        textMessage.series = NO;
 
         // Find the previous channel message
-        NINChannelMessage* prevMsg = nil;
+        NINTextMessage* prevMsg = nil;
         for (NSInteger i = 0; i < _chatMessages.count; i++) {
             id<NINChatMessage> msg = _chatMessages[i];
-            if ([msg isKindOfClass:NINChannelMessage.class]) {
+            if ([msg isKindOfClass:NINTextMessage.class]) {
                 prevMsg = msg;
                 break;
             }
         }
 
         if (prevMsg != nil) {
-            channelMessage.series = [prevMsg.sender.userID isEqualToString:channelMessage.sender.userID];
+            textMessage.series = [prevMsg.sender.userID isEqualToString:textMessage.sender.userID];
         }
     }
 
@@ -620,7 +620,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kChannelMessageNotification, @{@"removedMessageAtIndex": @(index)});
 }
 
--(void) handleInboundChatMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId{
+-(void) handleInboundChatMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId {
 
     NSError* error = nil;
 
@@ -660,7 +660,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                     if (error != nil) {
                         [NINToast showWithErrorMessage:@"Failed to update file info" callback:nil];
                     } else {
-                        NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
+                        NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
                         [weakSelf addNewChatMessage:msg];
                     }
                 }];
@@ -671,9 +671,28 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         // Only allocate a new message now if there is text and no attachment
         if (!hasAttachment && (text.length > 0)) {
-            NINChannelMessage* msg = [NINChannelMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
+            NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
             [self addNewChatMessage:msg];
         }
+    }
+}
+
+-(void) handleInboundComposeMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId {
+    
+    NSError* error = nil;
+    
+    for (int i = 0; i < payload.length; i++) {
+        NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to deserialize message JSON: %@", error);
+            return;
+        }
+        
+        // Only allocate a new message now if there is text and no attachment
+//        if (!hasAttachment && (text.length > 0)) {
+//            NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
+//            [self addNewChatMessage:msg];
+//        }
     }
 }
 

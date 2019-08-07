@@ -12,6 +12,7 @@
 #import "NINUtils.h"
 #import "NINChatView.h"
 #import "NINChannelMessage.h"
+#import "NINTextMessage.h"
 #import "NINUserTypingMessage.h"
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
@@ -249,13 +250,14 @@
 }
 
 -(void) imagePressed {
-    if (self.imagePressedCallback != nil) {
-        if (self.message.attachment.isVideo) {
+    NINTextMessage* message = self.message;
+    if (message != nil && self.imagePressedCallback != nil) {
+        if (message.attachment.isVideo) {
             // Will open video player
-            self.imagePressedCallback(self.message.attachment, nil);
-        } else if (self.message.attachment.isImage && (self.messageImageView.image != nil)) {
+            self.imagePressedCallback(message.attachment, nil);
+        } else if (message.attachment.isImage && (self.messageImageView.image != nil)) {
             // Will show full-screen image viewer
-            self.imagePressedCallback(self.message.attachment, self.messageImageView.image);
+            self.imagePressedCallback(message.attachment, self.messageImageView.image);
         }
     }
 }
@@ -291,11 +293,13 @@
 // asynchronous = YES implies we're calling this asynchronously from the
 // updateInfoWithCompletionCallback completion block (meaning it did a network update)
 -(void) updateImage:(BOOL)asynchronous {
-    NSCAssert(self.message.attachment != nil, @"Must have attachment here");
-    NSCAssert(self.message.attachment.isImageOrVideo, @"Attachment must be image or video");
+    NINTextMessage* message = self.message;
+    NSCAssert(message != nil, @"Must be a text message here");
+    NSCAssert(message.attachment != nil, @"Must have attachment here");
+    NSCAssert(message.attachment.isImageOrVideo, @"Attachment must be image or video");
     NSCAssert(self.videoThumbnailManager != nil, @"Must have videoThumbnailManager");
     
-    NINFileInfo* attachment = self.message.attachment;
+    NINFileInfo* attachment = message.attachment;
     self.messageImageView.image = nil;
 
     // Make sure we have an image tap recognizer in place
@@ -340,25 +344,51 @@
 
 #pragma mark - Public methods
 
--(void) populateWithChannelMessage:(NINChannelMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
+-(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
+    
+    if ([message isKindOfClass:NINTextMessage.class]) {
+        NINTextMessage* textMessage = message;
+        
+        NINFileInfo* attachment = textMessage.attachment;
+        
+        self.videoPlayImageView.hidden = !textMessage.attachment.isVideo;
+        
+        if (textMessage.attachment.isPDF) {
+            [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", attachment.url, attachment.name]];
+            [self enableTextHeightZeroConstraint:NO];
+        } else {
+            self.messageTextView.text = textMessage.textContent;
+            [self enableTextHeightZeroConstraint:(textMessage.textContent == nil)];
+        }
+        
+        // Update the message image, if any
+        if (attachment == nil) {
+            // No image; clear image constraints etc so it wont affect layout
+            self.imageProportionalWidthConstraint.active = NO;
+            self.imageAspectRatioConstraint.active = NO;
+            self.imageAspectRatioConstraint = nil;
+            self.imageWidthConstraint.active = NO;
+            self.messageImageView.image = nil;
+            
+            if (self.imageTapRecognizer != nil) {
+                [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
+                self.imageTapRecognizer = nil;
+            }
+        } else if (attachment.isImageOrVideo) {
+            __weak typeof(self) weakSelf = self;
+            
+            [attachment updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
+                [weakSelf updateImage:didNetworkRefresh];
+            }];
+        }
+    }
 
     self.message = message;
-    NINFileInfo* attachment = message.attachment;
-
-    self.videoPlayImageView.hidden = !message.attachment.isVideo;
-
-    if (self.message.attachment.isPDF) {
-        [self.messageTextView setFormattedText:[NSString stringWithFormat:@"<a href=\"%@\">%@</a>", attachment.url, attachment.name]];
-        [self enableTextHeightZeroConstraint:NO];
-    } else {
-        self.messageTextView.text = message.textContent;
-        [self enableTextHeightZeroConstraint:(message.textContent == nil)];
-    }
 
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
@@ -390,26 +420,6 @@
     // Make Image view background match the bubble color
     self.messageImageView.backgroundColor = self.bubbleImageView.tintColor;
 
-    // Update the message image, if any
-    if (attachment == nil) {
-        // No image; clear image constraints etc so it wont affect layout
-        self.imageProportionalWidthConstraint.active = NO;
-        self.imageAspectRatioConstraint.active = NO;
-        self.imageAspectRatioConstraint = nil;
-        self.imageWidthConstraint.active = NO;
-        self.messageImageView.image = nil;
-
-        if (self.imageTapRecognizer != nil) {
-            [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
-            self.imageTapRecognizer = nil;
-        }
-    } else if (attachment.isImageOrVideo) {
-        __weak typeof(self) weakSelf = self;
-
-        [attachment updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
-            [weakSelf updateImage:didNetworkRefresh];
-        }];
-    }
 }
 
 -(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig {

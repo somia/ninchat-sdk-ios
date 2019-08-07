@@ -15,9 +15,9 @@
 		49140B7020F2494800A00EA8 /* NINSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B6E20F2494800A00EA8 /* NINSessionManager.h */; };
 		49140B7120F2494800A00EA8 /* NINSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B6F20F2494800A00EA8 /* NINSessionManager.m */; };
 		49140B7220F2494800A00EA8 /* NINSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B6F20F2494800A00EA8 /* NINSessionManager.m */; };
-		49140B7620F2748800A00EA8 /* NINChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7420F2748800A00EA8 /* NINChannelMessage.h */; };
-		49140B7720F2748800A00EA8 /* NINChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* NINChannelMessage.m */; };
-		49140B7820F2748800A00EA8 /* NINChannelMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* NINChannelMessage.m */; };
+		49140B7620F2748800A00EA8 /* NINTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7420F2748800A00EA8 /* NINTextMessage.h */; };
+		49140B7720F2748800A00EA8 /* NINTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* NINTextMessage.m */; };
+		49140B7820F2748800A00EA8 /* NINTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B7520F2748800A00EA8 /* NINTextMessage.m */; };
 		49140B7D20F27BC900A00EA8 /* NINPrivateTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7C20F27BC900A00EA8 /* NINPrivateTypes.h */; };
 		49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140B7F20F28BE000A00EA8 /* NINChatViewController.h */; };
 		49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49140B8020F28BE000A00EA8 /* NINChatViewController.m */; };
@@ -142,6 +142,7 @@
 		49F5FA3F20F8CF6B00A4A526 /* NINRatingViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */; };
 		49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
 		49F5FA4120F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
+		749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70DC22F9AED90031FEEB /* NINChannelMessage.h */; };
 		7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -164,8 +165,8 @@
 		49140B6E20F2494800A00EA8 /* NINSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINSessionManager.h; sourceTree = "<group>"; };
 		49140B6F20F2494800A00EA8 /* NINSessionManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINSessionManager.m; sourceTree = "<group>"; };
 		49140B7320F267EE00A00EA8 /* NINPublicTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINPublicTypes.h; sourceTree = "<group>"; };
-		49140B7420F2748800A00EA8 /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
-		49140B7520F2748800A00EA8 /* NINChannelMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChannelMessage.m; sourceTree = "<group>"; };
+		49140B7420F2748800A00EA8 /* NINTextMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINTextMessage.h; sourceTree = "<group>"; };
+		49140B7520F2748800A00EA8 /* NINTextMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINTextMessage.m; sourceTree = "<group>"; };
 		49140B7C20F27BC900A00EA8 /* NINPrivateTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NINPrivateTypes.h; sourceTree = "<group>"; };
 		49140B7F20F28BE000A00EA8 /* NINChatViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChatViewController.h; sourceTree = "<group>"; };
 		49140B8020F28BE000A00EA8 /* NINChatViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINChatViewController.m; sourceTree = "<group>"; };
@@ -286,6 +287,7 @@
 		49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINRatingViewController.h; sourceTree = "<group>"; };
 		49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINRatingViewController.m; sourceTree = "<group>"; };
 		5317ED40D8AD5529D4109826 /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		749E70DC22F9AED90031FEEB /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -622,8 +624,9 @@
 				4961A19C21B03BB9002ACB43 /* NINAvatarConfig.m */,
 				496F85F02137DD43001FD1C4 /* NINChannelUser.h */,
 				496F85F12137DD43001FD1C4 /* NINChannelUser.m */,
-				49140B7420F2748800A00EA8 /* NINChannelMessage.h */,
-				49140B7520F2748800A00EA8 /* NINChannelMessage.m */,
+				49140B7420F2748800A00EA8 /* NINTextMessage.h */,
+				49140B7520F2748800A00EA8 /* NINTextMessage.m */,
+				749E70DC22F9AED90031FEEB /* NINChannelMessage.h */,
 				49F5FA3720F781D600A4A526 /* NINQueue.h */,
 				49F5FA3820F781D600A4A526 /* NINQueue.m */,
 				49622FAB214FCD3700570D59 /* NINFileInfo.h */,
@@ -712,6 +715,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */,
+				749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */,
 				49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */,
 				4930441B2158D90700DECB0C /* NINChatMetaMessage.h in Headers */,
 				49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */,
@@ -725,7 +729,7 @@
 				49F5FA3620F775FF00A4A526 /* NINClientPropsParser.h in Headers */,
 				49F5FA3F20F8CF6B00A4A526 /* NINRatingViewController.h in Headers */,
 				49721CC72122F70500695F33 /* NINWebRTCClient.h in Headers */,
-				49140B7620F2748800A00EA8 /* NINChannelMessage.h in Headers */,
+				49140B7620F2748800A00EA8 /* NINTextMessage.h in Headers */,
 				496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */,
 				49140B8720F395A700A00EA8 /* NINQueueViewController.h in Headers */,
 				497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */,
@@ -956,7 +960,7 @@
 				49140B7120F2494800A00EA8 /* NINSessionManager.m in Sources */,
 				49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */,
 				49F5FA3420F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
-				49140B7720F2748800A00EA8 /* NINChannelMessage.m in Sources */,
+				49140B7720F2748800A00EA8 /* NINTextMessage.m in Sources */,
 				4911895D214B9B14008F1748 /* NINChatSession+Internal.m in Sources */,
 				49F5FA3A20F781D600A4A526 /* NINQueue.m in Sources */,
 				49721CC82122F70500695F33 /* NINWebRTCClient.m in Sources */,
@@ -1000,7 +1004,7 @@
 				49140B7220F2494800A00EA8 /* NINSessionManager.m in Sources */,
 				49F5FA3520F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
 				49D77F2021563EBA00900224 /* NSString+NinchatTests.m in Sources */,
-				49140B7820F2748800A00EA8 /* NINChannelMessage.m in Sources */,
+				49140B7820F2748800A00EA8 /* NINTextMessage.m in Sources */,
 				49F5FA3B20F781D600A4A526 /* NINQueue.m in Sources */,
 				499443B6208F320700101DCA /* NINChatSession.m in Sources */,
 				495762A320EE1AE000BC39A8 /* NINUtils.m in Sources */,

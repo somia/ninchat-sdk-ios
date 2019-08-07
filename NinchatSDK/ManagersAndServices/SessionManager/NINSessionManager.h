@@ -16,7 +16,7 @@
 #import "NINChatMessage.h"
 
 @class NINQueue;
-@class NINChannelMessage;
+@class NINTextMessage;
 @class NINChatSession;
 @class NINFileInfo;
 

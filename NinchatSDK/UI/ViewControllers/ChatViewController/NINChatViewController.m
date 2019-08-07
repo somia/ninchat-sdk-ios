@@ -16,7 +16,7 @@
 #import "NINChatViewController.h"
 #import "NINSessionManager.h"
 #import "NINUtils.h"
-#import "NINChannelMessage.h"
+#import "NINTextMessage.h"
 #import "NINWebRTCClient.h"
 #import "NINChatView.h"
 #import "NINTouchView.h"
@@ -798,7 +798,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     return self.sessionManager.chatMessages.count;
 }
 
--(NINChannelMessage*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
+-(NSObject<NINChannelMessage>*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
     return self.sessionManager.chatMessages[index];
 }
 

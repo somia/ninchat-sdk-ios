@@ -166,7 +166,7 @@
     __weak typeof(self) weakSelf = self;
     id<NINChatMessage> message = [self.dataSource chatView:self messageAtIndex:indexPath.row];
 
-    if ([message isKindOfClass:NINChannelMessage.class]) {
+    if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = _videoThumbnailManager;
         [cell populateWithChannelMessage:message imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
