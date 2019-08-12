@@ -12,6 +12,7 @@
 #import "NINChatSession.h"
 #import "NINChatMessage.h"
 #import "NINTextMessage.h"
+#import "NINUIComposeMessage.h"
 #import "NINChatMetaMessage.h"
 #import "NINUserTypingMessage.h"
 #import "NINChannelUser.h"
@@ -589,16 +590,16 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) addNewChatMessage:(id<NINChatMessage>)message {
     NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
 
-    if ([message isKindOfClass:NINTextMessage.class]) {
+    if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
         // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
         NINTextMessage* textMessage = (NINTextMessage*)message;
         textMessage.series = NO;
 
         // Find the previous channel message
-        NINTextMessage* prevMsg = nil;
+        NSObject<NINChannelMessage>* prevMsg = nil;
         for (NSInteger i = 0; i < _chatMessages.count; i++) {
-            id<NINChatMessage> msg = _chatMessages[i];
+            id<NINChannelMessage> msg = _chatMessages[i];
             if ([msg isKindOfClass:NINTextMessage.class]) {
                 prevMsg = msg;
                 break;
@@ -608,6 +609,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         if (prevMsg != nil) {
             textMessage.series = [prevMsg.sender.userID isEqualToString:textMessage.sender.userID];
         }
+    } else if ([message isKindOfClass:NINUIComposeMessage.class]) {
+        
     }
 
     [_chatMessages insertObject:message atIndex:0];
@@ -682,17 +685,16 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSError* error = nil;
     
     for (int i = 0; i < payload.length; i++) {
-        NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
-        if (error != nil) {
+        // not sure why the resulting dictionary here is wrapped in an array but let's roll with it for now at least
+        NSArray* payloadArray = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+        if (error != nil && payloadArray.count > 1) {
             NSLog(@"Failed to deserialize message JSON: %@", error);
             return;
         }
         
-        // Only allocate a new message now if there is text and no attachment
-//        if (!hasAttachment && (text.length > 0)) {
-//            NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
-//            [self addNewChatMessage:msg];
-//        }
+        NSDictionary* payloadDict = payloadArray[0];
+        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] uid:payloadDict[@"id"] name:payloadDict[@"id"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
+        [self addNewChatMessage:msg];
     }
 }
 
@@ -745,14 +747,16 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    if (![messageType isEqualToString:@"ninchat.com/text"] && ![messageType isEqualToString:@"ninchat.com/file"]) {
-        // Ignore all but text/file messages
-        NSLog(@"Ignoring unsupported message type: '%@'", messageType);
+    if ([messageType isEqualToString:@"ninchat.com/text"] || [messageType isEqualToString:@"ninchat.com/file"]) {
+        [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
+        return;
+    } else if ([messageType isEqualToString:@"ninchat.com/ui/compose"]) {
+        [self handleInboundComposeMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
         return;
     }
 
-    // Expect other messages to be chat messages
-    [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
+    // ignore messages other than the types we're explicitly handling
+    NSLog(@"Ignoring unsupported message type: '%@'", messageType);
 }
 
 -(void) messageReceived:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
