@@ -16,13 +16,17 @@
 /** Represents a chat message on a channel. */
 @interface NINTextMessage : NSObject<NINChannelMessage>
 
+/**
+ * YES if this message is a part in a series, ie. the sender of the previous message
+ * also sent this message.
+ */
+@property (nonatomic, assign) BOOL series;
+
 /** Message (text) content. */
 @property (nonatomic, strong, readonly) NSString* textContent;
 
 /** Attachment file info. */
 @property (nonatomic, strong, readonly) NINFileInfo* attachment;
-
-@property (nonatomic, assign) BOOL series;
 
 /** Initializer. */
 +(NINTextMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine attachment:(NINFileInfo*)attachment;

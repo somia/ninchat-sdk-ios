@@ -102,7 +102,7 @@
 @property (nonatomic, assign) CGFloat topLabelsContainerHeight;
 
 // The message this cell is representing
-@property (nonatomic, strong) NINChannelMessage* message;
+@property (nonatomic, strong) NSObject<NINChannelMessage>* message;
 
 // Message updated -listener
 @property (nonatomic, assign) id messageUpdatedListener;
@@ -250,7 +250,7 @@
 }
 
 -(void) imagePressed {
-    NINTextMessage* message = self.message;
+    NINTextMessage* message = (NINTextMessage*)self.message;
     if (message != nil && self.imagePressedCallback != nil) {
         if (message.attachment.isVideo) {
             // Will open video player
@@ -293,7 +293,7 @@
 // asynchronous = YES implies we're calling this asynchronously from the
 // updateInfoWithCompletionCallback completion block (meaning it did a network update)
 -(void) updateImage:(BOOL)asynchronous {
-    NINTextMessage* message = self.message;
+    NINTextMessage* message = (NINTextMessage*)self.message;
     NSCAssert(message != nil, @"Must be a text message here");
     NSCAssert(message.attachment != nil, @"Must have attachment here");
     NSCAssert(message.attachment.isImageOrVideo, @"Attachment must be image or video");
@@ -352,7 +352,7 @@
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
     
     if ([message isKindOfClass:NINTextMessage.class]) {
-        NINTextMessage* textMessage = message;
+        NINTextMessage* textMessage = (NINTextMessage*)message;
         
         NINFileInfo* attachment = textMessage.attachment;
         

@@ -143,6 +143,8 @@
 		49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
 		49F5FA4120F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
 		749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70DC22F9AED90031FEEB /* NINChannelMessage.h */; };
+		749E70E222FC2E460031FEEB /* NINUIComposeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */; };
+		749E70E322FC2E460031FEEB /* NINUIComposeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */; };
 		7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -288,6 +290,8 @@
 		49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINRatingViewController.m; sourceTree = "<group>"; };
 		5317ED40D8AD5529D4109826 /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		749E70DC22F9AED90031FEEB /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
+		749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUIComposeMessage.h; sourceTree = "<group>"; };
+		749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUIComposeMessage.m; sourceTree = "<group>"; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -626,6 +630,8 @@
 				496F85F12137DD43001FD1C4 /* NINChannelUser.m */,
 				49140B7420F2748800A00EA8 /* NINTextMessage.h */,
 				49140B7520F2748800A00EA8 /* NINTextMessage.m */,
+				749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */,
+				749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */,
 				749E70DC22F9AED90031FEEB /* NINChannelMessage.h */,
 				49F5FA3720F781D600A4A526 /* NINQueue.h */,
 				49F5FA3820F781D600A4A526 /* NINQueue.m */,
@@ -758,6 +764,7 @@
 				49140B8E20F4BFA000A00EA8 /* NINNavigationBar.h in Headers */,
 				49D77F2B215651DE00900224 /* NINFullScreenImageViewController.h in Headers */,
 				49CD077B215CD4AD00046AB9 /* NINUserTypingMessage.h in Headers */,
+				749E70E222FC2E460031FEEB /* NINUIComposeMessage.h in Headers */,
 				49118960214BE54F008F1748 /* NSDateFormatter+Ninchat.h in Headers */,
 				496F1EB121660FEF006CF321 /* NINExpandingTextView.h in Headers */,
 			);
@@ -957,6 +964,7 @@
 				49D77F3521569C0400900224 /* NINToast.m in Sources */,
 				49F5FA2520F4E89A00A4A526 /* NINBaseViewController.m in Sources */,
 				49CD0781216205C600046AB9 /* NINVideoThumbnailManager.m in Sources */,
+				749E70E322FC2E460031FEEB /* NINUIComposeMessage.m in Sources */,
 				49140B7120F2494800A00EA8 /* NINSessionManager.m in Sources */,
 				49B699CB2156312000E6C83D /* NSString+Ninchat.m in Sources */,
 				49F5FA3420F775FF00A4A526 /* NINClientPropsParser.m in Sources */,
