@@ -81,7 +81,7 @@
 
 @end
 
-#pragma mark - NINEmbeddableNINChatView
+#pragma mark - NINEmbeddableCloseChatButton
 
 @implementation NINEmbeddableCloseChatButton
 

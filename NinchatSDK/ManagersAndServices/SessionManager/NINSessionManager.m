@@ -11,6 +11,7 @@
 #import "NINQueue.h"
 #import "NINChatSession.h"
 #import "NINChatMessage.h"
+#import "NINChannelMessage.h"
 #import "NINTextMessage.h"
 #import "NINUIComposeMessage.h"
 #import "NINChatMetaMessage.h"
@@ -593,13 +594,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
         // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
-        NINTextMessage* textMessage = (NINTextMessage*)message;
-        textMessage.series = NO;
+        NSObject<NINChannelMessage>* channelMessage = (NSObject<NINChannelMessage>*)message;
+        channelMessage.series = NO;
 
         // Find the previous channel message
         NSObject<NINChannelMessage>* prevMsg = nil;
         for (NSInteger i = 0; i < _chatMessages.count; i++) {
-            id<NINChannelMessage> msg = _chatMessages[i];
+            NSObject<NINChannelMessage>* msg = (NSObject<NINChannelMessage>*)_chatMessages[i];
             if ([msg isKindOfClass:NINTextMessage.class]) {
                 prevMsg = msg;
                 break;
@@ -607,12 +608,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         }
 
         if (prevMsg != nil) {
-            textMessage.series = [prevMsg.sender.userID isEqualToString:textMessage.sender.userID];
+            channelMessage.series = [prevMsg.sender.userID isEqualToString:channelMessage.sender.userID];
         }
-    } else if ([message isKindOfClass:NINUIComposeMessage.class]) {
-        
     }
-
+    
     [_chatMessages insertObject:message atIndex:0];
 
     postNotification(kChannelMessageNotification, @{@"newMessage": message});

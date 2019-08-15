@@ -798,7 +798,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     return self.sessionManager.chatMessages.count;
 }
 
--(NSObject<NINChannelMessage>*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
+-(NSObject<NINChatMessage>*) chatView:(NINChatView*)chatView messageAtIndex:(NSInteger)index {
     return self.sessionManager.chatMessages[index];
 }
 

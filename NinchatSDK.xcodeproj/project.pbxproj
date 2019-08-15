@@ -142,6 +142,8 @@
 		49F5FA3F20F8CF6B00A4A526 /* NINRatingViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */; };
 		49F5FA4020F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
 		49F5FA4120F8CF6B00A4A526 /* NINRatingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */; };
+		7483ABCF2305B0C0006D69E9 /* NINComposeInputView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7483ABCD2305B0C0006D69E9 /* NINComposeInputView.h */; };
+		7483ABD02305B0C0006D69E9 /* NINComposeInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7483ABCE2305B0C0006D69E9 /* NINComposeInputView.m */; };
 		749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70DC22F9AED90031FEEB /* NINChannelMessage.h */; };
 		749E70E222FC2E460031FEEB /* NINUIComposeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */; };
 		749E70E322FC2E460031FEEB /* NINUIComposeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */; };
@@ -289,6 +291,8 @@
 		49F5FA3D20F8CF6B00A4A526 /* NINRatingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINRatingViewController.h; sourceTree = "<group>"; };
 		49F5FA3E20F8CF6B00A4A526 /* NINRatingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINRatingViewController.m; sourceTree = "<group>"; };
 		5317ED40D8AD5529D4109826 /* Pods_NinchatSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7483ABCD2305B0C0006D69E9 /* NINComposeInputView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINComposeInputView.h; sourceTree = "<group>"; };
+		7483ABCE2305B0C0006D69E9 /* NINComposeInputView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINComposeInputView.m; sourceTree = "<group>"; };
 		749E70DC22F9AED90031FEEB /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
 		749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUIComposeMessage.h; sourceTree = "<group>"; };
 		749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUIComposeMessage.m; sourceTree = "<group>"; };
@@ -488,6 +492,8 @@
 				4930441D2158DD4E00DECB0C /* NINChatMetaCell.h */,
 				4930441E2158DD4E00DECB0C /* NINChatMetaCell.m */,
 				493044212158DD5F00DECB0C /* NINChatMetaCell.xib */,
+				7483ABCD2305B0C0006D69E9 /* NINComposeInputView.h */,
+				7483ABCE2305B0C0006D69E9 /* NINComposeInputView.m */,
 			);
 			path = ChatView;
 			sourceTree = "<group>";
@@ -753,6 +759,7 @@
 				496F85F6213838E7001FD1C4 /* NINTouchView.h in Headers */,
 				49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */,
 				49D77F2F21566E5700900224 /* UIImageView+Ninchat.h in Headers */,
+				7483ABCF2305B0C0006D69E9 /* NINComposeInputView.h in Headers */,
 				4986E5A921A573ED00104CD4 /* NINPermissions.h in Headers */,
 				496F1EBC21663205006CF321 /* NINChoiceDialogRow.h in Headers */,
 				499443B4208F320700101DCA /* NINChatSession.h in Headers */,
@@ -972,6 +979,7 @@
 				4911895D214B9B14008F1748 /* NINChatSession+Internal.m in Sources */,
 				49F5FA3A20F781D600A4A526 /* NINQueue.m in Sources */,
 				49721CC82122F70500695F33 /* NINWebRTCClient.m in Sources */,
+				7483ABD02305B0C0006D69E9 /* NINComposeInputView.m in Sources */,
 				499443C3208F47EA00101DCA /* NINInitialViewController.m in Sources */,
 				493044202158DD4E00DECB0C /* NINChatMetaCell.m in Sources */,
 				49721CD221295AEA00695F33 /* NINChatView.m in Sources */,

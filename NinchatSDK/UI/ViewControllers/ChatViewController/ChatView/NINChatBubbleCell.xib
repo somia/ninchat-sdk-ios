@@ -138,16 +138,24 @@
                                                     </mask>
                                                 </variation>
                                             </textView>
+                                            <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ioO-dR-nZb" customClass="NINComposeInputView">
+                                                <rect key="frame" x="0.0" y="0.0" width="392" height="104.5"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
+                                            <constraint firstAttribute="bottom" secondItem="ioO-dR-nZb" secondAttribute="bottom" id="369-vL-XnF"/>
+                                            <constraint firstItem="ioO-dR-nZb" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" id="8m3-Jx-BOa"/>
                                             <constraint firstAttribute="trailing" secondItem="uba-VT-R7U" secondAttribute="trailing" constant="10" id="MnJ-s5-Lre"/>
+                                            <constraint firstAttribute="trailing" secondItem="ioO-dR-nZb" secondAttribute="trailing" id="O6i-8U-3GY"/>
                                             <constraint firstItem="GOj-1m-Klp" firstAttribute="centerY" secondItem="uba-VT-R7U" secondAttribute="centerY" id="PmT-Zo-sT4"/>
+                                            <constraint firstItem="ioO-dR-nZb" firstAttribute="leading" secondItem="9Yb-ri-pEB" secondAttribute="leading" id="QRi-q2-780"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="QzG-SE-TkM"/>
                                             <constraint firstAttribute="trailing" secondItem="9Og-bJ-chR" secondAttribute="trailing" constant="10" id="RhV-VV-9z1"/>
                                             <constraint firstAttribute="bottom" secondItem="9Og-bJ-chR" secondAttribute="bottom" constant="10" id="bVo-nE-WgS"/>
                                             <constraint firstItem="9Og-bJ-chR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9Yb-ri-pEB" secondAttribute="leading" constant="10" id="fvg-TI-KGO"/>
-                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" id="ga7-Ih-CLf"/>
+                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="bottom" priority="900" id="ga7-Ih-CLf"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="top" secondItem="9Yb-ri-pEB" secondAttribute="top" constant="15" id="mhi-h0-la2"/>
                                             <constraint firstItem="GOj-1m-Klp" firstAttribute="centerX" secondItem="uba-VT-R7U" secondAttribute="centerX" id="rIb-RO-6RP"/>
                                         </constraints>
@@ -199,6 +207,7 @@
                 <outlet property="bubbleContentsContainerRightConstraint" destination="EJE-73-eqo" id="4Lt-hq-gG2"/>
                 <outlet property="bubbleContentsContainerView" destination="9Yb-ri-pEB" id="3ax-xQ-dXZ"/>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
+                <outlet property="composeInputView" destination="ioO-dR-nZb" id="xda-bC-xmr"/>
                 <outlet property="imageProportionalWidthConstraint" destination="VDo-Xj-qhv" id="VK6-g8-ASP"/>
                 <outlet property="imageWidthConstraint" destination="OBY-Vp-eda" id="XQ3-cA-kEh"/>
                 <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>

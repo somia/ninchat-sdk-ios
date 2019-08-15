@@ -13,7 +13,9 @@
 #import "NINChatView.h"
 #import "NINChannelMessage.h"
 #import "NINTextMessage.h"
+#import "NINUIComposeMessage.h"
 #import "NINUserTypingMessage.h"
+#import "NINComposeInputView.h"
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
@@ -58,6 +60,9 @@
 
 // The message's image
 @property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
+
+// Input view for messages of type ui/compose
+@property (nonatomic, strong) IBOutlet NINComposeInputView* composeInputView;
 
 // 'Padding' between message image and the bubble's top edge. Used to adjust the padding.
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* messageImageTopConstraint;
@@ -344,6 +349,19 @@
 
 #pragma mark - Public methods
 
+-(void) resetImageLayout {
+    self.imageProportionalWidthConstraint.active = NO;
+    self.imageAspectRatioConstraint.active = NO;
+    self.imageAspectRatioConstraint = nil;
+    self.imageWidthConstraint.active = NO;
+    self.messageImageView.image = nil;
+    
+    if (self.imageTapRecognizer != nil) {
+        [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
+        self.imageTapRecognizer = nil;
+    }
+}
+
 -(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
@@ -352,6 +370,9 @@
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
     
     if ([message isKindOfClass:NINTextMessage.class]) {
+        [self.composeInputView clear];
+        self.composeInputView.hidden = YES;
+        
         NINTextMessage* textMessage = (NINTextMessage*)message;
         
         NINFileInfo* attachment = textMessage.attachment;
@@ -369,16 +390,7 @@
         // Update the message image, if any
         if (attachment == nil) {
             // No image; clear image constraints etc so it wont affect layout
-            self.imageProportionalWidthConstraint.active = NO;
-            self.imageAspectRatioConstraint.active = NO;
-            self.imageAspectRatioConstraint = nil;
-            self.imageWidthConstraint.active = NO;
-            self.messageImageView.image = nil;
-            
-            if (self.imageTapRecognizer != nil) {
-                [self.messageImageView removeGestureRecognizer:self.imageTapRecognizer];
-                self.imageTapRecognizer = nil;
-            }
+            [self resetImageLayout];
         } else if (attachment.isImageOrVideo) {
             __weak typeof(self) weakSelf = self;
             
@@ -386,6 +398,15 @@
                 [weakSelf updateImage:didNetworkRefresh];
             }];
         }
+    } else if ([message isKindOfClass:NINUIComposeMessage.class]) {
+        self.messageTextView.text = @"";
+        [self resetImageLayout];
+        self.videoPlayImageView.hidden = YES;
+        self.composeInputView.hidden = NO;
+        
+        NINUIComposeMessage* uiComposeMessage = (NINUIComposeMessage*)message;
+        NSLog(@"compose %@", self.composeInputView);
+        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options];
     }
 
     self.message = message;

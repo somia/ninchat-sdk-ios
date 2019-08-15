@@ -42,9 +42,9 @@
 /** A label or a descriptive text depending on the element. Text prompt on "select". */
 @property (nonatomic, strong, readonly) NSString* label;
 /** Array of NINUIComposeOption elements for "select" type element. */
-@property (nonatomic, strong, readonly) NSArray* options;
+@property (nonatomic, strong, readonly) NSArray<NSString*>* options;
 
-+(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray*)options;
++(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSString*>*)options;
 
 @end
 

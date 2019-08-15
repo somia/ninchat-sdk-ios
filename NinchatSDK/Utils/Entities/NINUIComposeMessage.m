@@ -38,13 +38,13 @@
 @property (nonatomic, strong) NSString* element;
 @property (nonatomic, strong) NSString* name;
 @property (nonatomic, strong) NSString* label;
-@property (nonatomic, strong) NSArray* options;
+@property (nonatomic, strong) NSArray<NSString*>* options;
 
 @end
 
 @implementation NINUIComposeMessage
 
-+(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray*)options {
++(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSString*>*)options {
     
     NINUIComposeMessage* msg = [NINUIComposeMessage new];
     msg.messageID = messageID;
