@@ -13,7 +13,7 @@ CGFloat verticalMargin = 10;
 
 @interface NINComposeInputView ()
 
-@property (nonatomic, strong) NSSet<NSString*>* selectedOptions;
+@property (nonatomic, strong) NSArray<NSDictionary*>* options;
 
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UIButton* sendButton;
@@ -32,7 +32,7 @@ CGFloat verticalMargin = 10;
 
 -(CGSize) intrinsicContentSize {
     if (self.optionButtons != nil) {
-        return CGSizeMake(CGFLOAT_MAX, UIViewNoIntrinsicMetric);
+        return CGSizeMake(CGFLOAT_MAX, [self intrinsicHeight]);
     } else {
         return CGSizeMake(UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric);
     }
@@ -60,11 +60,11 @@ CGFloat verticalMargin = 10;
     self.optionButtons = nil;
 }
 
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSString*>*)options {
+-(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options {
     if (self.titleLabel == nil) {
-        self.titleLabel = [UILabel init];
+        self.titleLabel = [[UILabel alloc] init];
         [self addSubview:self.titleLabel];
-        self.sendButton = [UIButton init];
+        self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self addSubview:self.sendButton];
     }
     if (self.optionButtons != nil) {
@@ -74,9 +74,9 @@ CGFloat verticalMargin = 10;
     }
     
     NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
-    for (NSString* option in options) {
+    for (NSDictionary* option in options) {
         UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
-        [button setTitle:option forState:UIControlStateNormal];
+        [button setTitle:option[@"label"] forState:UIControlStateNormal];
         [self addSubview:button];
         [optionButtons addObject:button];
     }

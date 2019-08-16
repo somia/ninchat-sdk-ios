@@ -11,7 +11,7 @@
 @interface NINComposeInputView : UIView
 
 -(void) clear;
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSString*>*)options;
+-(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options;
 
 
 @end
