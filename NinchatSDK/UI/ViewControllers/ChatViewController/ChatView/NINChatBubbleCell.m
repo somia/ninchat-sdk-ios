@@ -405,8 +405,7 @@
         self.composeInputView.hidden = NO;
         
         NINUIComposeMessage* uiComposeMessage = (NINUIComposeMessage*)message;
-        NSLog(@"compose %@", self.composeInputView);
-        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options];
+        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options colorAssets:colorAssets];
     }
 
     self.message = message;

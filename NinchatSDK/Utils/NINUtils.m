@@ -123,3 +123,10 @@ NSString* guessMIMETypeFromFileName(NSString* fileName) {
 
     return (__bridge NSString*)mimeType;
 }
+
+UIImage* imageFrom(UIColor* _Nonnull color) {
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(1, 1), true, 0.0);
+    [color setFill];
+    UIRectFill(CGRectMake(0, 0, 1, 1));
+    return UIGraphicsGetImageFromCurrentImageContext();
+}

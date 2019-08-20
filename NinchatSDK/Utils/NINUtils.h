@@ -62,4 +62,7 @@ void fetchSiteConfig(NSString* _Nonnull serverAddress, NSString* _Nonnull config
 /** Looks up a MIME type for a file name. */
 NSString* _Nonnull guessMIMETypeFromFileName(NSString* _Nonnull fileName);
 
+/** Return a single pixel image with given color. */
+UIImage* imageFrom(UIColor* _Nonnull color);
+
 #endif /* NINUtils_h */

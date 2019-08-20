@@ -8,10 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINPublicTypes.h"
+#import "NINPrivateTypes.h"
+
 @interface NINComposeInputView : UIView
 
 -(void) clear;
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options;
+-(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
 
 
 @end
