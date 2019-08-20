@@ -14,7 +14,11 @@ static CGFloat const kVerticalMargin = 10;
 
 @interface NINComposeInputView ()
 
-@property (nonatomic, strong) NSArray<NSDictionary*>* options;
+@property (nonatomic, strong) UIColor* buttonBlue;
+@property (nonatomic, strong) UIColor* buttonGrey;
+@property (nonatomic, strong) UIFont* labelFont;
+
+@property (nonatomic, strong) NSArray<NSMutableDictionary*>* options;
 
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UIButton* sendButton;
@@ -43,15 +47,15 @@ static CGFloat const kVerticalMargin = 10;
     // TODO read session object for colors
     button.layer.cornerRadius = kButtonHeight / 2;
     button.layer.masksToBounds = YES;
-    button.layer.borderColor = [[UIColor darkGrayColor] CGColor];
+    button.layer.borderColor = self.buttonGrey.CGColor;
     if (selected) {
         button.layer.borderWidth = 0;
-        [button setBackgroundImage:imageFrom([UIColor blueColor]) forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [button setBackgroundImage:imageFrom(self.buttonBlue) forState:UIControlStateNormal];
+        [button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     } else {
         button.layer.borderWidth = 2;
         [button setBackgroundImage:nil forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        [button setTitleColor:self.buttonGrey forState:UIControlStateNormal];
     }
 }
 
@@ -64,7 +68,7 @@ static CGFloat const kVerticalMargin = 10;
         button.frame = CGRectMake(0, y, self.bounds.size.width, kButtonHeight);
         y += kButtonHeight + kVerticalMargin;
     }
-    CGFloat sendButtonWidth = self.sendButton.intrinsicContentSize.width;
+    CGFloat sendButtonWidth = self.sendButton.intrinsicContentSize.width + 60;
     self.sendButton.frame = CGRectMake(self.bounds.size.width - sendButtonWidth, y, sendButtonWidth, kButtonHeight);
 }
 
@@ -74,14 +78,30 @@ static CGFloat const kVerticalMargin = 10;
             [button removeFromSuperview];
         }
     }
+    self.options = nil;
     self.optionButtons = nil;
 }
 
+-(void) pressed:(UIButton*)button {
+    if (button == self.sendButton) {
+        NSLog(@"TODO send %@", self.options);
+        [self applyButtonStyle:button selected:YES];
+        return;
+    }
+    for (int i=0; i<self.optionButtons.count; ++i) {
+        if (button == self.optionButtons[i]) {
+            BOOL selected = ![[self.options[i] valueForKey:@"selected"] boolValue];
+            self.options[i][@"selected"] = [NSNumber numberWithBool:selected];
+            [self applyButtonStyle:button selected:selected];
+            return;
+        }
+    }
+}
+
 -(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
-    // TODO read session object
     if (self.titleLabel == nil) {
         self.titleLabel = [[UILabel alloc] init];
-        self.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:16];
+        self.titleLabel.font = self.labelFont;
         self.titleLabel.textColor = [UIColor blackColor];
         UIColor* bubbleTextColor = colorAssets[NINColorAssetKeyChatBubbleLeftText];
         if (bubbleTextColor != nil) {
@@ -92,9 +112,10 @@ static CGFloat const kVerticalMargin = 10;
         // TODO get send button text from session object
         [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
         [self applyButtonStyle:self.sendButton selected:false];
-        self.sendButton.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:16];
-        [self.sendButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-        self.sendButton.layer.borderColor = [[UIColor blueColor] CGColor];
+        self.sendButton.titleLabel.font = self.labelFont;
+        [self.sendButton setTitleColor:self.buttonBlue forState:UIControlStateNormal];
+        self.sendButton.layer.borderColor = self.buttonBlue.CGColor;
+        [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.sendButton];
     }
     if (self.optionButtons != nil) {
@@ -105,18 +126,36 @@ static CGFloat const kVerticalMargin = 10;
     
     [self.titleLabel setText:label];
     
+    NSMutableArray<NSMutableDictionary*>* newOptions = [NSMutableArray new];
     NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
+    
     for (NSDictionary* option in options) {
+        NSMutableDictionary* newOption = [option mutableCopy];
+        newOption[@"selected"] = @NO;
         UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.titleLabel.font = [UIFont fontWithName:@"SourceSansPro-Regular" size:16];
+        button.titleLabel.font = self.labelFont;
         [self applyButtonStyle:button selected:false];
         [button setTitle:option[@"label"] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:button];
+        [newOptions addObject:newOption];
         [optionButtons addObject:button];
     }
+    
+    self.options = newOptions;
     self.optionButtons = optionButtons;
 }
 
-
+-(void) awakeFromNib {
+    [super awakeFromNib];
+    self.buttonBlue = [UIColor colorWithRed:(CGFloat)0x49/0xFF green:(CGFloat)0xAC/0xFF blue:(CGFloat)0xFD/0xFF alpha:1];
+    self.buttonGrey = [UIColor colorWithRed:(CGFloat)0x99/0xFF green:(CGFloat)0x99/0xFF blue:(CGFloat)0x99/0xFF alpha:1];
+    /*
+     This should be source sans pro, but the custom font fails to initialise.
+     It appears it's actually borken everywhere else too, so for the sake of
+     getting this feature out we'll just match the current look for now.
+     */
+    self.labelFont = [UIFont fontWithName:@"Helvetica" size:16];;
+}
 
 @end
