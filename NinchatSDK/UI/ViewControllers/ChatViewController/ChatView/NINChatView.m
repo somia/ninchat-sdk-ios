@@ -170,7 +170,7 @@
         NINChannelMessage* channelMessage = (NINChannelMessage*)message;
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = _videoThumbnailManager;
-        [cell populateWithChannelMessage:channelMessage imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
+        [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };

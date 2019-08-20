@@ -362,7 +362,7 @@
     }
 }
 
--(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
+-(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message siteConfiguration:(NSDictionary*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
@@ -405,7 +405,7 @@
         self.composeInputView.hidden = NO;
         
         NINUIComposeMessage* uiComposeMessage = (NINUIComposeMessage*)message;
-        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options colorAssets:colorAssets];
+        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options siteConfiguration:siteConfiguration colorAssets:colorAssets];
     }
 
     self.message = message;

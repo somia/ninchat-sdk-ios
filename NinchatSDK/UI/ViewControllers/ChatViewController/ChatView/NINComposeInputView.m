@@ -14,12 +14,15 @@ static CGFloat const kVerticalMargin = 10;
 
 @interface NINComposeInputView ()
 
+// properties that should be static const but can't be initialised compile-time
 @property (nonatomic, strong) UIColor* buttonBlue;
 @property (nonatomic, strong) UIColor* buttonGrey;
 @property (nonatomic, strong) UIFont* labelFont;
 
+// compose options received from the backend and displayed
 @property (nonatomic, strong) NSArray<NSMutableDictionary*>* options;
 
+// subviews
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UIButton* sendButton;
 @property (nonatomic, strong) NSArray<UIButton*>* optionButtons;
@@ -44,7 +47,6 @@ static CGFloat const kVerticalMargin = 10;
 }
 
 -(void) applyButtonStyle:(UIButton*)button selected:(BOOL)selected {
-    // TODO read session object for colors
     button.layer.cornerRadius = kButtonHeight / 2;
     button.layer.masksToBounds = YES;
     button.layer.borderColor = self.buttonGrey.CGColor;
@@ -61,13 +63,16 @@ static CGFloat const kVerticalMargin = 10;
 
 -(void) layoutSubviews {
     [super layoutSubviews];
+    
     CGFloat titleHeight = self.titleLabel.intrinsicContentSize.height;
     self.titleLabel.frame = CGRectMake(0, 0, self.titleLabel.intrinsicContentSize.width, titleHeight);
+    
     CGFloat y = titleHeight + kVerticalMargin;
     for (UIButton* button in self.optionButtons) {
         button.frame = CGRectMake(0, y, self.bounds.size.width, kButtonHeight);
         y += kButtonHeight + kVerticalMargin;
     }
+    
     CGFloat sendButtonWidth = self.sendButton.intrinsicContentSize.width + 60;
     self.sendButton.frame = CGRectMake(self.bounds.size.width - sendButtonWidth, y, sendButtonWidth, kButtonHeight);
 }
@@ -98,7 +103,9 @@ static CGFloat const kVerticalMargin = 10;
     }
 }
 
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+    
+    // create title label and send button once
     if (self.titleLabel == nil) {
         self.titleLabel = [[UILabel alloc] init];
         self.titleLabel.font = self.labelFont;
@@ -108,9 +115,14 @@ static CGFloat const kVerticalMargin = 10;
             self.titleLabel.textColor = bubbleTextColor;
         }
         [self addSubview:self.titleLabel];
+        
         self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        // TODO get send button text from session object
-        [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
+        NSString* sendButtonText = siteConfiguration[@"default"][@"sendButtonText"];
+        if (sendButtonText != nil) {
+            [self.sendButton setTitle:sendButtonText forState:UIControlStateNormal];
+        } else {
+            [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
+        }
         [self applyButtonStyle:self.sendButton selected:false];
         self.sendButton.titleLabel.font = self.labelFont;
         [self.sendButton setTitleColor:self.buttonBlue forState:UIControlStateNormal];
@@ -118,26 +130,30 @@ static CGFloat const kVerticalMargin = 10;
         [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.sendButton];
     }
+    [self.titleLabel setText:label];
+
+    // clear existing option buttons
     if (self.optionButtons != nil) {
         for (UIButton* button in self.optionButtons) {
             [button removeFromSuperview];
         }
     }
     
-    [self.titleLabel setText:label];
-    
+    // recreate options dict to add the "selected" fields
     NSMutableArray<NSMutableDictionary*>* newOptions = [NSMutableArray new];
     NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
     
     for (NSDictionary* option in options) {
         NSMutableDictionary* newOption = [option mutableCopy];
         newOption[@"selected"] = @NO;
+        
         UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.titleLabel.font = self.labelFont;
         [self applyButtonStyle:button selected:false];
         [button setTitle:option[@"label"] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:button];
+        
         [newOptions addObject:newOption];
         [optionButtons addObject:button];
     }

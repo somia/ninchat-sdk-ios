@@ -8,14 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINSessionManager.h"
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
 
+/** Represents the ui/compose message UI within a NINChatBubbleCell. */
 @interface NINComposeInputView : UIView
 
 -(void) clear;
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
-
+-(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
 
 @end
 
