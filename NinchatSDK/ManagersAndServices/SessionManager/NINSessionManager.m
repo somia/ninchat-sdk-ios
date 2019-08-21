@@ -692,7 +692,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         }
         
         NSDictionary* payloadDict = payloadArray[0];
-        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] uid:payloadDict[@"id"] name:payloadDict[@"id"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
+        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
         [self addNewChatMessage:msg];
     }
 }
@@ -1046,6 +1046,15 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     NSDictionary* payloadDict = @{@"text": message};
     [self sendMessageWithMessageType:@"ninchat.com/text" payloadDict:payloadDict completion:completion];
+}
+
+// Sends a ui/action response to the current channel
+-(void) sendUIActionMessage:(NSDictionary*)composeMessageDict completion:(callbackWithErrorBlock _Nonnull)completion {
+    NSCAssert(self.session != nil, @"No chat session");
+    
+    NSDictionary* payloadDict = @{@"action": @"click",
+                                  @"target": composeMessageDict};
+    [self sendMessageWithMessageType:@"ninchat.com/ui/action" payloadDict:payloadDict completion:completion];
 }
 
 -(void) sendFileWithFilename:(NSString*)fileName withData:(NSData*)data completion:(callbackWithErrorBlock _Nonnull)completion {

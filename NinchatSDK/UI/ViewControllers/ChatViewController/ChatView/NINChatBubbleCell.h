@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINComposeInputView.h"
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
 
@@ -18,12 +19,15 @@
 @class NINAvatarConfig;
 
 typedef void (^imagePressedCallback)(NINFileInfo* attachment, UIImage* image);
+typedef void (^uiComposeSendPressedCallback)(NINComposeInputView* composeInputView);
 
 /** Rerepsents a chat message (in a 'bubble') in the chat view. */
 @interface NINChatBubbleCell : UITableViewCell
 
 @property (nonatomic, strong) NINVideoThumbnailManager* videoThumbnailManager;
 @property (nonatomic, copy) imagePressedCallback imagePressedCallback;
+/** Custom getter and setter for uiComposeSendPressedCallback pass the object through to composeInputView. */
+@property (nonatomic, copy) uiComposeSendPressedCallback uiComposeSendPressedCallback;
 @property (nonatomic, copy) emptyBlock cellConstraintsUpdatedCallback;
 
 -(void) populateWithChannelMessage:(NINChannelMessage*)message siteConfiguration:(NSDictionary*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig;

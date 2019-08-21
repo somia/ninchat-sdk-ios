@@ -821,6 +821,16 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self closeChatButtonPressed];
 }
 
+-(void) uiActionSentByComposeInputView:(NINComposeInputView*)composeInputView {
+    [self.sessionManager sendUIActionMessage:composeInputView.composeMessageDict completion:^(NSError* _Nonnull error) {
+        if (error != nil) {
+            NSLog(@"TODO: message failed to send - show error message");
+            [NINToast showWithErrorMessage:@"Failed to send message" callback:nil];
+            [composeInputView sendActionFailed];
+        }
+    }];
+}
+
 #pragma mark - From NINBaseViewController
 
 -(void) keyboardWillShow:(NSNotification *)notification {

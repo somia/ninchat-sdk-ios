@@ -349,6 +349,14 @@
 
 #pragma mark - Public methods
 
+// getter and setter for uiComposeSendPressedCallback pass the block along to composeInputView
+-(uiComposeSendPressedCallback) uiComposeSendPressedCallback {
+    return self.composeInputView.uiComposeSendPressedCallback;
+}
+-(void) setUiComposeSendPressedCallback:(uiComposeSendPressedCallback)uiComposeSendPressedCallback {
+    self.composeInputView.uiComposeSendPressedCallback = uiComposeSendPressedCallback;
+}
+
 -(void) resetImageLayout {
     self.imageProportionalWidthConstraint.active = NO;
     self.imageAspectRatioConstraint.active = NO;
@@ -404,8 +412,7 @@
         self.videoPlayImageView.hidden = YES;
         self.composeInputView.hidden = NO;
         
-        NINUIComposeMessage* uiComposeMessage = (NINUIComposeMessage*)message;
-        [self.composeInputView populateWithLabel:uiComposeMessage.label options:uiComposeMessage.options siteConfiguration:siteConfiguration colorAssets:colorAssets];
+        [self.composeInputView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets];
     }
 
     self.message = message;
@@ -493,6 +500,7 @@
 
     self.cellConstraintsUpdatedCallback = nil;
     self.imagePressedCallback = nil;
+    self.uiComposeSendPressedCallback = nil;
 }
 
 #pragma mark - Lifecycle etc.

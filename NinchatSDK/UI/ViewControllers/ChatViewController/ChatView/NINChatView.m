@@ -174,6 +174,9 @@
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
+        cell.uiComposeSendPressedCallback = ^(NINComposeInputView *composeInputView) {
+            [weakSelf.delegate uiActionSentByComposeInputView:composeInputView];
+        };
         cell.cellConstraintsUpdatedCallback = ^{
             [UIView animateWithDuration:0.3 animations:^{
                 [weakSelf.tableView beginUpdates];

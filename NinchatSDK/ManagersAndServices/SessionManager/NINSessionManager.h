@@ -12,6 +12,7 @@
 
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
+#import "NINUIComposeMessage.h"
 #import "NINChatSession+Internal.h" // To provide log: method
 #import "NINChatMessage.h"
 
@@ -124,6 +125,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 
 /** Sends chat message to the active chat channel. */
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
+
+/** Sends a ui/action response to the current channel. */
+-(void) sendUIActionMessage:(NSDictionary*)composeMessageDict completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends a file to the chat. */
 -(void) sendFileWithFilename:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;

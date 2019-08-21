@@ -8,25 +8,6 @@
 
 #import "NINUIComposeMessage.h"
 
-@interface NINUIComposeOption ()
-
-// Writable private definitions for the properties
-@property (nonatomic, strong) NSString* label;
-@property (nonatomic, strong) NSString* value;
-
-@end
-
-@implementation NINUIComposeOption
-
-+(NINUIComposeOption*) optionWithValue:(NSString*)value label:(NSString*)label {
-    NINUIComposeOption* option = [NINUIComposeOption new];
-    option.value = value;
-    option.label = label;
-    return option;
-}
-
-@end
-
 @interface NINUIComposeMessage ()
 
 // Writable private definitions for the properties
@@ -43,6 +24,29 @@
 @end
 
 @implementation NINUIComposeMessage
+
+-(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options {
+    NSMutableDictionary* mutableDict = [[NSMutableDictionary alloc] init];
+    mutableDict[@"element"] = self.element;
+    if (self.className != nil) {
+        mutableDict[@"class"] = self.className;
+    }
+    if (self.uid != nil) {
+        mutableDict[@"id"] = self.uid;
+    }
+    if (self.label != nil) {
+        mutableDict[@"label"] = self.label;
+    }
+    if (options != nil) {
+        mutableDict[@"options"] = options;
+    } else if (self.options != nil) {
+        mutableDict[@"options"] = self.options;
+    }
+    if (self.name != nil) {
+        mutableDict[@"name"] = self.name;
+    }
+    return mutableDict;
+}
 
 +(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options {
     

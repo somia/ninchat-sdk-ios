@@ -22,6 +22,9 @@ static CGFloat const kVerticalMargin = 10;
 // compose options received from the backend and displayed
 @property (nonatomic, strong) NSArray<NSMutableDictionary*>* options;
 
+// originally received ui/compose message, public getter returns modified options
+@property (nonatomic, strong) NINUIComposeMessage* originalMessage;
+
 // subviews
 @property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UIButton* sendButton;
@@ -61,6 +64,10 @@ static CGFloat const kVerticalMargin = 10;
     }
 }
 
+-(NSDictionary*) composeMessageDict {
+    return [self.originalMessage dictWithOptions:self.options];
+}
+
 -(void) layoutSubviews {
     [super layoutSubviews];
     
@@ -89,7 +96,7 @@ static CGFloat const kVerticalMargin = 10;
 
 -(void) pressed:(UIButton*)button {
     if (button == self.sendButton) {
-        NSLog(@"TODO send %@", self.options);
+        self.uiComposeSendPressedCallback(self);
         [self applyButtonStyle:button selected:YES];
         return;
     }
@@ -103,7 +110,9 @@ static CGFloat const kVerticalMargin = 10;
     }
 }
 
--(void) populateWithLabel:(NSString*)label options:(NSArray<NSDictionary*>*)options siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+    
+    self.originalMessage = composeMessage;
     
     // create title label and send button once
     if (self.titleLabel == nil) {
@@ -123,14 +132,13 @@ static CGFloat const kVerticalMargin = 10;
         } else {
             [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
         }
-        [self applyButtonStyle:self.sendButton selected:false];
         self.sendButton.titleLabel.font = self.labelFont;
-        [self.sendButton setTitleColor:self.buttonBlue forState:UIControlStateNormal];
-        self.sendButton.layer.borderColor = self.buttonBlue.CGColor;
+        [self sendActionFailed]; // sets send button appearance to initial state
         [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.sendButton];
     }
-    [self.titleLabel setText:label];
+    
+    [self.titleLabel setText:composeMessage.label];
 
     // clear existing option buttons
     if (self.optionButtons != nil) {
@@ -140,10 +148,10 @@ static CGFloat const kVerticalMargin = 10;
     }
     
     // recreate options dict to add the "selected" fields
-    NSMutableArray<NSMutableDictionary*>* newOptions = [NSMutableArray new];
+    NSMutableArray<NSMutableDictionary*>* options = [NSMutableArray new];
     NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
     
-    for (NSDictionary* option in options) {
+    for (NSDictionary* option in composeMessage.options) {
         NSMutableDictionary* newOption = [option mutableCopy];
         newOption[@"selected"] = @NO;
         
@@ -154,12 +162,19 @@ static CGFloat const kVerticalMargin = 10;
         [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:button];
         
-        [newOptions addObject:newOption];
+        [options addObject:newOption];
         [optionButtons addObject:button];
     }
     
-    self.options = newOptions;
+    self.options = options;
     self.optionButtons = optionButtons;
+}
+
+// sets send button appearance to initial state, also called in initialisation
+-(void) sendActionFailed {
+    [self applyButtonStyle:self.sendButton selected:false];
+    [self.sendButton setTitleColor:self.buttonBlue forState:UIControlStateNormal];
+    self.sendButton.layer.borderColor = self.buttonBlue.CGColor;
 }
 
 -(void) awakeFromNib {

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "NINChatMessage.h"
+#import "NINComposeInputView.h"
 #import "NINPublicTypes.h"
 
 @class NINChatView;
@@ -34,6 +35,9 @@
 
 /** "Close Chat" button was pressed inside the chat view; the used requests closing the chat SDK. */
 -(void) closeChatRequestedByChatView:(NINChatView*)chatView;
+
+/** "Send" button was pressed in a ui/compose type message. */
+-(void) uiActionSentByComposeInputView:(NINComposeInputView*)composeInputView;
 
 @end
 

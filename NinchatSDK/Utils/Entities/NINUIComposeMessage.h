@@ -12,17 +12,6 @@
 
 @class NINChannelUser;
 
-@interface NINUIComposeOption: NSObject
-
-/** Option label text. */
-@property (nonatomic, strong, readonly) NSString* label;
-/** Option internal identifier. */
-@property (nonatomic, strong, readonly) NSString* value;
-
-+(NINUIComposeOption*) optionWithValue:(NSString*)value label:(NSString*)label;
-
-@end
-
 @interface NINUIComposeMessage : NSObject<NINChannelMessage>
 
 /**
@@ -43,6 +32,9 @@
 @property (nonatomic, strong, readonly) NSString* label;
 /** Array of NINUIComposeOption elements for "select" type element. */
 @property (nonatomic, strong, readonly) NSArray<NSDictionary*>* options;
+
+/** Instance data as a dictionary, with options property replaced if parameter is non-nil. */
+-(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options;
 
 +(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options;
 
