@@ -377,6 +377,8 @@
     NSCAssert(self.imageProportionalWidthConstraint != nil, @"Cannot be nil");
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
     
+    self.message = message;
+    
     if ([message isKindOfClass:NINTextMessage.class]) {
         [self.composeInputView clear];
         self.composeInputView.hidden = YES;
@@ -414,9 +416,7 @@
         
         [self.composeInputView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets];
     }
-
-    self.message = message;
-
+    
     self.senderNameLabel.text = message.sender.displayName;
     if (self.senderNameLabel.text.length < 1) {
         self.senderNameLabel.text = @"Guest";
