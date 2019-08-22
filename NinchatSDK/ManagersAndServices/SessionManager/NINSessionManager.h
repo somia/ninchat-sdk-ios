@@ -127,7 +127,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 -(void) sendTextMessage:(NSString* _Nonnull)message completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends a ui/action response to the current channel. */
--(void) sendUIActionMessage:(NSDictionary*)composeMessageDict completion:(callbackWithErrorBlock _Nonnull)completion;
+-(void) sendUIActionMessage:(NSDictionary* _Nonnull)composeMessageDict completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Sends a file to the chat. */
 -(void) sendFileWithFilename:(NSString*_Nonnull)fileName withData:(NSData*_Nonnull)data completion:(callbackWithErrorBlock _Nonnull)completion;
