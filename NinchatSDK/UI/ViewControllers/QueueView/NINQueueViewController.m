@@ -131,11 +131,11 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     self.motdTextView.delegate = self;
     
     // Translations
-    NSString* inQueueText = self.sessionManager.siteConfiguration[@"default"][@"inQueueText"];
+    NSString* inQueueText = [self.sessionManager.siteConfiguration valueForKey:@"inQueueText"];
     if (inQueueText != nil) {
         [self.motdTextView setFormattedText:inQueueText];
     } else {
-        [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+        [self.motdTextView setFormattedText:[self.sessionManager.siteConfiguration valueForKey:@"motd"]];
     }
     self.queueInfoTextView.text = nil;
 

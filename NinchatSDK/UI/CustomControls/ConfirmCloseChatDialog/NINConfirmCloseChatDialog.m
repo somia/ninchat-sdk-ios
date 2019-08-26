@@ -113,7 +113,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     [NSLayoutConstraint activateConstraints:constraints];
 
     // UI texts
-    NSString* confirmText = sessionManager.siteConfiguration[@"default"][@"closeConfirmText"];
+    NSString* confirmText = [sessionManager.siteConfiguration valueForKey:@"closeConfirmText"];
     if (confirmText != nil) {
         [d.infoTextView setFormattedText:confirmText];
     }

@@ -205,7 +205,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 
         NSLog(@"Got site config: %@", config);
 
-        weakSelf.sessionManager.siteConfiguration = config;
+        weakSelf.sessionManager.siteConfiguration = [NINSiteConfiguration siteConfigurationWith:config];
 
         // Open the chat session
         NSError* openSessionError = [weakSelf.sessionManager openSession:^(NSError *error) {

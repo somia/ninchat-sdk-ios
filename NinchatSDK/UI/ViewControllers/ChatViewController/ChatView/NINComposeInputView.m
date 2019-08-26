@@ -110,7 +110,7 @@ static CGFloat const kVerticalMargin = 10;
     }
 }
 
--(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
     
     self.originalMessage = composeMessage;
     
@@ -126,7 +126,7 @@ static CGFloat const kVerticalMargin = 10;
         [self addSubview:self.titleLabel];
         
         self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString* sendButtonText = siteConfiguration[@"default"][@"sendButtonText"];
+        NSString* sendButtonText = [siteConfiguration valueForKey:@"sendButtonText"];
         if (sendButtonText != nil) {
             [self.sendButton setTitle:sendButtonText forState:UIControlStateNormal];
         } else {

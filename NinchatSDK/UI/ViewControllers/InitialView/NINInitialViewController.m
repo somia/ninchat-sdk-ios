@@ -153,11 +153,11 @@ static NSString* const kSegueIdInitialToQueue = @"ninchatsdk.InitialToQueue";
     [super viewDidLoad];
 
     // Translations
-    NSString* welcomeText = (NSString*)self.sessionManager.siteConfiguration[@"default"][@"welcome"];;
+    NSString* welcomeText = (NSString*)[self.sessionManager.siteConfiguration valueForKey:@"welcome"];;
     [self.welcomeTextView setFormattedText:welcomeText];
     self.welcomeTextView.delegate = self;
     [self.closeWindowButton setTitle:[self.sessionManager translation:kCloseWindowText formatParams:nil]  forState:UIControlStateNormal];
-    [self.motdTextView setFormattedText:self.sessionManager.siteConfiguration[@"default"][@"motd"]];
+    [self.motdTextView setFormattedText:[self.sessionManager.siteConfiguration valueForKey:@"motd"]];
     self.motdTextView.delegate = self;
 
     // Create queue buttons

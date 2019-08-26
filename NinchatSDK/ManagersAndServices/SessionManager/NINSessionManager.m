@@ -190,7 +190,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     // Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
     // if not, we use the complete list of queues.
-    NSArray* audienceQueueIDs = self.siteConfiguration[@"default"][@"audienceQueues"];
+    NSArray* audienceQueueIDs = [self.siteConfiguration valueForKey:@"audienceQueues"];
     if (audienceQueueIDs == nil) {
         _audienceQueues = [NSMutableArray arrayWithArray:_queues];
     } else {
@@ -1179,7 +1179,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
 
     // Make sure our site configuration contains a realm_id
-    NSString* realmId = self.siteConfiguration[@"default"][@"audienceRealmId"];
+    NSString* realmId = [self.siteConfiguration valueForKey:@"audienceRealmId"];
     if ((realmId == nil) || (![realmId isKindOfClass:[NSString class]])) {
         return newError(@"Could not find valid realm id in the site configuration");
     }
@@ -1195,7 +1195,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 
     // Get the username from the site config
-    NSString* userName = self.siteConfiguration[@"default"][@"userName"];
+    NSString* userName = [self.siteConfiguration valueForKey:@"userName"];
     if (userName != nil) {
         NINLowLevelClientProps* attrs = [NINLowLevelClientProps new];
         [attrs setString:@"name" val:userName];
@@ -1241,7 +1241,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(NSString*) translation:(NSString*)keyName formatParams:(NSDictionary<NSString*,NSString*>*)formatParams {
     // Look for a translation. If one is not available for this key, use the key itself.
-    NSString* translation = self.siteConfiguration[@"default"][@"translations"][keyName];
+    NSString* translation = [self.siteConfiguration valueForKey:@"translations"][keyName];
     if (translation == nil) {
         translation = keyName;
     }

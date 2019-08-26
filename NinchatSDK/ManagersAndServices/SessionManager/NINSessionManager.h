@@ -12,7 +12,7 @@
 
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
-#import "NINUIComposeMessage.h"
+#import "NINSiteConfiguration.h"
 #import "NINChatSession+Internal.h" // To provide log: method
 #import "NINChatMessage.h"
 
@@ -85,7 +85,7 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @property (nonatomic, strong) NSString* _Nullable siteSecret; 
 
 /** Site configuration. */
-@property (nonatomic, strong) NSDictionary* _Nonnull siteConfiguration;
+@property (nonatomic, strong) NINSiteConfiguration* _Nonnull siteConfiguration;
 
 /** List of available queues for the realm_id. */
 @property (nonatomic, strong) NSArray<NINQueue*>* _Nonnull queues;

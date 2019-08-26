@@ -23,7 +23,7 @@
 @property (nonatomic, copy) void (^uiComposeSendPressedCallback)(NINComposeInputView*);
 
 -(void) clear;
--(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NSDictionary*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
 
 /** Set send button appearance to initial state in response to send failing; also called in initialisation. */
 -(void) sendActionFailed;

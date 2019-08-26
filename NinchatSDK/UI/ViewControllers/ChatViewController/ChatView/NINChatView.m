@@ -145,9 +145,10 @@
     self.imageAssets = [self createImageAssetDictionary];
     self.colorAssets = [self createColorAssetDictionary];
 
-    NSDictionary* defaultDict = sessionManager.siteConfiguration[@"default"];
-    self.agentAvatarConfig = [NINAvatarConfig configWithAvatar:defaultDict[@"agentAvatar"] name:defaultDict[@"agentName"]];
-    self.userAvatarConfig = [NINAvatarConfig configWithAvatar:defaultDict[@"userAvatar"] name:defaultDict[@"userName"]];
+    self.agentAvatarConfig = [NINAvatarConfig configWithAvatar:[sessionManager.siteConfiguration valueForKey:@"agentAvatar"]
+                                                          name:[sessionManager.siteConfiguration valueForKey:@"agentName"]];
+    self.userAvatarConfig = [NINAvatarConfig configWithAvatar:[sessionManager.siteConfiguration valueForKey:@"userAvatar"]
+                                                         name:[sessionManager.siteConfiguration valueForKey:@"userName"]];
 }
 
 -(void) newMessageWasAdded {

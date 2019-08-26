@@ -30,7 +30,7 @@ typedef void (^uiComposeSendPressedCallback)(NINComposeInputView* composeInputVi
 @property (nonatomic, copy) uiComposeSendPressedCallback uiComposeSendPressedCallback;
 @property (nonatomic, copy) emptyBlock cellConstraintsUpdatedCallback;
 
--(void) populateWithChannelMessage:(NINChannelMessage*)message siteConfiguration:(NSDictionary*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig;
+-(void) populateWithChannelMessage:(NINChannelMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig;
 
 -(void) populateWithUserTypingMessage:(NINUserTypingMessage*)message imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig;
 

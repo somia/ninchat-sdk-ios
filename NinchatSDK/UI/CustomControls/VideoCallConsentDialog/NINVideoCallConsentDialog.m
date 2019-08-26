@@ -90,7 +90,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     d.translatesAutoresizingMaskIntoConstraints = NO;
     d.closedBlock = closedBlock;
 
-    NINAvatarConfig* agentAvatarConfig = [NINAvatarConfig configWithAvatar:sessionManager.siteConfiguration[@"default"][@"agentAvatar"] name:sessionManager.siteConfiguration[@"default"][@"agentName"]];
+    NINAvatarConfig* agentAvatarConfig = [NINAvatarConfig configWithAvatar:[sessionManager.siteConfiguration valueForKey:@"agentAvatar"] name:[sessionManager.siteConfiguration valueForKey:@"agentName"]];
 
     // Caller's Avatar image
     if (agentAvatarConfig.imageOverrideUrl != nil) {

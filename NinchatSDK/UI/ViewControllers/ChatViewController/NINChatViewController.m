@@ -173,7 +173,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 }
 
 -(void) applyAssetOverrides {
-    NSString* sendButtonTitle = self.sessionManager.siteConfiguration[@"default"][@"sendButtonText"];
+    NSString* sendButtonTitle = [self.sessionManager.siteConfiguration valueForKey:@"sendButtonText"];
     [self updateSendMessageButtonWithText:sendButtonTitle];
 
     UIImage* attachmentIcon = [self.sessionManager.ninchatSession overrideImageAssetForKey:NINImageAssetKeyIconTextareaAttachment];
