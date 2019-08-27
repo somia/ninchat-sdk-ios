@@ -692,8 +692,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         }
         
         NSDictionary* payloadDict = payloadArray[0];
-        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
-        [self addNewChatMessage:msg];
+        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] href:payloadDict[@"href"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
+        if ([msg.element isEqualToString:@"select"]) {
+            [self addNewChatMessage:msg];
+        } else {
+            NSLog(@"Discarding message of type ui/compose, element=%@", msg.element);
+        }
     }
 }
 

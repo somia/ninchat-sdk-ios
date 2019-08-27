@@ -24,6 +24,8 @@
 @property (nonatomic, strong, readonly) NSString* className;
 /** Element type. API specifies "a", "button" and "select", SDK currently only supports "select". */
 @property (nonatomic, strong, readonly) NSString* element;
+/** Link target for element type "a". */
+@property (nonatomic, strong, readonly) NSString* href;
 /** Element unique identifier. */
 @property (nonatomic, strong, readonly) NSString* uid;
 /** Element name. */
@@ -36,7 +38,7 @@
 /** Instance data as a dictionary, with options property replaced if parameter is non-nil. */
 -(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options;
 
-+(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options;
++(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element href:(NSString*)href uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options;
 
 @end
 
