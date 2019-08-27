@@ -11,8 +11,8 @@
 /** Manages siteconfig data. */
 @interface NINSiteConfiguration : NSObject
 
-/** Selected configuration name. */
-@property (nonatomic, strong) NSString* configName;
+/** Environments to use. */
+@property (nonatomic, strong) NSArray<NSString*>* environments;
 
 /** Value for given key from selected config, or "default" if not available. */
 -(id)valueForKey:(NSString*)key;

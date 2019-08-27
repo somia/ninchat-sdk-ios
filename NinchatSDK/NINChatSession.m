@@ -88,6 +88,9 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 /** ID of the queue to join automatically. Nil to not join automatically to a queue. */
 @property (nonatomic, strong) NSString* queueID;
 
+/** Environments to use. */
+@property (nonatomic, strong) NSArray<NSString*>* environments;
+
 @end
 
 @implementation NINChatSession
@@ -206,6 +209,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         NSLog(@"Got site config: %@", config);
 
         weakSelf.sessionManager.siteConfiguration = [NINSiteConfiguration siteConfigurationWith:config];
+        weakSelf.sessionManager.siteConfiguration.environments = weakSelf.environments;
 
         // Open the chat session
         NSError* openSessionError = [weakSelf.sessionManager openSession:^(NSError *error) {
@@ -235,16 +239,21 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 }
 
 -(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID {
-    self = [super init];
+    return [self initWithConfigKey:configKey queueID:queueID environments:nil];
+}
 
+-(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID environments:(NSArray<NSString*>* _Nullable)environments{
+    self = [super init];
+    
     if (self != nil) {
         self.sessionManager = [NINSessionManager new];
         self.sessionManager.ninchatSession = self;
         self.configKey = configKey;
         self.queueID = queueID;
+        self.environments = environments;
         self.started = NO;
     }
-
+    
     return self;
 }
 

@@ -17,12 +17,13 @@
 @implementation NINSiteConfiguration
 
 -(id)valueForKey:(NSString*)key {
-    NSObject* value = self.configDict[self.configName][key];
-    if (value != nil) {
-        return value;
-    } else {
-        return self.configDict[@"default"][key];
+    for (NSString* env in self.environments) {
+        NSObject* value = self.configDict[env][key];
+        if (value != nil) {
+            return value;
+        }
     }
+    return self.configDict[@"default"][key];
 }
 
 -(NSArray<NSString*>*)availableConfigurations {
@@ -33,7 +34,6 @@
 +(NINSiteConfiguration*)siteConfigurationWith:(NSDictionary*)dict {
     NINSiteConfiguration* config = [[NINSiteConfiguration alloc] init];
     config.configDict = dict;
-    config.configName = @"asdffsd";
     return config;
 }
 

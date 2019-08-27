@@ -97,13 +97,23 @@
 @property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
 
 /**
- * Initializes the API.
+ * Initializes the API using default environment.
  *
  * @param configKey configuration key; this decides the chat realm
  * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
  * @return new API facade instance
  */
 -(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID;
+
+/**
+ * Initializes the API.
+ *
+ * @param configKey configuration key; this decides the chat realm
+ * @param queueID ID of the queue to join automatically. Nil to not join automatically to a queue.
+ * @param environments site config environments to use instead of default
+ * @return new API facade instance
+ */
+-(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID environments:(NSArray<NSString*>* _Nullable)environments;
 
 /**
  * Starts the API engine. Must be called before other API methods. The caller

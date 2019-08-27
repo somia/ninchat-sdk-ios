@@ -37,14 +37,14 @@ NOTE that `use_frameworks!` is optional.
 
 The SDK's API client is to be re-created every time a new chat session is started; once it has terminated, it cannot be used any more and must be disposed of to deallocate memory.
 
-To initialize the client, you need a server address and a configuration key (and optionallya site secret). These will point the SDK to your chat server realm. You obtain these from Ninchat.
+To initialize the client, you need a server address and a configuration key (and optionally a site secret). These will point the SDK to your chat server realm. You obtain these from Ninchat. Optionally, you may specify a list of siteconfig environments to use over the default one. 
 
 You must keep a reference to the created API client instance until the SDK UI terminates.
 
 ```swift
 import NinchatSDK
 
-self.ninchatSession = NINChatSession(configKey: configKey, queueID: queueID)
+self.ninchatSession = NINChatSession(configKey: configKey, queueID: queueID, environments: environments)
 self.ninchatSession.delegate = self
 ```
 
