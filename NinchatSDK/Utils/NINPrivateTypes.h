@@ -18,13 +18,13 @@ typedef void (^fetchSiteConfigCallbackBlock)(NSDictionary* _Nullable, NSError* _
 typedef void (^beginICECallbackBlock)(NSError* _Nullable, NSArray<NINWebRTCServerInfo*>* _Nullable stunServers, NSArray<NINWebRTCServerInfo*>* _Nullable turnServers);
 
 // WebRTC client operating modes
-typedef NS_ENUM(NSInteger, NINWebRTCClientOperatingMode) {
+typedef NS_CLOSED_ENUM(NSInteger, NINWebRTCClientOperatingMode) {
     NINWebRTCClientOperatingModeCaller,
     NINWebRTCClientOperatingModeCallee
 };
 
 // Values for chat rating
-typedef NS_ENUM(NSInteger, NINChatRating) {
+typedef NS_CLOSED_ENUM(NSInteger, NINChatRating) {
     // Do not change these values
     kNINChatRatingSad = -1,
     kNINChatRatingNeutral = 0,

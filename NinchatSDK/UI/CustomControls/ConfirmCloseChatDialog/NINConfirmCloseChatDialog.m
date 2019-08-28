@@ -100,8 +100,9 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     [NSLayoutConstraint activateConstraints:faderConstraints];
 
     // Install a tap recognizer on the fader view. Tapping it will cancel this dialog.
-    UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:d action:@selector(faderViewTapped:)];
-    [d.faderView addGestureRecognizer:tapRecognizer];
+    // TODO disabled because for some reason this seems to read touches on the dialog instead of the fader and block the close button from being usable
+//    UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:d action:@selector(faderViewTapped:)];
+//    [d.faderView addGestureRecognizer:tapRecognizer];
 
     // Constrain the view to the given view's top edge
     NSArray* constraints = @[
