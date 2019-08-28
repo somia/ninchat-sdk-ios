@@ -25,9 +25,11 @@ static CGFloat const kVerticalMargin = 10;
 // originally received ui/compose message, public getter returns modified options
 @property (nonatomic, strong) NINUIComposeMessage* originalMessage;
 
-// subviews
+// title label initialised once, hidden for button elements
 @property (nonatomic, strong) UILabel* titleLabel;
+// send button initialised once, used as the single button for button elements
 @property (nonatomic, strong) UIButton* sendButton;
+// select element option buttons, recreated on reuse
 @property (nonatomic, strong) NSArray<UIButton*>* optionButtons;
 
 @end
@@ -35,14 +37,20 @@ static CGFloat const kVerticalMargin = 10;
 @implementation NINComposeInputView
 
 -(CGFloat) intrinsicHeight {
-    // + 1 to button count from send button, additional margins top and bottom
-    return self.titleLabel.intrinsicContentSize.height
+    if ([self.originalMessage.element isEqualToString:kUIComposeMessageElementSelect]) {
+        // + 1 to button count from send button, additional margins top and bottom
+        return self.titleLabel.intrinsicContentSize.height
         + (self.optionButtons.count + 1) * kButtonHeight
         + (self.optionButtons.count + 1) * kVerticalMargin;
+    } else if ([self.originalMessage.element isEqualToString:kUIComposeMessageElementButton]) {
+        return kButtonHeight;
+    } else {
+        return 0;
+    }
 }
 
 -(CGSize) intrinsicContentSize {
-    if (self.optionButtons != nil) {
+    if (self.originalMessage != nil) {
         return CGSizeMake(CGFLOAT_MAX, [self intrinsicHeight]);
     } else {
         return CGSizeMake(UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric);
@@ -71,20 +79,25 @@ static CGFloat const kVerticalMargin = 10;
 -(void) layoutSubviews {
     [super layoutSubviews];
     
-    CGFloat titleHeight = self.titleLabel.intrinsicContentSize.height;
-    self.titleLabel.frame = CGRectMake(0, 0, self.titleLabel.intrinsicContentSize.width, titleHeight);
-    
-    CGFloat y = titleHeight + kVerticalMargin;
-    for (UIButton* button in self.optionButtons) {
-        button.frame = CGRectMake(0, y, self.bounds.size.width, kButtonHeight);
-        y += kButtonHeight + kVerticalMargin;
+    if ([self.originalMessage.element isEqualToString:kUIComposeMessageElementSelect]) {
+        CGFloat titleHeight = self.titleLabel.intrinsicContentSize.height;
+        self.titleLabel.frame = CGRectMake(0, 0, self.titleLabel.intrinsicContentSize.width, titleHeight);
+        
+        CGFloat y = titleHeight + kVerticalMargin;
+        for (UIButton* button in self.optionButtons) {
+            button.frame = CGRectMake(0, y, self.bounds.size.width, kButtonHeight);
+            y += kButtonHeight + kVerticalMargin;
+        }
+        
+        CGFloat sendButtonWidth = self.sendButton.intrinsicContentSize.width + 60;
+        self.sendButton.frame = CGRectMake(self.bounds.size.width - sendButtonWidth, y, sendButtonWidth, kButtonHeight);
+    } else if ([self.originalMessage.element isEqualToString:kUIComposeMessageElementButton]) {
+        self.sendButton.frame = self.bounds;
     }
-    
-    CGFloat sendButtonWidth = self.sendButton.intrinsicContentSize.width + 60;
-    self.sendButton.frame = CGRectMake(self.bounds.size.width - sendButtonWidth, y, sendButtonWidth, kButtonHeight);
 }
 
 -(void) clear {
+    self.originalMessage = nil;
     if (self.optionButtons != nil) {
         for (UIButton* button in self.optionButtons) {
             [button removeFromSuperview];
@@ -126,48 +139,56 @@ static CGFloat const kVerticalMargin = 10;
         [self addSubview:self.titleLabel];
         
         self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString* sendButtonText = [siteConfiguration valueForKey:@"sendButtonText"];
-        if (sendButtonText != nil) {
-            [self.sendButton setTitle:sendButtonText forState:UIControlStateNormal];
-        } else {
-            [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
-        }
         self.sendButton.titleLabel.font = self.labelFont;
         [self sendActionFailed]; // sets send button appearance to initial state
         [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.sendButton];
     }
     
-    [self.titleLabel setText:composeMessage.label];
+    if ([composeMessage.element isEqualToString:kUIComposeMessageElementButton]) {
+        [self.titleLabel setHidden:YES];
+        [self.sendButton setTitle:composeMessage.label forState:UIControlStateNormal];
 
-    // clear existing option buttons
-    if (self.optionButtons != nil) {
-        for (UIButton* button in self.optionButtons) {
-            [button removeFromSuperview];
+    } else if ([composeMessage.element isEqualToString:kUIComposeMessageElementSelect]) {
+        [self.titleLabel setHidden:NO];
+        [self.titleLabel setText:composeMessage.label];
+        NSString* sendButtonText = [siteConfiguration valueForKey:@"sendButtonText"];
+        if (sendButtonText != nil) {
+            [self.sendButton setTitle:sendButtonText forState:UIControlStateNormal];
+        } else {
+            [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
         }
-    }
-    
-    // recreate options dict to add the "selected" fields
-    NSMutableArray<NSMutableDictionary*>* options = [NSMutableArray new];
-    NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
-    
-    for (NSDictionary* option in composeMessage.options) {
-        NSMutableDictionary* newOption = [option mutableCopy];
-        newOption[@"selected"] = @NO;
+
+
+        // clear existing option buttons
+        if (self.optionButtons != nil) {
+            for (UIButton* button in self.optionButtons) {
+                [button removeFromSuperview];
+            }
+        }
         
-        UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.titleLabel.font = self.labelFont;
-        [self applyButtonStyle:button selected:false];
-        [button setTitle:option[@"label"] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
-        [self addSubview:button];
+        // recreate options dict to add the "selected" fields
+        NSMutableArray<NSMutableDictionary*>* options = [NSMutableArray new];
+        NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
         
-        [options addObject:newOption];
-        [optionButtons addObject:button];
+        for (NSDictionary* option in composeMessage.options) {
+            NSMutableDictionary* newOption = [option mutableCopy];
+            newOption[@"selected"] = @NO;
+            
+            UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
+            button.titleLabel.font = self.labelFont;
+            [self applyButtonStyle:button selected:false];
+            [button setTitle:option[@"label"] forState:UIControlStateNormal];
+            [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+            [self addSubview:button];
+            
+            [options addObject:newOption];
+            [optionButtons addObject:button];
+        }
+        
+        self.options = options;
+        self.optionButtons = optionButtons;
     }
-    
-    self.options = options;
-    self.optionButtons = optionButtons;
 }
 
 // sets send button appearance to initial state, also called in initialisation
@@ -183,7 +204,7 @@ static CGFloat const kVerticalMargin = 10;
     self.buttonGrey = [UIColor colorWithRed:(CGFloat)0x99/0xFF green:(CGFloat)0x99/0xFF blue:(CGFloat)0x99/0xFF alpha:1];
     /*
      This should be source sans pro, but the custom font fails to initialise.
-     It appears it's actually borken everywhere else too, so for the sake of
+     It appears it's actually broken everywhere else too, so for the sake of
      getting this feature out we'll just match the current look for now.
      */
     self.labelFont = [UIFont fontWithName:@"Helvetica" size:16];;

@@ -10,6 +10,10 @@
 
 #import "NINChannelMessage.h"
 
+static NSString* const kUIComposeMessageElementA = @"a";
+static NSString* const kUIComposeMessageElementButton = @"button";
+static NSString* const kUIComposeMessageElementSelect = @"select";
+
 @class NINChannelUser;
 
 @interface NINUIComposeMessage : NSObject<NINChannelMessage>
