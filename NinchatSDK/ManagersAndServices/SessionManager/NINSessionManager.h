@@ -108,8 +108,8 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** Opens the session with an asynchronous completion callback. */
 -(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
 
-/** Lists all the available queues for this realm. */
--(void) listQueuesWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
+/** List queues with specified ids for this realm, all available ones if queueIds is nil. */
+-(void) listQueuesWithIds:(NSArray<NSString*>* _Nullable)queueIds completion:(callbackWithErrorBlock _Nonnull)completion;
 
 /** Joins a chat queue. */
 -(void) joinQueueWithId:(NSString* _Nonnull)queueId progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined;

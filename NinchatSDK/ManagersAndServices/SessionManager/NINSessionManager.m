@@ -865,12 +865,19 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     return self.session != nil;
 }
 
--(void) listQueuesWithCompletion:(callbackWithErrorBlock)completion {
+-(void) listQueuesWithIds:(NSArray<NSString*>*)queueIds completion:(callbackWithErrorBlock)completion {
     NSCAssert(self.session != nil, @"No chat session");
 
     NINLowLevelClientProps* params = [NINLowLevelClientProps new];
     [params setString:@"action" val:@"describe_realm_queues"];
     [params setString:@"realm_id" val:self.realmId];
+    if (queueIds != nil) {
+        NINLowLevelClientStrings* strings = [NINLowLevelClientStrings new];
+        for (NSString* string in queueIds) {
+            [strings append:string];
+        }
+        [params setStringArray:@"queue_ids" ref:strings];
+    }
 
     NSError* error = nil;
     int64_t actionId;

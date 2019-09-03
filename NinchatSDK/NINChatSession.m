@@ -222,7 +222,9 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             }
 
             // Find our realm's queues
-            [weakSelf.sessionManager listQueuesWithCompletion:^(NSError* error) {
+            NSArray* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+            // Potentially passing a nil queueIds here is intended
+            [weakSelf.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
                 NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
                 if (error == nil) {
