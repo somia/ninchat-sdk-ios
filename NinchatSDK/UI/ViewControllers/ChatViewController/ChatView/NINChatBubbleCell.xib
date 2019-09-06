@@ -138,7 +138,7 @@
                                                     </mask>
                                                 </variation>
                                             </textView>
-                                            <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ioO-dR-nZb" customClass="NINComposeInputView">
+                                            <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ioO-dR-nZb" customClass="NINComposeMessageView">
                                                 <rect key="frame" x="10" y="15" width="372" height="79.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
@@ -207,7 +207,7 @@
                 <outlet property="bubbleContentsContainerRightConstraint" destination="EJE-73-eqo" id="4Lt-hq-gG2"/>
                 <outlet property="bubbleContentsContainerView" destination="9Yb-ri-pEB" id="3ax-xQ-dXZ"/>
                 <outlet property="bubbleImageView" destination="f9O-t5-M7M" id="dkx-lh-QyE"/>
-                <outlet property="composeInputView" destination="ioO-dR-nZb" id="xda-bC-xmr"/>
+                <outlet property="composeMessageView" destination="ioO-dR-nZb" id="3kn-BO-HIf"/>
                 <outlet property="imageProportionalWidthConstraint" destination="VDo-Xj-qhv" id="VK6-g8-ASP"/>
                 <outlet property="imageWidthConstraint" destination="OBY-Vp-eda" id="XQ3-cA-kEh"/>
                 <outlet property="leftAvatarContainerView" destination="B9w-uE-UUn" id="81J-vS-Jpt"/>

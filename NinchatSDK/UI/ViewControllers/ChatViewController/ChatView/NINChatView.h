@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "NINChatMessage.h"
-#import "NINComposeInputView.h"
+#import "NINComposeMessageView.h"
 #import "NINPublicTypes.h"
 
 @class NINChatView;
@@ -37,7 +37,7 @@
 -(void) closeChatRequestedByChatView:(NINChatView*)chatView;
 
 /** "Send" button was pressed in a ui/compose type message. */
--(void) uiActionSentByComposeInputView:(NINComposeInputView*)composeInputView;
+-(void) uiActionSentByComposeContentView:(NINComposeContentView*)composeContentView;
 
 @end
 

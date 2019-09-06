@@ -1,5 +1,5 @@
 //
-//  NINComposeInputView.h
+//  NINComposeMessageView.h
 //  NinchatSDK
 //
 //  Created by Kosti Jokinen on 15/08/2019.
@@ -13,20 +13,24 @@
 #import "NINPublicTypes.h"
 #import "NINPrivateTypes.h"
 
-/** Represents the ui/compose message UI within a NINChatBubbleCell. */
-@interface NINComposeInputView : UIView
+/** Represents a single ui/compose object's UI within a NINComposeMessageView. */
+@interface NINComposeContentView : UIView
 
 /** Compose message as a dictionary, including current selection status. */
 @property (nonatomic, strong, readonly) NSDictionary* composeMessageDict;
-
-/** Send button callback. */
-@property (nonatomic, copy) void (^uiComposeSendPressedCallback)(NINComposeInputView*);
-
--(void) clear;
--(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
 
 /** Set send button appearance to initial state in response to send failing; also called in initialisation. */
 -(void) sendActionFailed;
 
 @end
 
+/** Represents ui/compose messages's content within a NINChatBubbleCell. */
+@interface NINComposeMessageView : UIView
+
+/** Send button callback. */
+@property (nonatomic, copy) void (^uiComposeSendPressedCallback)(NINComposeContentView*);
+
+-(void) clear;
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
+
+@end

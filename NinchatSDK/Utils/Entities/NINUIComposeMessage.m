@@ -8,13 +8,9 @@
 
 #import "NINUIComposeMessage.h"
 
-@interface NINUIComposeMessage ()
+@interface NINUIComposeContent ()
 
 // Writable private definitions for the properties
-@property (nonatomic, strong) NSString* messageID;
-@property (nonatomic, assign) BOOL mine;
-@property (nonatomic, strong) NINChannelUser* sender;
-@property (nonatomic, strong) NSDate* timestamp;
 @property (nonatomic, strong) NSString* className;
 @property (nonatomic, strong) NSString* element;
 @property (nonatomic, strong) NSString* href;
@@ -24,7 +20,7 @@
 
 @end
 
-@implementation NINUIComposeMessage
+@implementation NINUIComposeContent
 
 -(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options {
     NSMutableDictionary* mutableDict = [[NSMutableDictionary alloc] init];
@@ -52,21 +48,47 @@
     return mutableDict;
 }
 
-+(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element href:(NSString*)href uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options {
++(NINUIComposeContent*) contentWithClassName:(NSString*)className element:(NSString*)element href:(NSString*)href uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options {
+    NINUIComposeContent* content = [NINUIComposeContent new];
+    content.className = className;
+    content.element = element;
+    content.href = href;
+    content.name = name;
+    content.label = label;
+    content.options = options;
     
+    return content;
+}
+
+@end
+
+@interface NINUIComposeMessage ()
+
+// Writable private definitions for the properties
+@property (nonatomic, strong) NSString* messageID;
+@property (nonatomic, assign) BOOL mine;
+@property (nonatomic, strong) NINChannelUser* sender;
+@property (nonatomic, strong) NSDate* timestamp;
+@property (nonatomic, strong) NSArray<NINUIComposeContent*>* content;
+
+@end
+
+@implementation NINUIComposeMessage
+
++(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine payload:(NSArray*)payload {
     NINUIComposeMessage* msg = [NINUIComposeMessage new];
     msg.messageID = messageID;
     msg.sender = sender;
     msg.timestamp = timestamp;
     msg.mine = mine;
     msg.series = NO;
-    msg.className = className;
-    msg.element = element;
-    msg.href = href;
-    msg.name = name;
-    msg.label = label;
-    msg.options = options;
-
+    
+    NSMutableArray* mutableContent = [[NSMutableArray alloc] init];
+    for (NSDictionary* dict in payload) {
+        [mutableContent addObject:[NINUIComposeContent contentWithClassName:dict[@"class"] element:dict[@"element"] href:dict[@"href"] uid:dict[@"id"] name:dict[@"name"] label:dict[@"label"] options:dict[@"options"]]];
+    }
+    msg.content = mutableContent;
+    
     return msg;
 }
 

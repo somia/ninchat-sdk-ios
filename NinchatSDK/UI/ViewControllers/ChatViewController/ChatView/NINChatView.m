@@ -170,12 +170,13 @@
         NINChannelMessage* channelMessage = (NINChannelMessage*)message;
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
         cell.videoThumbnailManager = _videoThumbnailManager;
+        // callback needs to be set before the populate call, probably should just refactor to avoid the potential trap
+        cell.uiComposeSendPressedCallback = ^(NINComposeContentView *composeContentView) {
+            [weakSelf.delegate uiActionSentByComposeContentView:composeContentView];
+        };
         [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
-        };
-        cell.uiComposeSendPressedCallback = ^(NINComposeInputView *composeInputView) {
-            [weakSelf.delegate uiActionSentByComposeInputView:composeInputView];
         };
         cell.cellConstraintsUpdatedCallback = ^{
             [UIView animateWithDuration:0.3 animations:^{

@@ -16,13 +16,7 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 
 @class NINChannelUser;
 
-@interface NINUIComposeMessage : NSObject<NINChannelMessage>
-
-/**
- * YES if this message is a part in a series, ie. the sender of the previous message
- * also sent this message.
- */
-@property (nonatomic, assign) BOOL series;
+@interface NINUIComposeContent : NSObject
 
 /** Element class. */
 @property (nonatomic, strong, readonly) NSString* className;
@@ -42,7 +36,22 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 /** Instance data as a dictionary, with options property replaced if parameter is non-nil. */
 -(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options;
 
-+(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine className:(NSString*)className element:(NSString*)element href:(NSString*)href uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options;
++(NINUIComposeContent*) contentWithClassName:(NSString*)className element:(NSString*)element href:(NSString*)href uid:(NSString*)uid name:(NSString*)name label:(NSString*)label options:(NSArray<NSDictionary*>*)options;
+
+@end
+
+@interface NINUIComposeMessage : NSObject<NINChannelMessage>
+
+/**
+ * YES if this message is a part in a series, ie. the sender of the previous message
+ * also sent this message.
+ */
+@property (nonatomic, assign) BOOL series;
+
+/** Message payload of ui/compose type content. */
+@property (nonatomic, strong, readonly) NSArray<NINUIComposeContent*>* content;
+
++(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine payload:(NSArray*)payload;
 
 @end
 

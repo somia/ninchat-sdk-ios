@@ -15,7 +15,7 @@
 #import "NINTextMessage.h"
 #import "NINUIComposeMessage.h"
 #import "NINUserTypingMessage.h"
-#import "NINComposeInputView.h"
+#import "NINComposeMessageView.h"
 #import "NINFileInfo.h"
 #import "NINChannelUser.h"
 #import "UIImageView+Ninchat.h"
@@ -62,7 +62,7 @@
 @property (nonatomic, strong) IBOutlet UIImageView* messageImageView;
 
 // Input view for messages of type ui/compose
-@property (nonatomic, strong) IBOutlet NINComposeInputView* composeInputView;
+@property (nonatomic, strong) IBOutlet NINComposeMessageView* composeMessageView;
 
 // 'Padding' between message image and the bubble's top edge. Used to adjust the padding.
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint* messageImageTopConstraint;
@@ -349,12 +349,12 @@
 
 #pragma mark - Public methods
 
-// getter and setter for uiComposeSendPressedCallback pass the block along to composeInputView
+// getter and setter for uiComposeSendPressedCallback pass the block along to composeContentView
 -(uiComposeSendPressedCallback) uiComposeSendPressedCallback {
-    return self.composeInputView.uiComposeSendPressedCallback;
+    return self.composeMessageView.uiComposeSendPressedCallback;
 }
 -(void) setUiComposeSendPressedCallback:(uiComposeSendPressedCallback)uiComposeSendPressedCallback {
-    self.composeInputView.uiComposeSendPressedCallback = uiComposeSendPressedCallback;
+    self.composeMessageView.uiComposeSendPressedCallback = uiComposeSendPressedCallback;
 }
 
 -(void) resetImageLayout {
@@ -380,8 +380,8 @@
     self.message = message;
     
     if ([message isKindOfClass:NINTextMessage.class]) {
-        [self.composeInputView clear];
-        self.composeInputView.hidden = YES;
+        [self.composeMessageView clear];
+        self.composeMessageView.hidden = YES;
         
         NINTextMessage* textMessage = (NINTextMessage*)message;
         
@@ -412,9 +412,9 @@
         self.messageTextView.text = @"";
         [self resetImageLayout];
         self.videoPlayImageView.hidden = YES;
-        self.composeInputView.hidden = NO;
+        self.composeMessageView.hidden = NO;
         
-        [self.composeInputView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets];
+        [self.composeMessageView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets];
     }
     
     self.senderNameLabel.text = message.sender.displayName;

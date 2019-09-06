@@ -707,13 +707,18 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return;
         }
         
-        NSDictionary* payloadDict = payloadArray[0];
+        NSString* invalidType;
+        for (NSDictionary* contentDict in payloadArray) {
+            if (!([contentDict[@"element"] isEqualToString:kUIComposeMessageElementSelect] || [contentDict[@"element"] isEqualToString:kUIComposeMessageElementButton])) {
+                invalidType = contentDict[@"element"];
+            }
+        }
         
-        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:[messageUser.userID isEqualToString:self.myUserID] className:payloadDict[@"class"] element:payloadDict[@"element"] href:payloadDict[@"href"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
-        if ([msg.element isEqualToString:kUIComposeMessageElementSelect] || [msg.element isEqualToString:kUIComposeMessageElementButton]) {
+        if (invalidType == nil) {
+            NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:[messageUser.userID isEqualToString:self.myUserID] payload:payloadArray];
             [self addNewChatMessage:msg];
         } else {
-            NSLog(@"Discarding message of type ui/compose, element=%@", msg.element);
+            NSLog(@"Found ui/compose object with unhandled element=%@, discarding message.", invalidType);
         }
     }
 }
