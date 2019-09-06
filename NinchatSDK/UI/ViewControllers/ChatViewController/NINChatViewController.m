@@ -122,6 +122,9 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 // This view is used to detect a tap outside the keyboard to close it
 @property (nonatomic, strong) NINTouchView* tapRecognizerView;
 
+// Tap recognizer on the input controls view
+@property (nonatomic, weak) UIGestureRecognizer* tapRecognizer;
+
 // Reference to the notifications observer that listens to new message -notifications.
 @property (nonatomic, strong) id<NSObject> messagesObserver;
 
@@ -894,6 +897,17 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     }
 }
 
+-(void) disableInputControls {
+    self.textInput.userInteractionEnabled = NO;
+    [self.textInput resignFirstResponder];
+    self.sendMessageButton.enabled = NO;
+    self.attachmentButton.enabled = NO;
+    self.hangupButton.enabled = NO;
+    self.cameraEnabledButton.enabled = NO;
+    self.microphoneEnabledButton.enabled = NO;
+    [self.inputControlsContainerView removeGestureRecognizer:self.tapRecognizer];
+}
+
 -(void) viewDidLoad {
     [super viewDidLoad];
 
@@ -921,6 +935,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     // Add tap gesture recognizer for the input controls container view
     UIGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(inputControlsContainerTapped:)];
     [self.inputControlsContainerView addGestureRecognizer:tapRecognizer];
+    self.tapRecognizer = tapRecognizer;
 
     // Give the local video view a slight border
 //    self.localVideoView.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.8].CGColor;
@@ -940,18 +955,21 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     // Listen to chat ended messages
     fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* notification) {
         [weakSelf stopObserverChatEvents];
-
-        // Disable message input controls
-        weakSelf.textInput.userInteractionEnabled = NO;
-        [weakSelf.textInput resignFirstResponder];
-        weakSelf.sendMessageButton.enabled = NO;
-        weakSelf.attachmentButton.enabled = NO;
-        weakSelf.hangupButton.enabled = NO;
-        weakSelf.cameraEnabledButton.enabled = NO;
-        weakSelf.microphoneEnabledButton.enabled = NO;
-        [weakSelf.inputControlsContainerView removeGestureRecognizer:tapRecognizer];
-
+        [weakSelf disableInputControls];
+        
         return YES;
+    });
+    
+    // Listen to queued messages
+    fetchNotification(kNINQueuedNotification, ^BOOL(NSNotification* notification) {
+        if ([notification.userInfo[@"event"] isEqualToString:@"audience_enqueued"]) {
+            [weakSelf stopObserverChatEvents];
+            [weakSelf disableInputControls];
+            
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+            return YES;
+        }
+        return NO;
     });
 
     // Start listening to WebRTC signaling messages from the chat session manager

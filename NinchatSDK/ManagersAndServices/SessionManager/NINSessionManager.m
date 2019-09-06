@@ -35,6 +35,8 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
+/** Notification name for audience_enqueued event. */
+extern NSString* const kNINQueuedNotification = @"ninchatsdk.QueuedNotification";
 
 // Notification strings
 NSString* const kChannelMessageNotification = @"ninchatsdk.ChannelMessageNotification";
@@ -223,14 +225,20 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
         return;
     }
-
+    
+    long position;
+    [params getInt:@"queue_position" val:&position error:&error];
+    
     if ([eventType isEqualToString:@"audience_enqueued"]) {
         NSCAssert(self.currentQueueID == nil, @"Already have current queue");
         self.currentQueueID = queueId;
+        if (error == nil) {
+            postNotification(kNINQueuedNotification, @{@"event": eventType, @"action_id": @(actionId), @"queue_id": queueId, @"queue_position": @(position)});
+        } else {
+            postNotification(kNINQueuedNotification, @{@"event": eventType, @"action_id": @(actionId), @"queue_id": queueId});
+        }
     }
 
-    long position;
-    [params getInt:@"queue_position" val:&position error:&error];
     if (error != nil) {
         postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
         return;

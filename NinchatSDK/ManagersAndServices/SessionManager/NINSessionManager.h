@@ -42,6 +42,9 @@ extern NSString* _Nonnull const kChannelMessageNotification;
  */
 //extern NSString* _Nonnull const kNINUserIsTypingNotification;
 
+/** Notification that indicates the user joining a queue (audience_enqueued event). */
+extern NSString* _Nonnull const kNINQueuedNotification;
+
 /**
  * Notification that indicates a WebRTC signaling message was received.
  * Userinfo 'messageType' contains a kNINMessageTypeWebRTC* value, 'payload'

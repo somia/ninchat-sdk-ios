@@ -89,39 +89,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 #pragma mark - Lifecycle etc.
 
--(void) viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    // Connect to the queue
-    __weak typeof(self) weakSelf = self;
-    [self.sessionManager joinQueueWithId:self.queueToJoin.queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
-
-        if (queuePosition == 1) {
-            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-        } else {
-            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-        }
-
-        // Apply color override 
-        UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
-        if (textTopColor != nil) {
-            weakSelf.queueInfoTextView.textColor = textTopColor;
-        }
-    } channelJoined:^{
-        [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
-    }];
-
-    // Spin the whirl icon continuoysly
-    if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
-        CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-        animation.fromValue = @(0.0);
-        animation.toValue = @(2*M_PI);
-        animation.duration = 3.0f;
-        animation.repeatCount = INFINITY;
-        [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
-    }
-}
-
 -(void) viewDidLoad {
     [super viewDidLoad];
 
@@ -148,6 +115,46 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
     // Apply asset overrides
     [self applyAssetOverrides];
+    
+    // Connect to the queue
+    [self.sessionManager joinQueueWithId:self.queueToJoin.queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+        
+        if (queuePosition == 1) {
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+        } else {
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+        }
+        
+        // Apply color override
+        UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+        if (textTopColor != nil) {
+            weakSelf.queueInfoTextView.textColor = textTopColor;
+        }
+        
+        // Listen to new queue events to handle possible transfers later
+        fetchNotification(kNINQueuedNotification, ^BOOL(NSNotification* notification) {
+            NSNumber* queuePosition = notification.userInfo[@"queue_position"];
+            if ([queuePosition intValue] == 1) {
+                [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+            } else {
+                [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": queuePosition.stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+            }
+            
+            return YES;
+        });
+    } channelJoined:^{
+        [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
+    }];
+    
+    // Spin the whirl icon continuoysly
+    if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
+        CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+        animation.fromValue = @(0.0);
+        animation.toValue = @(2*M_PI);
+        animation.duration = 3.0f;
+        animation.repeatCount = INFINITY;
+        [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
+    }
 }
 
 @end
