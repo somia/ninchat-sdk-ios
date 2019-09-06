@@ -99,6 +99,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 /** Currently active channel id - or nil if no active channel. */
 @property (nonatomic, strong) NSString* currentChannelID;
 
+/** "Active" channel id during transfer process - or nil if not currently transferring. */
+@property (nonatomic, strong) NSString* backgroundChannelID;
+
 /** Channel join observer; while in queue. */
 @property (nonatomic, strong) id<NSObject> channelJoinObserver;
 
@@ -386,6 +389,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     // Set the currently active channel
     self.currentChannelID = channelId;
+    self.backgroundChannelID = nil;
 
     // Get the queue we are joining
     NINQueue* queue = [self queueForId:self.currentQueueID];
@@ -444,7 +448,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) channelUpdated:(NINLowLevelClientProps*)params {
     NSError* error;
 
-    NSCAssert(self.currentChannelID != nil, @"No active channel");
+    NSCAssert(self.currentChannelID != nil || self.backgroundChannelID != nil, @"No active channel");
 
     NSString* channelId = [params getString:@"channel_id" error:&error];
     if (error != nil) {
@@ -452,7 +456,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    if (![channelId isEqualToString:self.currentChannelID]) {
+    if (![channelId isEqualToString:self.currentChannelID]
+        && ![channelId isEqualToString:self.backgroundChannelID]) {
         NSLog(@"Got channel_updated for wrong channel '%@'", channelId);
         return;
     }
@@ -772,7 +777,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 -(void) messageReceived:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
-    NSCAssert(self.currentChannelID != nil, @"No active channel");
+    // handle transfers
+    if ([[params getString:@"message_type" error:nil] isEqualToString:@"ninchat.com/info/part"]) {
+        self.backgroundChannelID = self.currentChannelID;
+        self.currentChannelID = nil;
+        return;
+    }
+    
+    NSCAssert(self.currentChannelID != nil || self.backgroundChannelID != nil, @"No active channel");
 
     NSError* error = nil;
 
@@ -797,7 +809,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSString* channelID = [params getString:@"channel_id" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    if (![channelID isEqualToString:self.currentChannelID]) {
+    if (![channelID isEqualToString:self.currentChannelID]
+        && ![channelID isEqualToString:self.backgroundChannelID]) {
         [self.ninchatSession sdklog:@"Error: Got event for wrong channel: %@", channelID];
         return;
     }
@@ -902,8 +915,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) joinQueueWithId:(NSString*)joinQueueID progress:(queueProgressCallback _Nonnull)progress channelJoined:(emptyBlock _Nonnull)channelJoined {
 
     NSCAssert(self.session != nil, @"No chat session");
-    NSCAssert(self.currentQueueID == nil, @"Already in queue!");
     NSCAssert(self.queueProgressObserver == nil, @"Cannot have observer set already");
+
+    // when transferred we're kind of just dropped into the new queue, but we'll still need to set up observers again
+    BOOL alreadyInQueue = (self.currentQueueID != nil);
 
     __weak typeof(self) weakSelf = self;
 
@@ -919,28 +934,29 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return YES;
         });
 
-        NINLowLevelClientProps* params = [NINLowLevelClientProps new];
-        [params setString:@"action" val:@"request_audience"];
-        [params setString:@"queue_id" val:joinQueueID];
-        if (weakSelf.audienceMetadata != nil) {
-            [params setObject:@"audience_metadata" ref:weakSelf.audienceMetadata];
-        }
+        if (!alreadyInQueue) {
+            NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+            [params setString:@"action" val:@"request_audience"];
+            [params setString:@"queue_id" val:joinQueueID];
+            if (weakSelf.audienceMetadata != nil) {
+                [params setObject:@"audience_metadata" ref:weakSelf.audienceMetadata];
+            }
 
-        int64_t actionId;
-        NSError* error = nil;
-        [weakSelf.session send:params payload:nil actionId:&actionId error:&error];
-        if (error != nil) {
-            NSLog(@"Error joining queue: %@", error);
-            progress(error, -1);
+            int64_t actionId;
+            NSError* error = nil;
+            [weakSelf.session send:params payload:nil actionId:&actionId error:&error];
+            if (error != nil) {
+                NSLog(@"Error joining queue: %@", error);
+                progress(error, -1);
+            }
         }
 
         // Keep listening to progress events for queue position updates
         weakSelf.queueProgressObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
-            NSNumber* eventActionId = note.userInfo[@"action_id"];
             NSString* eventType = note.userInfo[@"event"];
             NSString* queueID = note.userInfo[@"queue_id"];
 
-            if ((eventActionId.longValue == actionId) || ([eventType isEqualToString:@"queue_updated"] && [weakSelf.currentQueueID isEqualToString:queueID])) {
+            if ([eventType isEqualToString:@"queue_updated"] && [weakSelf.currentQueueID isEqualToString:queueID]) {
                 NSError* error = note.userInfo[@"error"];
                 NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
                 progress(error, queuePosition);
@@ -1155,6 +1171,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self.ninchatSession sdklog:@"disconnect: Closing Ninchat session."];
 
     self.currentChannelID = nil;
+    self.backgroundChannelID = nil;
     self.currentQueueID = nil;
 
     [self.session close];

@@ -31,6 +31,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 @property (nonatomic, strong) IBOutlet UITextView* queueInfoTextView;
 @property (nonatomic, strong) IBOutlet UITextView* motdTextView;
 @property (nonatomic, strong) IBOutlet NINCloseChatButton* closeChatButton;
+@property (nonatomic, strong) id<NSObject> queueTransferListener;
 
 @end
 
@@ -89,6 +90,36 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 #pragma mark - Lifecycle etc.
 
+-(void) connectToQueueWithId:(NSString*)queueId {
+    self.spinnerImageView.layer.speed = 1;
+    __weak typeof(self) weakSelf = self;
+    [self.sessionManager joinQueueWithId:queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+        
+        if (queuePosition == 1) {
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+        } else {
+            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
+        }
+        
+        // Apply color override
+        UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
+        if (textTopColor != nil) {
+            weakSelf.queueInfoTextView.textColor = textTopColor;
+        }
+        
+    } channelJoined:^{
+        [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
+        // Listen to new queue events to handle possible transfers later
+        if (self.queueTransferListener == nil) {
+            self.queueTransferListener = fetchNotification(kNINQueuedNotification, ^BOOL(NSNotification* notification) {
+                [weakSelf connectToQueueWithId:[notification.userInfo valueForKey:@"queue_id"]];
+                return YES;
+            });
+        }
+    }];
+    
+}
+
 -(void) viewDidLoad {
     [super viewDidLoad];
 
@@ -117,34 +148,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     [self applyAssetOverrides];
     
     // Connect to the queue
-    [self.sessionManager joinQueueWithId:self.queueToJoin.queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
-        
-        if (queuePosition == 1) {
-            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-        } else {
-            [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-        }
-        
-        // Apply color override
-        UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
-        if (textTopColor != nil) {
-            weakSelf.queueInfoTextView.textColor = textTopColor;
-        }
-        
-        // Listen to new queue events to handle possible transfers later
-        fetchNotification(kNINQueuedNotification, ^BOOL(NSNotification* notification) {
-            NSNumber* queuePosition = notification.userInfo[@"queue_position"];
-            if ([queuePosition intValue] == 1) {
-                [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-            } else {
-                [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": queuePosition.stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
-            }
-            
-            return YES;
-        });
-    } channelJoined:^{
-        [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
-    }];
+    [self connectToQueueWithId:self.queueToJoin.queueID];
     
     // Spin the whirl icon continuoysly
     if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
