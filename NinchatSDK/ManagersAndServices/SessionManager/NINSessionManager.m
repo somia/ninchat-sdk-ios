@@ -36,7 +36,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
 /** Notification name for audience_enqueued event. */
-extern NSString* const kNINQueuedNotification = @"ninchatsdk.QueuedNotification";
+NSString* const kNINQueuedNotification = @"ninchatsdk.QueuedNotification";
 
 // Notification strings
 NSString* const kChannelMessageNotification = @"ninchatsdk.ChannelMessageNotification";
@@ -626,13 +626,16 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
     
     [_chatMessages insertObject:message atIndex:0];
+    [_chatMessages sortUsingComparator:^NSComparisonResult(id<NINChatMessage> _Nonnull msg1, id<NINChatMessage> _Nonnull msg2) {
+        return [msg1.timestamp compare:msg2.timestamp] == NSOrderedAscending;
+    }];
 
-    postNotification(kChannelMessageNotification, @{@"newMessage": message});
+    postNotification(kChannelMessageNotification, @{@"action":@"insert", @"index":@([_chatMessages indexOfObject:message])});
 }
 
 -(void) removeChatMessageAtIndex:(NSInteger)index {
     [_chatMessages removeObjectAtIndex:index];
-    postNotification(kChannelMessageNotification, @{@"removedMessageAtIndex": @(index)});
+    postNotification(kChannelMessageNotification, @{@"action":@"remove", @"index":@(index)});
 }
 
 -(void) handleInboundChatMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId {
@@ -675,7 +678,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
                     if (error != nil) {
                         [NINToast showWithErrorMessage:@"Failed to update file info" callback:nil];
                     } else {
-                        NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:(actionId != 0) attachment:fileInfo];
+                        NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:nil sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime]  mine:[messageUser.userID isEqualToString:self.myUserID] attachment:fileInfo];
                         [weakSelf addNewChatMessage:msg];
                     }
                 }];
@@ -686,7 +689,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         // Only allocate a new message now if there is text and no attachment
         if (!hasAttachment && (text.length > 0)) {
-            NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) attachment:nil];
+            NINTextMessage* msg = [NINTextMessage messageWithID:messageID textContent:text sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:[messageUser.userID isEqualToString:self.myUserID] attachment:nil];
             [self addNewChatMessage:msg];
         }
     }
@@ -706,7 +709,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         
         NSDictionary* payloadDict = payloadArray[0];
         
-        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:(actionId != 0) className:payloadDict[@"class"] element:payloadDict[@"element"] href:payloadDict[@"href"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
+        NINUIComposeMessage* msg = [NINUIComposeMessage messageWithID:messageID sender:messageUser timestamp:[NSDate dateWithTimeIntervalSince1970:messageTime] mine:[messageUser.userID isEqualToString:self.myUserID] className:payloadDict[@"class"] element:payloadDict[@"element"] href:payloadDict[@"href"] uid:payloadDict[@"id"] name:payloadDict[@"name"] label:payloadDict[@"label"] options:payloadDict[@"options"]];
         if ([msg.element isEqualToString:kUIComposeMessageElementSelect] || [msg.element isEqualToString:kUIComposeMessageElementButton]) {
             [self addNewChatMessage:msg];
         } else {

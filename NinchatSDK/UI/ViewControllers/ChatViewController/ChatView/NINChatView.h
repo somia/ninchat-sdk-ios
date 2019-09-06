@@ -52,8 +52,8 @@
 /** Chat session manager. */
 @property (nonatomic, strong) NINSessionManager* sessionManager;
 
-/** A new message was added at the bottom of the list (index = 0). Updates the view. */
--(void) newMessageWasAdded;
+/** A new message was added to given index. Updates the view. */
+-(void) newMessageWasAddedAtIndex:(NSInteger)index;
 
 /** A message was removed from given index. */
 -(void) messageWasRemovedAtIndex:(NSInteger)index;

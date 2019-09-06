@@ -879,6 +879,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     // Set the constraints so that video is initially hidden
     [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
+    
+    [self.sessionManager loadHistoryWithCompletion:^(NSError* error) {
+        
+    }];
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -977,11 +981,11 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     // Start listening to new messages
     self.messagesObserver = fetchNotification(kChannelMessageNotification, ^BOOL(NSNotification* _Nonnull note) {
-        NSNumber* removedAtIndex = note.userInfo[@"removedMessageAtIndex"];
-        if (removedAtIndex == nil) {
-            [weakSelf.chatView newMessageWasAdded];
+        NSNumber* index = note.userInfo[@"index"];
+        if ([note.userInfo[@"action"] isEqualToString:@"insert"]) {
+            [weakSelf.chatView newMessageWasAddedAtIndex:index.integerValue];
         } else {
-            [weakSelf.chatView messageWasRemovedAtIndex:removedAtIndex.integerValue];
+            [weakSelf.chatView messageWasRemovedAtIndex:index.integerValue];
         }
 
         return NO;

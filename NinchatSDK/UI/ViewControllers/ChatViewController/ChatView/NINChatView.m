@@ -151,13 +151,12 @@
                                                          name:[sessionManager.siteConfiguration valueForKey:@"userName"]];
 }
 
--(void) newMessageWasAdded {
-    [self.tableView insertRowsAtIndexPaths:_zeroIndexPathArray withRowAnimation:UITableViewRowAnimationAutomatic];
+-(void) newMessageWasAddedAtIndex:(NSInteger)index {
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 -(void) messageWasRemovedAtIndex:(NSInteger)index {
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:index inSection:0];
-    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 #pragma mark - From UITableViewDelegate
