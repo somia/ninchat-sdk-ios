@@ -75,23 +75,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 }
 
-#pragma mark - From UIViewController
-
--(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:kSegueIdQueueToChat]) {
-        NINChatViewController* vc = segue.destinationViewController;
-        vc.sessionManager = self.sessionManager;
-    }
-}
-
--(UIInterfaceOrientationMask) supportedInterfaceOrientations {
-    return UIInterfaceOrientationMaskPortrait;
-}
-
-#pragma mark - Lifecycle etc.
-
 -(void) connectToQueueWithId:(NSString*)queueId {
-    self.spinnerImageView.layer.speed = 1;
     __weak typeof(self) weakSelf = self;
     [self.sessionManager joinQueueWithId:queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
         
@@ -118,6 +102,35 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         }
     }];
     
+}
+
+#pragma mark - From UIViewController
+
+-(void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kSegueIdQueueToChat]) {
+        NINChatViewController* vc = segue.destinationViewController;
+        vc.sessionManager = self.sessionManager;
+    }
+}
+
+-(UIInterfaceOrientationMask) supportedInterfaceOrientations {
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+#pragma mark - Lifecycle etc.
+
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    // Spin the whirl icon continuoysly
+    if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
+        CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+        animation.fromValue = @(0.0);
+        animation.toValue = @(2*M_PI);
+        animation.duration = 3.0f;
+        animation.repeatCount = INFINITY;
+        [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
+    }
 }
 
 -(void) viewDidLoad {
@@ -149,16 +162,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     
     // Connect to the queue
     [self connectToQueueWithId:self.queueToJoin.queueID];
-    
-    // Spin the whirl icon continuoysly
-    if ([self.spinnerImageView.layer animationForKey:@"SpinAnimation"] == nil) {
-        CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-        animation.fromValue = @(0.0);
-        animation.toValue = @(2*M_PI);
-        animation.duration = 3.0f;
-        animation.repeatCount = INFINITY;
-        [self.spinnerImageView.layer addAnimation:animation forKey:@"SpinAnimation"];
-    }
 }
 
 @end
