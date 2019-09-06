@@ -1167,6 +1167,25 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     connectCallbackToActionCompletion(actionId, completion);
 }
 
+-(void) loadHistoryWithCompletion:(callbackWithErrorBlock _Nonnull)completion {
+    NSCAssert(self.currentChannelID != nil, @"Must have current channel");
+    
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+    [params setString:@"action" val:@"load_history"];
+    [params setString:@"channel_id" val:self.currentChannelID];
+    
+    NSError* error = nil;
+    int64_t actionId = -1;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error loading channel history: %@", error);
+        completion(error);
+    }
+    
+    // When this action completes, trigger the completion block callback
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
 -(void) disconnect {
     [self.ninchatSession sdklog:@"disconnect: Closing Ninchat session."];
 

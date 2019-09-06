@@ -141,6 +141,9 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** Indicate whether or not the user is currently typing into the chat. */
 -(void) setIsWriting:(BOOL)isWriting completion:(callbackWithErrorBlock _Nonnull)completion;
 
+/** Load channel history. */
+-(void) loadHistoryWithCompletion:(callbackWithErrorBlock _Nonnull)completion;
+    
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;
 
