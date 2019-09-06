@@ -141,6 +141,7 @@ static UIFont* labelFont;
     if ([composeContent.element isEqualToString:kUIComposeMessageElementButton]) {
         [self.titleLabel setHidden:YES];
         [self.sendButton setTitle:composeContent.label forState:UIControlStateNormal];
+        self.sendButton.layer.borderWidth = 1;
         
     } else if ([composeContent.element isEqualToString:kUIComposeMessageElementSelect]) {
         [self.titleLabel setHidden:NO];
@@ -151,7 +152,7 @@ static UIFont* labelFont;
         } else {
             [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
         }
-        
+        self.sendButton.layer.borderWidth = 2;
         
         // clear existing option buttons
         if (self.optionButtons != nil) {
