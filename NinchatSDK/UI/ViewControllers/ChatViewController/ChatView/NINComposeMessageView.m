@@ -51,17 +51,18 @@ static UIFont* labelFont;
 }
 
 -(void) applyButtonStyle:(UIButton*)button selected:(BOOL)selected {
+    UIColor* mainColor = (button == self.sendButton) ? buttonBlue : buttonGrey;
     button.layer.cornerRadius = kButtonHeight / 2;
     button.layer.masksToBounds = YES;
-    button.layer.borderColor = buttonGrey.CGColor;
+    button.layer.borderColor = mainColor.CGColor;
     if (selected) {
         button.layer.borderWidth = 0;
         [button setBackgroundImage:imageFrom(buttonBlue) forState:UIControlStateNormal];
         [button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     } else {
         button.layer.borderWidth = 2;
-        [button setBackgroundImage:nil forState:UIControlStateNormal];
-        [button setTitleColor:buttonGrey forState:UIControlStateNormal];
+        [button setBackgroundImage:imageFrom(UIColor.whiteColor) forState:UIControlStateNormal];
+        [button setTitleColor:mainColor forState:UIControlStateNormal];
     }
 }
 
@@ -103,7 +104,6 @@ static UIFont* labelFont;
 -(void) pressed:(UIButton*)button {
     if (button == self.sendButton) {
         self.uiComposeSendPressedCallback(self);
-        [self applyButtonStyle:button selected:YES];
         return;
     }
     for (int i=0; i<self.optionButtons.count; ++i) {
@@ -130,10 +130,9 @@ static UIFont* labelFont;
             self.titleLabel.textColor = bubbleTextColor;
         }
         [self addSubview:self.titleLabel];
-        
         self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self applyButtonStyle:self.sendButton selected:NO];
         self.sendButton.titleLabel.font = labelFont;
-        [self sendActionFailed]; // sets send button appearance to initial state
         [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.sendButton];
     }
@@ -185,11 +184,9 @@ static UIFont* labelFont;
     }
 }
 
-// sets send button appearance to initial state, also called in initialisation
+// update ui to reflect that sending failed
 -(void) sendActionFailed {
-    [self applyButtonStyle:self.sendButton selected:false];
-    [self.sendButton setTitleColor:buttonBlue forState:UIControlStateNormal];
-    self.sendButton.layer.borderColor = buttonBlue.CGColor;
+    // no ui feedback at the moment
 }
 
 @end
