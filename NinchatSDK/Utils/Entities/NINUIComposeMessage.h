@@ -20,7 +20,7 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 
 /** Element class. */
 @property (nonatomic, strong, readonly) NSString* className;
-/** Element type. API specifies "a", "button" and "select", SDK currently only supports "select". */
+/** Element type. API specifies "a", "button" and "select", SDK currently supports "button" and "select". */
 @property (nonatomic, strong, readonly) NSString* element;
 /** Link target for element type "a". */
 @property (nonatomic, strong, readonly) NSString* href;

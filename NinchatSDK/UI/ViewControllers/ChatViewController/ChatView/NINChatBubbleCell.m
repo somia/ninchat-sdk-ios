@@ -370,7 +370,7 @@
     }
 }
 
--(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig {
+-(void) populateWithChannelMessage:(NSObject<NINChannelMessage>*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration imageAssets:(NSDictionary<NINImageAssetKey, UIImage*>*)imageAssets colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets agentAvatarConfig:(NINAvatarConfig*)agentAvatarConfig userAvatarConfig:(NINAvatarConfig*)userAvatarConfig composeState:(NSArray*)composeState {
     NSCAssert(self.topLabelsLeftConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsRightConstraint != nil, @"Cannot be nil");
     NSCAssert(self.topLabelsContainerHeightConstraint != nil, @"Cannot be nil");
@@ -378,7 +378,8 @@
     NSCAssert(self.imageWidthConstraint != nil, @"Cannot be nil");
     
     self.message = message;
-    
+    __weak typeof(self) weakSelf = self;
+
     if ([message isKindOfClass:NINTextMessage.class]) {
         [self.composeMessageView clear];
         self.composeMessageView.hidden = YES;
@@ -402,7 +403,6 @@
             // No image; clear image constraints etc so it wont affect layout
             [self resetImageLayout];
         } else if (attachment.isImageOrVideo) {
-            __weak typeof(self) weakSelf = self;
             
             [attachment updateInfoWithCompletionCallback:^(NSError * _Nullable error, BOOL didNetworkRefresh) {
                 [weakSelf updateImage:didNetworkRefresh];
@@ -414,7 +414,10 @@
         self.videoPlayImageView.hidden = YES;
         self.composeMessageView.hidden = NO;
         
-        [self.composeMessageView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets];
+        [self.composeMessageView populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState];
+        self.composeMessageView.uiComposeStateUpdateCallback = ^(NSArray *composeState) {
+            weakSelf.uiComposeStateUpdateCallback(composeState);
+        };
     }
     
     self.senderNameLabel.text = message.sender.displayName;

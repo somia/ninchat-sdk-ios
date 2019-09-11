@@ -6,6 +6,7 @@
 //  Copyright © 2019 Somia Reality Oy. All rights reserved.
 //
 
+#import "NINChatBubbleCell.h"
 #import "NINComposeMessageView.h"
 #import "NINUtils.h"
 
@@ -15,6 +16,8 @@ static CGFloat const kVerticalMargin = 10;
 static UIColor* buttonBlue;
 static UIColor* buttonGrey;
 static UIFont* labelFont;
+
+typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 @interface NINComposeContentView ()
 
@@ -31,7 +34,15 @@ static UIFont* labelFont;
 // select element option buttons, recreated on reuse
 @property (nonatomic, strong) NSArray<UIButton*>* optionButtons;
 
-@property (nonatomic, copy) void (^uiComposeSendPressedCallback)(NINComposeContentView*);
+/*
+ Current state to be synced with NINChatView to persist state across cell recycling.
+ "select" type objects use option indices as keys, selection states as values, other
+ element types currently track nothing.
+ */
+@property (nonatomic, strong) NSMutableDictionary* composeState;
+
+@property (nonatomic, copy) uiComposeSendPressedCallback uiComposeSendPressedCallback;
+@property (nonatomic, copy) uiComposeElementStateUpdateCallback uiComposeElementStateUpdateCallback;
 
 @end
 
@@ -109,14 +120,16 @@ static UIFont* labelFont;
     for (int i=0; i<self.optionButtons.count; ++i) {
         if (button == self.optionButtons[i]) {
             BOOL selected = ![[self.options[i] valueForKey:@"selected"] boolValue];
-            self.options[i][@"selected"] = [NSNumber numberWithBool:selected];
+            self.options[i][@"selected"] = @(selected);
+            self.composeState[@(i)] = @(selected);
             [self applyButtonStyle:button selected:selected];
+            self.uiComposeElementStateUpdateCallback(self.composeState);
             return;
         }
     }
 }
 
--(void) populateWithComposeMessage:(NINUIComposeContent*)composeContent siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) populateWithComposeMessage:(NINUIComposeContent*)composeContent siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSDictionary*)composeState {
     
     self.originalContent = composeContent;
     
@@ -141,6 +154,7 @@ static UIFont* labelFont;
         [self.titleLabel setHidden:YES];
         [self.sendButton setTitle:composeContent.label forState:UIControlStateNormal];
         self.sendButton.layer.borderWidth = 1;
+        self.composeState = nil;
         
     } else if ([composeContent.element isEqualToString:kUIComposeMessageElementSelect]) {
         [self.titleLabel setHidden:NO];
@@ -163,15 +177,24 @@ static UIFont* labelFont;
         // recreate options dict to add the "selected" fields
         NSMutableArray<NSMutableDictionary*>* options = [NSMutableArray new];
         NSMutableArray<UIButton*>* optionButtons = [NSMutableArray new];
-        
-        for (NSDictionary* option in composeContent.options) {
-            NSMutableDictionary* newOption = [option mutableCopy];
-            newOption[@"selected"] = @NO;
+        self.composeState = [composeState mutableCopy];
+        if (composeState == nil) {
+            self.composeState = [NSMutableDictionary new];
+        }
+
+        for (int i=0; i<composeContent.options.count; ++i) {
+            NSMutableDictionary* newOption = [composeContent.options[i] mutableCopy];
+            NSNumber* selected = composeState[@(i)];
+            if (selected == nil) {
+                selected = @NO;
+                self.composeState[@(i)] = @NO;
+            }
+            newOption[@"selected"] = selected;
             
             UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
             button.titleLabel.font = labelFont;
-            [self applyButtonStyle:button selected:false];
-            [button setTitle:option[@"label"] forState:UIControlStateNormal];
+            [self applyButtonStyle:button selected:[selected boolValue]];
+            [button setTitle:newOption[@"label"] forState:UIControlStateNormal];
             [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:button];
             
@@ -196,12 +219,19 @@ static UIFont* labelFont;
 // content views
 @property (nonatomic, strong) NSMutableArray<NINComposeContentView*>* contentViews;
 
+// ui/compose objects's current states
+@property (nonatomic, strong) NSMutableArray<NSDictionary*>* composeStates;
+
 @end
 
 @implementation NINComposeMessageView
 
+-(BOOL) isActive {
+    return self.contentViews.count && !self.contentViews[0].isHidden;
+}
+
 -(CGFloat) intrinsicHeight {
-    if (self.contentViews.count) {
+    if ([self isActive]) {
         CGFloat height = kVerticalMargin;
         for (NINComposeContentView* view in self.contentViews) {
             height += [view intrinsicHeight];
@@ -213,14 +243,12 @@ static UIFont* labelFont;
 }
 
 -(CGSize) intrinsicContentSize {
-    if (self.contentViews.count) {
+    if ([self isActive]) {
         return CGSizeMake(CGFLOAT_MAX, [self intrinsicHeight]);
     } else {
         return CGSizeMake(UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric);
     }
 }
-
-
 
 -(void) layoutSubviews {
     [super layoutSubviews];
@@ -237,9 +265,11 @@ static UIFont* labelFont;
         [view clear];
         [view setHidden:YES];
     }
+    
+    [self invalidateIntrinsicContentSize];
 }
 
--(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets {
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSArray*)composeState {
     
     if (self.contentViews.count < composeMessage.content.count) {
         NSUInteger oldCount = self.contentViews.count;
@@ -252,11 +282,23 @@ static UIFont* labelFont;
         [self.contentViews removeObjectsInRange:NSMakeRange(composeMessage.content.count, self.contentViews.count - composeMessage.content.count)];
     }
     
+    if (composeState == nil) {
+        self.composeStates = [[NSMutableArray alloc] init];
+    } else {
+        self.composeStates = [composeState mutableCopy];
+    }
+    __weak typeof(self) weakSelf = self;
     for (int i = 0; i < self.contentViews.count; ++i) {
-        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets];
+        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i]];
         self.contentViews[i].uiComposeSendPressedCallback = self.uiComposeSendPressedCallback;
         [self.contentViews[i] setHidden:NO];
+        self.contentViews[i].uiComposeElementStateUpdateCallback = ^(NSDictionary *composeState) {
+            weakSelf.composeStates[i] = composeState;
+            weakSelf.uiComposeStateUpdateCallback(weakSelf.composeStates);
+        };
     }
+    
+    [self invalidateIntrinsicContentSize];
 }
 
 -(void) awakeFromNib {

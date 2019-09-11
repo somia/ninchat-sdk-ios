@@ -39,6 +39,14 @@
  */
 @property (nonatomic, strong) NSDictionary<NINColorAssetKey,UIColor*>* colorAssets;
 
+/**
+ * Current states for the visible ui/compose type messages, tracked across cell
+ * recycle. messageID as key, array corresponds to the array of ui/compose objects
+ * in the message with each object being a dictionary that gets received and passed
+ * to NINUIComposeElement objects that are responsible for generating and reading it.
+ */
+@property (nonatomic, strong) NSMutableDictionary<NSString*,NSArray*>* composeMessageStates;
+
 /** Configuration for agent avatar. */
 @property (nonatomic, strong) NINAvatarConfig* agentAvatarConfig;
 
@@ -167,14 +175,18 @@
     id<NINChatMessage> message = [self.dataSource chatView:self messageAtIndex:indexPath.row];
 
     if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
-        NINChannelMessage* channelMessage = (NINChannelMessage*)message;
+        NSObject<NINChannelMessage>* channelMessage = (NSObject<NINChannelMessage>*)message;
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
+        NSString* messageID = [channelMessage messageID];
         cell.videoThumbnailManager = _videoThumbnailManager;
         // callback needs to be set before the populate call, probably should just refactor to avoid the potential trap
         cell.uiComposeSendPressedCallback = ^(NINComposeContentView *composeContentView) {
             [weakSelf.delegate uiActionSentByComposeContentView:composeContentView];
         };
-        [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig];
+        [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig composeState:self.composeMessageStates[messageID]];
+        cell.uiComposeStateUpdateCallback = ^(NSArray* composeState) {
+            weakSelf.composeMessageStates[messageID] = composeState;
+        };
         cell.imagePressedCallback = ^(NINFileInfo* attachment, UIImage *image) {
             [weakSelf.delegate chatView:weakSelf imageSelected:image forAttachment:attachment];
         };
@@ -232,6 +244,8 @@
 
     // Rotate the table view 180 degrees; we will use it upside down
     self.tableView.transform = CGAffineTransformMakeRotation(M_PI);
+    
+    self.composeMessageStates = [[NSMutableDictionary alloc] init];
 }
 
 -(void) dealloc {

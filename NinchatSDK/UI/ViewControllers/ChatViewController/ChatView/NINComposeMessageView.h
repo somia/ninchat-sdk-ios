@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+#import "NINChatBubbleCell.h"
 #import "NINSessionManager.h"
 #import "NINUIComposeMessage.h"
 #import "NINPublicTypes.h"
@@ -28,9 +29,11 @@
 @interface NINComposeMessageView : UIView
 
 /** Send button callback. */
-@property (nonatomic, copy) void (^uiComposeSendPressedCallback)(NINComposeContentView*);
+@property (nonatomic, copy) uiComposeSendPressedCallback uiComposeSendPressedCallback;
+/** State update callback. */
+@property (nonatomic, copy) uiComposeStateUpdateCallback uiComposeStateUpdateCallback;
 
 -(void) clear;
--(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets;
+-(void) populateWithComposeMessage:(NINUIComposeMessage*)message siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSArray*)composeState;
 
 @end
