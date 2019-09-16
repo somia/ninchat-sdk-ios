@@ -879,10 +879,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     // Set the constraints so that video is initially hidden
     [self adjustConstraintsForSize:self.view.bounds.size animate:NO];
-    
-    [self.sessionManager loadHistoryWithCompletion:^(NSError* error) {
-        
-    }];
 }
 
 -(void) viewDidDisappear:(BOOL)animated {
@@ -993,6 +989,10 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
     // Apply asset overrides
     [self applyAssetOverrides];
+    
+    [self.sessionManager loadHistoryWithCompletion:^(NSError* error) {
+        
+    }];
 }
 
 -(void) dealloc {
