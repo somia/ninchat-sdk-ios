@@ -603,11 +603,24 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) addNewChatMessage:(id<NINChatMessage>)message {
     NSCAssert([NSThread isMainThread], @"Must only be called on the main thread.");
-
+    
     if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
         // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
         NSObject<NINChannelMessage>* channelMessage = (NSObject<NINChannelMessage>*)message;
+        
+        // Guard against the same message getting added multiple times
+        // should only happen if the client makes extraneous load_history calls elsewhere
+        for (id<NINChatMessage> oldMessage in _chatMessages) {
+            if (![oldMessage conformsToProtocol:@protocol(NINChannelMessage)]) {
+                continue;
+            }
+            if ([channelMessage.messageID isEqualToString:((NSObject<NINChannelMessage>*)oldMessage).messageID]) {
+                NSLog(@"Attempted to add an already existing message with id %@", channelMessage.messageID);
+                return;
+            }
+        }
+
         channelMessage.series = NO;
 
         // Find the previous channel message
