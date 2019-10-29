@@ -77,7 +77,13 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
 
 -(void) connectToQueueWithId:(NSString*)queueId {
     __weak typeof(self) weakSelf = self;
+    
     [self.sessionManager joinQueueWithId:queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+        
+        if (error != nil) {
+            // Failed to join the queue
+            [self.sessionManager.ninchatSession sdklog:@"Failed to join the queue: %@", error];
+        }
         
         if (queuePosition == 1) {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
@@ -90,7 +96,6 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         if (textTopColor != nil) {
             weakSelf.queueInfoTextView.textColor = textTopColor;
         }
-        
     } channelJoined:^{
         [weakSelf performSegueWithIdentifier:kSegueIdQueueToChat sender:nil];
         // Listen to new queue events to handle possible transfers later

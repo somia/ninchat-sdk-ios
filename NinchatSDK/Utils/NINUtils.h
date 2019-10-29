@@ -9,6 +9,9 @@
 #ifndef NINUtils_h
 #define NINUtils_h
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
 #import "NINPrivateTypes.h"
 
 /**

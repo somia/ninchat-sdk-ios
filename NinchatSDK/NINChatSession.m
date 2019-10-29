@@ -154,7 +154,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             }
         }
 
-        NSCAssert(false, @"Queue not found!");
+        // Queue not found!
         [self sdklog:@"Queue with id '%@' not found!", self.queueID];
         return nil;
     }
@@ -222,7 +222,15 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             }
 
             // Find our realm's queues
-            NSArray* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+            NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+            
+            if (queueIds != nil) {
+                // If the queueID we've been initialized with isnt in the config's set of
+                // audienceQueues, add it's ID to the list and we'll see if it exists
+                [self sdklog:@"Adding my queueID %@", self.queueID];
+                queueIds = [queueIds arrayByAddingObject:self.queueID];
+            }
+            
             // Potentially passing a nil queueIds here is intended
             [weakSelf.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
                 NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
