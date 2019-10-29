@@ -64,7 +64,7 @@ cp -r /tmp/NinchatGo.framework /path/to/project/Frameworks/NinchatGo.framework
 First of all you need to have configured the private podspecs repo:
 
 ```sh
-pod repo add ninchat-podspecs https://github.com/somia/ninchat-podspecs.git
+pod repo add ninchat-podspecs git@github.com:somia/ninchat-podspecs.git
 ```
 
 To release a new SDK version on the said podspec repository, take the following steps:
