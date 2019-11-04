@@ -155,7 +155,6 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
         [self.sendButton setTitle:composeContent.label forState:UIControlStateNormal];
         self.sendButton.layer.borderWidth = 1;
         self.composeState = nil;
-        
     } else if ([composeContent.element isEqualToString:kUIComposeMessageElementSelect]) {
         [self.titleLabel setHidden:NO];
         [self.titleLabel setText:composeContent.label];
@@ -227,15 +226,19 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 @implementation NINComposeMessageView
 
 -(BOOL) isActive {
-    return self.contentViews.count && !self.contentViews[0].isHidden;
+    return (self.contentViews.count > 0) && !self.contentViews[0].isHidden;
 }
 
 -(CGFloat) intrinsicHeight {
     if ([self isActive]) {
-        CGFloat height = kVerticalMargin;
+        CGFloat height = 0;
         for (NINComposeContentView* view in self.contentViews) {
             height += [view intrinsicHeight];
         }
+        
+        // Add margin between all views
+        height += kVerticalMargin * (self.contentViews.count - 1);
+        
         return height;
     } else {
         return 0;
@@ -252,7 +255,9 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 -(void) layoutSubviews {
     [super layoutSubviews];
+    
     CGFloat y = 0;
+    
     for (NINComposeContentView* view in self.contentViews) {
         CGFloat height = [view intrinsicHeight];
         view.frame = CGRectMake(0, y, self.bounds.size.width, height);
@@ -271,7 +276,10 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 -(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSArray*)composeState {
     
+    // Note, this method will reuse existing content views already allocated.
+    
     if (self.contentViews.count < composeMessage.content.count) {
+        // There are fewer content views than needed; add the missing amount
         NSUInteger oldCount = self.contentViews.count;
         for (int i = 0; i < composeMessage.content.count - oldCount; ++i) {
             NINComposeContentView* contentView = [[NINComposeContentView alloc] init];
@@ -279,6 +287,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
             [self.contentViews addObject:contentView];
         }
     } else if (composeMessage.content.count < self.contentViews.count) {
+        // There are more content views than needed; remove the extra ones
         [self.contentViews removeObjectsInRange:NSMakeRange(composeMessage.content.count, self.contentViews.count - composeMessage.content.count)];
     }
     
@@ -287,6 +296,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     } else {
         self.composeStates = [composeState mutableCopy];
     }
+    
     __weak typeof(self) weakSelf = self;
     for (int i = 0; i < self.contentViews.count; ++i) {
         [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i]];
