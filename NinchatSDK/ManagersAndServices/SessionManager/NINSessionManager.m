@@ -24,6 +24,7 @@
 #import "NINChatSession+Internal.h"
 #import "NINFileInfo.h"
 #import "NINToast.h"
+#import "NINMessageThrottler.h"
 
 // UI texts
 static NSString* const kConversationStartedText = @"Audience in queue {{queue}} accepted.";
@@ -80,6 +81,9 @@ NSString* _Nonnull const kNINMessageTypeWebRTCHangup = @"ninchat.com/rtc/hang-up
 
     /** Channel user map; ID -> NINChannelUser. */
     NSMutableDictionary<NSString*, NINChannelUser*>* _channelUsers;
+    
+    /** Message throttler that manages message order by their message_id. */
+    NINMessageThrottler* _messageThrottler;
 }
 
 /** Realm ID to use. */
@@ -662,6 +666,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return;
         }
 
+        NSLog(@"Received Chat message with payload: %@", payloadDict);
+
         BOOL hasAttachment = NO;
         NSArray* fileObjectsList = payloadDict[@"files"];
         if ((fileObjectsList != nil) && [fileObjectsList isKindOfClass:NSArray.class] && (fileObjectsList.count > 0)) {
@@ -719,6 +725,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             NSLog(@"Failed to deserialize message JSON: %@", error);
             return;
         }
+        
+        NSLog(@"Received Compose message with payload: %@", payloadArray);
         
         NSString* invalidType;
         for (NSDictionary* contentDict in payloadArray) {
@@ -785,6 +793,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
+    NSLog(@"Inbound message with message_id: %@, message_time: %f", messageID, messageTime);
+    
     if ([messageType isEqualToString:@"ninchat.com/text"] || [messageType isEqualToString:@"ninchat.com/file"]) {
         [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
         return;
@@ -812,6 +822,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
+    
+    NSLog(@"message_received with action_id = %ld", actionId);
 
     [self handleInboundMessage:params payload:payload actionId:actionId];
 
@@ -1210,6 +1222,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) disconnect {
     [self.ninchatSession sdklog:@"disconnect: Closing Ninchat session."];
 
+    [_messageThrottler stop];
+    _messageThrottler = nil;
+    
     self.currentChannelID = nil;
     self.backgroundChannelID = nil;
     self.currentQueueID = nil;
@@ -1255,6 +1270,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
 
+    // Create message throttler to manage inbound message order
+    __weak NINSessionManager* weakSelf = self;
+    _messageThrottler = [NINMessageThrottler throttlerWithCallback:^(NINInboundMessage * _Nonnull message) {
+        [weakSelf messageReceived:message.params payload:message.payload];
+    }];
+    
     // Make sure our site configuration contains a realm_id
     NSString* realmId = [self.siteConfiguration valueForKey:@"audienceRealmId"];
     if ((realmId == nil) || (![realmId isKindOfClass:[NSString class]])) {
@@ -1348,7 +1369,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     } else if ([event isEqualToString:@"channel_joined"]) {
         [self channelJoined:params];
     } else if ([event isEqualToString:@"message_received"]) {
-        [self messageReceived:params payload:payload];
+        // Throttle the message; it will be cached for a short while to ensure inbound message order.
+        [_messageThrottler addMessage:[NINInboundMessage messageWithParams:params andPayload:payload]];
     } else if ([event isEqualToString:@"realm_queues_found"]) {
         [self realmQueuesFound:params];
     } else if ([event isEqualToString:@"audience_enqueued"] || [event isEqualToString:@"queue_updated"]) {

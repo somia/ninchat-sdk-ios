@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -91,6 +91,8 @@
 		49721CDF212AF84200695F33 /* RTCSessionDescription+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */; };
 		49721CE2212AFBBB00695F33 /* RTCICECandidate+Dictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */; };
 		49721CE3212AFBBB00695F33 /* RTCICECandidate+Dictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */; };
+		4972AF2B2371AA2B00386503 /* NINMessageThrottler.h in Headers */ = {isa = PBXBuildFile; fileRef = 4972AF292371AA2B00386503 /* NINMessageThrottler.h */; };
+		4972AF2C2371AA2B00386503 /* NINMessageThrottler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4972AF2A2371AA2B00386503 /* NINMessageThrottler.m */; };
 		497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */; };
 		497C4EDA214A8D060090C5E6 /* NINCloseChatButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */; };
 		497C4EDC214A8D170090C5E6 /* NINCloseChatButton.xib in Resources */ = {isa = PBXBuildFile; fileRef = 497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */; };
@@ -242,6 +244,8 @@
 		49721CDD212AF84200695F33 /* RTCSessionDescription+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCSessionDescription+Dictionary.m"; sourceTree = "<group>"; };
 		49721CE0212AFBBB00695F33 /* RTCICECandidate+Dictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RTCICECandidate+Dictionary.h"; sourceTree = "<group>"; };
 		49721CE1212AFBBB00695F33 /* RTCICECandidate+Dictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "RTCICECandidate+Dictionary.m"; sourceTree = "<group>"; };
+		4972AF292371AA2B00386503 /* NINMessageThrottler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINMessageThrottler.h; sourceTree = "<group>"; };
+		4972AF2A2371AA2B00386503 /* NINMessageThrottler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINMessageThrottler.m; sourceTree = "<group>"; };
 		497C4ED7214A8D060090C5E6 /* NINCloseChatButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINCloseChatButton.h; sourceTree = "<group>"; };
 		497C4ED8214A8D060090C5E6 /* NINCloseChatButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINCloseChatButton.m; sourceTree = "<group>"; };
 		497C4EDB214A8D170090C5E6 /* NINCloseChatButton.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NINCloseChatButton.xib; sourceTree = "<group>"; };
@@ -336,6 +340,8 @@
 			children = (
 				49140B6E20F2494800A00EA8 /* NINSessionManager.h */,
 				49140B6F20F2494800A00EA8 /* NINSessionManager.m */,
+				4972AF292371AA2B00386503 /* NINMessageThrottler.h */,
+				4972AF2A2371AA2B00386503 /* NINMessageThrottler.m */,
 			);
 			path = SessionManager;
 			sourceTree = "<group>";
@@ -751,6 +757,7 @@
 				496F85F22137DD43001FD1C4 /* NINChannelUser.h in Headers */,
 				49140B8720F395A700A00EA8 /* NINQueueViewController.h in Headers */,
 				497C4ED9214A8D060090C5E6 /* NINCloseChatButton.h in Headers */,
+				4972AF2B2371AA2B00386503 /* NINMessageThrottler.h in Headers */,
 				4986E5B021A6C32600104CD4 /* NINConfirmCloseChatDialog.h in Headers */,
 				49140B8120F28BE000A00EA8 /* NINChatViewController.h in Headers */,
 				494330C7213FB3B5006E2C9C /* NINVideoCallConsentDialog.h in Headers */,
@@ -969,6 +976,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4972AF2C2371AA2B00386503 /* NINMessageThrottler.m in Sources */,
 				4930441C2158D90700DECB0C /* NINChatMetaMessage.m in Sources */,
 				496F1EB221660FEF006CF321 /* NINExpandingTextView.m in Sources */,
 				49721CD821295C7F00695F33 /* NINChatBubbleCell.m in Sources */,
