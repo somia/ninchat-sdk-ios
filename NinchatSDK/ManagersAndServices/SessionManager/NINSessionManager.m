@@ -36,6 +36,7 @@ static NSString* const kActionNotification = @"ninchatsdk.ActionNotification";
 
 /** Notification name for channel_joined event. */
 static NSString* const kChannelJoinedNotification = @"ninchatsdk.ChannelJoinedNotification";
+
 /** Notification name for audience_enqueued event. */
 NSString* const kNINQueuedNotification = @"ninchatsdk.QueuedNotification";
 
@@ -388,6 +389,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         NSLog(@"Failed to get channel id: %@", error);
         return;
     }
+    NSCAssert(channelId != nil, @"Channel ID must exist");
 
     [self.ninchatSession sdklog:@"Joined channel ID: %@", channelId];
 
@@ -397,7 +399,11 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
     // Get the queue we are joining
     NINQueue* queue = [self queueForId:self.currentQueueID];
-
+    NSString* queueName = @"";
+    if (queue != nil && queue.name != nil) {
+        queueName = queue.name;
+    }
+    
     // We are no longer in the queue; clear the queue reference
     self.currentQueueID = nil;
 
@@ -406,7 +412,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [_channelUsers removeAllObjects];
 
     // Insert a meta message about the conversation start
-    [self addNewChatMessage:[NINChatMetaMessage messageWithText:[self translation:kConversationStartedText formatParams:@{@"queue": queue.name}] timestamp:[NSDate date] closeChatButtonTitle:nil]];
+    [self addNewChatMessage:[NINChatMetaMessage messageWithText:[self translation:kConversationStartedText formatParams:@{@"queue": queueName}] timestamp:[NSDate date] closeChatButtonTitle:nil]];
 
     // Extract the channel members' data
     NINLowLevelClientProps* members = [params getObject:@"channel_members" error:&error];
@@ -823,6 +829,19 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSLog(@"Ignoring unsupported message type: '%@'", messageType);
 }
 
+-(void) handlePartMessage:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
+    for (int i = 0; i < payload.length; i++) {
+        NSError* error = nil;
+        NSArray* payloadArray = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+        if (error != nil && payloadArray.count > 1) {
+            NSLog(@"Failed to deserialize message JSON: %@", error);
+            return;
+        }
+        
+        NSLog(@"Received a Part message with payload: %@", payloadArray);
+    }
+}
+
 -(void) messageReceived:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
     NSError* error = nil;
     
@@ -833,7 +852,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     
     // handle transfers
     if ([messageType isEqualToString:@"ninchat.com/info/part"]) {
-        self.currentChannelID = nil;
+        [self handlePartMessage:params payload:payload];
         return;
     }
     
