@@ -20,18 +20,27 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 
 /** Element class. */
 @property (nonatomic, strong, readonly) NSString* className;
+
 /** Element type. API specifies "a", "button" and "select", SDK currently supports "button" and "select". */
 @property (nonatomic, strong, readonly) NSString* element;
+
 /** Link target for element type "a". */
 @property (nonatomic, strong, readonly) NSString* href;
+
 /** Element unique identifier. */
 @property (nonatomic, strong, readonly) NSString* uid;
+
 /** Element name. */
 @property (nonatomic, strong, readonly) NSString* name;
+
 /** A label or a descriptive text depending on the element. Text prompt on "select". */
 @property (nonatomic, strong, readonly) NSString* label;
+
 /** Array of NINUIComposeOption elements for "select" type element. */
 @property (nonatomic, strong, readonly) NSArray<NSDictionary*>* options;
+
+/** Indicates that 'send' button has been pressed for this item. */
+@property (nonatomic, assign) BOOL sendPressed;
 
 /** Instance data as a dictionary, with options property replaced if parameter is non-nil. */
 -(NSDictionary*) dictWithOptions:(NSArray<NSDictionary*>*)options;
@@ -50,6 +59,12 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 
 /** Message payload of ui/compose type content. */
 @property (nonatomic, strong, readonly) NSArray<NINUIComposeContent*>* content;
+
+/**
+ Indicates the content index of the item for which 'send' button has been pressed.
+ Returns -1 if none has been pressed.
+ */
+-(NSInteger) sendPressedIndex;
 
 +(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine payload:(NSArray*)payload;
 

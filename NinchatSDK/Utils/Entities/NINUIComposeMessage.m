@@ -75,6 +75,16 @@
 
 @implementation NINUIComposeMessage
 
+-(NSInteger) sendPressedIndex {
+    for (NSInteger i = 0; i < self.content.count; i++) {
+        if (self.content[i].sendPressed) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
 +(NINUIComposeMessage*) messageWithID:(NSString*)messageID sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine payload:(NSArray*)payload {
     NINUIComposeMessage* msg = [NINUIComposeMessage new];
     msg.messageID = messageID;

@@ -112,11 +112,17 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     self.optionButtons = nil;
 }
 
+-(void) removeSendButtonAction {
+    [self.sendButton removeTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+}
+
 -(void) pressed:(UIButton*)button {
     if (button == self.sendButton) {
         self.uiComposeSendPressedCallback(self);
+        [self applyButtonStyle:button selected:YES];
         return;
     }
+    
     for (int i=0; i<self.optionButtons.count; ++i) {
         if (button == self.optionButtons[i]) {
             BOOL selected = ![[self.options[i] valueForKey:@"selected"] boolValue];
@@ -129,7 +135,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     }
 }
 
--(void) populateWithComposeMessage:(NINUIComposeContent*)composeContent siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSDictionary*)composeState {
+-(void) populateWithComposeMessage:(NINUIComposeContent*)composeContent siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSDictionary*)composeState enableSendButton:(BOOL)enableSendButton isSelected:(BOOL)isSelected {
     
     self.originalContent = composeContent;
     
@@ -144,9 +150,13 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
         }
         [self addSubview:self.titleLabel];
         self.sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [self applyButtonStyle:self.sendButton selected:NO];
+        [self applyButtonStyle:self.sendButton selected:isSelected];
         self.sendButton.titleLabel.font = labelFont;
-        [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if (enableSendButton) {
+            [self.sendButton addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+        }
+        
         [self addSubview:self.sendButton];
     }
     
@@ -298,9 +308,19 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     }
     
     __weak typeof(self) weakSelf = self;
-    for (int i = 0; i < self.contentViews.count; ++i) {
-        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i]];
-        self.contentViews[i].uiComposeSendPressedCallback = self.uiComposeSendPressedCallback;
+    BOOL enableSendButtons = (composeMessage.sendPressedIndex == -1);
+    
+    for (int i = 0; i < self.contentViews.count; i++) {
+        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i] enableSendButton:enableSendButtons isSelected:(composeMessage.sendPressedIndex == i)];
+        self.contentViews[i].uiComposeSendPressedCallback = ^(NINComposeContentView* composeContentView) {
+            composeMessage.content[i].sendPressed = YES;
+            
+            // Make the send buttons unclickable for this message
+            for (int j = 0; j < self.contentViews.count; j++) {
+                [weakSelf.contentViews[j] removeSendButtonAction];
+            }
+            weakSelf.uiComposeSendPressedCallback(composeContentView);
+        };
         [self.contentViews[i] setHidden:NO];
         self.contentViews[i].uiComposeElementStateUpdateCallback = ^(NSDictionary *composeState) {
             weakSelf.composeStates[i] = composeState;
