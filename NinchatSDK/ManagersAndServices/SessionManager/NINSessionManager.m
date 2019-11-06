@@ -714,6 +714,21 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 }
 
+-(void) handleChannelMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId {
+    
+    for (int i = 0; i < payload.length; i++) {
+        // not sure why the resulting dictionary here is wrapped in an array but let's roll with it for now at least
+        NSError* error = nil;
+        NSArray* payloadArray = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
+        if (error != nil && payloadArray.count > 1) {
+            NSLog(@"Failed to deserialize message JSON: %@", error);
+            return;
+        }
+        
+        NSLog(@"Received a Channel message with payload: %@", payloadArray);
+    }
+}
+
 -(void) handleInboundComposeMessageWithPayload:(NINLowLevelClientPayload*)payload messageID:(NSString*)messageID messageUser:(NINChannelUser*)messageUser messageTime:(CGFloat)messageTime actionId:(long)actionId {
     
     NSError* error = nil;
@@ -793,13 +808,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
-    NSLog(@"Inbound message with message_id: %@, message_time: %f", messageID, messageTime);
-    
     if ([messageType isEqualToString:@"ninchat.com/text"] || [messageType isEqualToString:@"ninchat.com/file"]) {
         [self handleInboundChatMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
         return;
     } else if ([messageType isEqualToString:@"ninchat.com/ui/compose"]) {
         [self handleInboundComposeMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
+        return;
+    } else if ([messageType isEqualToString:@"ninchat.com/info/channel"]) {
+        [self handleChannelMessageWithPayload:payload messageID:messageID messageUser:messageUser messageTime:messageTime actionId:actionId];
         return;
     }
 
@@ -808,23 +824,25 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 -(void) messageReceived:(NINLowLevelClientProps*)params payload:(NINLowLevelClientPayload*)payload {
+    NSError* error = nil;
+    
+    NSString* messageType = [params getString:@"message_type" error:nil];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSLog(@"Received message of type '%@'", messageType);
+    
     // handle transfers
-    if ([[params getString:@"message_type" error:nil] isEqualToString:@"ninchat.com/info/part"]) {
-        self.backgroundChannelID = self.currentChannelID;
+    if ([messageType isEqualToString:@"ninchat.com/info/part"]) {
         self.currentChannelID = nil;
         return;
     }
     
     NSCAssert(self.currentChannelID != nil || self.backgroundChannelID != nil, @"No active channel");
 
-    NSError* error = nil;
-
     long actionId;
     [params getInt:@"action_id" val:&actionId error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
     
-    NSLog(@"message_received with action_id = %ld", actionId);
-
     [self handleInboundMessage:params payload:payload actionId:actionId];
 
     if (actionId != 0) {
@@ -1004,6 +1022,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         [self partChannel:self.currentChannelID completion:^(NSError* error) {
             [weakSelf.ninchatSession sdklog:@"Channel parted; joining queue."];
+            weakSelf.backgroundChannelID = weakSelf.currentChannelID;
             weakSelf.currentChannelID = nil;
             performJoin();
         }];
