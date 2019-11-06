@@ -12,7 +12,7 @@
 const NSTimeInterval kTimerTickInterval = 0.05;
 
 // Max age of a message in the list before it is submitted
-const NSTimeInterval kMessageMaxAge = 0.25;
+const NSTimeInterval kMessageMaxAge = 1.0;
 
 #pragma mark - NINInboundMessage
 
