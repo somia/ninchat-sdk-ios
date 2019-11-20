@@ -7,7 +7,7 @@ xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
 
 before_install:
   - git submodule update --init --recursive
-  
+
   - brew install go
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
@@ -15,7 +15,8 @@ before_install:
   - ./update-go-framework.sh
 
   - gem install cocoapods -v '0.32.1'
-  - pod update && pod install
+  - pod setup
+  - pod install
 
 script:
   - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
