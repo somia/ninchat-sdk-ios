@@ -6,18 +6,16 @@ xcode_scheme: NinchatSDK
 xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
 
 before_install:
+  - git submodule update --init --recursive
+  
   - brew install go
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
   - gomobile init
-  - git submodule update --init --recursive
+  - ./update-go-framework.sh
+
   - gem install cocoapods -v '0.32.1'
-  
-install:
-  - gem install xcpretty 
-  - pod setup
+  - pod update && pod install
 
 script:
-  - ./update-go-framework.sh
-  - xcodebuild clean
-  - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | xcpretty -c
+  - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
