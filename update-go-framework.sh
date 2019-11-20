@@ -6,6 +6,10 @@ echo "Will rebuild the low-level framework."
 
 framework="NinchatLowLevelClient.framework"
 
+if [ -z "$GOPATH" ]
+then GOPATH=$(go env GOPATH)
+fi
+
 mygopath="`pwd`/go-sdk:$GOPATH"
 gocodedir="`pwd`/go-sdk/src/github.com/ninchat/ninchat-go/mobile/"
 tmpframework="/tmp/$framework"
