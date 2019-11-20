@@ -5,14 +5,15 @@ xcode_workspace: NinchatSDK.xcworkspace
 xcode_scheme: NinchatSDK
 xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
 
-install:
+before_install:
   - brew install go
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
   - gomobile init
   - ./update-go-framework.sh
   - pod setup --verbose
+  - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 
 script:
   - xcodebuild clean
-  - xcodebuild -workspace $xcode_workspace -scheme $xcode_scheme -configuration "Release"
+  - xcodebuild -workspace "$xcode_workspace" -scheme "$xcode_scheme" -configuration "Release" | xcpretty -c
