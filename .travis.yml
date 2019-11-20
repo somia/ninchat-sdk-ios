@@ -1,0 +1,16 @@
+language: objective-c
+osx_image: xcode11.2
+
+xcode_workspace: NinchatSDK.xcworkspace
+xcode_scheme: NinchatSDK
+xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
+
+install:
+  - brew install go
+  - go get -u golang.org/x/mobile/cmd/gomobile
+  - export PATH=$PATH:~/go/bin
+  - gomobile init
+
+script:
+  - ./update-go-framework.sh
+  - pod update && pod install
