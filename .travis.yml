@@ -11,8 +11,6 @@ before_install:
   - git submodule update --init --recursive
 
   - brew install go
-  - brew install cocoapods
-
   # update Go-Pods to the latest version
   - brew update
   - brew upgrade go
@@ -23,7 +21,10 @@ before_install:
   - gomobile init
   - ./update-go-framework.sh
   
+  - gem install cocoapods
   - travis_wait 45 pod setup
+  - travis_wait 45 pod update
+  - travis_wait 45 pod install
 
 script:
   - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
