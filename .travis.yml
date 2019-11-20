@@ -15,14 +15,9 @@ before_install:
   - export PATH=$PATH:~/go/bin
   - gomobile init
   - ./update-go-framework.sh
-
-  # install cocoapods manually
-  # related to: https://stackoverflow.com/questions/58958185/travis-ci-gets-stuck-at-cocoapods-installation
-  - mkdir ~/.cocoapods/repos && cd ~/.cocoapods/repos
-  - git clone "https://github.com/CocoaPods/Specs" master --depth 1
-  - cd master
-  - git fetch --unshallow
-  - pod setup
+  
+  - gem install cocoapods
+  - travis_wait 45 pod setup
 
 script:
   - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
