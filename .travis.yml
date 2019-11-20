@@ -10,10 +10,12 @@ cache: cocoapods
 before_install:
   - git submodule update --init --recursive
 
-  - brew update
-  - brew upgrade
   - brew install go
-  
+
+  # update Go to the latest version
+  - brew update
+  - brew upgrade go
+
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
   - gomobile init
