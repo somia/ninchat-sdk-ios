@@ -14,7 +14,6 @@ before_install:
   # update Go-Pods to the latest version
   - brew update
   - brew upgrade go
-  - brew upgrade cocoapods
 
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
