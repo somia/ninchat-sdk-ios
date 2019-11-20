@@ -18,7 +18,7 @@ before_install:
 
   # install cocoapods manually
   # related to: https://stackoverflow.com/questions/58958185/travis-ci-gets-stuck-at-cocoapods-installation
-  - cd ~/.cocoapods/repos
+  - mkdir ~/.cocoapods/repos && cd ~/.cocoapods/repos
   - git clone "https://github.com/CocoaPods/Specs" master --depth 1
   - cd master
   - git fetch --unshallow
