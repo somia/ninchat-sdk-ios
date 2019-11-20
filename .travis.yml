@@ -15,8 +15,8 @@ before_install:
   - ./update-go-framework.sh
 
   - gem install cocoapods -v '0.32.1'
+  - gem update concurrent-ruby
   - pod setup
-  - pod install
 
 script:
   - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
