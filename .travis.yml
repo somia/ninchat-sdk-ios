@@ -12,7 +12,7 @@ before_install:
   - gomobile init
   - ./update-go-framework.sh
   - pod setup --verbose
-  - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+  - gem install xcpretty
 
 script:
   - xcodebuild clean
