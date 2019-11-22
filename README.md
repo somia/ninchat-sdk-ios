@@ -1,6 +1,11 @@
 # Ninchat iOS SDK Integrator's Guide
+![build_status](https://travis-ci.org/somia/ninchat-sdk-ios.svg?branch=develop)
+![cocoapods compatible](https://img.shields.io/badge/Cocoapods-compatible-4BC51D.svg?style=flat)
+![Licence](https://img.shields.io/github/license/somia/ninchat-sdk-ios)
 
 This document describes integrating the Ninchat iOS SDK into an iOS application.
+
+
 
 ## Installation
 
