@@ -10,17 +10,17 @@ before_install:
   - brew update
 
   - brew install go
-#  - brew upgrade go
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
   - gomobile init
   - ./update-go-framework.sh
   
   - brew install cocoapods
-#  - brew upgrade cocoapods
   - pod setup
+
+  - gem install xcpretty
 
 script:
   - pod update
   - pod install
-  - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | xcpretty -t; test ${PIPESTATUS[0]} -eq 0
+  - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | xcpretty -t; test ${PIPESTATUS[0]} -eq 0
