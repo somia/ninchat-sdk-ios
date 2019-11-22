@@ -18,9 +18,10 @@ before_install:
   - brew install cocoapods
   - pod setup
 
+  - gem install ocunit2junit
   - gem install xcpretty
 
 script:
   - pod update
   - pod install
-  - xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | xcpretty -t; test ${PIPESTATUS[0]} -eq 0
+  - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | tee raw.txt | xcpretty -c cat raw.txt | ocunit2junit
