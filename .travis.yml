@@ -9,17 +9,15 @@ before_install:
   - git submodule update --init --recursive
   - brew update
 
-  # update Go-Pods to the latest version
   - brew install go
-  - brew upgrade go
-
+#  - brew upgrade go
   - go get -u golang.org/x/mobile/cmd/gomobile
   - export PATH=$PATH:~/go/bin
   - gomobile init
   - ./update-go-framework.sh
   
   - brew install cocoapods
-  - brew upgrade cocoapods
+#  - brew upgrade cocoapods
   - pod setup
 
 script:
