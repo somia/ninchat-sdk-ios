@@ -5,14 +5,12 @@ xcode_workspace: NinchatSDK.xcworkspace
 xcode_scheme: NinchatSDK
 xcode_destination: platform=iOS Simulator,OS=13.2,name=iPhone 8
 
-cache: cocoapods
-
 before_install:
   - git submodule update --init --recursive
-
-  - brew install go
-  # update Go-Pods to the latest version
   - brew update
+
+  # update Go-Pods to the latest version
+  - brew install go
   - brew upgrade go
 
   - go get -u golang.org/x/mobile/cmd/gomobile
@@ -20,10 +18,11 @@ before_install:
   - gomobile init
   - ./update-go-framework.sh
   
-  - gem install cocoapods
-  - travis_wait 45 pod setup
-  - travis_wait 45 pod update
-  - travis_wait 45 pod install
+  - brew install cocoapods
+  - brew upgrade cocoapods
+  - pod setup
 
 script:
-  - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release"
+  - pod update
+  - pod install
+  - set -o pipefail && xcodebuild -workspace NinchatSDK.xcworkspace -scheme NinchatSDK -configuration "Release" | xcpretty -t; test ${PIPESTATUS[0]} -eq 0
