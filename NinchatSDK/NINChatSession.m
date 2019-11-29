@@ -224,7 +224,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             // Find our realm's queues
             NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
             
-            if (queueIds != nil) {
+            if (queueIds != nil && self.queueID != nil) {
                 // If the queueID we've been initialized with isnt in the config's set of
                 // audienceQueues, add it's ID to the list and we'll see if it exists
                 [self sdklog:@"Adding my queueID %@", self.queueID];
