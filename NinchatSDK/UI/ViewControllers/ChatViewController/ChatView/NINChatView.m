@@ -160,20 +160,23 @@
 }
 
 -(void) newMessageWasAddedAtIndex:(NSInteger)index {
-    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView endUpdates];
 }
 
 -(void) messageWasRemovedAtIndex:(NSInteger)index {
-    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
+    [self.tableView endUpdates];
 }
 
 #pragma mark - From UITableViewDelegate
 
 -(nonnull UITableViewCell*)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-
     __weak typeof(self) weakSelf = self;
     id<NINChatMessage> message = [self.dataSource chatView:self messageAtIndex:indexPath.row];
-
+    
     if ([message conformsToProtocol:@protocol(NINChannelMessage)]) {
         NSObject<NINChannelMessage>* channelMessage = (NSObject<NINChannelMessage>*)message;
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];

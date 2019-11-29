@@ -286,8 +286,9 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 -(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSArray*)composeState {
     
-    // Note, this method will reuse existing content views already allocated.
-    
+    /// Reusing exisiting content views that are already allocated results in UI problems for different scenarios, e.g.
+    /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
+    self.contentViews = [NSMutableArray new];
     if (self.contentViews.count < composeMessage.content.count) {
         // There are fewer content views than needed; add the missing amount
         NSUInteger oldCount = self.contentViews.count;
@@ -311,7 +312,8 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     BOOL enableSendButtons = (composeMessage.sendPressedIndex == -1);
     
     for (int i = 0; i < self.contentViews.count; i++) {
-        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i] enableSendButton:enableSendButtons isSelected:(composeMessage.sendPressedIndex == i)];
+        BOOL isSelected = composeMessage.content[i].sendPressed;
+        [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i] enableSendButton:enableSendButtons isSelected:isSelected];
         self.contentViews[i].uiComposeSendPressedCallback = ^(NINComposeContentView* composeContentView) {
             composeMessage.content[i].sendPressed = YES;
             
