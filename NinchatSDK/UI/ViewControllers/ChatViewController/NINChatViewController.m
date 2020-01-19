@@ -730,25 +730,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self.remoteVideoView renderFrame:nil];
     self.remoteVideoTrack = remoteVideoTrack;
     [self.remoteVideoTrack addRenderer:self.remoteVideoView];
-    
-//    AVAudioSessionPortOverride port = AVAudioSessionPortOverrideSpeaker;
-//    [RTCDispatcher dispatchAsyncOnType:RTCDispatcherTypeAudioSession block:^{
-//        RTCAudioSession *session = [RTCAudioSession sharedInstance];
-//        session.useManualAudio = true;
-//        [session lockForConfiguration];
-//
-//        NSError *error = nil;
-//        [session setMode:AVAudioSessionModeVideoChat error:&error];
-//        NSCAssert(error == nil, @"Error");
-//
-//        [session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error];
-//        NSCAssert(error == nil, @"Error");
-//
-//        [session setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
-//        NSCAssert(error == nil, @"Error");
-//
-//        [session unlockForConfiguration];
-//    }];
 }
 
 - (void)webrtcClient:(NINWebRTCClient *)client didChangeConnectionState:(RTCIceConnectionState)newState {
