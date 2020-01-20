@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yjz-4D-80v">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Yjz-4D-80v">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -20,7 +18,7 @@
             <objects>
                 <navigationController id="Yjz-4D-80v" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="lxX-er-2uy">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -40,14 +38,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pn8-ui-9zD" customClass="NINEmbeddableNavigationBar">
-                                <rect key="frame" x="0.0" y="20" width="375" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" id="VkV-Uq-cNP"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cVi-ux-Foo" userLabel="Top content view">
-                                <rect key="frame" x="0.0" y="20" width="375" height="253.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="253.5"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_progress_whirl" translatesAutoresizingMaskIntoConstraints="NO" id="9Zh-Yi-kTD">
                                         <rect key="frame" x="162.5" y="70" width="50" height="50"/>
@@ -78,7 +76,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkT-tD-Ztq" userLabel="Bottom content view">
-                                <rect key="frame" x="0.0" y="273.5" width="375" height="393.5"/>
+                                <rect key="frame" x="0.0" y="253.5" width="375" height="413.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="RGm-bx-l81">
                                         <rect key="frame" x="20" y="50" width="335" height="54.5"/>
@@ -155,7 +153,7 @@ you are next.</string>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XJz-Z9-GdN" userLabel="Remote video View">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="257"/>
-                                        <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="375" id="DhL-uc-K7h"/>
                                             <constraint firstAttribute="height" constant="257" id="Tgw-Sv-lFF"/>
@@ -341,7 +339,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" placeholderIntrinsicWidth="132" placeholderIntrinsicHeight="45" translatesAutoresizingMaskIntoConstraints="NO" id="Sle-hz-0wC" customClass="NINEmbeddableCloseChatButton">
-                                <rect key="frame" x="233" y="30" width="132" height="45"/>
+                                <rect key="frame" x="233" y="10" width="132" height="45"/>
                                 <color key="backgroundColor" red="0.69019607839999997" green="0.20000000000000001" blue="0.20392156859999999" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
@@ -430,10 +428,10 @@ you are next.</string>
                                 </connections>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PMo-Y7-zHd">
-                                <rect key="frame" x="0.0" y="20" width="375" height="60"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gjX-BK-gzs" userLabel="Top bar background">
-                                        <rect key="frame" x="0.0" y="-20" width="375" height="80"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="60"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="IMG_423492987.JPG" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QX0-zo-sPu">
@@ -517,14 +515,14 @@ you are next.</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dqa-Bq-Kdu" customClass="NINEmbeddableNavigationBar">
-                                <rect key="frame" x="0.0" y="20" width="375" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" id="g0W-LY-jZw"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L5U-F0-l9Y" userLabel="Top part container view">
-                                <rect key="frame" x="0.0" y="20" width="375" height="333.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="333.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="How was our customer service? Please leave a rating by pressing the buttons below, or hit Skip to bypass this step." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Ikj-NF-Jwm">
                                         <rect key="frame" x="20" y="40" width="335" height="108.5"/>
@@ -714,14 +712,14 @@ you are next.</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4D-ft-8zg" customClass="NINEmbeddableNavigationBar">
-                                <rect key="frame" x="0.0" y="20" width="375" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" id="qfh-00-Oy7"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wa1-0U-Lj7" userLabel="Top container view">
-                                <rect key="frame" x="0.0" y="20" width="375" height="314.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="314.5"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wXY-o9-goJ" userLabel="Welcome text container view">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="134.5"/>
@@ -807,7 +805,7 @@ you are next.</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3xg-1C-FCR" userLabel="Bottom container view">
-                                <rect key="frame" x="0.0" y="334.5" width="375" height="332.5"/>
+                                <rect key="frame" x="0.0" y="314.5" width="375" height="352.5"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="D4q-k8-gpN">
                                         <rect key="frame" x="20" y="40" width="335" height="150"/>

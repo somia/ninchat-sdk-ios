@@ -127,7 +127,9 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
     NSInteger fps = [self selectFpsForFormat:format];
     NSLog(@"Using FPS: %ld for local capture", (long)fps);
-
+    
+    /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
+    [self setAudioOutputToSpeaker];
     [self.localCapturer startCaptureWithDevice:device format:format fps:fps completionHandler:^(NSError * _Nonnull error) {
         if (error != nil) {
             [self.sessionManager.ninchatSession sdklog:@"** ERROR failed to start local capture: %@", error];
@@ -136,6 +138,29 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
         NSLog(@"Local capture started OK.");
     }];
+}
+
+/// The solution came from: `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
+-(void) setAudioOutputToSpeaker {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didSessionRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+
+    AVAudioSession* session = [AVAudioSession sharedInstance];
+    NSError* error;
+
+    /// Set the audioSession category.
+    /// Needs to be Record or PlayAndRecord to use audioRouteOverride:
+    if (![session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error])
+        NSLog(@"AVAudioSession error setting category:%@",error);
+
+    /// Set the audioSession override
+    if (![session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error])
+        NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",error);
+
+    /// Activate the audio session
+    if (![session setActive:YES error:&error])
+        NSLog(@"AVAudioSession error activating: %@",error);
+    else
+        NSLog(@"audioSession active");
 }
 
 -(void) stopLocalCapture {
@@ -325,6 +350,23 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
             });
         }];
     }
+}
+
+- (void)didSessionRouteChange:(NSNotification *)notification {
+  NSDictionary *interuptionDict = notification.userInfo;
+  NSInteger routeChangeReason = [[interuptionDict valueForKey:AVAudioSessionRouteChangeReasonKey] integerValue];
+
+  switch (routeChangeReason) {
+      case AVAudioSessionRouteChangeReasonCategoryChange: {
+          /// Set speaker as default route and remove the observer
+          [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
+          [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
+      }
+      break;
+
+    default:
+      break;
+  }
 }
 
 #pragma mark - Public Methods

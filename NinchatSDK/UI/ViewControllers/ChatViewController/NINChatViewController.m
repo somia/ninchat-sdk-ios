@@ -716,10 +716,6 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.remoteVideoView = remoteView;
 #endif
 
-    // Debug
-    self.remoteVideoView.backgroundColor = [UIColor yellowColor];
-    self.remoteVideoView.tag = 678;
-
     // Anchor the remote view to its container view
     self.remoteVideoView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.remoteVideoViewContainer addSubview:self.remoteVideoView];

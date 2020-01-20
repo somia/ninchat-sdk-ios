@@ -1268,7 +1268,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     self.currentQueueID = nil;
 
     [self.session close];
-    self.session = nil;
     self.sessionCallbackHandler = nil;
 }
 
