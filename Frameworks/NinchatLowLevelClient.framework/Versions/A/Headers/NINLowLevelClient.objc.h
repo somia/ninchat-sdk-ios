@@ -76,6 +76,7 @@
 - (nullable instancetype)init;
 - (NINLowLevelClientEvents* _Nullable)call:(NINLowLevelClientProps* _Nullable)params payload:(NINLowLevelClientPayload* _Nullable)payload error:(NSError* _Nullable* _Nullable)error;
 - (void)setAddress:(NSString* _Nullable)address;
+- (void)setHeader:(NSString* _Nullable)key value:(NSString* _Nullable)value;
 @end
 
 @interface NINLowLevelClientEvent : NSObject <goSeqRefInterface> {
@@ -170,12 +171,13 @@
 - (BOOL)open:(NSError* _Nullable* _Nullable)error;
 - (BOOL)send:(NINLowLevelClientProps* _Nullable)params payload:(NINLowLevelClientPayload* _Nullable)payload actionId:(int64_t* _Nullable)actionId error:(NSError* _Nullable* _Nullable)error;
 - (void)setAddress:(NSString* _Nullable)address;
-- (void)setOnClose:(id<NINLowLevelClientCloseHandler> _Nullable)callback;
-- (void)setOnConnActive:(id<NINLowLevelClientConnActiveHandler> _Nullable)callback;
-- (void)setOnConnState:(id<NINLowLevelClientConnStateHandler> _Nullable)callback;
-- (void)setOnEvent:(id<NINLowLevelClientEventHandler> _Nullable)callback;
-- (void)setOnLog:(id<NINLowLevelClientLogHandler> _Nullable)callback;
-- (void)setOnSessionEvent:(id<NINLowLevelClientSessionEventHandler> _Nullable)callback;
+- (void)setHeader:(NSString* _Nullable)key value:(NSString* _Nullable)value;
+- (void)setOnClose:(id<NINLowLevelClientCloseHandler> _Nullable)h;
+- (void)setOnConnActive:(id<NINLowLevelClientConnActiveHandler> _Nullable)h;
+- (void)setOnConnState:(id<NINLowLevelClientConnStateHandler> _Nullable)h;
+- (void)setOnEvent:(id<NINLowLevelClientEventHandler> _Nullable)h;
+- (void)setOnLog:(id<NINLowLevelClientLogHandler> _Nullable)h;
+- (void)setOnSessionEvent:(id<NINLowLevelClientSessionEventHandler> _Nullable)h;
 - (BOOL)setParams:(NINLowLevelClientProps* _Nullable)params error:(NSError* _Nullable* _Nullable)error;
 @end
 
@@ -190,6 +192,8 @@
 - (long)length;
 - (NSString* _Nonnull)string;
 @end
+
+FOUNDATION_EXPORT NSString* _Nonnull NINLowLevelClientDefaultUserAgent(void);
 
 FOUNDATION_EXPORT NINLowLevelClientCaller* _Nullable NINLowLevelClientNewCaller(void);
 

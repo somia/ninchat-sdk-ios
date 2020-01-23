@@ -97,6 +97,14 @@
 @property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
 
 /**
+ * Append information to the user agent string. The string should be in
+ * the form "app-name/version" or "app-name/version (more; details)".
+ *
+ * Set this prior to calling startWithCallback:
+ */
+@property (nonatomic, strong) NSString* _Nullable appDetails;
+
+/**
  * Initializes the API using default environment.
  *
  * @param configKey configuration key; this decides the chat realm

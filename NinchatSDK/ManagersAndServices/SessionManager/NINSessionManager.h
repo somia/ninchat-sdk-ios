@@ -96,6 +96,11 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** List of Audience queues. These are the queues the user gets to pick from in the UI. */
 @property (nonatomic, strong) NSArray<NINQueue*>* _Nonnull audienceQueues;
 
+/** Host application details including name, version, and some more details.
+ *  will be appended to some predefined values such as SDK version, device OS, and device model.
+ */
+@property (nonatomic, strong) NSString* _Nullable appDetails;
+
 /** Whether or not this session is connected. */
 @property (nonatomic, assign, readonly) BOOL connected;
 
