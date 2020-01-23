@@ -55,8 +55,16 @@ self.ninchatSession.delegate = self
 
 ##### Optional parameters
 
-* `siteSecret` is optional and may not be required for your deployment
+* `environments` is optional and may not be required for your deployment
 * `queueID` define a valid queue ID to join the queue directly; specify nil to show queue selection view.
+
+##### User Agent Header (Optional)
+
+To append information as the user agent header to your requests, use the following format to set value to  `appDetails` prior to call `start(callBack:)` function:
+
+```swift
+ninchatSession.appDetails = "app-name/version - (more; details)"
+```
 
 #### Starting the API client
 
@@ -246,4 +254,4 @@ These keys can be found in the SDK's public header `NINPublicTypes.h`. For Objec
 ## Contact
 
 If you have any questions, contact:
-* Matti Dahlbom / Qvik <matti@qvik.com>
+* Hassan Shahbazi / Ninchat <hassan@ninchat.com>

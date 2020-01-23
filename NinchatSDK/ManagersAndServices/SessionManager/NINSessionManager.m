@@ -25,6 +25,7 @@
 #import "NINFileInfo.h"
 #import "NINToast.h"
 #import "NINMessageThrottler.h"
+#import <sys/utsname.h>
 
 // UI texts
 static NSString* const kConversationStartedText = @"Audience in queue {{queue}} accepted.";
@@ -950,6 +951,33 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": newError(errorType)});
 }
 
+-(NSString*)sdkDetails {
+    NSString *details = @"ninchat-sdk-ios";
+    
+    /// SDK Version
+    NSString* appVersion = [[findResourceBundle() infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (appVersion != nil)
+        details = [details stringByAppendingString:[NSString stringWithFormat:@"/%@", appVersion]];
+    
+    /// Device OS
+    details = [details stringByAppendingString:@" (ios "];
+    NSString* operatingSystem = [[UIDevice currentDevice] systemVersion];
+    if (operatingSystem != nil)
+        details = [details stringByAppendingString:[NSString stringWithFormat:@"%@;", operatingSystem]];
+    
+    /// Device Model
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    NSString* model = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
+    if (model != nil)
+        details = [details stringByAppendingString:[NSString stringWithFormat:@" %@)", model]];
+    
+    if (self.appDetails != nil)
+        details = [details stringByAppendingString:[NSString stringWithFormat:@" %@", self.appDetails]];
+    
+    return details;
+}
+
 #pragma mark - Public methods
 
 -(BOOL) connected {
@@ -1358,7 +1386,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self.session setOnLog:self.sessionCallbackHandler];
     [self.session setOnSessionEvent:self.sessionCallbackHandler];
     [self.session setOnEvent:self.sessionCallbackHandler];
-
+    [self.session setHeader:@"User-Agent" value:[self sdkDetails]];
+    
     NSError* error = nil;
     [self.session setParams:sessionParams error:&error];
     if (error != nil) {

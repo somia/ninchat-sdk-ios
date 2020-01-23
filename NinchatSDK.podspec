@@ -2,13 +2,12 @@
 
 Pod::Spec.new do |s|
   s.name         = "NinchatSDK"
-  s.version      = "0.0.39"
+  s.version      = "0.0.40"
   s.summary      = "iOS SDK for Ninchat."
   s.description  = "For building iOS applications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
-  s.license      = { :type => "Ninchat", :file => "LICENSE.md" }
-  s.author       = { "Matti Dahlbom" => "matti.dahlbom@qvik.fi",
-                     "Hassan Shahbazi" => "hassan@ninchat.com" }
+  s.license      = { :type => "BSD-2", :file => "LICENSE.md" }
+  s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
   s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios.git", :tag => "#{s.version}" }
 
   s.ios.deployment_target = "9.0"
