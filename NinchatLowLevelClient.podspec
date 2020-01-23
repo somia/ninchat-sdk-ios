@@ -6,9 +6,9 @@ Pod::Spec.new do |s|
   s.summary      = "Low-level communications library for Ninchat messaging."
   s.description  = "For providing low-level communications using Ninchat messaging."
   s.homepage     = "https://ninchat.com/"
-  s.license      = { :type => "BSD-2", :file => "LICENSE.md" }
+  s.license      = { :type => "BSD", :file => "LICENSE.md" }
   s.author       = { "Hassan Shahbazi" => "hassan@ninchat.com" }
-  s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios.git", :tag => "asdf" }
+  s.source       = { :git => "https://github.com/somia/ninchat-sdk-ios.git", :tag => "#{s.version}" }
 
   s.ios.deployment_target = "9.0"
 

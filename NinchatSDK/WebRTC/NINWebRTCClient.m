@@ -128,8 +128,6 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     NSInteger fps = [self selectFpsForFormat:format];
     NSLog(@"Using FPS: %ld for local capture", (long)fps);
     
-    /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
-    [self setAudioOutputToSpeaker];
     [self.localCapturer startCaptureWithDevice:device format:format fps:fps completionHandler:^(NSError * _Nonnull error) {
         if (error != nil) {
             [self.sessionManager.ninchatSession sdklog:@"** ERROR failed to start local capture: %@", error];
@@ -410,6 +408,8 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
     __weak typeof(self) weakSelf = self;
 
+    /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
+    [self setAudioOutputToSpeaker];
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         NSDictionary* payload = note.userInfo[@"payload"];

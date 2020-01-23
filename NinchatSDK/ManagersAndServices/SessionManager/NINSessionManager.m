@@ -955,22 +955,24 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSString *details = @"ninchat-sdk-ios";
     
     /// SDK Version
-    NSString* appVersion = [[findResourceBundle() infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    if (appVersion != nil)
-        details = [details stringByAppendingString:[NSString stringWithFormat:@"/%@", appVersion]];
+    NSString* sdkVersion = [[findResourceBundle() infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (sdkVersion != nil)
+        details = [details stringByAppendingString:[NSString stringWithFormat:@"/%@", sdkVersion]];
     
     /// Device OS
     details = [details stringByAppendingString:@" (ios "];
     NSString* operatingSystem = [[UIDevice currentDevice] systemVersion];
     if (operatingSystem != nil)
-        details = [details stringByAppendingString:[NSString stringWithFormat:@"%@;", operatingSystem]];
-    
+        details = [details stringByAppendingString:[NSString stringWithFormat:@"%@", operatingSystem]];
+    details = [details stringByAppendingString:@";"];
+        
     /// Device Model
     struct utsname systemInfo;
     uname(&systemInfo);
     NSString* model = [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
     if (model != nil)
-        details = [details stringByAppendingString:[NSString stringWithFormat:@" %@)", model]];
+        details = [details stringByAppendingString:[NSString stringWithFormat:@" %@", model]];
+    details = [details stringByAppendingString:@")"];
     
     if (self.appDetails != nil)
         details = [details stringByAppendingString:[NSString stringWithFormat:@" %@", self.appDetails]];

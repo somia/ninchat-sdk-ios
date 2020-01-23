@@ -63,7 +63,7 @@ self.ninchatSession.delegate = self
 To append information as the user agent header to your requests, use the following format to set value to  `appDetails` prior to call `start(callBack:)` function:
 
 ```swift
-ninchatSession.appDetails = "app-name/version - (more; details)"
+ninchatSession.appDetails = "app-name/version (more; details)"
 ```
 
 #### Starting the API client
