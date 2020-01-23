@@ -117,6 +117,14 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     self.sessionManager.audienceMetadata = audienceMetadata;
 }
 
+-(void)setAppDetails:(NSString *)appDetails {
+    self.sessionManager.appDetails = appDetails;
+}
+
+-(NSString*)appDetails {
+    return self.sessionManager.appDetails;
+}
+
 -(NINLowLevelClientProps*) audienceMetadata {
     return self.sessionManager.audienceMetadata;
 }
