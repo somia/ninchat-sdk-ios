@@ -210,7 +210,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
         if (error != nil) {
-            callbackBlock(error);
+            callbackBlock(nil, error);
             return;
         }
 
@@ -220,12 +220,12 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         weakSelf.sessionManager.siteConfiguration.environments = weakSelf.environments;
 
         // Open the chat session
-        NSError* openSessionError = [weakSelf.sessionManager openSession:^(NSError *error) {
+        NSError* openSessionError = [weakSelf.sessionManager openSession:^(NINSessionCredentials *credentials, NSError *error) {
             NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
             NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
             if (error != nil) {
-                callbackBlock(error);
+                callbackBlock(credentials, error);
                 return;
             }
 
@@ -246,12 +246,14 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
                 if (error == nil) {
                     weakSelf.started = YES;
                 }
-                callbackBlock(error);
+                callbackBlock(credentials, error);
             }];
         }];
 
-        if (openSessionError != nil) {
-            callbackBlock(error);
+        /// Error in opening the session
+        /// TODO: Manage different scenarios
+        if (openSessionError) {
+            callbackBlock(nil, error);
         }
     });
 }

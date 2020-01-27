@@ -152,6 +152,8 @@
 		749E70E222FC2E460031FEEB /* NINUIComposeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */; };
 		749E70E322FC2E460031FEEB /* NINUIComposeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */; };
 		7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */; };
+		851E393023DF26BB00078968 /* NINSessionCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 851E392E23DF26BB00078968 /* NINSessionCredentials.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		851E393123DF26BB00078968 /* NINSessionCredentials.m in Sources */ = {isa = PBXBuildFile; fileRef = 851E392F23DF26BB00078968 /* NINSessionCredentials.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -304,6 +306,8 @@
 		749E70DC22F9AED90031FEEB /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
 		749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUIComposeMessage.h; sourceTree = "<group>"; };
 		749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUIComposeMessage.m; sourceTree = "<group>"; };
+		851E392E23DF26BB00078968 /* NINSessionCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINSessionCredentials.h; sourceTree = "<group>"; };
+		851E392F23DF26BB00078968 /* NINSessionCredentials.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINSessionCredentials.m; sourceTree = "<group>"; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -573,6 +577,8 @@
 				499443BD208F473700101DCA /* UI */,
 				49944358208DF33400101DCA /* NinchatSDK.h */,
 				49944359208DF33400101DCA /* Info.plist */,
+				851E392E23DF26BB00078968 /* NINSessionCredentials.h */,
+				851E392F23DF26BB00078968 /* NINSessionCredentials.m */,
 				499443B2208F320700101DCA /* NINChatSession.h */,
 				499443B3208F320700101DCA /* NINChatSession.m */,
 				49140B7320F267EE00A00EA8 /* NINPublicTypes.h */,
@@ -738,6 +744,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				851E393023DF26BB00078968 /* NINSessionCredentials.h in Headers */,
 				49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */,
 				749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */,
 				49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */,
@@ -1009,6 +1016,7 @@
 				49140B8F20F4BFA000A00EA8 /* NINNavigationBar.m in Sources */,
 				49118961214BE54F008F1748 /* NSDateFormatter+Ninchat.m in Sources */,
 				49B699C4215625E200E6C83D /* NSMutableAttributedString+Ninchat.m in Sources */,
+				851E393123DF26BB00078968 /* NINSessionCredentials.m in Sources */,
 				4986E5AA21A573ED00104CD4 /* NINPermissions.m in Sources */,
 				49D77F3021566E5700900224 /* UIImageView+Ninchat.m in Sources */,
 				49140B8220F28BE000A00EA8 /* NINChatViewController.m in Sources */,

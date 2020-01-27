@@ -1374,8 +1374,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     // Wait for the session creation event
     fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSString* eventType = note.userInfo[@"event_type"];
+        
         if ([eventType isEqualToString:@"session_created"]) {
-            callbackBlock(note.userInfo[@"error"]);
+            NINSessionCredentials *sessionCredentials = note.userInfo[@"session_credentials"];
+            NSError* error = note.userInfo[@"error"];
+            
+            callbackBlock(sessionCredentials, error);
             return YES;
         }
 
@@ -1488,12 +1492,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(error == nil, @"Failed to get attribute");
 
     if ([event isEqualToString:@"session_created"]) {
-        self.myUserID = [params getString:@"user_id" error:&error];
-        NSCAssert(error == nil, @"Failed to get attribute");
-
+        NINSessionCredentials *credentials = [[NINSessionCredentials alloc] init:params];
+        NSCAssert(credentials.userID != nil, @"Failed to get attribute");
+        NSCAssert(credentials.userAuth != nil, @"Failed to get attribute");
+        
+        self.myUserID = credentials.userID;
         [self.ninchatSession sdklog:@"Session created - my user ID is: %@", self.myUserID];
 
-        postNotification(kActionNotification, @{@"event_type": event});
+        postNotification(kActionNotification, @{@"event_type": event, @"session_credentials": credentials});
     } else if ([event isEqualToString:@"user_deleted"]) {
         [self userDeleted:params];
     }

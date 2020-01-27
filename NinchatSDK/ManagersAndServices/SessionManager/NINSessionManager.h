@@ -15,6 +15,7 @@
 #import "NINSiteConfiguration.h"
 #import "NINChatSession+Internal.h" // To provide log: method
 #import "NINChatMessage.h"
+#import "NINSessionCredentials.h"
 
 @class NINQueue;
 @class NINTextMessage;

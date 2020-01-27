@@ -9,8 +9,10 @@
 #ifndef PublicTypes_h
 #define PublicTypes_h
 
+@class NINSessionCredentials;
+
 /** Asynchronous completion callback for the -start operation. */
-typedef void (^startCallbackBlock)(NSError* _Nullable error);
+typedef void (^startCallbackBlock)(NINSessionCredentials* _Nullable credentials, NSError* _Nullable error);
 
 /** Defines the type for a overrideable color asset. */
 typedef NSString* const NINImageAssetKey NS_STRING_ENUM;
