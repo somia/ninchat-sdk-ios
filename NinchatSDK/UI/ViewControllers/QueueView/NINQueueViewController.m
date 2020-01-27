@@ -154,6 +154,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         [self.motdTextView setFormattedText:[self.sessionManager.siteConfiguration valueForKey:@"motd"]];
     }
     self.queueInfoTextView.text = nil;
+    self.queueInfoTextView.hidden = NO;
 
     __weak typeof(self) weakSelf = self;
     self.closeChatButton.pressedCallback = ^{
