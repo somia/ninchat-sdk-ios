@@ -14,7 +14,7 @@
 @implementation NSString (Ninchat)
 
 -(NSAttributedString*) htmlAttributedStringWithFont:(UIFont*)font {
-    NSData* data = [self dataUsingEncoding:NSUTF8StringEncoding];
+    NSData* data = [self dataUsingEncoding:NSUTF16StringEncoding];
     NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithData:data options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType} documentAttributes:NULL error:NULL];
     [attrString overrideFont:font];
 
