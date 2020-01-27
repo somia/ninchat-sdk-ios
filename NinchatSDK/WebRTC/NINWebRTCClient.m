@@ -138,7 +138,10 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     }];
 }
 
-/// The solution came from: `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
+/*
+ * The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
+ * The solution came from: `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
+ */
 -(void) setAudioOutputToSpeaker {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didSessionRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
     
@@ -284,7 +287,6 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
         if (remoteVideoTrack == nil) {
             NSLog(@"** ERROR: got nil remotevideo track from tranceiver!");
         }
-        /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
         [self setAudioOutputToSpeaker];
         [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:remoteVideoTrack];
 #endif
@@ -369,7 +371,6 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
           /// Set speaker as default route and remove the observer
           [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
           [[RTCAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-//          [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
       }
       break;
 
@@ -548,7 +549,6 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 #ifdef NIN_USE_PLANB_SEMANTICS
     runOnMainThread(^{
         if (stream.audioTracks.count > 0) {
-            /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
             [self setAudioOutputToSpeaker];
         }
         
