@@ -30,4 +30,16 @@
     return self;
 }
 
+-(id _Nonnull)init:(NSString* _Nonnull)userID userAuth:(NSString* _Nonnull)userAuth sessionID:(NSString* _Nullable)sessionID {
+    self = [super init];
+    if (self) {
+        self.userID = userID;
+        self.userAuth = userAuth;
+        self.sessionID = sessionID;
+    }
+    
+    return self;
+}
+
+
 @end
