@@ -138,27 +138,38 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
     }];
 }
 
-/// The solution came from: `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
+/*
+ * The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
+ * The solution came from: `https://stackoverflow.com/questions/24595579/how-to-redirect-audio-to-speakers-in-the-apprtc-ios-example`
+ */
 -(void) setAudioOutputToSpeaker {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didSessionRouteChange:) name:AVAudioSessionRouteChangeNotification object:nil];
+    
+    runInBackgroundThread(^{
+        [[RTCAudioSession sharedInstance] lockForConfiguration];
+        NSError* error;
 
-    AVAudioSession* session = [AVAudioSession sharedInstance];
-    NSError* error;
-
-    /// Set the audioSession category.
-    /// Needs to be Record or PlayAndRecord to use audioRouteOverride:
-    if (![session setCategory:AVAudioSessionCategoryPlayAndRecord error:&error])
-        NSLog(@"AVAudioSession error setting category:%@",error);
-
-    /// Set the audioSession override
-    if (![session overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error])
-        NSLog(@"AVAudioSession error overrideOutputAudioPort:%@",error);
-
-    /// Activate the audio session
-    if (![session setActive:YES error:&error])
-        NSLog(@"AVAudioSession error activating: %@",error);
-    else
-        NSLog(@"audioSession active");
+        /// Set the audioSession category.
+        /// Needs to be Record or PlayAndRecord to use audioRouteOverride:
+        if (![[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error])
+            NSLog(@"** WebRTC: AVAudioSession error setting category:%@",error);
+        if (![[RTCAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error])
+            NSLog(@"** WebRTC: RTCAudioSession error setting category:%@",error);
+        
+        /// Set the audioSession override
+        if (![[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error])
+            NSLog(@"** WebRTC: AVAudioSession error overrideOutputAudioPort:%@",error);
+        if (![[RTCAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&error])
+            NSLog(@"** WebRTC: RTCAudioSession error overrideOutputAudioPort:%@",error);
+        
+        /// Activate the audio session
+        if (![[AVAudioSession sharedInstance] setActive:YES error:&error] && ![[RTCAudioSession sharedInstance] setActive:YES error:&error])
+            NSLog(@"** WebRTC: AVAudioSession - RTCAudioSession error activating: %@",error);
+        else
+            NSLog(@"audioSession active");
+        
+        [[RTCAudioSession sharedInstance] unlockForConfiguration];
+    });
 }
 
 -(void) stopLocalCapture {
@@ -276,6 +287,7 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
         if (remoteVideoTrack == nil) {
             NSLog(@"** ERROR: got nil remotevideo track from tranceiver!");
         }
+        [self setAudioOutputToSpeaker];
         [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:remoteVideoTrack];
 #endif
     }
@@ -358,7 +370,7 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
       case AVAudioSessionRouteChangeReasonCategoryChange: {
           /// Set speaker as default route and remove the observer
           [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
-          [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionRouteChangeNotification object:nil];
+          [[RTCAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:nil];
       }
       break;
 
@@ -535,9 +547,13 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
 -(void) peerConnection:(nonnull RTCPeerConnection *)peerConnection didAddStream:(nonnull RTCMediaStream *)stream {
     NSLog(@"WebRTC: Received stream %@ with %lu video tracks and %lu audio tracks", stream.streamId, (unsigned long)stream.videoTracks.count, (unsigned long)stream.audioTracks.count);
-
+    
 #ifdef NIN_USE_PLANB_SEMANTICS
     runOnMainThread(^{
+        if (stream.audioTracks.count > 0) {
+            [self setAudioOutputToSpeaker];
+        }
+        
         if (stream.videoTracks.count > 0) {
             [self.delegate webrtcClient:self didReceiveRemoteVideoTrack:stream.videoTracks[0]];
         } else {

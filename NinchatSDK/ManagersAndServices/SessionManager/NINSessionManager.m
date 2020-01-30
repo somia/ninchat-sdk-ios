@@ -1055,8 +1055,10 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         weakSelf.queueProgressObserver = fetchNotification(kActionNotification, ^(NSNotification* note) {
             NSString* eventType = note.userInfo[@"event"];
             NSString* queueID = note.userInfo[@"queue_id"];
-
-            if ([eventType isEqualToString:@"queue_updated"] && [weakSelf.currentQueueID isEqualToString:queueID]) {
+            
+            if (([eventType isEqualToString:@"audience_enqueued"] || [eventType isEqualToString:@"queue_updated"])
+                && [weakSelf.currentQueueID isEqualToString:queueID]) {
+                
                 NSError* error = note.userInfo[@"error"];
                 NSInteger queuePosition = [note.userInfo[@"queue_position"] intValue];
                 progress(error, queuePosition);
