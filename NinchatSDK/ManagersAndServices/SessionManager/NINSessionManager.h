@@ -115,7 +115,14 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
 
 /** Opens the session with an asynchronous completion callback. */
--(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
+-(NSError*_Nullable) openSession:(startCallbackBlock _Nonnull)callbackBlock;
+
+/** Continues to an exsiting session using given session id. Completes with an asynchronous completion callback. */
+-(NSError*_Nullable) continueSessionWithSessionID:(NSString*_Nonnull)sessionID andCallbackBlock:(nonnull startCallbackBlock)callbackBlock;
+
+/** Continues to an exsiting session using given user credentials. Completes with an asynchronous completion callback. */
+-(NSError*_Nullable) continueSessionWithUserID:(NSString*_Nonnull)userID userAuth:(NSString*_Nonnull)userAuth andCallbackBlock:(nonnull startCallbackBlock)callbackBlock;
+
 
 /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
 -(void) listQueuesWithIds:(NSArray<NSString*>* _Nullable)queueIds completion:(callbackWithErrorBlock _Nonnull)completion;

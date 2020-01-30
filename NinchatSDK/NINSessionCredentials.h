@@ -10,7 +10,7 @@
 @import NinchatLowLevelClient;
 
 /* Stores Session credentials */
-@interface NINSessionCredentials : NSObject
+@interface NINSessionCredentials: NSObject <NSCoding>
 
 /* User identification */
 @property (nonatomic, strong, nonnull) NSString* userID;

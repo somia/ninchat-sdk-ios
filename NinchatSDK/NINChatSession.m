@@ -117,11 +117,11 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     self.sessionManager.audienceMetadata = audienceMetadata;
 }
 
--(void)setAppDetails:(NSString *)appDetails {
+-(void) setAppDetails:(NSString *)appDetails {
     self.sessionManager.appDetails = appDetails;
 }
 
--(NSString*)appDetails {
+-(NSString*) appDetails {
     return self.sessionManager.appDetails;
 }
 
@@ -186,76 +186,177 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     }
 }
 
-// Performs these steps:
-// 1. Fetches the site configuration over a REST call
-// 2. Using that configuration, starts a new chat session
-// 3. Retrieves the queues available for this realm (realm id from site configuration)
+/**
+ * 1. Check given credentials. If all are set, continues to the previous session.
+ * 2. If not, `-startWithCallback:` should be called by the caller to create a new chat session.
+ */
+-(void) startWithCredentials:(nonnull NINSessionCredentials*)credentials andCallback:(nonnull startCallbackBlock)callbackBlock {
+    __weak typeof(self) weakSelf = self;
+    [self sdklog:@"Trying to conitue given chatt session"];
+    
+    /// TODO: Check credential paramteres
+    
+    if (self.sessionManager.siteConfiguration == nil) {
+        /// The configuration is not available. First, get the configuration.
+        [self fetchSiteConfigurations:^(NSError * _Nullable error) {
+            if (error != nil) {
+                callbackBlock(nil, error); return;
+            }
+            
+            // Continue the chat session
+            [weakSelf continueSessionWithCredentials:credentials andCallbackBlock:callbackBlock];
+        }];
+    } else {
+        /// The configuration are availabe, just open the session.
+        [self continueSessionWithCredentials:credentials andCallbackBlock:callbackBlock];
+    }
+}
+
+/**
+ * Performs these steps:
+ * 1. Using that configuration, starts a new chat session
+ * 2. Retrieves the queues available for this realm (realm id from site configuration)
+ */
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
+    [self sdklog:@"Starting a new chat session"];
+    
+    if (self.sessionManager.siteConfiguration == nil) {
+        /// The configuration is not available. First, get the configuration.
+        [self fetchSiteConfigurations:^(NSError * _Nullable error) {
+            if (error != nil) {
+                callbackBlock(nil, error); return;
+            }
+            
+            // Open the chat session
+            [weakSelf openSession:callbackBlock];
+        }];
+    } else {
+        /// The configuration are availabe, just open the session.
+        [self openSession:callbackBlock];
+    }
+}
 
+/// Fetching site configurations usable by both approaches to opening sessions
+-(void) fetchSiteConfigurations:(nonnull void (^)(NSError* _Nullable))callbackBlock {
+    __weak typeof(self) weakSelf = self;
+    
     if (self.sessionManager.serverAddress == nil) {
         // Use a default value for server address
 #ifdef NIN_USE_TEST_SERVER
-        self.sessionManager.serverAddress = kTestServerAddress;
+    self.sessionManager.serverAddress = kTestServerAddress;
 #else
-        self.sessionManager.serverAddress = kProductionServerAddress;
+    self.sessionManager.serverAddress = kProductionServerAddress;
 #endif
     }
-
-    [self sdklog:@"Starting a chat session"];
-
-    // Fetch the site configuration
+    
+    /// Fetch the site configuration
     fetchSiteConfig(weakSelf.sessionManager.serverAddress, weakSelf.configKey, ^(NSDictionary* config, NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
         if (error != nil) {
-            callbackBlock(nil, error);
-            return;
+            callbackBlock(error); return;
         }
 
         NSLog(@"Got site config: %@", config);
-
         weakSelf.sessionManager.siteConfiguration = [NINSiteConfiguration siteConfigurationWith:config];
         weakSelf.sessionManager.siteConfiguration.environments = weakSelf.environments;
-
-        // Open the chat session
-        NSError* openSessionError = [weakSelf.sessionManager openSession:^(NINSessionCredentials *credentials, NSError *error) {
-            NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
-            NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
-
-            if (error != nil) {
-                callbackBlock(credentials, error);
-                return;
-            }
-
-            // Find our realm's queues
-            NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
-            
-            if (queueIds != nil && self.queueID != nil) {
-                // If the queueID we've been initialized with isnt in the config's set of
-                // audienceQueues, add it's ID to the list and we'll see if it exists
-                [self sdklog:@"Adding my queueID %@", self.queueID];
-                queueIds = [queueIds arrayByAddingObject:self.queueID];
-            }
-            
-            // Potentially passing a nil queueIds here is intended
-            [weakSelf.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
-                NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
-
-                if (error == nil) {
-                    weakSelf.started = YES;
-                }
-                callbackBlock(credentials, error);
-            }];
-        }];
-
-        /// Error in opening the session
-        /// TODO: Manage different scenarios
-        if (openSessionError) {
-            callbackBlock(nil, error);
-        }
+        callbackBlock(nil);
     });
+}
+
+/* Opening a new chat session with no credentials passed by the host application. */
+-(void) openSession:(nonnull startCallbackBlock)callbackBlock {
+    __weak typeof(self) weakSelf = self;
+    
+    NSError* openSessionError = [self.sessionManager openSession:^(NINSessionCredentials *credentials, NSError *error) {
+        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+        NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
+
+        if (error != nil) {
+            callbackBlock(credentials, error); return;
+        }
+
+        /// Find our realm's queues
+        NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+        if (queueIds != nil && self.queueID != nil) {
+            /// If the queueID we've been initialized with isnt in the config's set of
+            /// audienceQueues, add it's ID to the list and we'll see if it exists
+            [self sdklog:@"Adding my queueID %@", self.queueID];
+            queueIds = [queueIds arrayByAddingObject:self.queueID];
+        }
+        
+        /// Potentially passing a nil queueIds here is intended
+        [weakSelf.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
+            NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+            if (error == nil) {
+                weakSelf.started = YES;
+            }
+            callbackBlock(credentials, error);
+        }];
+    }];
+
+    /// Error in opening the session
+    /// TODO: Manage different scenarios
+    if (openSessionError) {
+        callbackBlock(nil, openSessionError);
+    }
+}
+
+/* Trying to continue connecting to the provided session's credentials. */
+-(void) continueSessionWithCredentials:(nonnull NINSessionCredentials*)credentials andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
+    NSError* continueSessionError;
+    if (credentials.sessionID != nil) {
+        continueSessionError = [self continueSessionWithSessionID:credentials andCallbackBlock:callbackBlock];
+    } else if (credentials.userID != nil && credentials.userAuth != nil) {
+        continueSessionError = [self continueSessionWithUserID:credentials andCallbackBlock:callbackBlock];
+    } else {
+        
+    }
+
+    /// Error in opening the session
+    /// TODO: Manage different scenarios
+    if (continueSessionError) {
+        callbackBlock(nil, continueSessionError);
+    }
+}
+
+-(NSError*) continueSessionWithSessionID:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
+    __weak typeof(self) weakSelf = self;
+    return [self.sessionManager continueSessionWithSessionID:credentials.sessionID andCallbackBlock:^(NINSessionCredentials* credentials, NSError* error) {
+        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+        
+        if (error != nil) {
+            if ([error.userInfo[@"message"] isEqualToString:@"session_not_found"]) {
+                [weakSelf continueSessionWithUserID:credentials andCallbackBlock:callbackBlock]; return;
+            }
+            callbackBlock(credentials, error); return;
+        }
+        
+        weakSelf.started = YES;
+        callbackBlock(credentials, error);
+    }];
+}
+
+-(NSError*) continueSessionWithUserID:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
+    __weak typeof(self) weakSelf = self;
+    return [self.sessionManager continueSessionWithUserID:credentials.userID userAuth:credentials.userAuth andCallbackBlock:^(NINSessionCredentials* credentials, NSError* error) {
+        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+        if (error != nil) {
+            if ([error.userInfo[@"message"] isEqualToString:@"user_not_found"]
+                && [weakSelf.delegate respondsToSelector:@selector(ninchatFailedToResumeSession:)]
+                && [weakSelf.delegate ninchatFailedToResumeSession:weakSelf]) {
+                    [weakSelf startWithCallback:callbackBlock]; return;
+                }
+            callbackBlock(credentials, error); return;
+        }
+        
+        weakSelf.started = YES;
+        callbackBlock(credentials, error);
+    }];
 }
 
 -(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID {

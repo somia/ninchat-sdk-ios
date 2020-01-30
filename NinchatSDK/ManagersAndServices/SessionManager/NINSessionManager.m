@@ -1334,58 +1334,67 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 -(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
-    NSCAssert(self.session == nil, @"Existing chat session found");
-    NSCAssert(self.serverAddress != nil, @"Must have server address");
-
-    [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
-
-    // Create message throttler to manage inbound message order
-    __weak NINSessionManager* weakSelf = self;
-    _messageThrottler = [NINMessageThrottler throttlerWithCallback:^(NINInboundMessage * _Nonnull message) {
-        [weakSelf messageReceived:message.params payload:message.payload];
-    }];
-    
-    // Make sure our site configuration contains a realm_id
-    NSString* realmId = [self.siteConfiguration valueForKey:@"audienceRealmId"];
-    if ((realmId == nil) || (![realmId isKindOfClass:[NSString class]])) {
-        return newError(@"Could not find valid realm id in the site configuration");
-    }
-
-    self.realmId = realmId;
-
-    NINLowLevelClientStrings* messageTypes = [NINLowLevelClientStrings new];
-    [messageTypes append:@"ninchat.com/*"];
-
     NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
-    if (self.siteSecret != nil) {
-        [sessionParams setString:@"site_secret" val:self.siteSecret];
-    }
+    return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
+}
 
-    // Get the username from the site config
-    NSString* userName = [self.siteConfiguration valueForKey:@"userName"];
-    if (userName != nil) {
-        NINLowLevelClientProps* attrs = [NINLowLevelClientProps new];
-        [attrs setString:@"name" val:userName];
-        [sessionParams setObject:@"user_attrs" ref:attrs];
-    }
+-(NSError*) continueSessionWithSessionID:(NSString*)sessionID andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
+    NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
+    [sessionParams setString:@"session_id" val:sessionID];
+    return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
+}
 
-    [sessionParams setStringArray:@"message_types" ref:messageTypes];
+-(NSError*) continueSessionWithUserID:(NSString*)userID userAuth:(NSString*)userAuth andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
+    NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
+    [sessionParams setString:@"user_id" val:userID];
+    [sessionParams setString:@"user_auth" val:userAuth];
+    return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
+}
 
-    // Wait for the session creation event
+-(NSError*) initiateSessionWithParameters:(nonnull NINLowLevelClientProps*)params andCallbackBlock:(startCallbackBlock _Nonnull)callbackBlock {
+    NSCAssert(self.serverAddress != nil, @"Must have server address");
+    
+    /// Waits for the session creation event
     fetchNotification(kActionNotification, ^BOOL(NSNotification* _Nonnull note) {
         NSString* eventType = note.userInfo[@"event_type"];
         
         if ([eventType isEqualToString:@"session_created"]) {
-            NINSessionCredentials *sessionCredentials = note.userInfo[@"session_credentials"];
-            NSError* error = note.userInfo[@"error"];
-            
-            callbackBlock(sessionCredentials, error);
+            callbackBlock(note.userInfo[@"session_credentials"], note.userInfo[@"error"]);
+            return YES;
+        } else if ([eventType isEqualToString:@"error"]) {
+            callbackBlock(nil, note.userInfo[@"error_type"]);
             return YES;
         }
-
         return NO;
     });
+    [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
 
+    // Create message throttler to manage inbound message order
+    __weak typeof(self) weakSelf = self;
+    _messageThrottler = [NINMessageThrottler throttlerWithCallback:^(NINInboundMessage * _Nonnull message) {
+        [weakSelf messageReceived:message.params payload:message.payload];
+    }];
+    
+    if (self.siteSecret != nil)
+        [params setString:@"site_secret" val:self.siteSecret];
+    
+    // Make sure our site configuration contains a realm_id
+    NSString* realmId = [self.siteConfiguration valueForKey:@"audienceRealmId"];
+    if ((realmId == nil) || (![realmId isKindOfClass:[NSString class]]))
+        return newError(@"Could not find valid realm id in the site configuration");
+    self.realmId = realmId;
+    
+    NSString* userName = [self.siteConfiguration valueForKey:@"userName"];
+    if (userName != nil) {
+        NINLowLevelClientProps* attrs = [NINLowLevelClientProps new];
+        [attrs setString:@"name" val:userName];
+        [params setObject:@"user_attrs" ref:attrs];
+    }
+    
+    NINLowLevelClientStrings* messageTypes = [NINLowLevelClientStrings new];
+    [messageTypes append:@"ninchat.com/*"];
+    [params setStringArray:@"message_types" ref:messageTypes];
+    
     self.sessionCallbackHandler = [SessionCallbackHandler handlerWithSessionManager:self];
     self.session = [NINLowLevelClientSession new];
     [self.session setAddress:self.serverAddress];
@@ -1397,15 +1406,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [self.session setHeader:@"User-Agent" value:[self sdkDetails]];
     
     NSError* error = nil;
-    [self.session setParams:sessionParams error:&error];
+    [self.session setParams:params error:&error];
     if (error != nil) {
-        NSLog(@"Error setting session params: %@", error);
-        return error;
+        NSLog(@"Error setting session params: %@", error); return error;
     }
+    
     [self.session open:&error];
     if (error != nil) {
-        NSLog(@"Error opening session: %@", error);
-        return error;
+        NSLog(@"Error opening session: %@", error); return error;
     }
 
     return nil;
@@ -1471,7 +1479,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) onLog:(NSString*)msg {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
-
+    NSLog(@"GO SDK log: %@", msg);
 }
 
 -(void) onConnState:(NSString*)state {
@@ -1491,7 +1499,13 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSString* event = [params getString:@"event" error:&error];
     NSCAssert(error == nil, @"Failed to get attribute");
 
-    if ([event isEqualToString:@"session_created"]) {
+    if ([event isEqualToString:@"error"]) {
+        /// Error types:
+        ///     - session_not_found: retry to initiate session using user_id and user_auth credentials
+        ///     - user_not_found: ask the host application if it wants to initiate a new session
+        NSString* errorType = [params getString:@"error_type" error:&error];
+        postNotification(kActionNotification, @{@"event_type": event, @"error_type":newError(errorType)});
+    } else if ([event isEqualToString:@"session_created"]) {
         NINSessionCredentials *credentials = [[NINSessionCredentials alloc] init:params];
         NSCAssert(credentials.userID != nil, @"Failed to get attribute");
         NSCAssert(credentials.userAuth != nil, @"Failed to get attribute");
