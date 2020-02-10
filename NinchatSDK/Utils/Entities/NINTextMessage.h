@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#import "NINChannelMessage.h"
+#import "NINChatMessage.h"
 
 @class NINFileInfo;
 @class NINChannelUser;
@@ -16,17 +15,20 @@
 /** Represents a chat message on a channel. */
 @interface NINTextMessage : NSObject<NINChannelMessage>
 
-/**
- * YES if this message is a part in a series, ie. the sender of the previous message
- * also sent this message.
- */
-@property (nonatomic, assign) BOOL series;
-
 /** Message (text) content. */
 @property (nonatomic, strong, readonly) NSString* textContent;
 
 /** Attachment file info. */
 @property (nonatomic, strong, readonly) NINFileInfo* attachment;
+
+/** NINChatMessage */
+@property (nonatomic, strong, readonly) NSDate* timestamp;
+
+/** NINChannelMessage */
+@property (nonatomic, assign, readonly) BOOL mine;
+@property (nonatomic, assign) BOOL series;
+@property (nonatomic, strong, readonly) NINChannelUser* sender;
+@property (nonatomic, strong, readonly) NSString* messageID;
 
 /** Initializer. */
 +(NINTextMessage*) messageWithID:(NSString*)messageID textContent:(NSString*)textContent sender:(NINChannelUser*)sender timestamp:(NSDate*)timestamp mine:(BOOL)mine attachment:(NINFileInfo*)attachment;

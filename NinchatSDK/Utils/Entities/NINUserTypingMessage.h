@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** The chat user currently typing. */
 @property (nonatomic, strong, readonly) NINChannelUser* user;
 
-/** Message timestamp. */
+/** NINChatMessage */
 @property (nonatomic, strong, readonly) NSDate* timestamp;
 
 +(instancetype) messageWithUser:(NINChannelUser*)user timestamp:(NSDate*)timestamp;

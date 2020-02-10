@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#import "NINChannelMessage.h"
+#import "NINChatMessage.h"
 
 static NSString* const kUIComposeMessageElementA = @"a";
 static NSString* const kUIComposeMessageElementButton = @"button";
@@ -51,14 +50,17 @@ static NSString* const kUIComposeMessageElementSelect = @"select";
 
 @interface NINUIComposeMessage : NSObject<NINChannelMessage>
 
-/**
- * YES if this message is a part in a series, ie. the sender of the previous message
- * also sent this message.
- */
-@property (nonatomic, assign) BOOL series;
-
 /** Message payload of ui/compose type content. */
 @property (nonatomic, strong, readonly) NSArray<NINUIComposeContent*>* content;
+
+/** NINChatMessage */
+@property (nonatomic, strong, readonly) NSDate* timestamp;
+
+/** NINChannelMessage */
+@property (nonatomic, assign, readonly) BOOL mine;
+@property (nonatomic, assign) BOOL series;
+@property (nonatomic, strong, readonly) NINChannelUser* sender;
+@property (nonatomic, strong, readonly) NSString* messageID;
 
 /**
  Indicates the content index of the item for which 'send' button has been pressed.
