@@ -1086,9 +1086,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) leaveCurrentQueueWithCompletionCallback:(callbackWithErrorBlock _Nonnull)completion {
     if (self.currentQueueID == nil) {
         [self.ninchatSession sdklog:@"Error: tried to leave current queue but not in queue currently!"];
-        return;
     }
-
     [self.ninchatSession sdklog:@"Leaving current queue."];
 
     // Stop the queue observers
