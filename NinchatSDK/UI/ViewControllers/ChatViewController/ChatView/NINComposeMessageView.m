@@ -204,6 +204,13 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
             button.titleLabel.font = labelFont;
             [self applyButtonStyle:button selected:[selected boolValue]];
             [button setTitle:newOption[@"label"] forState:UIControlStateNormal];
+
+            /// `https://github.com/somia/ninchat-sdk-ios/issues/84`
+            [button.titleLabel setMinimumScaleFactor:0.7];
+            [button.titleLabel setAdjustsFontSizeToFitWidth:YES];
+            [button.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+            [button setTitleEdgeInsets:UIEdgeInsetsMake(0, 8, 2, 8)];
+
             [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:button];
             
@@ -286,7 +293,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 -(void) populateWithComposeMessage:(NINUIComposeMessage*)composeMessage siteConfiguration:(NINSiteConfiguration*)siteConfiguration colorAssets:(NSDictionary<NINColorAssetKey, UIColor*>*)colorAssets composeState:(NSArray*)composeState {
     
-    /// Reusing exisiting content views that are already allocated results in UI problems for different scenarios, e.g.
+    /// Reusing existing content views that are already allocated results in UI problems for different scenarios, e.g.
     /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
     self.contentViews = [NSMutableArray new];
     if (self.contentViews.count < composeMessage.content.count) {
@@ -317,7 +324,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
         self.contentViews[i].uiComposeSendPressedCallback = ^(NINComposeContentView* composeContentView) {
             composeMessage.content[i].sendPressed = YES;
             
-            // Make the send buttons unclickable for this message
+            // Make the send buttons un-clickable for this message
             for (int j = 0; j < self.contentViews.count; j++) {
                 [weakSelf.contentViews[j] removeSendButtonAction];
             }
