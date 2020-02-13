@@ -180,6 +180,9 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     initialViewController.sessionManager = self.sessionManager;
     
     if (withNavigationController) {
+        /// `https://github.com/somia/ninchat-sdk-ios/issues/62`
+        if (@available(iOS 13.0, *))
+            [navigationController setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
         return navigationController;
     } else {
         return initialViewController;
