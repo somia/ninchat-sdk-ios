@@ -11,7 +11,6 @@
 #import "NINChatBubbleCell.h"
 #import "NINUtils.h"
 #import "NINChatView.h"
-#import "NINChannelMessage.h"
 #import "NINTextMessage.h"
 #import "NINUIComposeMessage.h"
 #import "NINUserTypingMessage.h"
