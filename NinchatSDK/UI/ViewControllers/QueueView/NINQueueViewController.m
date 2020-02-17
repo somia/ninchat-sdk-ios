@@ -161,7 +161,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {
             [weakSelf.sessionManager closeChat];
             weakSelf.queueTransferListener = nil;
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:kNINQueuedNotification object:nil];
+            [[NSNotificationCenter defaultCenter] removeObserver:weakSelf name:kNINQueuedNotification object:nil];
         }];
     };
 
