@@ -51,9 +51,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 -(CGFloat) intrinsicHeight {
     if ([self.originalContent.element isEqualToString:kUIComposeMessageElementSelect]) {
         // + 1 to button count from send button, additional margin top, bottom handled in superview
-        return self.titleLabel.intrinsicContentSize.height
-        + (self.optionButtons.count + 1) * kButtonHeight
-        + self.optionButtons.count * kVerticalMargin;
+        return self.titleLabel.intrinsicContentSize.height + (self.optionButtons.count + 1) * kButtonHeight + (self.optionButtons.count +1) * kVerticalMargin;
     } else if ([self.originalContent.element isEqualToString:kUIComposeMessageElementButton]) {
         return kButtonHeight;
     } else {
@@ -274,7 +272,7 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     [super layoutSubviews];
     
     CGFloat y = 0;
-    
+
     for (NINComposeContentView* view in self.contentViews) {
         CGFloat height = [view intrinsicHeight];
         view.frame = CGRectMake(0, y, self.bounds.size.width, height);
@@ -296,17 +294,10 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     /// Reusing existing content views that are already allocated results in UI problems for different scenarios, e.g.
     /// `https://github.com/somia/ninchat-sdk-ios/issues/52`
     self.contentViews = [NSMutableArray new];
-    if (self.contentViews.count < composeMessage.content.count) {
-        // There are fewer content views than needed; add the missing amount
-        NSUInteger oldCount = self.contentViews.count;
-        for (int i = 0; i < composeMessage.content.count - oldCount; ++i) {
-            NINComposeContentView* contentView = [[NINComposeContentView alloc] init];
-            [self addSubview:contentView];
-            [self.contentViews addObject:contentView];
-        }
-    } else if (composeMessage.content.count < self.contentViews.count) {
-        // There are more content views than needed; remove the extra ones
-        [self.contentViews removeObjectsInRange:NSMakeRange(composeMessage.content.count, self.contentViews.count - composeMessage.content.count)];
+    for (int i = 0; i < composeMessage.content.count; ++i) {
+        NINComposeContentView* contentView = [[NINComposeContentView alloc] init];
+        [self addSubview:contentView];
+        [self.contentViews addObject:contentView];
     }
     
     if (composeState == nil) {

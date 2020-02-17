@@ -66,13 +66,13 @@
                                 <rect key="frame" x="50" y="0.0" width="412" height="36"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="999" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Dr Koistinen" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyP-g1-3PU">
-                                        <rect key="frame" x="5" y="16.5" width="353.5" height="16.5"/>
+                                        <rect key="frame" x="5" y="15" width="357.5" height="18"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="17:18" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRX-UO-W1X">
-                                        <rect key="frame" x="366.5" y="16.5" width="35.5" height="16.5"/>
+                                        <rect key="frame" x="370.5" y="15" width="31.5" height="18"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="14"/>
                                         <color key="textColor" red="0.45490196078431372" green="0.5725490196078431" blue="0.66666666666666663" alpha="1" colorSpace="calibratedRGB"/>
@@ -100,7 +100,7 @@
                                         <rect key="frame" x="20" y="0.0" width="392" height="105"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uba-VT-R7U">
-                                                <rect key="frame" x="10" y="15" width="372" height="44.5"/>
+                                                <rect key="frame" x="10" y="15" width="372" height="43.5"/>
                                                 <color key="backgroundColor" red="0.45776203440000002" green="0.89454518299999997" blue="0.91693240399999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="40" id="OBY-Vp-eda"/>
@@ -112,7 +112,7 @@
                                                 </variation>
                                             </imageView>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_play" translatesAutoresizingMaskIntoConstraints="NO" id="GOj-1m-Klp">
-                                                <rect key="frame" x="175" y="16.5" width="42" height="42"/>
+                                                <rect key="frame" x="175" y="16" width="42" height="42"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -121,7 +121,7 @@
                                                 </constraints>
                                             </imageView>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Bubble chat message content text" translatesAutoresizingMaskIntoConstraints="NO" id="9Og-bJ-chR">
-                                                <rect key="frame" x="126" y="59.5" width="256" height="35.5"/>
+                                                <rect key="frame" x="146.5" y="58.5" width="235.5" height="36.5"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" id="Vvi-H4-0gp"/>
@@ -137,13 +137,13 @@
                                                 </variation>
                                             </textView>
                                             <view contentMode="scaleToFill" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ioO-dR-nZb" customClass="NINComposeMessageView">
-                                                <rect key="frame" x="10" y="15" width="372" height="72"/>
+                                                <rect key="frame" x="10" y="15" width="372" height="80"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </view>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="bottom" secondItem="ioO-dR-nZb" secondAttribute="bottom" constant="8" id="369-vL-XnF"/>
+                                            <constraint firstItem="9Og-bJ-chR" firstAttribute="bottom" secondItem="ioO-dR-nZb" secondAttribute="bottom" id="369-vL-XnF"/>
                                             <constraint firstItem="ioO-dR-nZb" firstAttribute="top" secondItem="uba-VT-R7U" secondAttribute="top" id="8m3-Jx-BOa"/>
                                             <constraint firstAttribute="trailing" secondItem="uba-VT-R7U" secondAttribute="trailing" constant="10" id="MnJ-s5-Lre"/>
                                             <constraint firstItem="uba-VT-R7U" firstAttribute="trailing" secondItem="ioO-dR-nZb" secondAttribute="trailing" id="O6i-8U-3GY"/>

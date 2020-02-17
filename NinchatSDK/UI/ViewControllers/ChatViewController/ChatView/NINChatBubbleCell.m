@@ -411,6 +411,7 @@
     } else if ([message isKindOfClass:NINUIComposeMessage.class]) {
         self.messageTextView.text = @"";
         [self resetImageLayout];
+        [self.composeMessageView clear];
         self.videoPlayImageView.hidden = YES;
         self.composeMessageView.hidden = NO;
         

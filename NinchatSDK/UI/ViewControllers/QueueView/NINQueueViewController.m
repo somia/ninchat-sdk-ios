@@ -160,6 +160,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     self.closeChatButton.pressedCallback = ^{
         [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {
             [weakSelf.sessionManager closeChat];
+            weakSelf.queueTransferListener = nil;
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:kNINQueuedNotification object:nil];
         }];
     };
 
