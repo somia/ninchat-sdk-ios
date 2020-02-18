@@ -651,7 +651,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     [_chatMessages sortUsingComparator:^NSComparisonResult(id<NINChatMessage> _Nonnull msg1, id<NINChatMessage> _Nonnull msg2) {
         if ([msg1 conformsToProtocol:@protocol(NINChannelMessage)] && [msg2 conformsToProtocol:@protocol(NINChannelMessage)])
             return [((NSObject <NINChannelMessage> *) msg1).messageID compare:((NSObject <NINChannelMessage> *) msg2).messageID] == NSOrderedAscending;
-        return [msg1.timestamp compare:msg2.timestamp] == NSOrderedAscending;
+        return [NSCalendar.currentCalendar compareDate:msg1.timestamp toDate:msg2.timestamp toUnitGranularity:NSCalendarUnitNanosecond] == NSOrderedAscending;
     }];
 
     postNotification(kChannelMessageNotification, @{@"action":@"insert", @"index":@([_chatMessages indexOfObject:message])});

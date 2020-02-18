@@ -163,6 +163,8 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
         [self.sendButton setTitle:composeContent.label forState:UIControlStateNormal];
         self.sendButton.layer.borderWidth = 1;
         self.composeState = nil;
+
+        [self updateTitleScale:self.sendButton];
     } else if ([composeContent.element isEqualToString:kUIComposeMessageElementSelect]) {
         [self.titleLabel setHidden:NO];
         [self.titleLabel setText:composeContent.label];
@@ -202,14 +204,8 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
             button.titleLabel.font = labelFont;
             [self applyButtonStyle:button selected:[selected boolValue]];
             [button setTitle:newOption[@"label"] forState:UIControlStateNormal];
-
-            /// `https://github.com/somia/ninchat-sdk-ios/issues/84`
-            [button.titleLabel setMinimumScaleFactor:0.7];
-            [button.titleLabel setAdjustsFontSizeToFitWidth:YES];
-            [button.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
-            [button setTitleEdgeInsets:UIEdgeInsetsMake(0, 8, 2, 8)];
-
             [button addTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+            [self updateTitleScale:button];
             [self addSubview:button];
             
             [options addObject:newOption];
@@ -224,6 +220,14 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 // update ui to reflect that sending failed
 -(void) sendActionFailed {
     // no ui feedback at the moment
+}
+
+/// `https://github.com/somia/ninchat-sdk-ios/issues/84`
+-(void) updateTitleScale:(UIButton *)button {
+    [button.titleLabel setMinimumScaleFactor:0.7];
+    [button.titleLabel setAdjustsFontSizeToFitWidth:YES];
+    [button.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+    [button setTitleEdgeInsets:UIEdgeInsetsMake(0, 8, 2, 8)];
 }
 
 @end
