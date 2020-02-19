@@ -148,7 +148,6 @@
 		7483ABD02305B0C0006D69E9 /* NINComposeMessageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7483ABCE2305B0C0006D69E9 /* NINComposeMessageView.m */; };
 		7483ABD423103A3A006D69E9 /* NINSiteConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 7483ABD223103A3A006D69E9 /* NINSiteConfiguration.h */; };
 		7483ABD523103A3A006D69E9 /* NINSiteConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 7483ABD323103A3A006D69E9 /* NINSiteConfiguration.m */; };
-		749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70DC22F9AED90031FEEB /* NINChannelMessage.h */; };
 		749E70E222FC2E460031FEEB /* NINUIComposeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */; };
 		749E70E322FC2E460031FEEB /* NINUIComposeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */; };
 		7EA5647BD4220552EE115E16 /* Pods_NinchatSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */; };
@@ -301,7 +300,6 @@
 		7483ABCE2305B0C0006D69E9 /* NINComposeMessageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINComposeMessageView.m; sourceTree = "<group>"; };
 		7483ABD223103A3A006D69E9 /* NINSiteConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINSiteConfiguration.h; sourceTree = "<group>"; };
 		7483ABD323103A3A006D69E9 /* NINSiteConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINSiteConfiguration.m; sourceTree = "<group>"; };
-		749E70DC22F9AED90031FEEB /* NINChannelMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINChannelMessage.h; sourceTree = "<group>"; };
 		749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINUIComposeMessage.h; sourceTree = "<group>"; };
 		749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUIComposeMessage.m; sourceTree = "<group>"; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
@@ -648,7 +646,6 @@
 				49140B7520F2748800A00EA8 /* NINTextMessage.m */,
 				749E70E022FC2E460031FEEB /* NINUIComposeMessage.h */,
 				749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */,
-				749E70DC22F9AED90031FEEB /* NINChannelMessage.h */,
 				49F5FA3720F781D600A4A526 /* NINQueue.h */,
 				49F5FA3820F781D600A4A526 /* NINQueue.m */,
 				49622FAB214FCD3700570D59 /* NINFileInfo.h */,
@@ -739,7 +736,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				49CD0780216205C600046AB9 /* NINVideoThumbnailManager.h in Headers */,
-				749E70DE22F9AED90031FEEB /* NINChannelMessage.h in Headers */,
 				49D77F262156497600900224 /* UITextView+Ninchat.h in Headers */,
 				4930441B2158D90700DECB0C /* NINChatMetaMessage.h in Headers */,
 				49721CD721295C7F00695F33 /* NINChatBubbleCell.h in Headers */,

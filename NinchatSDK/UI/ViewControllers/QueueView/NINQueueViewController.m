@@ -102,7 +102,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
         if (self.queueTransferListener == nil) {
             self.queueTransferListener = fetchNotification(kNINQueuedNotification, ^BOOL(NSNotification* notification) {
                 [weakSelf connectToQueueWithId:[notification.userInfo valueForKey:@"queue_id"]];
-                return YES;
+                return NO;
             });
         }
     }];
@@ -160,6 +160,8 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     self.closeChatButton.pressedCallback = ^{
         [weakSelf.sessionManager leaveCurrentQueueWithCompletionCallback:^(NSError* error) {
             [weakSelf.sessionManager closeChat];
+            weakSelf.queueTransferListener = nil;
+            [[NSNotificationCenter defaultCenter] removeObserver:weakSelf name:kNINQueuedNotification object:nil];
         }];
     };
 
@@ -167,6 +169,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     [self applyAssetOverrides];
     
     // Connect to the queue
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNINQueuedNotification object:nil];
     [self connectToQueueWithId:self.queueToJoin.queueID];
 }
 

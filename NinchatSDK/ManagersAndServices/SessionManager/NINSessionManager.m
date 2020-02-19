@@ -11,7 +11,6 @@
 #import "NINQueue.h"
 #import "NINChatSession.h"
 #import "NINChatMessage.h"
-#import "NINChannelMessage.h"
 #import "NINTextMessage.h"
 #import "NINUIComposeMessage.h"
 #import "NINChatMetaMessage.h"
@@ -619,13 +618,12 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         // Check if the previous (normal) message was sent by the same user, ie. is the
         // message part of a series
         NSObject<NINChannelMessage>* channelMessage = (NSObject<NINChannelMessage>*)message;
-        
+
         // Guard against the same message getting added multiple times
         // should only happen if the client makes extraneous load_history calls elsewhere
         for (id<NINChatMessage> oldMessage in _chatMessages) {
-            if (![oldMessage conformsToProtocol:@protocol(NINChannelMessage)]) {
-                continue;
-            }
+            if (![oldMessage conformsToProtocol:@protocol(NINChannelMessage)]) { continue; }
+
             if ([channelMessage.messageID isEqualToString:((NSObject<NINChannelMessage>*)oldMessage).messageID]) {
                 NSLog(@"Attempted to add an already existing message with id %@", channelMessage.messageID);
                 return;
@@ -651,7 +649,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     
     [_chatMessages insertObject:message atIndex:0];
     [_chatMessages sortUsingComparator:^NSComparisonResult(id<NINChatMessage> _Nonnull msg1, id<NINChatMessage> _Nonnull msg2) {
-        return [msg1.timestamp compare:msg2.timestamp] == NSOrderedAscending;
+        if ([msg1 conformsToProtocol:@protocol(NINChannelMessage)] && [msg2 conformsToProtocol:@protocol(NINChannelMessage)])
+            return [((NSObject <NINChannelMessage> *) msg1).messageID compare:((NSObject <NINChannelMessage> *) msg2).messageID] == NSOrderedAscending;
+        return [NSCalendar.currentCalendar compareDate:msg1.timestamp toDate:msg2.timestamp toUnitGranularity:NSCalendarUnitNanosecond] == NSOrderedAscending;
     }];
 
     postNotification(kChannelMessageNotification, @{@"action":@"insert", @"index":@([_chatMessages indexOfObject:message])});
@@ -1086,9 +1086,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) leaveCurrentQueueWithCompletionCallback:(callbackWithErrorBlock _Nonnull)completion {
     if (self.currentQueueID == nil) {
         [self.ninchatSession sdklog:@"Error: tried to leave current queue but not in queue currently!"];
-        return;
     }
-
     [self.ninchatSession sdklog:@"Leaving current queue."];
 
     // Stop the queue observers

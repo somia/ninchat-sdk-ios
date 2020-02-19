@@ -75,6 +75,14 @@
 
 #pragma mark - Lifecycle etc.
 
+-(void) awakeFromNib {
+    [super awakeFromNib];
+
+    /// `https://github.com/somia/ninchat-sdk-ios/issues/62`
+    if (@available(iOS 13.0, *))
+        [self setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
+}
+
 -(void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
