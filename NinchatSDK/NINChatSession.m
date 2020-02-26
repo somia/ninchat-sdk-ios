@@ -180,6 +180,9 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     initialViewController.sessionManager = self.sessionManager;
     
     if (withNavigationController) {
+        /// `https://github.com/somia/ninchat-sdk-ios/issues/62`
+        if (@available(iOS 13.0, *))
+            [navigationController setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
         return navigationController;
     } else {
         return initialViewController;
@@ -331,6 +334,14 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         if (error != nil) {
             if ([error.userInfo[@"message"] isEqualToString:@"session_not_found"]) {
                 [weakSelf continueSessionWithUserID:credentials andCallbackBlock:callbackBlock]; return;
+            // Find our realm's queues
+            NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+            
+            if (queueIds != nil && self.queueID != nil) {
+                // If the queueID we've been initialized with isn't in the config's set of
+                // audienceQueues, add it's ID to the list and we'll see if it exists
+                [self sdklog:@"Adding my queueID %@", self.queueID];
+                queueIds = [queueIds arrayByAddingObject:self.queueID];
             }
             callbackBlock(credentials, error); return;
         }

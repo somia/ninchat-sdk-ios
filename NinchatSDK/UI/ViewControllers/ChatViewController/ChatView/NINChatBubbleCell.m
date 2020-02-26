@@ -11,7 +11,6 @@
 #import "NINChatBubbleCell.h"
 #import "NINUtils.h"
 #import "NINChatView.h"
-#import "NINChannelMessage.h"
 #import "NINTextMessage.h"
 #import "NINUIComposeMessage.h"
 #import "NINUserTypingMessage.h"
@@ -412,6 +411,7 @@
     } else if ([message isKindOfClass:NINUIComposeMessage.class]) {
         self.messageTextView.text = @"";
         [self resetImageLayout];
+        [self.composeMessageView clear];
         self.videoPlayImageView.hidden = YES;
         self.composeMessageView.hidden = NO;
         

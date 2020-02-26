@@ -8,7 +8,6 @@
 
 #import "NINChatView.h"
 #import "NINUtils.h"
-#import "NINChannelMessage.h"
 #import "NINChatMetaMessage.h"
 #import "NINUserTypingMessage.h"
 #import "NINChatBubbleCell.h"
