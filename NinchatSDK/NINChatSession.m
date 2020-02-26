@@ -10,7 +10,7 @@
 #import "NINInitialViewController.h"
 #import "NINUtils.h"
 #import "NINSessionManager.h"
-#import "NINChatSession+Internal.h"
+#import "NINChatViewController.h"
 #import "NINQueue.h"
 #import "NINQueueViewController.h"
 
@@ -91,6 +91,9 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 /** Environments to use. */
 @property (nonatomic, strong) NSArray<NSString*>* environments;
 
+/** Determines what would be the initial view controller based on the given state: (New Session or Resume Session).*/
+@property (nonatomic, assign) BOOL resumeSession;
+
 @end
 
 @implementation NINChatSession
@@ -139,9 +142,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     NSCAssert([NSThread isMainThread], @"Must be called in main thread");
 
     if (!self.started) {
-        @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                       reason:@"NINChat API has not been started; call -startWithCallback first"
-                                     userInfo:nil];
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"NINChat API has not been started; call -startWithCallback first" userInfo:nil];
     }
 
     NSBundle* bundle = findResourceBundle();
@@ -167,26 +168,23 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         return nil;
     }
 
-    // Get the initial view controller for the storyboard
-    UIViewController* vc = [storyboard instantiateInitialViewController];
+    UIViewController *viewController;
+    if (self.resumeSession) {
+        viewController = [storyboard instantiateViewControllerWithIdentifier:@"NINChatViewController"];
+        [(NINChatViewController *)viewController setSessionManager:self.sessionManager];
+    } else {
+        viewController = [storyboard instantiateViewControllerWithIdentifier:@"NINInitialViewController"];
+        [(NINInitialViewController *)viewController setSessionManager:self.sessionManager];
+    }
 
-    // Assert that the initial view controller from the Storyboard is a navigation controller
-    UINavigationController* navigationController = (UINavigationController*)vc;
-    NSCAssert([navigationController isKindOfClass:[UINavigationController class]], @"Storyboard initial view controller is not UINavigationController");
-
-    // Find our own initial view controller
-    NINInitialViewController* initialViewController = (NINInitialViewController*)navigationController.topViewController;
-    NSCAssert([initialViewController isKindOfClass:[NINInitialViewController class]], @"Storyboard navigation controller's top view controller is not NINInitialViewController");
-    initialViewController.sessionManager = self.sessionManager;
-    
     if (withNavigationController) {
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:viewController];
         /// `https://github.com/somia/ninchat-sdk-ios/issues/62`
         if (@available(iOS 13.0, *))
             [navigationController setOverrideUserInterfaceStyle:UIUserInterfaceStyleLight];
         return navigationController;
-    } else {
-        return initialViewController;
     }
+    return viewController;
 }
 
 /**
@@ -196,8 +194,6 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 -(void) startWithCredentials:(nonnull NINSessionCredentials*)credentials andCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     [self sdklog:@"Trying to continue given chat session"];
-    
-    /// TODO: Check credential paramteres
     
     if (self.sessionManager.siteConfiguration == nil) {
         /// The configuration is not available. First, get the configuration.
@@ -223,7 +219,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     [self sdklog:@"Starting a new chat session"];
-    
+
     if (self.sessionManager.siteConfiguration == nil) {
         /// The configuration is not available. First, get the configuration.
         [self fetchSiteConfigurations:^(NSError * _Nullable error) {
@@ -238,9 +234,10 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         /// The configuration are availabe, just open the session.
         [self openSession:callbackBlock];
     }
+    self.resumeSession = NO;
 }
 
-/// Fetching site configurations usable by both approaches to opening sessions
+/** Fetching site configurations usable by both approaches to opening sessions */
 -(void) fetchSiteConfigurations:(nonnull void (^)(NSError* _Nullable))callbackBlock {
     __weak typeof(self) weakSelf = self;
     
@@ -269,36 +266,18 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     });
 }
 
-/* Opening a new chat session with no credentials passed by the host application. */
+/** Opening a new chat session with no credentials passed by the host application. */
 -(void) openSession:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     
-    NSError* openSessionError = [self.sessionManager openSession:^(NINSessionCredentials *credentials, NSError *error) {
+    NSError* openSessionError = [self.sessionManager openSession:^(NINSessionCredentials *credentials, BOOL canContinueSession, NSError *error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
         if (error != nil) {
             callbackBlock(credentials, error); return;
         }
-
-        /// Find our realm's queues
-        NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
-        if (queueIds != nil && self.queueID != nil) {
-            /// If the queueID we've been initialized with isnt in the config's set of
-            /// audienceQueues, add it's ID to the list and we'll see if it exists
-            [self sdklog:@"Adding my queueID %@", self.queueID];
-            queueIds = [queueIds arrayByAddingObject:self.queueID];
-        }
-        
-        /// Potentially passing a nil queueIds here is intended
-        [weakSelf.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
-            NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
-
-            if (error == nil) {
-                weakSelf.started = YES;
-            }
-            callbackBlock(credentials, error);
-        }];
+        [weakSelf findRealmQueues:credentials andCallbackBlock:callbackBlock];
     }];
 
     /// Error in opening the session
@@ -308,12 +287,22 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     }
 }
 
-/* Trying to continue connecting to the provided session's credentials. */
+/** Trying to continue connecting to the provided session's credentials. */
 -(void) continueSessionWithCredentials:(nonnull NINSessionCredentials*)credentials andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
-    NSError* continueSessionError;
-    if (credentials.userID != nil && credentials.userAuth != nil) {
-        continueSessionError = [self continueSessionWith:credentials andCallbackBlock:callbackBlock];
-    }
+    __weak typeof(self) weakSelf = self;
+    NSError* continueSessionError = [self.sessionManager continueSessionWithCredentials:credentials andCallbackBlock:^(NINSessionCredentials* newCredentials, BOOL canContinueSession, NSError* error) {
+        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+        NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
+
+        if (error != nil && [error.userInfo[@"message"] isEqualToString:@"user_not_found"] || !canContinueSession) {
+            if ([weakSelf.delegate respondsToSelector:@selector(ninchatDidFailToResumeSession:)] && [weakSelf.delegate ninchatDidFailToResumeSession:weakSelf]) {}
+                [weakSelf startWithCallback:callbackBlock];
+            return;
+        }
+        weakSelf.started = YES;
+        weakSelf.resumeSession = canContinueSession;
+        callbackBlock(credentials, error);
+    }];
 
     /// Error in opening the session
     /// TODO: Manage different scenarios
@@ -322,21 +311,25 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     }
 }
 
--(NSError*) continueSessionWith:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
+- (void) findRealmQueues:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
+    NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
+
+    /// Find our realm's queues
+    NSArray<NSString*>* queueIds = [self.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
+    if (queueIds != nil && self.queueID != nil) {
+        /// If the queueID we've been initialized with isnt in the config's set of
+        /// audienceQueues, add it's ID to the list and we'll see if it exists
+        [self sdklog:@"Adding my queueID %@", self.queueID];
+        queueIds = [queueIds arrayByAddingObject:self.queueID];
+    }
+
     __weak typeof(self) weakSelf = self;
-    return [self.sessionManager continueSessionWithUserID:credentials.userID userAuth:credentials.userAuth andCallbackBlock:^(NINSessionCredentials* credentials, NSError* error) {
+    [self.sessionManager listQueuesWithIds:queueIds completion:^(NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
 
-        if (error != nil) {
-            if ([error.userInfo[@"message"] isEqualToString:@"user_not_found"]
-                && [weakSelf.delegate respondsToSelector:@selector(ninchatFailedToResumeSession:)]
-                && [weakSelf.delegate ninchatFailedToResumeSession:weakSelf]) {
-                    [weakSelf startWithCallback:callbackBlock]; return;
-                }
-            callbackBlock(credentials, error); return;
+        if (error == nil) {
+            weakSelf.started = YES;
         }
-        
-        weakSelf.started = YES;
         callbackBlock(credentials, error);
     }];
 }
@@ -364,7 +357,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
 }
 
-// Prevent calling the default initializer
+/** Prevent calling the default initializer */
 -(id) init {
     self = [super init];
 

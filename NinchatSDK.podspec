@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
 
   # Cocoapods dependencies
   s.dependency "AFNetworking", "~> 3.0"
-  s.dependency "NinchatLowLevelClient", "~> 0"
+  s.dependency "NinchatLowLevelClient"
   s.dependency "GoogleWebRTC", "~> 1.1"
 
   s.module_name = "NinchatSDK"

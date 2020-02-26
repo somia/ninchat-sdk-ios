@@ -306,6 +306,7 @@
 		749E70E122FC2E460031FEEB /* NINUIComposeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINUIComposeMessage.m; sourceTree = "<group>"; };
 		851E392E23DF26BB00078968 /* NINSessionCredentials.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NINSessionCredentials.h; sourceTree = "<group>"; };
 		851E392F23DF26BB00078968 /* NINSessionCredentials.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NINSessionCredentials.m; sourceTree = "<group>"; };
+		91A16A6EAFBD8B0348483AFF /* update-go-framework.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "update-go-framework.sh"; sourceTree = "<group>"; };
 		A7F7699C7352569AF2E37C05 /* Pods-NinchatSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDK/Pods-NinchatSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		CA3047E6C0F0E96D595DED5B /* Pods_NinchatSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NinchatSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA92BA1DB07BD7F2E578990B /* Pods-NinchatSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NinchatSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-NinchatSDKTests/Pods-NinchatSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -554,6 +555,7 @@
 				49944362208DF33400101DCA /* NinchatSDKTests */,
 				49944356208DF33400101DCA /* Products */,
 				748A62C35B36023A82D6A0E2 /* Pods */,
+				91A16A6EAFBD8B0348483AFF /* update-go-framework.sh */,
 			);
 			sourceTree = "<group>";
 		};

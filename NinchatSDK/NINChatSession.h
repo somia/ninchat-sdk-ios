@@ -23,13 +23,14 @@
 
 /**
  * The function is called when SDK cannot continue a session using provided credentials with `-startWithCredentials:andCallback`.
+ * The function could be used to clear saved credentials
  *
  * The return value indicates if the SDK should initiate a new chat session or not.
  */
--(BOOL) ninchatFailedToResumeSession:(NINChatSession*_Nonnull)session;
+-(BOOL) ninchatDidFailToResumeSession:(NINChatSession*_Nonnull)session;
 
 /**
- * Implemeent this if you want to receive debug/error logging from the SDK.
+ * Implement this if you want to receive debug/error logging from the SDK.
  *
  * Optional method.
  */

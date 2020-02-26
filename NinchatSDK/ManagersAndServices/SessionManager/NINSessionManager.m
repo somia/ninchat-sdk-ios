@@ -290,9 +290,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) userUpdated:(NINLowLevelClientProps*)params {
     NSError* error;
-
-    NSCAssert(self.currentChannelID != nil, @"No active channel");
-
     NSString* userID = [params getString:@"user_id" error:&error];
     if (error != nil) {
         NSLog(@"Failed to get user_id: %@", error);
@@ -443,6 +440,40 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     postNotification(kChannelJoinedNotification, @{});
 }
 
+-(void) channelFound:(NINLowLevelClientProps*)params {
+    NSError *error;
+    NSString *channelID = [params getString:@"channel_id" error:&error];
+    NSCAssert([channelID isEqualToString:self.currentChannelID], @"Channel ID is not valid");
+    if (error != nil) {
+        NSLog(@"Failed to get channel's id");
+        return;
+    }
+
+    NINLowLevelClientProps *channelMembers = [params getObject:@"channel_members" error:&error];
+    if (error != nil) {
+        NSLog(@"Failed to get channel's members");
+        return;
+    }
+
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+
+    NINClientPropsParser* memberParser = [NINClientPropsParser new];
+    [channelMembers accept:memberParser error:&error];
+    for (NSString* userID in memberParser.properties.allKeys) {
+        NINLowLevelClientProps* memberAttrs = memberParser.properties[userID];
+        NINLowLevelClientProps* userAttrs = [memberAttrs getObject:@"user_attrs" error:&error];
+        if (error != nil) {
+            NSLog(@"Failed to get user_attrs: %@", error);
+            continue;
+        }
+
+        _channelUsers[userID] = [self parseUserAttrs:userAttrs userID:userID];
+    }
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
+}
+
 -(void) channelParted:(NINLowLevelClientProps*)params {
     NSError* error = nil;
     long actionId;
@@ -500,6 +531,66 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
         postNotification(kNINChannelClosedNotification, @{});
     }
+}
+
+-(void) channelMemberUpdated:(NINLowLevelClientProps*)params {
+    NSError* error = nil;
+
+    long actionId;
+    [params getInt:@"action_id" val:&actionId error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NSString* channelID = [params getString:@"channel_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    if (![channelID isEqualToString:self.currentChannelID]
+        && ![channelID isEqualToString:self.backgroundChannelID]) {
+        [self.ninchatSession sdklog:@"Error: Got event for wrong channel: %@", channelID];
+        return;
+    }
+
+    NSString* userID = [params getString:@"user_id" error:&error];
+    NSCAssert(error == nil, @"Failed to get attribute");
+
+    NINChannelUser* messageUser = _channelUsers[userID];
+    if (messageUser == nil) {
+        [self.ninchatSession sdklog:@"Update from unknown user: %@", userID];
+        return;
+    }
+
+    if (![userID isEqualToString:self.myUserID]) {
+        NINLowLevelClientProps* memberAttrs = [params getObject:@"member_attrs" error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        BOOL writing = NO;
+        [memberAttrs getBool:@"writing" val:&writing error:&error];
+        NSCAssert(error == nil, @"Failed to get attribute");
+
+        // Check if that user already has a 'writing' message
+        NSInteger messageIndex = -1;
+
+        for (NSInteger i = 0; i < _chatMessages.count; i++) {
+            NINUserTypingMessage* msg = (NINUserTypingMessage*)_chatMessages[i];
+            if ([msg isKindOfClass:NINUserTypingMessage.class] && [msg.user.userID isEqualToString:userID]) {
+                messageIndex = i;
+                break;
+            }
+        }
+
+        if (writing) {
+            if (messageIndex < 0) {
+                // There's no 'typing' message for this user yet, lets create one
+                [self addNewChatMessage:[NINUserTypingMessage messageWithUser:messageUser timestamp:NSDate.date]];
+            }
+        } else {
+            if (messageIndex >= 0) {
+                // There's a 'typing' message for this user - lets remove that.
+                [self removeChatMessageAtIndex:messageIndex];
+            }
+        }
+    }
+
+    postNotification(kActionNotification, @{@"action_id": @(actionId)});
 }
 
 // Processes the response to the WebRTC connectivity ICE query
@@ -579,6 +670,25 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
+    connectCallbackToActionCompletion(actionId, completion);
+}
+
+// Asynchronously get channel's attributes
+-(void) describeChannel:(NSString*)channelID completion:(callbackWithErrorBlock)completion {
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+    [params setString:@"action" val:@"describe_channel"];
+    [params setString:@"channel_id" val:channelID];
+
+    NSError* error = nil;
+    int64_t actionId;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    if (error != nil) {
+        NSLog(@"Error getting user's info: %@", error);
+        completion(error);
+        return;
+    }
+
+    // When this action completes, trigger the completion block callback
     connectCallbackToActionCompletion(actionId, completion);
 }
 
@@ -795,8 +905,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [messageType isEqualToString:kNINMessageTypeWebRTCHangup] ||
         [messageType isEqualToString:kNINMessageTypeWebRTCPickup]) {
 
-//        [self.ninchatSession sdklog:@"Got RTC signaling message from Ninchat API: %@", messageType];
-
         if (actionId != 0) {
             // This message originates from me; we can ignore it.
             return;
@@ -870,66 +978,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 }
 
--(void) channelMemberUpdated:(NINLowLevelClientProps*)params {
-    NSError* error = nil;
-
-    long actionId;
-    [params getInt:@"action_id" val:&actionId error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
-
-    NSString* channelID = [params getString:@"channel_id" error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
-
-    if (![channelID isEqualToString:self.currentChannelID]
-        && ![channelID isEqualToString:self.backgroundChannelID]) {
-        [self.ninchatSession sdklog:@"Error: Got event for wrong channel: %@", channelID];
-        return;
-    }
-
-    NSString* userID = [params getString:@"user_id" error:&error];
-    NSCAssert(error == nil, @"Failed to get attribute");
-
-    NINChannelUser* messageUser = _channelUsers[userID];
-    if (messageUser == nil) {
-        [self.ninchatSession sdklog:@"Update from unknown user: %@", userID];
-        return;
-    }
-
-    if (![userID isEqualToString:self.myUserID]) {
-        NINLowLevelClientProps* memberAttrs = [params getObject:@"member_attrs" error:&error];
-        NSCAssert(error == nil, @"Failed to get attribute");
-
-        BOOL writing = NO;
-        [memberAttrs getBool:@"writing" val:&writing error:&error];
-        NSCAssert(error == nil, @"Failed to get attribute");
-
-        // Check if that user already has a 'writing' message
-        NSInteger messageIndex = -1;
-
-        for (NSInteger i = 0; i < _chatMessages.count; i++) {
-            NINUserTypingMessage* msg = (NINUserTypingMessage*)_chatMessages[i];
-            if ([msg isKindOfClass:NINUserTypingMessage.class] && [msg.user.userID isEqualToString:userID]) {
-                messageIndex = i;
-                break;
-            }
-        }
-
-        if (writing) {
-            if (messageIndex < 0) {
-                // There's no 'typing' message for this user yet, lets create one
-                [self addNewChatMessage:[NINUserTypingMessage messageWithUser:messageUser timestamp:NSDate.date]];
-            }
-        } else {
-            if (messageIndex >= 0) {
-                // There's a 'typing' message for this user - lets remove that.
-                [self removeChatMessageAtIndex:messageIndex];
-            }
-        }
-    }
-
-    postNotification(kActionNotification, @{@"action_id": @(actionId)});
-}
-
 /*
  Event: map[event_id:2 action_id:1 channel_id:5npnrkp1009n error_type:channel_not_found event:error]
  */
@@ -978,6 +1026,33 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         details = [details stringByAppendingString:[NSString stringWithFormat:@" %@", self.appDetails]];
     
     return details;
+}
+
+/** Determines if it is possible to resume the session in case it is still alive. */
+-(BOOL) canResumeSession:(NINLowLevelClientProps*)params {
+    NSError *error;
+    NINLowLevelClientProps *channels = [params getObject:@"user_channels" error:&error];
+    if (error != nil)
+        return NO;
+    NINClientPropsParser* channelParser = [NINClientPropsParser new];
+    [channels accept:channelParser error:&error];
+    if (error != nil)
+        return NO;
+
+    for (NSString* channelID in channelParser.properties.allKeys) {
+        NINLowLevelClientProps* channel = [channels getObject:channelID error:&error];
+        NINLowLevelClientProps* attributes = [channel getObject:@"channel_attrs" error:&error];
+        if (error != nil)
+            return NO;
+
+        BOOL closed;
+        [attributes getBool:@"closed" val:&closed error:&error];
+        if (!closed) {
+            self.currentChannelID = channelID;
+            return YES;
+        }
+    }
+    return NO;
 }
 
 #pragma mark - Public methods
@@ -1128,7 +1203,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     });
 }
 
-// Sends a message to the activa channel. Active channel must exist.
+// Sends a message to the active channel. Active channel must exist.
 -(int64_t) sendMessageWithMessageType:(NSString*)messageType payloadDict:(NSDictionary*)payloadDict completion:(callbackWithErrorBlock _Nonnull)completion {
 
     NSCAssert(self.session != nil, @"No chat session");
@@ -1301,7 +1376,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     self.sessionCallbackHandler = nil;
 }
 
-// Low-level shutdown of the chatsession; invalidates session resource.
+// Low-level shutdown of the chat session; invalidates session resource.
 -(void) closeChat {
     [self.ninchatSession sdklog:@"Shutting down chat Session.."];
 
@@ -1331,25 +1406,24 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }
 }
 
--(NSError*) openSession:(startCallbackBlock _Nonnull)callbackBlock {
+-(NSError*) openSession:(nonnull initiateSessionCallback)callbackBlock {
+    [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
+
     NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
     return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
 }
 
--(NSError*) continueSessionWithSessionID:(NSString*)sessionID andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
+-(NSError*) continueSessionWithCredentials:(NINSessionCredentials*)credentials andCallbackBlock:(nonnull initiateSessionCallback)callbackBlock {
+    self.sessionCredentials = credentials;
+    [self.ninchatSession sdklog:@"Resume session using user ID %@", credentials.userID];
+
     NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
-    [sessionParams setString:@"session_id" val:sessionID];
+    [sessionParams setString:@"user_id" val:credentials.userID];
+    [sessionParams setString:@"user_auth" val:credentials.userAuth];
     return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
 }
 
--(NSError*) continueSessionWithUserID:(NSString*)userID userAuth:(NSString*)userAuth andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
-    NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
-    [sessionParams setString:@"user_id" val:userID];
-    [sessionParams setString:@"user_auth" val:userAuth];
-    return [self initiateSessionWithParameters:sessionParams andCallbackBlock:callbackBlock];
-}
-
--(NSError*) initiateSessionWithParameters:(nonnull NINLowLevelClientProps*)params andCallbackBlock:(startCallbackBlock _Nonnull)callbackBlock {
+-(NSError*_Nullable) initiateSessionWithParameters:(nonnull NINLowLevelClientProps*)params andCallbackBlock:(nonnull initiateSessionCallback)callbackBlock {
     NSCAssert(self.serverAddress != nil, @"Must have server address");
     
     /// Waits for the session creation event
@@ -1357,15 +1431,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         NSString* eventType = note.userInfo[@"event_type"];
         
         if ([eventType isEqualToString:@"session_created"]) {
-            callbackBlock(note.userInfo[@"session_credentials"], note.userInfo[@"error"]);
-            return YES;
+            callbackBlock(note.userInfo[@"session_credentials"], (self.currentChannelID != nil), note.userInfo[@"error"]); return YES;
         } else if ([eventType isEqualToString:@"error"]) {
-            callbackBlock(nil, note.userInfo[@"error_type"]);
-            return YES;
+            callbackBlock(nil, NO, note.userInfo[@"error_type"]); return YES;
+        } else if ([eventType isEqualToString:@"connection_superseded"]) {
+            [self openSession:callbackBlock]; return YES;
         }
         return NO;
     });
-    [self.ninchatSession sdklog:@"Opening new chat session using server address %@", self.serverAddress];
 
     // Create message throttler to manage inbound message order
     __weak typeof(self) weakSelf = self;
@@ -1444,6 +1517,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         return;
     }
 
+    NSLog(@"**debug: received event: %@", event);
+
     if ([event isEqualToString:@"error"]) {
         [self handleError:params];
     } else if ([event isEqualToString:@"channel_joined"]) {
@@ -1459,7 +1534,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [self channelUpdated:params];
     } else if ([event isEqualToString:@"ice_begun"]) {
         [self iceBegun:params];
-    } else if ([event isEqualToString:@"user_updated"]) {
+    } else if ([event isEqualToString:@"user_updated"] || [event isEqualToString:@"user_found"]) {
         [self userUpdated:params];
     } else if ([event isEqualToString:@"file_found"]) {
         [self fileFound:params];
@@ -1467,6 +1542,8 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [self channelParted:params];
     } else if ([event isEqualToString:@"channel_member_updated"]) {
         [self channelMemberUpdated:params];
+    } else if ([event isEqualToString:@"channel_found"]) {
+        [self channelFound:params];
     }
 
     // Forward the event to the SDK delegate
@@ -1478,16 +1555,27 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) onLog:(NSString*)msg {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
     NSLog(@"GO SDK log: %@", msg);
+
+    /// The error appears when there is a race for getting into the session.
+    /// For some reasons, the error is not received in `onSessionEvent:`
+    /// To resolve, the following steps are taken:
+    ///     1. Close current sessions
+    ///     2. Let the host knows
+    ///     3. Re-initiate the session
+    if ([msg containsString:@"error: connection_superseded"] && [self.ninchatSession.delegate respondsToSelector:@selector(ninchatDidFailToResumeSession:)]) {
+        if ([self.ninchatSession.delegate ninchatDidFailToResumeSession:self.ninchatSession]) {
+            [self disconnect];
+            postNotification(kActionNotification, @{@"event_type": @"connection_superseded"});
+        }
+    }
 }
 
 -(void) onConnState:(NSString*)state {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
-
 }
 
 -(void) onClose {
     NSCAssert([NSThread isMainThread], @"Must be called on main thread");
-
 }
 
 -(void) onSessionEvent:(NINLowLevelClientProps*)params {
@@ -1498,20 +1586,28 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NSCAssert(error == nil, @"Failed to get attribute");
 
     if ([event isEqualToString:@"error"]) {
-        /// Error types:
-        ///     - session_not_found: retry to initiate session using user_id and user_auth credentials
-        ///     - user_not_found: ask the host application if it wants to initiate a new session
         NSString* errorType = [params getString:@"error_type" error:&error];
         postNotification(kActionNotification, @{@"event_type": event, @"error_type":newError(errorType)});
     } else if ([event isEqualToString:@"session_created"]) {
         NINSessionCredentials *credentials = [[NINSessionCredentials alloc] init:params];
         NSCAssert(credentials.userID != nil, @"Failed to get attribute");
         NSCAssert(credentials.userAuth != nil, @"Failed to get attribute");
-        
-        self.myUserID = credentials.userID;
-        [self.ninchatSession sdklog:@"Session created - my user ID is: %@", self.myUserID];
 
-        postNotification(kActionNotification, @{@"event_type": event, @"session_credentials": credentials});
+        self.myUserID = credentials.userID;
+
+        /// Checks if the session is alive to resume
+        ///     if possible, update channel members (name, avatar, message threads, etc)
+        ///     if not, just notify to continue normal process.
+        if ([self canResumeSession:params]) {
+            [self describeChannel:self.currentChannelID completion:^(NSError *error) {
+                if (error != nil) {
+                    NSLog(@"Error in describing the channel"); return;
+                }
+                postNotification(kActionNotification, @{@"event_type": event, @"session_credentials": credentials});
+            }];
+        } else {
+            postNotification(kActionNotification, @{@"event_type": event, @"session_credentials": credentials});
+        }
     } else if ([event isEqualToString:@"user_deleted"]) {
         [self userDeleted:params];
     }
@@ -1578,10 +1674,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         [self.sessionManager onConnState:state];
     });
 }
-
-//-(void) dealloc {
-//    NSLog(@"%@ deallocated.", NSStringFromClass(self.class));
-//}
 
 @end
 
