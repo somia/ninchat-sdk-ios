@@ -195,7 +195,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
  */
 -(void) startWithCredentials:(nonnull NINSessionCredentials*)credentials andCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
-    [self sdklog:@"Trying to conitue given chatt session"];
+    [self sdklog:@"Trying to continue given chat session"];
     
     /// TODO: Check credential paramteres
     
@@ -210,7 +210,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
             [weakSelf continueSessionWithCredentials:credentials andCallbackBlock:callbackBlock];
         }];
     } else {
-        /// The configuration are availabe, just open the session.
+        /// The configuration are available, just open the session.
         [self continueSessionWithCredentials:credentials andCallbackBlock:callbackBlock];
     }
 }
@@ -311,12 +311,8 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 /* Trying to continue connecting to the provided session's credentials. */
 -(void) continueSessionWithCredentials:(nonnull NINSessionCredentials*)credentials andCallbackBlock:(nonnull startCallbackBlock)callbackBlock {
     NSError* continueSessionError;
-    if (credentials.sessionID != nil) {
-        continueSessionError = [self continueSessionWithSessionID:credentials andCallbackBlock:callbackBlock];
-    } else if (credentials.userID != nil && credentials.userAuth != nil) {
-        continueSessionError = [self continueSessionWithUserID:credentials andCallbackBlock:callbackBlock];
-    } else {
-        
+    if (credentials.userID != nil && credentials.userAuth != nil) {
+        continueSessionError = [self continueSessionWith:credentials andCallbackBlock:callbackBlock];
     }
 
     /// Error in opening the session
@@ -326,32 +322,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     }
 }
 
--(NSError*) continueSessionWithSessionID:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
-    __weak typeof(self) weakSelf = self;
-    return [self.sessionManager continueSessionWithSessionID:credentials.sessionID andCallbackBlock:^(NINSessionCredentials* credentials, NSError* error) {
-        NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
-        
-        if (error != nil) {
-            if ([error.userInfo[@"message"] isEqualToString:@"session_not_found"]) {
-                [weakSelf continueSessionWithUserID:credentials andCallbackBlock:callbackBlock]; return;
-            // Find our realm's queues
-            NSArray<NSString*>* queueIds = [weakSelf.sessionManager.siteConfiguration valueForKey:@"audienceQueues"];
-            
-            if (queueIds != nil && self.queueID != nil) {
-                // If the queueID we've been initialized with isn't in the config's set of
-                // audienceQueues, add it's ID to the list and we'll see if it exists
-                [self sdklog:@"Adding my queueID %@", self.queueID];
-                queueIds = [queueIds arrayByAddingObject:self.queueID];
-            }
-            callbackBlock(credentials, error); return;
-        }
-        
-        weakSelf.started = YES;
-        callbackBlock(credentials, error);
-    }];
-}
-
--(NSError*) continueSessionWithUserID:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
+-(NSError*) continueSessionWith:(NINSessionCredentials*)credentials andCallbackBlock:(startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     return [self.sessionManager continueSessionWithUserID:credentials.userID userAuth:credentials.userAuth andCallbackBlock:^(NINSessionCredentials* credentials, NSError* error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
@@ -400,7 +371,6 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                    reason:[NSString stringWithFormat:@"-init is not a valid initializer for the class %@", NSStringFromClass(self.class)]
                                  userInfo:nil];
-    return nil;
 }
 
 @end
