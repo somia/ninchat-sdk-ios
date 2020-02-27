@@ -442,9 +442,7 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 
 -(void) channelFound:(NINLowLevelClientProps*)params {
     NSError *error;
-    NSString *channelID = [params getString:@"channel_id" error:&error];
-    NSCAssert([channelID isEqualToString:self.currentChannelID], @"Channel ID is not valid");
-    if (error != nil) {
+    if (![[params getString:@"channel_id" error:&error] isEqualToString:self.currentChannelID] || error != nil) {
         NSLog(@"Failed to get channel's id");
         return;
     }
@@ -1414,7 +1412,6 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 }
 
 -(NSError*) continueSessionWithCredentials:(NINSessionCredentials*)credentials andCallbackBlock:(nonnull initiateSessionCallback)callbackBlock {
-    self.sessionCredentials = credentials;
     [self.ninchatSession sdklog:@"Resume session using user ID %@", credentials.userID];
 
     NINLowLevelClientProps* sessionParams = [NINLowLevelClientProps new];
