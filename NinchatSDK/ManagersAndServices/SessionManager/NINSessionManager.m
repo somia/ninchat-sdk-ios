@@ -1388,6 +1388,25 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     }];
 }
 
+/** Low-level async shutdown of given session. The result is not important. */
+-(void)closeOldSession:(NSString *)sessionID {
+    if (sessionID == nil) {
+        [self.ninchatSession sdklog:@"Session ID 'null' cannot be shut down. Skipping...."];
+        return;
+    }
+    [self.ninchatSession sdklog:@"Shutting down the old chat Session.."];
+
+    NINLowLevelClientProps* params = [NINLowLevelClientProps new];
+    [params setString:@"action" val:@"close_session"];
+    [params setString:@"session_id" val:sessionID];
+
+
+    NSError* error = nil;
+    int64_t actionId;
+    [self.session send:params payload:nil actionId:&actionId error:&error];
+    NSLog(@"%@", error);
+}
+
 // High-level chat ending; sends channel metadata and then closes session.
 -(void) finishChat:(NSNumber* _Nullable)rating {
     NSCAssert(self.session != nil, @"No chat session");

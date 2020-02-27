@@ -157,6 +157,8 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;
 
+-(void) closeOldSession:(NSString* _Nullable)sessionID;
+
 /** (Optionally) sends ratings and finishes the current chat from our end. */
 -(void) finishChat:(NSNumber* _Nullable)rating;
 

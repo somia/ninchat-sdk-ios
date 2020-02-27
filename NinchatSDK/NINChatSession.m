@@ -270,14 +270,14 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 -(void) openSession:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     
-    NSError* openSessionError = [self.sessionManager openSession:^(NINSessionCredentials *credentials, BOOL canContinueSession, NSError *error) {
+    NSError* openSessionError = [self.sessionManager openSession:^(NINSessionCredentials *newCredentials, BOOL canContinueSession, NSError *error) {
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
         if (error != nil) {
-            callbackBlock(credentials, error); return;
+            callbackBlock(newCredentials, error); return;
         }
-        [weakSelf findRealmQueues:credentials andCallbackBlock:callbackBlock];
+        [weakSelf findRealmQueues:newCredentials andCallbackBlock:callbackBlock];
     }];
 
     /// Error in opening the session
@@ -294,6 +294,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
+//        [weakSelf.sessionManager closeOldSession:credentials.sessionID];
         if ((error != nil && [error.userInfo[@"message"] isEqualToString:@"user_not_found"]) || !canContinueSession) {
             if ([weakSelf.delegate respondsToSelector:@selector(ninchatDidFailToResumeSession:)] && [weakSelf.delegate ninchatDidFailToResumeSession:weakSelf]) {}
                 [weakSelf startWithCallback:callbackBlock];
@@ -301,7 +302,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         }
         weakSelf.started = YES;
         weakSelf.resumeSession = canContinueSession;
-        callbackBlock(credentials, error);
+        callbackBlock(newCredentials, error);
     }];
 
     /// Error in opening the session
