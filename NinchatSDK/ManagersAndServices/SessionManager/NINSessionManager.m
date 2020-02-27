@@ -1378,14 +1378,19 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
 -(void) closeChat {
     [self.ninchatSession sdklog:@"Shutting down chat Session.."];
 
-    // Delete our guest user.
-    __weak typeof(self) weakSelf = self;
-    [self deleteCurrentUserWithCompletion:^(NSError* error) {
-        [weakSelf disconnect];
+    /// delete only guest users
+    if (_channelUsers[self.myUserID].guest) {
+        __weak typeof(self) weakSelf = self;
+        [self deleteCurrentUserWithCompletion:^(NSError* error) {
+            [weakSelf disconnect];
 
-        // Signal the delegate that our session has ended
-        [weakSelf.ninchatSession.delegate ninchatDidEndSession:weakSelf.ninchatSession];
-    }];
+            // Signal the delegate that our session has ended
+            [weakSelf.ninchatSession.delegate ninchatDidEndSession:weakSelf.ninchatSession];
+        }];
+    } else {
+        [self disconnect];
+        [self.ninchatSession.delegate ninchatDidEndSession:self.ninchatSession];
+    }
 }
 
 /** Low-level async shutdown of given session. The result is not important. */

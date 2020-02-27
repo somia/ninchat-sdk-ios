@@ -300,9 +300,11 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
                 [weakSelf startWithCallback:callbackBlock];
             return;
         }
+
         weakSelf.started = YES;
         weakSelf.resumeSession = canContinueSession;
-        callbackBlock(newCredentials, error);
+        /// Keep userID and userAuth and just update sessionID
+        callbackBlock([[NINSessionCredentials alloc] init:credentials.userID userAuth:credentials.userAuth sessionID:newCredentials.sessionID], error);
     }];
 
     /// Error in opening the session
