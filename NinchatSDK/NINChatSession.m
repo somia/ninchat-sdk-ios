@@ -294,7 +294,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         NSCAssert([NSThread isMainThread], @"Must be called on the main thread");
         NSCAssert(weakSelf != nil, @"This pointer should not be nil here.");
 
-        if (error != nil && [error.userInfo[@"message"] isEqualToString:@"user_not_found"] || !canContinueSession) {
+        if (error != nil || [error.userInfo[@"message"] isEqualToString:@"user_not_found"] || !canContinueSession) {
             if ([weakSelf.delegate respondsToSelector:@selector(ninchatDidFailToResumeSession:)] && [weakSelf.delegate ninchatDidFailToResumeSession:weakSelf]) {}
                 [weakSelf startWithCallback:callbackBlock];
             return;
