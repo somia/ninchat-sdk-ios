@@ -15,6 +15,7 @@
 #import "NINSiteConfiguration.h"
 #import "NINChatSession+Internal.h" // To provide log: method
 #import "NINChatMessage.h"
+#import "NINSessionCredentials.h"
 
 @class NINQueue;
 @class NINTextMessage;
@@ -22,6 +23,7 @@
 @class NINFileInfo;
 
 typedef void (^getFileInfoCallback)(NSError* _Nullable error, NSDictionary* _Nullable fileInfo);
+typedef void (^initiateSessionCallback)(NINSessionCredentials* _Nullable credentials, BOOL willResume, NSError* _Nonnull error);
 
 /** Notification that indicates the current channel was closed. */
 extern NSString* _Nonnull const kNINChannelClosedNotification;
@@ -114,7 +116,10 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
 @property (nonatomic, strong) NINLowLevelClientProps* _Nullable audienceMetadata;
 
 /** Opens the session with an asynchronous completion callback. */
--(NSError*_Nonnull) openSession:(startCallbackBlock _Nonnull)callbackBlock;
+-(NSError*_Nullable) openSession:(initiateSessionCallback _Nonnull)callbackBlock;
+
+/** Continues to an existing session using given user credentials. Completes with an asynchronous completion callback. */
+-(NSError*_Nullable) continueSessionWithCredentials:(NINSessionCredentials*_Nonnull)credentials andCallbackBlock:(initiateSessionCallback _Nonnull)callbackBlock;
 
 /** List queues with specified ids for this realm, all available ones if queueIds is nil. */
 -(void) listQueuesWithIds:(NSArray<NSString*>* _Nullable)queueIds completion:(callbackWithErrorBlock _Nonnull)completion;
@@ -151,6 +156,8 @@ extern NSString* _Nonnull const kNINMessageTypeWebRTCHangup;
     
 /** Closes the chat by shutting down the session. Triggers the API delegate method -ninchatDidEndChatSession:. */
 -(void) closeChat;
+
+-(void) closeOldSession:(NSString* _Nullable)sessionID;
 
 /** (Optionally) sends ratings and finishes the current chat from our end. */
 -(void) finishChat:(NSNumber* _Nullable)rating;

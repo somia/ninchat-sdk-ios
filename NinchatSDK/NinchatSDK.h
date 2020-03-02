@@ -17,3 +17,4 @@ FOUNDATION_EXPORT const unsigned char NinchatSDKVersionString[];
 // This the umbrella header; include all public headers
 
 #import <NinchatSDK/NINChatSession.h>
+#import <NinchatSDK/NINSessionCredentials.h>

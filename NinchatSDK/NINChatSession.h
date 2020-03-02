@@ -22,7 +22,15 @@
 @protocol NINChatSessionDelegate <NSObject>
 
 /**
- * Implemeent this if you want to receive debug/error logging from the SDK.
+ * The function is called when SDK cannot continue a session using provided credentials with `-startWithCredentials:andCallback`.
+ * The function could be used to clear saved credentials
+ *
+ * The return value indicates if the SDK should initiate a new chat session or not.
+ */
+-(BOOL) ninchatDidFailToResumeSession:(NINChatSession*_Nonnull)session;
+
+/**
+ * Implement this if you want to receive debug/error logging from the SDK.
  *
  * Optional method.
  */
@@ -124,8 +132,15 @@
 -(id _Nonnull) initWithConfigKey:(NSString* _Nonnull)configKey queueID:(NSString* _Nullable)queueID environments:(NSArray<NSString*>* _Nullable)environments;
 
 /**
- * Starts the API engine. Must be called before other API methods. The caller
- * must wait for the callback block to be called without errors.
+ * Starts the API engine using given credentials. Must be called before other API methods.
+ * If callback returns the error indicating invalidated credentials, the caller is responsible to decide
+ * for using `-startWithCallback:` and startign a new chat session.
+ */
+-(void)startWithCredentials:(nonnull NINSessionCredentials*)credentials andCallback:(nonnull startCallbackBlock)callbackBlock;
+
+/**
+ * Starts the API engine. Must be called before other API methods. The method creates
+ * a new user and a new session. The caller must wait for the callback block to be called without errors.
  */
 -(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock;
 
