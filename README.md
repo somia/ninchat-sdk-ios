@@ -35,7 +35,7 @@ Starting **version 0.0.42**, the SDK supports session resumption. Consider the f
 
 ### Session initialization
 
-Since session resumption feature requires credentials, `start(callBack:)` includes  `credentials: NINSessionCredentials?` parameter which is being used for resuming the session later.
+Since session resumption feature requires credentials, `start(callBack:)` includes a  `NINSessionCredentials?` parameter which is used for resuming the session later.
 
 ```swift
 ninchatSession.start { [weak self] (credentials: NINSessionCredentials?, error: Error?) in  }
@@ -85,10 +85,10 @@ The SDK must perform some asynchornous networking tasks before it is ready to us
 
 ```swift
 ninchatSession.start { [weak self] credentials, error in
- if let error = error {
-  /// Some errors in starting a new session.
- }
- /// Save/Cache `credentials` for resuming the session later.
+    if let error = error {
+         /// Some errors in starting a new session.
+    }
+    /// Save/Cache `credentials` for resuming the session later.
 }
 ```
 
@@ -98,16 +98,16 @@ Starting **version 0.0.42**, the SDK provides support to resume a session. In ca
 
 ```swift
 ninchatSession.start(with: credentials) { [weak self] credentials, error in
- if let error = error {
-  /// Some errors in resuming the session.
- }                      
- /// Update saved/cached `credentials` with the new one.
+    if let error = error {
+        /// Some errors in resuming the session.
+    }                      
+    /// Update saved/cached `credentials` with the new one.
 }
 
 /// Called when credentials are not valid.
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
-  /// Return `true` if the SDK should start a new session.
-  return true
+    /// Return `true` if the SDK should start a new session.
+    return true
 }  
 ```
 
@@ -178,7 +178,7 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
 /// This method is called when the SDK was unable to resume a session using provided credentials.
 /// The return value determines if the SDK should initiate a new session or not.
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
- return true
+    return true
 } 
 ```
 
