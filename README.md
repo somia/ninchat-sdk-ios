@@ -16,25 +16,38 @@ Example Podfile:
 ```
 platform :ios, '9.0'
 
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 source 'https://github.com/somia/ninchat-podspecs.git'
 
-def all_pods
-  pod 'NinchatSDK', '~> 0.0.1'
-end
-
-target 'NinchatSDKTestClient' do
-  all_pods
-end
-
-target 'NinchatSDKTestClientTests' do
-  all_pods
+target 'HOST_APPLICATION_TARGET' do
+    use_frameworks!
+		pod 'NinchatSDK', '~> 0.0.42'
 end
 ```
 
 Install by running `pod install`.
 
 NOTE that `use_frameworks!` is optional.
+
+## Breaking Changes
+
+Starting **version 0.0.42**, the SDK supports session resumption. Consider the following breaking changes if you are updating the SDK to versions >= 0.0.42 from earlier versions.
+
+### Session initialization
+
+Since session resumption feature requires credentials, `start(callBack:)` now callback including a new parameter, `credentials: NINSessionCredentials?`, which is used for resuming the session later.
+
+```swift
+ninchatSession.start { [weak self] (credentials: NINSessionCredentials?, error: Error?) in  }
+```
+
+### Delegate methods
+
+There might be cases where provided credentials are not valid for resuming a session. In such cases, the following delegate would be used to initiate a new session. 
+
+```swift
+func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {}
+```
 
 ## Usage
 
@@ -68,19 +81,35 @@ ninchatSession.appDetails = "app-name/version (more; details)"
 
 #### Starting the API client
 
-The SDK must perform some asynchornous networking tasks before it is ready to use; this is done by calling the `start` method as follows:
+The SDK must perform some asynchornous networking tasks before it is ready to use; this is done by calling the `start` method as follows. The callback includes credentials that could be saved for resuming the session later.
 
 ```swift
-ninchatSession.start { [weak self] error in
+ninchatSession.start { [weak self] credentials, error in
     if let error = error {
-        log.error("Ninchat SDK chat session failed to start with error: \(error))")
-        self?.ninchatSession = nil
-        //TODO insert your error handling steps here
-        return
+        /// Some errors in starting a new session.
     }
+    /// Save/Cache `credentials` for resuming the session later.
 }
 ```
 
+#### Resuming a session
+
+Starting **version 0.0.42**, the SDK provides support to resume a session. In case of any issues in resuming the session using provided credentials, the corresponded delegate is called to ask if a new session should be started or not.
+
+```swift
+ninchatSession.start(with: credentials) { [weak self] credentials, error in
+		if let error = error {
+      	/// Some errors in resuming the session.
+    }                      
+    /// Update saved/cached `credentials` with the new one.
+}
+
+/// Called when credentials are not valid.
+func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
+  	/// Return `true` if the SDK should start a new session.
+  	return true
+}  
+```
 
 #### Showing the SDK UI
 
@@ -145,6 +174,12 @@ func ninchat(_ session: NINChatSession, onLowLevelEvent params: NINLowLevelClien
 func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
     log.debug("** NINCHAT SDK **: \(message)")
 }
+
+/// This method is called when the SDK was unable to resume a session using provided credentials.
+/// The return value determines if the SDK should initiate a new session or not.
+func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
+  	return true
+} 
 ```
 
 #### Info.plist keys Required by the SDK
