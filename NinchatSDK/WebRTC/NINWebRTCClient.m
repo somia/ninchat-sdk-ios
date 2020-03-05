@@ -420,6 +420,8 @@ static NSString* const kVideoTrackId = @"NINAMSv0";
 
     __weak typeof(self) weakSelf = self;
 
+    /// The issue with the output: `https://github.com/somia/ninchat-sdk-ios/issues/61`
+    [self setAudioOutputToSpeaker];
     // Start listening to WebRTC signaling messages from the chat session manager
     self.signalingObserver = fetchNotification(kNINWebRTCSignalNotification, ^BOOL(NSNotification* note) {
         NSDictionary* payload = note.userInfo[@"payload"];
