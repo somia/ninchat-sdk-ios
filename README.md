@@ -38,7 +38,7 @@ Starting **version 0.0.42**, the SDK supports session resumption. Consider the f
 Since session resumption feature requires credentials, `start(callBack:)` includes a  `NINSessionCredentials?` parameter which is used for resuming the session later.
 
 ```swift
-ninchatSession.start { [weak self] (credentials: NINSessionCredentials?, error: Error?) in  }
+ninchatSession.start { (credentials: NINSessionCredentials?, error: Error?) in  }
 ```
 
 ### Delegate methods
@@ -84,7 +84,7 @@ ninchatSession.appDetails = "app-name/version (more; details)"
 The SDK must perform some asynchornous networking tasks before it is ready to use; this is done by calling the `start` method as follows. The callback includes credentials that could be saved for resuming the session later.
 
 ```swift
-ninchatSession.start { [weak self] credentials, error in
+ninchatSession.start { (credentials: NINSessionCredentials?, error: Error?) in
     if let error = error {
          /// Some errors in starting a new session.
     }
@@ -97,7 +97,7 @@ ninchatSession.start { [weak self] credentials, error in
 Starting **version 0.0.42**, the SDK provides support to resume a session. In case of any issues in resuming the session using provided credentials, the corresponded delegate is called to ask if a new session should be started or not.
 
 ```swift
-ninchatSession.start(with: credentials) { [weak self] credentials, error in
+ninchatSession.start(with: credentials) { (credentials: NINSessionCredentials?, error: Error?) in
     if let error = error {
         /// Some errors in resuming the session.
     }                      
@@ -178,7 +178,7 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
 /// This method is called when the SDK was unable to resume a session using provided credentials.
 /// The return value determines if the SDK should initiate a new session or not.
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
-    return true
+     return true
 } 
 ```
 
