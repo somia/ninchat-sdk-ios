@@ -27,6 +27,7 @@
  *
  * The return value indicates if the SDK should initiate a new chat session or not.
  */
+@optional
 -(BOOL) ninchatDidFailToResumeSession:(NINChatSession*_Nonnull)session;
 
 /**
@@ -134,7 +135,7 @@
 /**
  * Starts the API engine using given credentials. Must be called before other API methods.
  * If callback returns the error indicating invalidated credentials, the caller is responsible to decide
- * for using `-startWithCallback:` and startign a new chat session.
+ * for using `-startWithCallback:` and starting a new chat session.
  */
 -(void)startWithCredentials:(nonnull NINSessionCredentials*)credentials andCallback:(nonnull startCallbackBlock)callbackBlock;
 
@@ -142,7 +143,12 @@
  * Starts the API engine. Must be called before other API methods. The method creates
  * a new user and a new session. The caller must wait for the callback block to be called without errors.
  */
--(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock;
+-(void) startWithCredentialCallback:(nonnull startCallbackBlock)callbackBlock;
+
+/**
+ * Add backward compatibility for applications to omit credentials and session resumption features.
+ * */
+-(void) startWithCallback:(nonnull void(^)(NSError* _Nullable))callbackBlock;
 
 /**
  * Returns the view controller for the Ninchat UI.
