@@ -216,7 +216,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
  * 1. Using that configuration, starts a new chat session
  * 2. Retrieves the queues available for this realm (realm id from site configuration)
  */
--(void) startWithCallback:(nonnull startCallbackBlock)callbackBlock {
+-(void) startWithCredentialCallback:(nonnull startCallbackBlock)callbackBlock {
     __weak typeof(self) weakSelf = self;
     [self sdklog:@"Starting a new chat session"];
 
@@ -235,6 +235,12 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
         [self openSession:callbackBlock];
     }
     self.resumeSession = NO;
+}
+
+-(void)startWithCallback:(nonnull void (^)(NSError *_Nullable))callbackBlock {
+    [self startWithCredentialCallback:^(NINSessionCredentials *credentials, NSError *error) {
+        callbackBlock(error);
+    }];
 }
 
 /** Fetching site configurations usable by both approaches to opening sessions */
@@ -297,7 +303,7 @@ NINColorAssetKey NINColorAssetRatingNegativeText = @"NINColorAssetRatingNegative
 //        [weakSelf.sessionManager closeOldSession:credentials.sessionID];
         if ((error != nil && [error.userInfo[@"message"] isEqualToString:@"user_not_found"]) || !canContinueSession) {
             if ([weakSelf.delegate respondsToSelector:@selector(ninchatDidFailToResumeSession:)] && [weakSelf.delegate ninchatDidFailToResumeSession:weakSelf]) {}
-                [weakSelf startWithCallback:callbackBlock];
+                [weakSelf startWithCredentialCallback:callbackBlock];
             return;
         }
 
