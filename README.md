@@ -92,9 +92,20 @@ ninchatSession.start { (credentials: NINSessionCredentials?, error: Error?) in
 }
 ```
 
+**Note: You still can initiate the session using the legacy interface without any credentials involved:**
+
+```swift
+ninchatSession.start { (error: Error?) in
+    if let error = error {
+         /// Some errors in starting a new session.
+    }
+    /// Show the SDK UI.
+}
+```
+
 #### Resuming a session
 
-Starting **version 0.0.42**, the SDK provides support to resume a session. In case of any issues in resuming the session using provided credentials, the corresponded delegate is called to ask if a new session should be started or not.
+Starting **version 0.0.42**, the SDK provides support to resume a session. In case of any issues in resuming the session using provided credentials, the corresponded optional delegate is called to ask if a new session should be started or not.
 
 ```swift
 ninchatSession.start(with: credentials) { (credentials: NINSessionCredentials?, error: Error?) in
@@ -104,6 +115,7 @@ ninchatSession.start(with: credentials) { (credentials: NINSessionCredentials?, 
     /// Update saved/cached `credentials` with the new one.
 }
 
+/// Optional
 /// Called when credentials are not valid.
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
     /// Return `true` if the SDK should start a new session.
@@ -175,6 +187,7 @@ func ninchat(_ session: NINChatSession, didOutputSDKLog message: String) {
     log.debug("** NINCHAT SDK **: \(message)")
 }
 
+/// Optional
 /// This method is called when the SDK was unable to resume a session using provided credentials.
 /// The return value determines if the SDK should initiate a new session or not.
 func ninchatDidFail(toResumeSession session: NINChatSession) -> Bool {
