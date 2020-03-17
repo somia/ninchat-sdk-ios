@@ -159,15 +159,19 @@
 }
 
 -(void) newMessageWasAddedAtIndex:(NSInteger)index {
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
-    [self.tableView endUpdates];
+    runOnMainThread(^{
+        [self.tableView beginUpdates];
+        [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView endUpdates];
+    });
 }
 
 -(void) messageWasRemovedAtIndex:(NSInteger)index {
-    [self.tableView beginUpdates];
-    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationTop];
-    [self.tableView endUpdates];
+    runOnMainThread(^{
+        [self.tableView beginUpdates];
+        [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView endUpdates];
+    });
 }
 
 #pragma mark - From UITableViewDelegate
@@ -185,7 +189,6 @@
         cell.uiComposeSendPressedCallback = ^(NINComposeContentView *composeContentView) {
             [weakSelf.delegate uiActionSentByComposeContentView:composeContentView];
         };
-        [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig composeState:self.composeMessageStates[messageID]];
         cell.uiComposeStateUpdateCallback = ^(NSArray* composeState) {
             weakSelf.composeMessageStates[messageID] = composeState;
         };
@@ -194,10 +197,14 @@
         };
         cell.cellConstraintsUpdatedCallback = ^{
             [UIView animateWithDuration:0.3 animations:^{
-                [weakSelf.tableView beginUpdates];
-                [weakSelf.tableView endUpdates];
+                runOnMainThread(^{
+                    [weakSelf.tableView beginUpdates];
+                    [weakSelf.tableView endUpdates];
+                });
             }];
         };
+
+        [cell populateWithChannelMessage:channelMessage siteConfiguration:self.sessionManager.siteConfiguration imageAssets:self.imageAssets colorAssets:self.colorAssets agentAvatarConfig:self.agentAvatarConfig userAvatarConfig:self.userAvatarConfig composeState:self.composeMessageStates[messageID]];
         return cell;
     } else if ([message isKindOfClass:NINUserTypingMessage.class]) {
         NINChatBubbleCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatBubbleCell" forIndexPath:indexPath];
@@ -206,12 +213,11 @@
         return cell;
     } else if ([message isKindOfClass:NINChatMetaMessage.class]) {
         NINChatMetaCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"NINChatMetaCell" forIndexPath:indexPath];
-
-        [cell populateWithMessage:message colorAssets:self.colorAssets session:self.sessionManager.ninchatSession];
         cell.closeChatCallback = ^{
             [weakSelf.delegate closeChatRequestedByChatView:weakSelf];
         };
 
+        [cell populateWithMessage:message colorAssets:self.colorAssets session:self.sessionManager.ninchatSession];
         return cell;
     } else {
         NSCAssert(NO, @"Invalid message type");
