@@ -112,23 +112,25 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
 
 -(void) removeSendButtonAction {
     [self.sendButton removeTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+    for (NSUInteger i = 0; i < self.optionButtons.count; i++) {
+        [self.optionButtons[i] removeTarget:self action:@selector(pressed:) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 -(void) pressed:(UIButton*)button {
-    if (button == self.sendButton) {
+    if (button == self.sendButton && self.uiComposeSendPressedCallback) {
         self.uiComposeSendPressedCallback(self);
         [self applyButtonStyle:button selected:YES];
-        return;
-    }
-    
-    for (int i=0; i<self.optionButtons.count; ++i) {
-        if (button == self.optionButtons[i]) {
-            BOOL selected = ![[self.options[i] valueForKey:@"selected"] boolValue];
-            self.options[i][@"selected"] = @(selected);
-            self.composeState[@(i)] = @(selected);
-            [self applyButtonStyle:button selected:selected];
-            self.uiComposeElementStateUpdateCallback(self.composeState);
-            return;
+    } else if (self.uiComposeElementStateUpdateCallback) {
+        for (int i=0; i<self.optionButtons.count; ++i) {
+            if (button == self.optionButtons[i]) {
+                BOOL selected = ![[self.options[i] valueForKey:@"selected"] boolValue];
+                self.options[i][@"selected"] = @(selected);
+                self.composeState[@(i)] = @(selected);
+                [self applyButtonStyle:button selected:selected];
+                self.uiComposeElementStateUpdateCallback(self.composeState);
+                return;
+            }
         }
     }
 }
@@ -230,6 +232,11 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     [button setTitleEdgeInsets:UIEdgeInsetsMake(0, 8, 2, 8)];
 }
 
+-(void) dealloc {
+    self.uiComposeElementStateUpdateCallback = nil;
+    self.uiComposeSendPressedCallback = nil;
+}
+
 @end
 
 @interface NINComposeMessageView ()
@@ -313,20 +320,29 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     __weak typeof(self) weakSelf = self;
     BOOL enableSendButtons = (composeMessage.sendPressedIndex == -1);
     
-    for (int i = 0; i < self.contentViews.count; i++) {
+    for (NSUInteger i = 0; i < self.contentViews.count; i++) {
         BOOL isSelected = composeMessage.content[i].sendPressed;
         [self.contentViews[i] populateWithComposeMessage:composeMessage.content[i] siteConfiguration:siteConfiguration colorAssets:colorAssets composeState:composeState[i] enableSendButton:enableSendButtons isSelected:isSelected];
         self.contentViews[i].uiComposeSendPressedCallback = ^(NINComposeContentView* composeContentView) {
+            /// Do an additional checking to ensure we won't get a null exception as described in
+            /// https://github.com/somia/ninchat-sdk-ios/issues/100
+            if (!weakSelf || !weakSelf.uiComposeSendPressedCallback)
+                return;
+
             composeMessage.content[i].sendPressed = YES;
-            
             // Make the send buttons un-clickable for this message
-            for (int j = 0; j < self.contentViews.count; j++) {
+            for (NSUInteger j = 0; j < self.contentViews.count; j++) {
                 [weakSelf.contentViews[j] removeSendButtonAction];
             }
             weakSelf.uiComposeSendPressedCallback(composeContentView);
         };
         [self.contentViews[i] setHidden:NO];
         self.contentViews[i].uiComposeElementStateUpdateCallback = ^(NSDictionary *composeState) {
+            /// Do an additional checking to ensure we won't get a null exception as described in
+            /// https://github.com/somia/ninchat-sdk-ios/issues/100
+            if (!weakSelf || !weakSelf.uiComposeStateUpdateCallback)
+                return;
+
             weakSelf.composeStates[i] = composeState;
             weakSelf.uiComposeStateUpdateCallback(weakSelf.composeStates);
         };
@@ -349,6 +365,13 @@ typedef void (^uiComposeElementStateUpdateCallback)(NSDictionary* composeState);
     }
     
     self.contentViews = [[NSMutableArray alloc] init];
+}
+
+-(void) dealloc {
+    /// To ensure that the blocks are deallocated to prevent the following issue to happening again
+    /// https://github.com/somia/ninchat-sdk-ios/issues/100
+    self.uiComposeStateUpdateCallback = nil;
+    self.uiComposeSendPressedCallback = nil;
 }
 
 @end
