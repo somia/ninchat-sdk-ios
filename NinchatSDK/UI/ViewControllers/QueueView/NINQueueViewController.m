@@ -84,7 +84,9 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
             // Failed to join the queue
             [self.sessionManager.ninchatSession sdklog:@"Failed to join the queue: %@", error];
         }
-        
+
+        /// https://github.com/somia/ninchat-sdk-ios/issues/68
+        [weakSelf.queueInfoTextView setHidden:queuePosition == 0];
         if (queuePosition == 1) {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         } else {
