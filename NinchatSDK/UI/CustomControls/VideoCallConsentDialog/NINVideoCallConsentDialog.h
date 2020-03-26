@@ -25,6 +25,6 @@ typedef void (^consentDialogClosedBlock)(NINConsentDialogResult result);
 @interface NINVideoCallConsentDialog : UIView
 
 /** Displays the dialog on top of another view. */
-+(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user sessionManager:(NINSessionManager*)sessionManager closedBlock:(consentDialogClosedBlock)closedBlock;
++(instancetype _Nonnull) showOnView:(UIView* _Nonnull)view forRemoteUser:(NINChannelUser* _Nullable)user sessionManager:(NINSessionManager* _Nonnull)sessionManager closedBlock:(consentDialogClosedBlock _Nullable)closedBlock;
 
 @end
