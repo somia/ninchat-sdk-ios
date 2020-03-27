@@ -17,6 +17,7 @@
 #import "UIButton+Ninchat.h"
 
 // UI strings
+static NSString* const kNoQueueText = @"noQueuesText";
 static NSString* const kQueuePositionN = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are at position {{audienceQueue.queue_position}}.";
 static NSString* const kQueuePositionNext = @"Joined audience queue {{audienceQueue.queue_attrs.name}}, you are next.";
 static NSString* const kCloseChatText = @"Close chat";
@@ -75,24 +76,30 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     [self.closeChatButton overrideAssetsWithSession:self.sessionManager.ninchatSession];
 }
 
--(void) connectToQueueWithId:(NSString*)queueId {
+/// https://github.com/somia/ninchat-sdk-ios/issues/68
+-(void) connectToQueue:(NINQueue*)queue {
+    if (queue.isClosed) {
+        [self.queueInfoTextView setFormattedText:[self.sessionManager.siteConfiguration valueForKey:kNoQueueText]];
+        return;
+    }
+    [self connectToQueueWithId:queue.queueID];
+}
+
+- (void)connectToQueueWithId:(NSString*)queueID {
     __weak typeof(self) weakSelf = self;
-    
-    [self.sessionManager joinQueueWithId:queueId progress:^(NSError * _Nullable error, NSInteger queuePosition) {
-        
+    [self.sessionManager joinQueueWithId:queueID progress:^(NSError * _Nullable error, NSInteger queuePosition) {
+
         if (error != nil) {
             // Failed to join the queue
             [self.sessionManager.ninchatSession sdklog:@"Failed to join the queue: %@", error];
         }
 
-        /// https://github.com/somia/ninchat-sdk-ios/issues/68
-        [weakSelf.queueInfoTextView setHidden:queuePosition == 0];
         if (queuePosition == 1) {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionNext formatParams:@{@"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         } else {
             [weakSelf.queueInfoTextView setFormattedText:[weakSelf.sessionManager translation:kQueuePositionN formatParams:@{@"audienceQueue.queue_position": @(queuePosition).stringValue, @"audienceQueue.queue_attrs.name": weakSelf.queueToJoin.name}]];
         }
-        
+
         // Apply color override
         UIColor* textTopColor = [weakSelf.sessionManager.ninchatSession overrideColorAssetForKey:NINColorAssetTextTop];
         if (textTopColor != nil) {
@@ -172,7 +179,7 @@ static NSString* const kSegueIdQueueToChat = @"ninchatsdk.segue.QueueToChat";
     
     // Connect to the queue
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNINQueuedNotification object:nil];
-    [self connectToQueueWithId:self.queueToJoin.queueID];
+    [self connectToQueue:self.queueToJoin];
 }
 
 @end

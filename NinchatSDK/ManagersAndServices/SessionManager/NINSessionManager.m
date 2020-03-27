@@ -195,7 +195,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return;
         }
 
-        [_queues addObject:[NINQueue queueWithId:queueId andName:queueName]];
+        BOOL isClosed;
+        [queueAttrs getBool:@"closed" val:&isClosed error:&error];
+        if (error != nil) {
+            postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+            return;
+        }
+
+        [_queues addObject:[NINQueue queueWithId:queueId andName:queueName isClosed:isClosed]];
     }
 
     // Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;

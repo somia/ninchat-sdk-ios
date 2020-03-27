@@ -13,6 +13,7 @@
 // Private writable versions of the properties
 @property (nonatomic, strong) NSString* queueID;
 @property (nonatomic, strong) NSString* name;
+@property (nonatomic, assign) BOOL isClosed;
 
 @end
 
@@ -37,10 +38,11 @@
     return [NSString stringWithFormat:@"Queue ID: %@, Name: %@", self.queueID, self.name];
 }
 
-+(NINQueue*) queueWithId:(NSString*)queueId andName:(NSString*)name {
++(NINQueue*) queueWithId:(NSString*)queueId andName:(NSString*)name isClosed:(BOOL)isClosed {
     NINQueue* queue = [NINQueue new];
     queue.queueID = queueId;
     queue.name = name;
+    queue.isClosed = isClosed;
 
     return queue;
 }

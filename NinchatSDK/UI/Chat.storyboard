@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -765,15 +765,26 @@ you are next.</string>
                                                     <action selector="closeWindowButtonPressed:" destination="YpM-11-QhB" eventType="touchUpInside" id="0qF-MX-afk"/>
                                                 </connections>
                                             </button>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" text="Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="fX8-AZ-l16">
+                                                <rect key="frame" x="67.5" y="5" width="240" height="60"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" name="SourceSansPro-Regular" family="Source Sans Pro" pointSize="16"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                <dataDetectorType key="dataDetectorTypes" phoneNumber="YES" link="YES"/>
+                                            </textView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="ign-ZR-Zu6" secondAttribute="bottom" constant="40" id="2BR-nD-ycT"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="top" secondItem="kgP-Ty-5vY" secondAttribute="bottom" constant="15" id="6eV-mB-lOO"/>
+                                            <constraint firstItem="fX8-AZ-l16" firstAttribute="trailing" secondItem="kgP-Ty-5vY" secondAttribute="trailing" id="FfG-3t-bJX"/>
                                             <constraint firstItem="kgP-Ty-5vY" firstAttribute="top" secondItem="MP0-uv-PXT" secondAttribute="top" constant="5" id="Omj-9X-SYY"/>
                                             <constraint firstItem="kgP-Ty-5vY" firstAttribute="centerX" secondItem="MP0-uv-PXT" secondAttribute="centerX" id="P6s-Kh-uKE"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="width" secondItem="kgP-Ty-5vY" secondAttribute="width" id="QCe-t8-Ez4"/>
+                                            <constraint firstItem="fX8-AZ-l16" firstAttribute="bottom" secondItem="kgP-Ty-5vY" secondAttribute="bottom" id="e20-P9-eWo"/>
                                             <constraint firstItem="ign-ZR-Zu6" firstAttribute="centerX" secondItem="MP0-uv-PXT" secondAttribute="centerX" id="er1-fp-enb"/>
+                                            <constraint firstItem="fX8-AZ-l16" firstAttribute="top" secondItem="kgP-Ty-5vY" secondAttribute="top" id="pwh-1g-Xal"/>
+                                            <constraint firstItem="fX8-AZ-l16" firstAttribute="leading" secondItem="kgP-Ty-5vY" secondAttribute="leading" id="raD-IG-ZHO"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -829,6 +840,7 @@ you are next.</string>
                         <outlet property="bottomContainerView" destination="3xg-1C-FCR" id="bTt-tN-u3D"/>
                         <outlet property="closeWindowButton" destination="ign-ZR-Zu6" id="jyw-cP-AxW"/>
                         <outlet property="motdTextView" destination="D4q-k8-gpN" id="mvn-0f-RPQ"/>
+                        <outlet property="noQueueTextView" destination="fX8-AZ-l16" id="E10-tU-8bt"/>
                         <outlet property="queueButtonsStackView" destination="kgP-Ty-5vY" id="0f1-eC-IFe"/>
                         <outlet property="topContainerView" destination="Wa1-0U-Lj7" id="o2l-78-drn"/>
                         <outlet property="welcomeTextView" destination="sio-TM-FLm" id="On2-aa-gGH"/>
