@@ -85,7 +85,7 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 
 #pragma mark - Public methods
 
-+(instancetype) showOnView:(UIView*)view forRemoteUser:(NINChannelUser*)user sessionManager:(NINSessionManager*)sessionManager closedBlock:(consentDialogClosedBlock)closedBlock {
++(instancetype _Nonnull) showOnView:(UIView* _Nonnull)view forRemoteUser:(NINChannelUser* _Nullable)user sessionManager:(NINSessionManager* _Nonnull)sessionManager closedBlock:(consentDialogClosedBlock _Nullable)closedBlock {
     NINVideoCallConsentDialog* d = [NINVideoCallConsentDialog loadViewFromNib];
     d.translatesAutoresizingMaskIntoConstraints = NO;
     d.closedBlock = closedBlock;
@@ -95,15 +95,19 @@ static const NSTimeInterval kAnimationDuration = 0.3;
     // Caller's Avatar image
     if (agentAvatarConfig.imageOverrideUrl != nil) {
         [d.avatarImageView setImageWithURL:[NSURL URLWithString:agentAvatarConfig.imageOverrideUrl]];
-    } else {
+    } else if (user != nil) {
         [d.avatarImageView setImageWithURL:[NSURL URLWithString:user.iconURL]];
+    } else {
+        d.avatarImageView.image = [UIImage imageNamed:@"icon_avatar_other" inBundle:findResourceBundle() compatibleWithTraitCollection:nil];
     }
 
     // Caller's name
     if (agentAvatarConfig.nameOverride != nil) {
         d.usernameLabel.text = agentAvatarConfig.nameOverride;
-    } else {
+    } else if (user != nil) {
         d.usernameLabel.text = user.displayName;
+    } else {
+        d.usernameLabel.text = NSLocalizedStringFromTableInBundle(@"Guest", @"Localizable", findResourceBundle(), @"");
     }
 
     [d applyAssetOverrides:sessionManager.ninchatSession];
