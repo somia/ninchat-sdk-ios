@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@import AFNetworking;
-
+#import <AFNetworking/AFNetworking.h>
+#import <CoreServices/CoreServices.h>
 #import "NINUtils.h"
 #import "NINInitialViewController.h"
 
@@ -92,6 +91,7 @@ UIView* loadFromNib(Class class) {
 
 void fetchSiteConfig(NSString* serverAddress, NSString* configurationKey, fetchSiteConfigCallbackBlock callbackBlock) {
     NSString* url = [NSString stringWithFormat:kSiteConfigUrlPattern, serverAddress, configurationKey];
+    NSURLRequest *req = [[NSURLRequest alloc] initWithURL:[[NSURL alloc] initWithString:url]];
 
     void (^callCallback)(NSDictionary* config, NSError* error) = ^(NSDictionary* config, NSError* error) {
         runOnMainThread(^{
@@ -100,14 +100,13 @@ void fetchSiteConfig(NSString* serverAddress, NSString* configurationKey, fetchS
     };
 
     AFHTTPSessionManager* manager = [AFHTTPSessionManager manager];
-    [manager GET:url parameters:nil progress:nil success:^(NSURLSessionTask* task, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+    [manager dataTaskWithRequest:req uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        if (error != nil)
+            callCallback(nil, error);
+        else if ([responseObject isKindOfClass:[NSDictionary class]])
             callCallback((NSDictionary*)responseObject, nil);
-        } else {
+        else
             callCallback(nil, newError([NSString stringWithFormat:@"Invalid responseObject class: %@", [responseObject class]]));
-        }
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        callCallback(nil, error);
     }];
 }
 

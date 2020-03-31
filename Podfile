@@ -7,7 +7,7 @@ source 'https://cdn.cocoapods.org/'
 source 'https://github.com/somia/ninchat-podspecs.git'
 
 def all_pods
-    pod 'AFNetworking', '~> 3.0'
+    pod 'AFNetworking'
     pod 'NinchatLowLevelClient', '~> 0.0.40'
     pod 'GoogleWebRTC', '~> 1.1'
 end
