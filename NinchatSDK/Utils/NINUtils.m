@@ -7,9 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@import AFNetworking;
-
+#import <AFNetworking/AFNetworking.h>
+#import <CoreServices/CoreServices.h>
 #import "NINUtils.h"
 #import "NINInitialViewController.h"
 
@@ -99,14 +98,12 @@ void fetchSiteConfig(NSString* serverAddress, NSString* configurationKey, fetchS
         });
     };
 
-    AFHTTPSessionManager* manager = [AFHTTPSessionManager manager];
-    [manager GET:url parameters:nil progress:nil success:^(NSURLSessionTask* task, id responseObject) {
-        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+    [[AFHTTPSessionManager manager] GET:url parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]])
             callCallback((NSDictionary*)responseObject, nil);
-        } else {
+        else
             callCallback(nil, newError([NSString stringWithFormat:@"Invalid responseObject class: %@", [responseObject class]]));
-        }
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
+    } failure:^(NSURLSessionDataTask *task, NSError *error) {
         callCallback(nil, error);
     }];
 }
