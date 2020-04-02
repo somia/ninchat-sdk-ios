@@ -195,7 +195,14 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
             return;
         }
 
-        [_queues addObject:[NINQueue queueWithId:queueId andName:queueName]];
+        BOOL isClosed;
+        [queueAttrs getBool:@"closed" val:&isClosed error:&error];
+        if (error != nil) {
+            postNotification(kActionNotification, @{@"action_id": @(actionId), @"error": error});
+            return;
+        }
+
+        [_queues addObject:[NINQueue queueWithId:queueId andName:queueName isClosed:isClosed]];
     }
 
     // Form the list of audience queues; if audienceQueues is specified in siteConfig, we use those;
@@ -893,7 +900,9 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
     NINChannelUser* messageUser = _channelUsers[messageUserID];
     if (messageUser == nil) {
         NSLog(@"Message from unknown user: %@", messageUserID);
-        //TODO how big a problem is this?
+        /// This can result in crashes such as the one described in https://github.com/somia/ninchat-sdk-ios/issues/104
+        /// The solution is to either return with the appropriate error
+        /// Or trying to handle the situation in the rest of the function where the user is injected
     }
 
     if ([messageType isEqualToString:kNINMessageTypeWebRTCIceCandidate] ||
@@ -911,12 +920,17 @@ void connectCallbackToActionCompletion(int64_t actionId, callbackWithErrorBlock 
         for (int i = 0; i < payload.length; i++) {
             // Handle a WebRTC signaling message
             NSDictionary* payloadDict = [NSJSONSerialization JSONObjectWithData:[payload get:i] options:0 error:&error];
-            if (error != nil) {
+            if (error != nil || payloadDict == nil) {
                 NSLog(@"Failed to deserialize message JSON: %@", error);
                 return;
             }
 
-            postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict, @"messageUser": messageUser});
+            /// For now, since only https://github.com/somia/ninchat-sdk-ios/issues/104 is reported by customers, the easiest way is to handle the "null" exception here
+            /// Later, if we get more crashes or reports, we might think to make a permanent solution for all.
+            if (messageUser == nil)
+                postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict});
+            else
+                postNotification(kNINWebRTCSignalNotification, @{@"messageType": messageType, @"payload": payloadDict, @"messageUser": messageUser});
         }
         return;
     }

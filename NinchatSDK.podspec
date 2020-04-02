@@ -40,9 +40,9 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   # Cocoapods dependencies
-  s.dependency "AFNetworking", "~> 3.0"
+  s.dependency "AFNetworking"
   s.dependency "NinchatLowLevelClient"
-  s.dependency "GoogleWebRTC", "~> 1.1"
+  s.dependency "GoogleWebRTC", "~> 1.0"
 
   s.module_name = "NinchatSDK"
   s.requires_arc = true
