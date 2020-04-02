@@ -952,7 +952,12 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     fetchNotification(kNINChannelClosedNotification, ^BOOL(NSNotification* notification) {
         [weakSelf stopObserverChatEvents];
         [weakSelf disableInputControls];
-        
+
+        /// Ending the conversation must remove the video
+        /// As described in https://github.com/somia/ninchat-sdk-ios/issues/105
+        [weakSelf disconnectWebRTC];
+        [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
+
         return YES;
     });
     
