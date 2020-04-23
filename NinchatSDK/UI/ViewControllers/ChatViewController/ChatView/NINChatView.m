@@ -160,6 +160,8 @@
 
 -(void) newMessageWasAddedAtIndex:(NSInteger)index {
     runOnMainThread(^{
+        if ([self.tableView numberOfRowsInSection:0] >= [self.dataSource numberOfMessagesForChatView:self]) { return; }
+
         [self.tableView beginUpdates];
         [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
         [self.tableView endUpdates];
@@ -168,6 +170,8 @@
 
 -(void) messageWasRemovedAtIndex:(NSInteger)index {
     runOnMainThread(^{
+        if ([self.tableView numberOfRowsInSection:0] <= [self.dataSource numberOfMessagesForChatView:self]) { return; }
+
         [self.tableView beginUpdates];
         [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
         [self.tableView endUpdates];
