@@ -391,13 +391,15 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
                 // Show the video view
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
-                [self resizeLocalVideoView];
+                [weakSelf resizeLocalVideoView];
+                [weakSelf stopIdleTimer:YES];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
             NSLog(@"Got WebRTC hang-up - closing the video call.");
 
             // Disconnect
             [weakSelf disconnectWebRTC];
+            [weakSelf stopIdleTimer:NO];
 
             // Close the video view
             [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
@@ -859,6 +861,14 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     self.tapRecognizerView = nil;
 
     [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
+}
+
+#pragma mark - Helper
+
+/// To prevent screen-saver during a video call
+/// https://github.com/somia/mobile/issues/204
+- (void) stopIdleTimer:(BOOL )stop {
+    [UIApplication sharedApplication].idleTimerDisabled = stop;
 }
 
 #pragma mark - Lifecycle etc.
