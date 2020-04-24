@@ -991,7 +991,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
         NSNumber* index = note.userInfo[@"index"];
         if ([note.userInfo[@"action"] isEqualToString:@"insert"]) {
             [weakSelf.chatView newMessageWasAddedAtIndex:index.integerValue];
-        } else {
+        } else if ([note.userInfo[@"action"] isEqualToString:@"remove"]) {
             [weakSelf.chatView messageWasRemovedAtIndex:index.integerValue];
         }
 
