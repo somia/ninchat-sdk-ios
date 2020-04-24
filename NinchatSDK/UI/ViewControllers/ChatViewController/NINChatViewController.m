@@ -7,6 +7,7 @@
 //
 
 @import CoreServices;
+@import MobileCoreServices;
 @import AVFoundation;
 @import AVKit;
 @import Photos;
