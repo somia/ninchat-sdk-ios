@@ -7,6 +7,7 @@
 //
 
 @import CoreServices;
+@import MobileCoreServices;
 @import AVFoundation;
 @import AVKit;
 @import Photos;
@@ -391,13 +392,15 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
 
                 // Show the video view
                 [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
-                [self resizeLocalVideoView];
+                [weakSelf resizeLocalVideoView];
+                [weakSelf stopIdleTimer:YES];
             }];
         } else if ([note.userInfo[@"messageType"] isEqualToString:kNINMessageTypeWebRTCHangup]) {
             NSLog(@"Got WebRTC hang-up - closing the video call.");
 
             // Disconnect
             [weakSelf disconnectWebRTC];
+            [weakSelf stopIdleTimer:NO];
 
             // Close the video view
             [weakSelf adjustConstraintsForSize:weakSelf.view.bounds.size animate:YES];
@@ -861,6 +864,14 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
     [self.sessionManager setIsWriting:NO completion:^(NSError* error) {}];
 }
 
+#pragma mark - Helper
+
+/// To prevent screen-saver during a video call
+/// https://github.com/somia/mobile/issues/204
+- (void) stopIdleTimer:(BOOL )stop {
+    [UIApplication sharedApplication].idleTimerDisabled = stop;
+}
+
 #pragma mark - Lifecycle etc.
 
 -(void) viewWillAppear:(BOOL)animated {
@@ -981,7 +992,7 @@ static NSString* const kTextInputPlaceholderText = @"Enter your message";
         NSNumber* index = note.userInfo[@"index"];
         if ([note.userInfo[@"action"] isEqualToString:@"insert"]) {
             [weakSelf.chatView newMessageWasAddedAtIndex:index.integerValue];
-        } else {
+        } else if ([note.userInfo[@"action"] isEqualToString:@"remove"]) {
             [weakSelf.chatView messageWasRemovedAtIndex:index.integerValue];
         }
 
