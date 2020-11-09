@@ -6,6 +6,8 @@
 This document describes integrating the Ninchat iOS SDK into an iOS application.
 
 
+**⚠️  The project has been archived and will not receive any more updates. To integrate with Ninchat services, pleaes use the [Swift SDK](https://github.com/somia/ninchat-sdk-ios-swift)  ⚠️**
+
 
 ## Installation
 
